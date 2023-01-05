@@ -48,6 +48,7 @@ let inputdefault: Move = {right: false, left:false};
 let move1 : Move = {...inputdefault};
 let move2 : Move = {...inputdefault};
 let paddleDimensions:Vec2 = {x: 100, y: 10};
+let ballRadius : number = 10;
 
 let gameWindowBegin:Vec2 = {x:window.innerWidth / 2 - Window.x / 2, y:window.innerHeight / 2 - Window.y / 2};
 let gameWindowEnd:Vec2 = {x:window.innerWidth / 2 + Window.x / 2, y:window.innerHeight / 2 + Window.y / 2};
@@ -122,26 +123,29 @@ function App() {
     }
   }, []);
 
+//  Here to modify game page
   return (
-    <div style={{backgroundColor: "black"}}>
-      <Stage width={window.innerWidth} height={window.innerHeight}>
+    <div style={{backgroundColor: "#5680E9"}}>
+    <Stage width={window.innerWidth} height={window.innerHeight}>
         <Layer>
-          <Rect offsetX={Window.x / 2} offsetY={Window.y / 2} x={window.innerWidth / 2} y={window.innerHeight / 2} width={Window.x} height={Window.y} fill="grey"/>
+          <Rect cornerRadius={50} offsetX={Window.x / 2} offsetY={Window.y / 2} x={window.innerWidth / 2} y={window.innerHeight / 2} width={Window.x} height={Window.y} fill="#C1C8E4"/>
         </Layer>
         <Layer>
             <Circle
-              radius={10}
+              radius={ballRadius}
               x={gameState.ball.position.x}
               y={gameState.ball.position.y}
               fill="white"
             />
             <Rect
+            cornerRadius={50}
               x={gameState.player1.paddle.position.x}
               y={gameState.player1.paddle.position.y}
               fill="white"
               width={paddleDimensions.x} height={paddleDimensions.y}
             />
             <Rect
+            cornerRadius={50}
               x={gameState.player2.paddle.position.x}
               y={gameState.player2.paddle.position.y}
               fill="white"
@@ -171,9 +175,9 @@ function paddleCollision(ball: Ball, player: Player)
 {
   if (ball.cooldown === 0)
   {
-    if (((ball.previous.y - 10 < player.paddle.position.y - paddleDimensions.y/2 && ball.position.y + 10 > player.paddle.position.y - paddleDimensions.y / 2)
-      || (ball.previous.y + 10 > player.paddle.position.y + paddleDimensions.y/2 && ball.position.y - 10 < player.paddle.position.y + paddleDimensions.y / 2))
-      && (ball.position.x + 10 > player.paddle.position.x && ball.position.x - 10 < player.paddle.position.x + paddleDimensions.x))
+    if (((ball.previous.y - ballRadius < player.paddle.position.y - paddleDimensions.y/2 && ball.position.y + ballRadius > player.paddle.position.y - paddleDimensions.y / 2)
+      || (ball.previous.y + ballRadius > player.paddle.position.y + paddleDimensions.y/2 && ball.position.y - ballRadius < player.paddle.position.y + paddleDimensions.y / 2))
+      && (ball.position.x + ballRadius > player.paddle.position.x && ball.position.x - ballRadius < player.paddle.position.x + paddleDimensions.x))
     {
       if (player.side === 0)
       {
@@ -208,7 +212,7 @@ function paddleCollision(ball: Ball, player: Player)
         else
           ball.position.y -=5;
       }
-      ball.cooldown = 20;
+      ball.cooldown = 1;
       return 1;
     }
   }
@@ -217,14 +221,14 @@ function paddleCollision(ball: Ball, player: Player)
 
 function wallCollision(ball: Ball, state: GameState)
 {
-  if (ball.position.x + 10 > gameWindowEnd.x || ball.position.x - 10 < gameWindowBegin.x)
+  if (ball.position.x + ballRadius > gameWindowEnd.x || ball.position.x - ballRadius < gameWindowBegin.x)
     ball.speed.x = -ball.speed.x;
   if (paddleCollision(ball, state.player1) === 0 && paddleCollision(ball, state.player2) === 0)
   {
-    if (ball.position.y > gameWindowEnd.y - 10) {
+    if (ball.position.y > gameWindowEnd.y - ballRadius) {
       resetState(state);
       state.player2.score++;
-    } else if (ball.position.y < gameWindowBegin.y + 10) {
+    } else if (ball.position.y < gameWindowBegin.y + ballRadius) {
       resetState(state);
       state.player1.score++;
     }
@@ -340,3 +344,4 @@ function updateState(setGameState: Function) {
 }
 
 export default App;
+  

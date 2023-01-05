@@ -6,10 +6,20 @@ import reportWebVitals from './reportWebVitals';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
+  
 );
+
+const name = 'Clarisse Agbegnenou';
+const element = <h1>Bonjour, {name}</h1>;
+
 root.render(
-    <App />
+  element
 );
+
+root.render(
+  <App />
+);
+
 
 // If you want to start measuring performance in your app, pass a function
 // to log results (for example: reportWebVitals(console.log))
