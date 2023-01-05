@@ -1,347 +1,373 @@
-import React, { useState, useEffect } from 'react';
-import { Circle, Layer, Rect, Stage, Text } from 'react-konva';
-import './App.css';
+import { useEffect, useState } from "react";
+import { Circle, Layer, Rect, Stage } from "react-konva";
+import "./styles/game.scss";
 
 export interface Vec2 {
-  x: number,
-  y: number,
+	x: number;
+	y: number;
 }
 
 export interface Paddle {
-  position: Vec2,
-  speed: Vec2,
-  angle: number,
+	position: Vec2;
+	speed: Vec2;
+	angle: number;
 }
 
 export interface Move {
-  left: boolean,
-  right: boolean,
+	left: boolean;
+	right: boolean;
 }
 
-
 export interface Player {
-  paddle: Paddle,
-  input: Move,
-  name: string,
-  score: number,
-  side: number,
+	paddle: Paddle;
+	input: Move;
+	name: string;
+	score: number;
+	side: number;
 }
 
 export interface Ball {
-  position: Vec2,
-  speed: Vec2,
-  previous: Vec2,
-  cooldown: number,
+	position: Vec2;
+	speed: Vec2;
+	previous: Vec2;
+	cooldown: number;
 }
 
 export interface GameState {
-  player1: Player,
-  player2: Player,
-  ball: Ball,
+	area: Vec2;
+	scale: number;
+	client_area: Vec2;
+	player1: Player;
+	player2: Player;
+	ball: Ball;
 }
 
+const GAME_RATIO = 1.5;
+const GAME_INTERNAL_WIDTH = 700;
 
-let Window:Vec2 = {x:700, y:1000};
-let balldefault: Ball = {position:{x:window.innerWidth / 2 - 10, y:window.innerHeight / 2 - 10}, speed:{x:5, y:1}, previous:{x:window.innerWidth / 2 - 10, y:window.innerHeight / 2 - 10}, cooldown: 0};
-let inputdefault: Move = {right: false, left:false};
+let inputdefault: Move = { right: false, left: false };
 
-let move1 : Move = {...inputdefault};
-let move2 : Move = {...inputdefault};
-let paddleDimensions:Vec2 = {x: 100, y: 10};
-let ballRadius : number = 10;
+let move1: Move = { ...inputdefault };
+let move2: Move = { ...inputdefault };
+let paddleDimensions: Vec2 = { x: 100, y: 10 };
+let ballRadius: number = 10;
 
-let gameWindowBegin:Vec2 = {x:window.innerWidth / 2 - Window.x / 2, y:window.innerHeight / 2 - Window.y / 2};
-let gameWindowEnd:Vec2 = {x:window.innerWidth / 2 + Window.x / 2, y:window.innerHeight / 2 + Window.y / 2};
+const vector_zero = (): Vec2 => ({ x: 0, y: 0 });
 
-
-let gameStateDefault: GameState = {
-  player1: {
-    paddle: {
-      position: {
-        x: window.innerWidth / 2 - 50,
-        y: window.innerHeight / 2 + 445,
-      },
-      speed: {
-        x: 0,
-        y: 0,
-      },
-      angle: 0,
-    },
-    input: inputdefault,
-    name: "Player1",
-    score: 0,
-    side: 0,
-  },
-  player2: {
-    paddle: {
-      position: {
-        x: window.innerWidth / 2 - 50,
-        y: window.innerHeight / 2 - 455,
-      },
-      speed: {
-        x: 0,
-        y: 0,
-      },
-      angle: 0,
-    },
-    input: inputdefault,
-    name: "Player2",
-    score: 0,
-    side: 1,
-  },
-  ball: balldefault,
+let balldefault: Ball = {
+	position: vector_zero(),
+	speed: vector_zero(),
+	previous: vector_zero(),
+	cooldown: 0,
 };
 
+let gameStateDefault: GameState = {
+	area: { x: GAME_INTERNAL_WIDTH, y: GAME_INTERNAL_WIDTH * GAME_RATIO },
+	scale: 1,
+	client_area: vector_zero(),
+	player1: {
+		paddle: {
+			position: vector_zero(),
+			speed: vector_zero(),
+			angle: 0,
+		},
+		input: inputdefault,
+		name: "Player1",
+		score: 0,
+		side: 0,
+	},
+	player2: {
+		paddle: {
+			position: vector_zero(),
+			speed: vector_zero(),
+			angle: 0,
+		},
+		input: inputdefault,
+		name: "Player2",
+		score: 0,
+		side: 1,
+	},
+	ball: balldefault,
+};
+
+resetState(gameStateDefault);
+
 function App() {
-  const [gameState, setGameState] = useState<GameState>(gameStateDefault);
-  useEffect(() =>
-  {
-    setInterval(() => {
-      updateState(setGameState);
-    }, 1000/60);
+	const [gameState, setGameState] = useState<GameState>(gameStateDefault);
+	useEffect(() => {
+		setInterval(() => {
+			updateState(setGameState);
+		}, 1000 / 60);
 
-    document.addEventListener('keydown', function(event)
-    {
-      keyEvent(event, true);
-    })
+		document.addEventListener("keydown", keyEvent);
+		document.addEventListener("keyup", keyEvent);
 
-    document.addEventListener('keyup', function(event)
-    {
-      keyEvent(event, false);
-    })
+		// At the end of the component remove the listener using return
+		return () => {
+			document.removeEventListener("keydown", keyEvent);
+			document.removeEventListener("keyup", keyEvent);
+		};
+	}, []);
 
-    // At the end of the component remove the listener using return
-    return () => {
-      document.removeEventListener('keydown', function(event)
-      {
-        keyEvent(event, true);
-      });
-      document.removeEventListener('keyup', function(event)
-      {
-        keyEvent(event, false);
-      });
-    }
-  }, []);
-
-//  Here to modify game page
-  return (
-    <div style={{backgroundColor: "#5680E9"}}>
-    <Stage width={window.innerWidth} height={window.innerHeight}>
-        <Layer>
-          <Rect cornerRadius={50} offsetX={Window.x / 2} offsetY={Window.y / 2} x={window.innerWidth / 2} y={window.innerHeight / 2} width={Window.x} height={Window.y} fill="#C1C8E4"/>
-        </Layer>
-        <Layer>
-            <Circle
-              radius={ballRadius}
-              x={gameState.ball.position.x}
-              y={gameState.ball.position.y}
-              fill="white"
-            />
-            <Rect
-            cornerRadius={50}
-              x={gameState.player1.paddle.position.x}
-              y={gameState.player1.paddle.position.y}
-              fill="white"
-              width={paddleDimensions.x} height={paddleDimensions.y}
-            />
-            <Rect
-            cornerRadius={50}
-              x={gameState.player2.paddle.position.x}
-              y={gameState.player2.paddle.position.y}
-              fill="white"
-              width={paddleDimensions.x} height={paddleDimensions.y}
-            />
-        </Layer>
-        <Layer>
-          <Text text={gameState.player1.name + " : " + gameState.player1.score} fill={"cyan"} x={window.innerWidth / 2 - 50} y={window.innerHeight / 2 + 550}/>
-          <Text text={gameState.player2.name + " : " + gameState.player2.score} fill={"red"} x={window.innerWidth / 2 - 50} y={window.innerHeight / 2 - 550}/>
-        </Layer>
-      </Stage>
-    </div>
-  );
+	//  Here to modify game page
+	return (
+		<div id="game-container">
+			<h3>
+				{gameState.player1.name} {gameState.player1.score}
+			</h3>
+			<Stage
+				width={gameState.client_area.x}
+				height={gameState.client_area.y}
+				scaleX={gameState.scale}
+				scaleY={gameState.scale}
+			>
+				<Layer>
+					<Rect
+						cornerRadius={50}
+						width={gameState.area.x}
+						height={gameState.area.y}
+						fill="#C1C8E4"
+					/>
+				</Layer>
+				<Layer>
+					<Circle
+						radius={ballRadius}
+						x={gameState.ball.position.x}
+						y={gameState.ball.position.y}
+						fill="white"
+					/>
+					<Rect
+						cornerRadius={50}
+						x={gameState.player1.paddle.position.x}
+						y={gameState.player1.paddle.position.y}
+						fill="white"
+						width={paddleDimensions.x}
+						height={paddleDimensions.y}
+					/>
+					<Rect
+						cornerRadius={50}
+						x={gameState.player2.paddle.position.x}
+						y={gameState.player2.paddle.position.y}
+						fill="white"
+						width={paddleDimensions.x}
+						height={paddleDimensions.y}
+					/>
+				</Layer>
+			</Stage>
+			<h3>
+				{gameState.player2.name} {gameState.player2.score}
+			</h3>
+		</div>
+	);
 }
 
 function updateGameState(state: GameState) {
-  state.player1.input = {...move1};
-  state.player2.input = {...move2};
-  movePlayer(state.player1);
-  movePlayer(state.player2);
-  wallCollision(state.ball, state);
-  moveBall(state.ball);
-  return state;
+	state.client_area.x = Math.min((window.innerWidth * 70) / 100, 700);
+	state.client_area.y = state.client_area.x * GAME_RATIO;
+	state.scale = state.client_area.x / state.area.x;
+
+	state.player1.input = { ...move1 };
+	state.player2.input = { ...move2 };
+	movePlayer(state.player1, state);
+	movePlayer(state.player2, state);
+	wallCollision(state.ball, state);
+	moveBall(state.ball);
+	return state;
 }
 
-function paddleCollision(ball: Ball, player: Player)
-{
-  if (ball.cooldown === 0)
-  {
-    if (((ball.previous.y - ballRadius < player.paddle.position.y - paddleDimensions.y/2 && ball.position.y + ballRadius > player.paddle.position.y - paddleDimensions.y / 2)
-      || (ball.previous.y + ballRadius > player.paddle.position.y + paddleDimensions.y/2 && ball.position.y - ballRadius < player.paddle.position.y + paddleDimensions.y / 2))
-      && (ball.position.x + ballRadius > player.paddle.position.x && ball.position.x - ballRadius < player.paddle.position.x + paddleDimensions.x))
-    {
-      if (player.side === 0)
-      {
-        if ((player.input.left && player.input.right && ball.previous.y < player.paddle.position.y)
-        || (player.input.left === false && player.input.right === false && ball.previous.y > player.paddle.position.y))
-        ball.speed.y = ball.speed.y * (Math.random() * (2 - 1.5) + 1.5);
-        else if (player.input.left === false && player.input.right === false && ball.previous.y < player.paddle.position.y)
-        ball.speed.y = ball.speed.y * (Math.random() * (1 - 0.8) + 0.8);
-      }
-      else
-      {
-        if ((player.input.left && player.input.right && ball.previous.y > player.paddle.position.y)
-        || (player.input.left === false && player.input.right === false && ball.previous.y < player.paddle.position.y))
-        ball.speed.y = ball.speed.y * (Math.random() * (2 - 1.5) + 1.5);
-        else if (player.input.left && player.input.right && ball.previous.y > player.paddle.position.y)
-        ball.speed.y = ball.speed.y * (Math.random() * (1 - 0.8) + 0.8);
-      }
+function paddleCollision(ball: Ball, player: Player) {
+	if (ball.cooldown === 0) {
+		if (
+			((ball.previous.y - ballRadius <
+				player.paddle.position.y - paddleDimensions.y / 2 &&
+				ball.position.y + ballRadius >
+					player.paddle.position.y - paddleDimensions.y / 2) ||
+				(ball.previous.y + ballRadius >
+					player.paddle.position.y + paddleDimensions.y / 2 &&
+					ball.position.y - ballRadius <
+						player.paddle.position.y + paddleDimensions.y / 2)) &&
+			ball.position.x + ballRadius > player.paddle.position.x &&
+			ball.position.x - ballRadius <
+				player.paddle.position.x + paddleDimensions.x
+		) {
+			if (player.side === 0) {
+				if (
+					(player.input.left &&
+						player.input.right &&
+						ball.previous.y < player.paddle.position.y) ||
+					(player.input.left === false &&
+						player.input.right === false &&
+						ball.previous.y > player.paddle.position.y)
+				)
+					ball.speed.y = ball.speed.y * (Math.random() * (2 - 1.5) + 1.5);
+				else if (
+					player.input.left === false &&
+					player.input.right === false &&
+					ball.previous.y < player.paddle.position.y
+				)
+					ball.speed.y = ball.speed.y * (Math.random() * (1 - 0.8) + 0.8);
+			} else {
+				if (
+					(player.input.left &&
+						player.input.right &&
+						ball.previous.y > player.paddle.position.y) ||
+					(player.input.left === false &&
+						player.input.right === false &&
+						ball.previous.y < player.paddle.position.y)
+				)
+					ball.speed.y = ball.speed.y * (Math.random() * (2 - 1.5) + 1.5);
+				else if (
+					player.input.left &&
+					player.input.right &&
+					ball.previous.y > player.paddle.position.y
+				)
+					ball.speed.y = ball.speed.y * (Math.random() * (1 - 0.8) + 0.8);
+			}
 
-      if ((ball.previous.y < player.paddle.position.y && ball.speed.y > 0)
-        || (ball.previous.y > player.paddle.position.y && ball.speed.y < 0))
-      {
-        ball.speed.y = -ball.speed.y
-        if (ball.speed.y > 0)
-          ball.position.y += 5;
-        else
-          ball.position.y -=5;
-      }
-      else
-      {
-        if (ball.speed.y > 0)
-          ball.position.y += 5;
-        else
-          ball.position.y -=5;
-      }
-      ball.cooldown = 1;
-      return 1;
-    }
-  }
-  return 0;
+			if (
+				(ball.previous.y < player.paddle.position.y && ball.speed.y > 0) ||
+				(ball.previous.y > player.paddle.position.y && ball.speed.y < 0)
+			) {
+				ball.speed.y = -ball.speed.y;
+				if (ball.speed.y > 0) ball.position.y += 5;
+				else ball.position.y -= 5;
+			} else {
+				if (ball.speed.y > 0) ball.position.y += 5;
+				else ball.position.y -= 5;
+			}
+			ball.cooldown = 1;
+			return 1;
+		}
+	}
+	return 0;
 }
 
-function wallCollision(ball: Ball, state: GameState)
-{
-  if (ball.position.x + ballRadius > gameWindowEnd.x || ball.position.x - ballRadius < gameWindowBegin.x)
-    ball.speed.x = -ball.speed.x;
-  if (paddleCollision(ball, state.player1) === 0 && paddleCollision(ball, state.player2) === 0)
-  {
-    if (ball.position.y > gameWindowEnd.y - ballRadius) {
-      resetState(state);
-      state.player2.score++;
-    } else if (ball.position.y < gameWindowBegin.y + ballRadius) {
-      resetState(state);
-      state.player1.score++;
-    }
-  }
+function wallCollision(ball: Ball, state: GameState) {
+	if (
+		ball.position.x + ballRadius > state.area.x ||
+		ball.position.x - ballRadius < 0
+	)
+		ball.speed.x = -ball.speed.x;
+	if (
+		paddleCollision(ball, state.player1) === 0 &&
+		paddleCollision(ball, state.player2) === 0
+	) {
+		if (ball.position.y > state.area.y - ballRadius) {
+			resetState(state);
+			state.player2.score++;
+		} else if (ball.position.y < 0 + ballRadius) {
+			resetState(state);
+			state.player1.score++;
+		}
+	}
 }
 
 function resetState(state: GameState) {
-  state.player1.paddle.position.x = window.innerWidth / 2 - paddleDimensions.x / 2;
-  state.player1.paddle.position.y = window.innerHeight / 2 + 495 - paddleDimensions.x / 2;
-  state.player2.paddle.position.x = window.innerWidth / 2 - paddleDimensions.x / 2;
-  state.player2.paddle.position.y = window.innerHeight / 2 - 495 + paddleDimensions.x / 2;
-  state.ball.position.x = window.innerWidth / 2 - paddleDimensions.y;
-  state.ball.position.y = window.innerHeight / 2 - paddleDimensions.y;
-  state.ball.speed.x = (Math.random() * (-6));
-  if (state.player1.score > state.player2.score)
-    state.ball.speed.y = (Math.random() * (5 - 1.5) + 1.5);
-  else
-    state.ball.speed.y = -(Math.random() * (5 - 1.5) + 1.5);
+	state.player1.paddle.position = {
+		x: state.area.x / 2 - paddleDimensions.x / 2,
+		y: state.area.y - paddleDimensions.y,
+	};
+	state.player1.paddle.speed = { x: 0, y: 0 };
+	state.player1.paddle.angle = 0;
+
+	state.player2.paddle.position = {
+		x: state.area.x / 2 - paddleDimensions.x / 2,
+		y: 0,
+	};
+	state.player2.paddle.speed = { x: 0, y: 0 };
+	state.player2.paddle.angle = 0;
+
+	state.ball.position = { x: state.area.x / 2 - 10, y: state.area.y / 2 - 10 };
+	state.ball.speed = { x: 5, y: 1 };
+	state.ball.previous = { x: state.area.x / 2 - 10, y: state.area.y / 2 - 10 };
+
+	state.ball.speed.x = Math.random() * -6;
+	if (state.player1.score > state.player2.score)
+		state.ball.speed.y = Math.random() * (5 - 1.5) + 1.5;
+	else state.ball.speed.y = -(Math.random() * (5 - 1.5) + 1.5);
 }
 
-function moveBall(ball: Ball)
-{
-  ball.previous.x = ball.position.x;
-  ball.previous.y = ball.position.y;
-  if (ball.speed.y > 12)
-    ball.speed.y = 12;
-  else if (ball.speed.y < -12)
-    ball.speed.y = -12;
-  else if (ball.speed.y < 4 && ball.speed.y > 0)
-    ball.speed.y = 4;
-  else if (ball.speed.y > -4 && ball.speed.y < 0)
-    ball.speed.y = -4
-  if (ball.speed.x > 15)
-    ball.speed.x = 15;
-  else if (ball.speed.x < -15)
-    ball.speed.x = -15;
-  else if (ball.speed.x < 4 && ball.speed.x > 0)
-    ball.speed.x = 4;
-  else if (ball.speed.x > -4 && ball.speed.x < 0)
-    ball.speed.x = -4
-  ball.position.x += ball.speed.x;
-  ball.position.y += ball.speed.y;
-  if (ball.cooldown > 0)
-    ball.cooldown--;
+function moveBall(ball: Ball) {
+	ball.previous.x = ball.position.x;
+	ball.previous.y = ball.position.y;
+	if (ball.speed.y > 12) ball.speed.y = 12;
+	else if (ball.speed.y < -12) ball.speed.y = -12;
+	else if (ball.speed.y < 4 && ball.speed.y > 0) ball.speed.y = 4;
+	else if (ball.speed.y > -4 && ball.speed.y < 0) ball.speed.y = -4;
+	if (ball.speed.x > 15) ball.speed.x = 15;
+	else if (ball.speed.x < -15) ball.speed.x = -15;
+	else if (ball.speed.x < 4 && ball.speed.x > 0) ball.speed.x = 4;
+	else if (ball.speed.x > -4 && ball.speed.x < 0) ball.speed.x = -4;
+	ball.position.x += ball.speed.x;
+	ball.position.y += ball.speed.y;
+	if (ball.cooldown > 0) ball.cooldown--;
 }
 
-function movePlayer(player: Player) {
-  player.paddle.speed = {x:0, y:0};
-  if (player.side === 0)
-  {
-    if (player.input.left && player.input.right)
-      player.paddle.speed.y = -4;
-    else if (player.input.left && player.paddle.position.x > gameWindowBegin.x)
-      player.paddle.speed.x = -8;
-    else if (player.input.right && player.paddle.position.x < gameWindowEnd.x - paddleDimensions.x)
-      player.paddle.speed.x = 8;
-    else if (player.paddle.position.y + paddleDimensions.y < gameWindowEnd.y)
-      player.paddle.speed.y = 2;
-  }
-  else
-  {
-    if (player.input.left && player.input.right)
-      player.paddle.speed.y = 4;
-    else if (player.input.left && player.paddle.position.x > gameWindowBegin.x)
-      player.paddle.speed.x = -8;
-    else if (player.input.right && player.paddle.position.x < gameWindowEnd.x - paddleDimensions.x)
-      player.paddle.speed.x = 8;
-    else if (player.paddle.position.y > gameWindowBegin.y)
-      player.paddle.speed.y = -2;
-  }
+function movePlayer(player: Player, state: GameState) {
+	player.paddle.speed = { x: 0, y: 0 };
+	if (player.side === 0) {
+		if (player.input.left && player.input.right) player.paddle.speed.y = -4;
+		else if (player.input.left && player.paddle.position.x > 0)
+			player.paddle.speed.x = -8;
+		else if (
+			player.input.right &&
+			player.paddle.position.x < state.area.x - paddleDimensions.x
+		)
+			player.paddle.speed.x = 8;
+		else if (player.paddle.position.y + paddleDimensions.y < state.area.y)
+			player.paddle.speed.y = 2;
+	} else {
+		if (player.input.left && player.input.right) player.paddle.speed.y = 4;
+		else if (player.input.left && player.paddle.position.x > 0)
+			player.paddle.speed.x = -8;
+		else if (
+			player.input.right &&
+			player.paddle.position.x < state.area.x - paddleDimensions.x
+		)
+			player.paddle.speed.x = 8;
+		else if (player.paddle.position.y > 0) player.paddle.speed.y = -2;
+	}
 
-  player.paddle.position.x += player.paddle.speed.x;
-  player.paddle.position.y += player.paddle.speed.y;
+	player.paddle.position.x += player.paddle.speed.x;
+	player.paddle.position.y += player.paddle.speed.y;
 }
 
-function keyEvent(key: KeyboardEvent, keyState: boolean)
-{
-  if (key.key === "ArrowLeft" && keyState) //move left
-  {
-    move1.left = true;
-  } else if (key.key === "ArrowLeft") //move left
-  {
-    move1.left = false;
-  } 
-  else if (key.key === "ArrowRight" && keyState) //move left
-  {
-    move1.right = true;
-  } else if (key.key === "ArrowRight") //move left
-  {
-    move1.right = false;
-  }
+function keyEvent(event: KeyboardEvent) {
+	let key = event.key;
+	let keyState = event.type === "keydown";
+	if (key === "ArrowLeft" && keyState) {
+		//move left
+		move1.left = true;
+	} else if (key === "ArrowLeft") {
+		//move left
+		move1.left = false;
+	} else if (key === "ArrowRight" && keyState) {
+		//move left
+		move1.right = true;
+	} else if (key === "ArrowRight") {
+		//move left
+		move1.right = false;
+	}
 
-  if ((key.key === "A" || key.key === "a") && keyState) //move left
-  {
-    move2.left = true;
-  } else if (key.key === "A" || key.key === "a") //move left
-  {
-    move2.left = false;
-  } 
-  else if ((key.key === "D" || key.key === "d") && keyState) //move left
-  {
-    move2.right = true;
-  } else if (key.key === "D" || key.key === "d") //move left
-  {
-    move2.right = false;
-  }
+	if ((key === "A" || key === "a") && keyState) {
+		//move left
+		move2.left = true;
+	} else if (key === "A" || key === "a") {
+		//move left
+		move2.left = false;
+	} else if ((key === "D" || key === "d") && keyState) {
+		//move left
+		move2.right = true;
+	} else if (key === "D" || key === "d") {
+		//move left
+		move2.right = false;
+	}
 }
 
 function updateState(setGameState: Function) {
-  setGameState((prev: GameState) => {
-    return updateGameState({...prev});
-  })
+	setGameState((prev: GameState) => {
+		return updateGameState({ ...prev });
+	});
 }
 
 export default App;
-  
