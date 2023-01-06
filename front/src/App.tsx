@@ -115,7 +115,7 @@ function App() {
 	return (
 		<div id="game-container">
 			<h3>
-				{gameState.player1.name} {gameState.player1.score}
+				{gameState.player2.name} : {gameState.player2.score}
 			</h3>
 			<Stage
 				width={gameState.client_area.x}
@@ -157,7 +157,7 @@ function App() {
 				</Layer>
 			</Stage>
 			<h3>
-				{gameState.player2.name} {gameState.player2.score}
+				{gameState.player1.name} : {gameState.player1.score}
 			</h3>
 		</div>
 	);
