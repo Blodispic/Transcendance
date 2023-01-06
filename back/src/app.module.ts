@@ -1,11 +1,10 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { User } from './users/users.entity';
+import { User } from './user/user.entity';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UserService } from './user/user.service';
-import { UsersModule } from './users/users.module';
-
+import { UserModule } from './user/user.module';
 @Module({
   imports: [
     TypeOrmModule.forRoot({
@@ -17,7 +16,7 @@ import { UsersModule } from './users/users.module';
       entities: [User],
       synchronize: true,
     }),
-    UsersModule
+    UserModule
   ],
   controllers: [AppController],
   providers: [AppService, UserService],
