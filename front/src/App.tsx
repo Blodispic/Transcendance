@@ -36,6 +36,7 @@ export interface Ball {
 export interface GameState {
 	area: Vec2;
 	scale: number;
+	resetCooldown: number;
 	client_area: Vec2;
 	player1: Player;
 	player2: Player;
@@ -64,6 +65,7 @@ let balldefault: Ball = {
 let gameStateDefault: GameState = {
 	area: { x: GAME_INTERNAL_WIDTH, y: GAME_INTERNAL_WIDTH * GAME_RATIO },
 	scale: 1,
+	resetCooldown: 60,
 	client_area: vector_zero(),
 	player1: {
 		paddle: {
@@ -123,7 +125,7 @@ function App() {
 			>
 				<Layer>
 					<Rect
-						cornerRadius={50}
+						cornerRadius={30}
 						width={gameState.area.x}
 						height={gameState.area.y}
 						fill="#C1C8E4"
@@ -168,10 +170,15 @@ function updateGameState(state: GameState) {
 
 	state.player1.input = { ...move1 };
 	state.player2.input = { ...move2 };
-	movePlayer(state.player1, state);
-	movePlayer(state.player2, state);
-	wallCollision(state.ball, state);
-	moveBall(state.ball);
+	if (state.resetCooldown === 0)
+	{
+		movePlayer(state.player1, state);
+		movePlayer(state.player2, state);
+		wallCollision(state.ball, state);
+		moveBall(state.ball);
+	}
+	else
+		state.resetCooldown--;
 	return state;
 }
 
@@ -181,14 +188,14 @@ function paddleCollision(ball: Ball, player: Player) {
 			((ball.previous.y - ballRadius <
 				player.paddle.position.y - paddleDimensions.y / 2 &&
 				ball.position.y + ballRadius >
-					player.paddle.position.y - paddleDimensions.y / 2) ||
+				player.paddle.position.y - paddleDimensions.y / 2) ||
 				(ball.previous.y + ballRadius >
 					player.paddle.position.y + paddleDimensions.y / 2 &&
 					ball.position.y - ballRadius <
-						player.paddle.position.y + paddleDimensions.y / 2)) &&
+					player.paddle.position.y + paddleDimensions.y / 2)) &&
 			ball.position.x + ballRadius > player.paddle.position.x &&
 			ball.position.x - ballRadius <
-				player.paddle.position.x + paddleDimensions.x
+			player.paddle.position.x + paddleDimensions.x
 		) {
 			if (player.side === 0) {
 				if (
@@ -263,6 +270,7 @@ function wallCollision(ball: Ball, state: GameState) {
 }
 
 function resetState(state: GameState) {
+	state.resetCooldown = 60;
 	state.player1.paddle.position = {
 		x: state.area.x / 2 - paddleDimensions.x / 2,
 		y: state.area.y - paddleDimensions.y,
@@ -281,7 +289,7 @@ function resetState(state: GameState) {
 	state.ball.speed = { x: 5, y: 1 };
 	state.ball.previous = { x: state.area.x / 2 - 10, y: state.area.y / 2 - 10 };
 
-	state.ball.speed.x = Math.random() * -6;
+	state.ball.speed.x = (Math.random() * (20) - 10);
 	if (state.player1.score > state.player2.score)
 		state.ball.speed.y = Math.random() * (5 - 1.5) + 1.5;
 	else state.ball.speed.y = -(Math.random() * (5 - 1.5) + 1.5);
@@ -290,14 +298,22 @@ function resetState(state: GameState) {
 function moveBall(ball: Ball) {
 	ball.previous.x = ball.position.x;
 	ball.previous.y = ball.position.y;
-	if (ball.speed.y > 12) ball.speed.y = 12;
-	else if (ball.speed.y < -12) ball.speed.y = -12;
-	else if (ball.speed.y < 4 && ball.speed.y > 0) ball.speed.y = 4;
-	else if (ball.speed.y > -4 && ball.speed.y < 0) ball.speed.y = -4;
-	if (ball.speed.x > 15) ball.speed.x = 15;
-	else if (ball.speed.x < -15) ball.speed.x = -15;
-	else if (ball.speed.x < 4 && ball.speed.x > 0) ball.speed.x = 4;
-	else if (ball.speed.x > -4 && ball.speed.x < 0) ball.speed.x = -4;
+	if (ball.speed.y > 12)
+		ball.speed.y = 12;
+	else if (ball.speed.y < -12)
+		ball.speed.y = -12;
+	else if (ball.speed.y < 4 && ball.speed.y > 0)
+		ball.speed.y = 4;
+	else if (ball.speed.y > -4 && ball.speed.y < 0)
+		ball.speed.y = -4;
+	if (ball.speed.x > 15)
+		ball.speed.x = 15;
+	else if (ball.speed.x < -15)
+		ball.speed.x = -15;
+	else if (ball.speed.x < 1 && ball.speed.x > 0)
+		ball.speed.x = 1;
+	else if (ball.speed.x > -1 && ball.speed.x < 0)
+		ball.speed.x = -1;
 	ball.position.x += ball.speed.x;
 	ball.position.y += ball.speed.y;
 	if (ball.cooldown > 0) ball.cooldown--;
@@ -306,26 +322,24 @@ function moveBall(ball: Ball) {
 function movePlayer(player: Player, state: GameState) {
 	player.paddle.speed = { x: 0, y: 0 };
 	if (player.side === 0) {
-		if (player.input.left && player.input.right) player.paddle.speed.y = -4;
+		if (player.input.left && player.input.right)
+			player.paddle.speed.y = -4;
 		else if (player.input.left && player.paddle.position.x > 0)
 			player.paddle.speed.x = -8;
-		else if (
-			player.input.right &&
-			player.paddle.position.x < state.area.x - paddleDimensions.x
-		)
+		else if (player.input.right && player.paddle.position.x < state.area.x - paddleDimensions.x)
 			player.paddle.speed.x = 8;
 		else if (player.paddle.position.y + paddleDimensions.y < state.area.y)
 			player.paddle.speed.y = 2;
-	} else {
-		if (player.input.left && player.input.right) player.paddle.speed.y = 4;
+	}
+	else {
+		if (player.input.left && player.input.right)
+			player.paddle.speed.y = 4;
 		else if (player.input.left && player.paddle.position.x > 0)
 			player.paddle.speed.x = -8;
-		else if (
-			player.input.right &&
-			player.paddle.position.x < state.area.x - paddleDimensions.x
-		)
+		else if (player.input.right && player.paddle.position.x < state.area.x - paddleDimensions.x)
 			player.paddle.speed.x = 8;
-		else if (player.paddle.position.y > 0) player.paddle.speed.y = -2;
+		else if (player.paddle.position.y > 0)
+			player.paddle.speed.y = -2;
 	}
 
 	player.paddle.position.x += player.paddle.speed.x;
