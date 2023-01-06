@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
@@ -43,9 +42,3 @@ export class UserService {
     return `This action removes a #${id} user`;
   }
 }
-=======
-import { Injectable } from '@nestjs/common';
-
-@Injectable()
-export class UserService {}
->>>>>>> 90bad53df266c7fc5d1bec75c40b7e3b820448b4
