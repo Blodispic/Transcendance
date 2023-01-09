@@ -35,7 +35,6 @@ export class UserService {
   }
 
   update(id: number, updateUserDto: UpdateUserDto) {
-    this.getById.name
     return `This action updates a #${id} user ${this.getByUsername('elabasqu')}`;
   }
 
