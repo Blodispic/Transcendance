@@ -35,10 +35,12 @@ export class UserService {
   }
 
   update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
+    this.getById.name
+    return `This action updates a #${id} user ${this.getByUsername('elabasqu')}`;
   }
 
   remove(id: number) {
+    this.usersRepository.delete(id);
     return `This action removes a #${id} user`;
   }
 }
