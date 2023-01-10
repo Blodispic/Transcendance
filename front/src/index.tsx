@@ -6,13 +6,32 @@ import Router from './router';
 import reportWebVitals from './reportWebVitals';
 import FirstComponent from './components/FirstComponent';
 import  Header  from './components/Header';
+import SecondComponent from './components/SecondComponent';
+import {
+  createBrowserRouter,
+  RouterProvider,
+} from "react-router-dom";
 
+const router = createBrowserRouter([
+  {
+    path: "/",
+    element: <Router />,
+  },
+  {
+    path: "/components/FirstComponent",
+    element: <FirstComponent />,
+  },
+  {
+    path: "/components/SecondComponent",
+    element: <SecondComponent />,
+  },
+]);
  
 const game = ReactDOM.createRoot(
   document.getElementById('game') as HTMLElement
 );
 game.render(
-  <Header/>
+    <RouterProvider router={router} />
 );
 
 // If you want to start measuring performance in your app, pass a function

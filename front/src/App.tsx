@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Circle, Layer, Rect, Stage, Text } from 'react-konva';
 import './App.css';
-import { Header } from './components/Header';
+import  Header  from './components/Header';
 
 export interface Vec2 {
   x: number,
@@ -126,11 +126,7 @@ function App() {
   return (
 
     <div style={{backgroundColor: "black"}}>
-
       <Stage width={window.innerWidth} height={window.innerHeight}>
-
-       
-
         <Layer>
           <Rect offsetX={Window.x / 2} offsetY={Window.y / 2} x={window.innerWidth / 2} y={window.innerHeight / 2} width={Window.x} height={Window.y} fill="grey"/>
         </Layer>

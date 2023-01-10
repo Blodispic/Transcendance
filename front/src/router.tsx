@@ -1,7 +1,7 @@
 import * as React from 'react';
 import App from './App'
 import FirstComponent from './components/FirstComponent';
-import { Header } from './components/Header';
+import  Header  from './components/Header';
 import SecondComponent from './components/SecondComponent';
 import './styles/styles.scss';
 import { BrowserRouter , Route, Link } from 'react-router-dom';
@@ -9,7 +9,8 @@ import { BrowserRouter , Route, Link } from 'react-router-dom';
 
 const Router: React.FC = () => {
   return (
-    <BrowserRouter>
+    
+    // <BrowserRouter>
       <div>
       <Header />
         <nav>
@@ -23,16 +24,16 @@ const Router: React.FC = () => {
           </ul>
         </nav>
 
-            <main>
+            {/* <main>
           <Route path="/components/FirstComponent">
             < FirstComponent />
           </Route>
           <Route path="/components/SecondComponent">
             <SecondComponent />
           </Route>
-          </main>
+          </main> */}
       </div>
-    </BrowserRouter>
+    // </BrowserRouter>
   );
 };
 
