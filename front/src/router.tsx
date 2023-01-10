@@ -9,7 +9,6 @@ import { BrowserRouter , Route, Link } from 'react-router-dom';
 
 const Router: React.FC = () => {
   return (
-    
     <BrowserRouter>
       <div>
       <Header />
