@@ -1,6 +1,6 @@
 import * as React from "react";
 
-export default class FirstComponent extends React.Component<{}> {
+class FirstComponent extends React.Component<{}> {
 
         public render() {
                 return (
@@ -12,3 +12,5 @@ export default class FirstComponent extends React.Component<{}> {
         }
 
 }
+
+export default FirstComponent;

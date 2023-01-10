@@ -2,18 +2,17 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
+import Router from './router';
 import reportWebVitals from './reportWebVitals';
-import { Router } from './router';
-
+import FirstComponent from './components/FirstComponent';
 
  
 const game = ReactDOM.createRoot(
-  <Router />,
   document.getElementById('game') as HTMLElement
 );
 game.render(
   
-    <App />
+    <Router />
 );
 
 // If you want to start measuring performance in your app, pass a function
