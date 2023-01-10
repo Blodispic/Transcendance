@@ -1,35 +1,36 @@
-#base du fichier jsp si on met un system de volumes et de network 
 
 version: '3'
 
 services:
-
-PostgreSQL:
-    image: PostgreSQL
-    container_name: PostgreSQL 
+  PostgreSQL:
+    image: postgres
     restart: always
-    init: true
-    build: ./srcs/database
-  
-
-back:
-    depends_on:
-      - PostgreSQL
-    image: back
-    container_name: back
-    restart: always
-    init: true
+    environment:
+      POSTGRES_PASSWORD: admin
+      POSTGRES_USER: admin
+    ports: 
+      - "5432:5432"
 
 
-front :
-    depends_on:
-      - back
-    build: ./srcs/front
-    image: front
-    container_name: front
-    restart: always
-    ports:
-      - 4000:4000
-
+      #
+      #back:
+      #    depends_on:
+      #      - PostgreSQL
+      #    image: back
+      #    container_name: back
+      #    restart: always
+      #    init: true
+      #
+      #
+      #front :
+      #    depends_on:
+      #      - back
+      #    build: ./srcs/front
+      #    image: front
+      #    container_name: front
+      #    restart: always
+      #    ports:
+      #      - 4000:4000
+      #
 
 
