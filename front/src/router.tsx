@@ -9,8 +9,10 @@ import { BrowserRouter , Route, Link } from 'react-router-dom';
 
 const Router: React.FC = () => {
   return (
+    
     <BrowserRouter>
       <div>
+      <Header />
         <nav>
           <ul>
             <li>
@@ -22,13 +24,14 @@ const Router: React.FC = () => {
           </ul>
         </nav>
 
-
+            <main>
           <Route path="/components/FirstComponent">
             < FirstComponent />
           </Route>
           <Route path="/components/SecondComponent">
             <SecondComponent />
           </Route>
+          </main>
       </div>
     </BrowserRouter>
   );

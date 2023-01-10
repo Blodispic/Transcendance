@@ -12,12 +12,12 @@ import SecondComponent from './SecondComponent';
                     <Link to="/">dankNotDank</Link>
                 </Navbar.Brand>     
             <Nav>
-                <IndexLinkContainer to="/FirstComponent">
+                <Link to="/FirstComponent">
                     <NavItem>Page 1</NavItem>
-                </IndexLinkContainer>
-                <IndexLinkContainer to="/SecondComponent">
+                </Link>
+                <Link to="/SecondComponent">
                     <NavItem>Page 2</NavItem>
-                </IndexLinkContainer>
+                </Link>
             </Nav>
         </Navbar>
     );
