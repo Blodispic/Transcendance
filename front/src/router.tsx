@@ -1,19 +1,21 @@
 import * as React from 'react';
 
 import Game from './components/Game/Game'
-import FirstComponent from './components/connection/FirstComponent';
+import Connection from './components/connection/Connection';
 import  Header  from './components/Header/Header';
 import SecondComponent from './components/Chat/SecondComponent';
 import './styles/styles.scss';
 import { createBrowserRouter, RouterProvider, } from "react-router-dom";
 
+
 const router = createBrowserRouter([
   {
-    path: "/",
+    path: "/", 
+    element: <Connection />,
   },
   {
     path: "/Home",
-    element: <FirstComponent />,
+  
   },
   {
     path: "/Chat",
