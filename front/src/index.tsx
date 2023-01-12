@@ -8,11 +8,11 @@ import { createBrowserRouter, RouterProvider, } from "react-router-dom";
 import reportWebVitals from './reportWebVitals';
 
  
-const game = ReactDOM.createRoot(
-  document.getElementById('game') as HTMLElement
+const root = ReactDOM.createRoot(
+  document.getElementById('root') as HTMLElement
 );
 
-game.render(
+root.render(
   <div>
     <Header />
     <RouterProvider router={router} />

@@ -1,5 +1,6 @@
 import * as React from 'react';
 import '../../styles/nav.scss'
+import { Link } from 'react-router-dom';
 
 
 const Header: React.FC = () => {
