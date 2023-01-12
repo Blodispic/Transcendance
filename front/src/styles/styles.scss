@@ -1,13 +1,28 @@
-.centreText {
-    text-align: center;
-}
+
+    .centreText {
+        text-align: center;
+    }
 
 .button {
 
-    margin-top: 30%;
-    background-color:black;
-    color: white;
 
+    position: absolute;
+    top: 30%;
+    left: 40%;
+    border-radius: 2px;
+    cursor: pointer;
+    padding: 10px 16px;
+    background-color: #34495E;
+
+    a {
+        text-decoration: none;
+        color: white;
+
+        &:hover {
+            text-decoration: none;
+            color: white;
+        }
+    }
 }
 h1 {
     font-size: 150px;
