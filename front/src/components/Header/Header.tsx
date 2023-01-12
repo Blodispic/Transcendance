@@ -8,13 +8,39 @@ const Header: React.FC = () => {
 
   return (
     <div className='mynavbar'>
-    <Link to="/">logo</Link>
-    <div className='navbar-right'>
-      <Link to="/Game"> Game </Link>
-      <Link to="/Chat"> Chat </Link>
-      <Link to="/Profile"> Profile </Link>
-      <Link to="/Home"> Home </Link>
+
+      <div className='navbar-left'>
+
+        <Link to="/">
+          <span className="font-link">
+            Logo
+          </span>  
+        </Link>
+        
+      </div>
+
+      <div className='navbar-right'>
+
+        <Link to="/Game">
+          <span className="font-link">
+            Game
+          </span>  
+        </Link>
+
+        <Link to="/Chat">
+          <span className="font-link">
+            Chat
+          </span>
+        </Link>
+
+        <Link to="/Profile">
+          <span className="font-link">
+            Profile
+          </span>  
+        </Link>
+
     </div>
+
   </div>
   );
 }
