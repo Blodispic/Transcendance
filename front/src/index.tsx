@@ -14,7 +14,6 @@ const root = ReactDOM.createRoot(
 
 root.render(
   <div>
-    <Header />
     <RouterProvider router={router} />
   </div>
 );

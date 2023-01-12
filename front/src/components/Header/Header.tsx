@@ -7,18 +7,16 @@ const Header: React.FC = () => {
 
 
   return (
-   <div className='mynavbar'>
-     {/* <div className='logo'> */}
-       <a href="/Home">logo</a>
-     {/* </div> */}
-     <div className='navbar-right'>
-        <a href="/Game"> Game </a>
-        <a href="/Chat"> Chat </a>
-        <a href="/Profile"> Profile </a>
-     </div>
-   </div>
+    <div className='mynavbar'>
+    <Link to="/">logo</Link>
+    <div className='navbar-right'>
+      <Link to="/Game"> Game </Link>
+      <Link to="/Chat"> Chat </Link>
+      <Link to="/Profile"> Profile </Link>
+      <Link to="/Home"> Home </Link>
+    </div>
+  </div>
   );
- 
 }
 
 export default Header;
