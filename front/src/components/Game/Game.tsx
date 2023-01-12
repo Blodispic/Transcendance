@@ -128,7 +128,7 @@ function Game() {
 						cornerRadius={30}
 						width={gameState.area.x}
 						height={gameState.area.y}
-						fill="#C1C8E4"
+						fill="#8860D0"
 					/>
 				</Layer>
 				<Layer>

@@ -13,7 +13,7 @@ const root = ReactDOM.createRoot(
 );
 
 root.render(
-  <div>
+  <div  className='container' >
     <RouterProvider router={router} />
   </div>
 );
