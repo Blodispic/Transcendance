@@ -1,4 +1,5 @@
 import { Injectable } from "@nestjs/common";
+import { Socket } from "dgram";
 import { Server } from "socket.io";
 import { Ball, GameState, Move, Player, Vec2 } from "./game.interfaces";
 
@@ -54,8 +55,16 @@ let gameStateDefault: GameState = {
 
 @Injectable()
 export class GameService {
-    public server: Server;
-    constructor() {
+    startGame(server: Server) {
+        let game = new Game(server);
+    }
+}
+
+class Game {
+    server: Server;
+
+    constructor(server: Server) {
+        this.server = server;
         let gameState: GameState = gameStateDefault;
         // while (1)
         //     this.updateState(gameState);
@@ -65,12 +74,13 @@ export class GameService {
     }
     
     updateGameState(state: GameState) {
-        state.client_area.x = Math.min((window.innerWidth * 70) / 100, 700);
-        state.client_area.y = state.client_area.x * GAME_RATIO;
         state.scale = state.client_area.x / state.area.x;
     
         state.player1.input = { ...move1 };
         state.player2.input = { ...move2 };
+        this.server.on("InputKeyboard", (newMove: Move)=> {
+            move1 = newMove;
+        })
         if (state.resetCooldown === 0)
         {
             this.movePlayer(state.player1, state);
@@ -245,48 +255,9 @@ export class GameService {
         player.paddle.position.x += player.paddle.speed.x;
         player.paddle.position.y += player.paddle.speed.y;
     }
-    
-    keyEvent(event: KeyboardEvent) {
-        let key = event.key;
-        let keyState = event.type === "keydown";
-        if (key === "ArrowLeft" && keyState) {
-            //move left
-            move1.left = true;
-        } else if (key === "ArrowLeft") {
-            //move left
-            move1.left = false;
-        } else if (key === "ArrowRight" && keyState) {
-            //move left
-            move1.right = true;
-        } else if (key === "ArrowRight") {
-            //move left
-            move1.right = false;
-        }
-    
-        if ((key === "A" || key === "a") && keyState) {
-            //move left
-            move2.left = true;
-        } else if (key === "A" || key === "a") {
-            //move left
-            move2.left = false;
-        } else if ((key === "D" || key === "d") && keyState) {
-            //move left
-            move2.right = true;
-        } else if (key === "D" || key === "d") {
-            //move left
-            move2.right = false;
-        }
-    }
-    
-    // updateState(setGameState: Function) {
-    //     setGameState((prev: GameState) => {
-    //         this.server.emit("UpdateState", this.updateGameState({ ...prev }))
-    //         // return this.updateGameState({ ...prev });
-    //     });
-    // }
+
     updateState(gameState: GameState)
     {
-        console.log("server", this.server)
         this.server.emit("UpdateState", this.updateGameState({ ...gameState }));
     }
 }

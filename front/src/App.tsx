@@ -117,7 +117,12 @@ function App() {
 		  });
 
 		  socket.on("UpdateState", (newGameState: GameState) => {
-			setGameState(newGameState);
+			let updatedGame: GameState = gameStateDefault;
+			updatedGame.ball = newGameState.ball;
+			updatedGame.player1 = newGameState.player1;
+			updatedGame.player2 = newGameState.player2;
+			updatedGame.resetCooldown = newGameState.resetCooldown;
+			setGameState(updatedGame);
 			console.log(newGameState);
 		  });
 
