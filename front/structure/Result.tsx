@@ -1,4 +1,4 @@
-interface Result {
+export interface Result {
     username1: string;
     username2: string;
     

@@ -11,7 +11,7 @@ const Header: React.FC = () => {
 
       <div className='navbar-left'>
 
-        <Link to="/Home">
+        <Link to="/">
           <img className='logo' src={require('../../assets/logo.gif')} />
         </Link>
         
