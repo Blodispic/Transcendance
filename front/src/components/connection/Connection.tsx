@@ -42,7 +42,7 @@ export default function Connection() {
                         <a href="https://api.intra.42.fr/oauth/authorize?client_id=u-s4t2ud-658eea99b7f8711a79cb566ab3962e5a8612e37784b6f5b93df3d2c781606160&redirect_uri=http://localhost:3000/&response_type=code
 
 ">
-                                Connect with intra
+                        Connect with Intra
                         </a>
                 </button>
         );
