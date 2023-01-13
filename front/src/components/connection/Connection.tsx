@@ -19,7 +19,7 @@ export default function Connection() {
         const [token, setToken] = useState(null);
 
 
-          //BACKK!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        //BACKK!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         const api_key = process.env.REACT_APP_API42_UID;
         const private_key = process.env.REACT_APP_API42_SECRET;
         const redirect_uri = process.env.REACT_APP_REDIRECT_URI;
@@ -49,7 +49,7 @@ export default function Connection() {
                                 setToken(data.access_token);
                         }
                         fetchToken();
-                
+                        //////////////////////////////////////////////////
                 
                 
                 }
