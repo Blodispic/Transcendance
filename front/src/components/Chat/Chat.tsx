@@ -1,17 +1,5 @@
 import * as React from "react";
-import  Header  from '../Header/Header';
-
-// export default class Chat extends React.Component <{}> {
-        
-//         public render() {
-//                 return (
-//                         <div className="centreText">
-//                                 <h2>Chat</h2>
-// 								<h1>ฅ^•ω•^ฅ</h1>
-//                         </div>
-//                 );
-//                 }
-// }
+import '../../styles/chat.scss'
 
 function Chat() {
 	const [currentMessage, setCurrentMessage] = React.useState("");
@@ -26,16 +14,17 @@ function Chat() {
 
 	return (
 		<div id="chat-container">
-			<div className="chat">
-				<div className="header">
-					<p> -- Chat --</p>
-				</div>
-				<div className="body"></div>
-				<div className="footer">
-					<input type="text" placeholder="Type message here" />
-					<button onClick={sendMessage}>Send</button>					
-				</div>
+		<div className="layer">
+			<div className="header">
+				<span className="font-link"> Welcome to Chat </span>
 			</div>
+			<div className="body"></div>
+			<div className="footer">
+				<input type="text" placeholder="Type a message..." />
+				<input type="submit" value="send" className="button" />			
+			</div>
+		</div>
+
 		</div>
 	);
 }
