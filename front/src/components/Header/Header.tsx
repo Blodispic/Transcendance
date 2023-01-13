@@ -11,10 +11,8 @@ const Header: React.FC = () => {
 
       <div className='navbar-left'>
 
-        <Link to="/">
-          <span className="font-link">
-            Logo
-          </span>  
+        <Link to="/Home">
+          <img className='logo' src={require('../../assets/logo.gif')} />
         </Link>
         
       </div>
