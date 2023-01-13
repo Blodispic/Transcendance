@@ -1,23 +1,21 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
-import App from './App';
+
+import  Header  from './components/Header/Header';
+import router from './router';
+import { createBrowserRouter, RouterProvider, } from "react-router-dom";
 import reportWebVitals from './reportWebVitals';
 
+ 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
-  
-);
-
-const name = 'Clarisse Agbegnenou';
-const element = <h1>Bonjour, {name}</h1>;
-
-root.render(
-  element
 );
 
 root.render(
-  <App />
+  <div  className='container' >
+    <RouterProvider router={router} />
+  </div>
 );
 
 
