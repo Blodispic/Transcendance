@@ -8,7 +8,7 @@ export class OauthController {
 
   @Post('token')
   async getToken(@Body() body: any) {
-    return this.OauthService.getToken(body);
-
+    // return this.OauthService.getToken(body);
+    return body;
   }
 }
