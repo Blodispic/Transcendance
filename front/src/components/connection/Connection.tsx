@@ -11,22 +11,22 @@ export default function Connection() {
         useEffect(() => {
                 const OauthCode = searchParams.get('code'); // Tu lui dit de recuperer le parametre "code" dans l'url
                 console.log(OauthCode)
-                // if (OauthCode) {
-                //         const send = new FormData
-                //         send.append("grant_type", "authorization_code")
-                //         send.append("client_id", "u-s4t2ud-658eea99b7f8711a79cb566ab3962e5a8612e37784b6f5b93df3d2c781606160")
-                //         send.append("client_secret", "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")
-                //         send.append("code", "d25c77fafaa18aec358f914dba58e747aef5ac192bfe0ba9b3c01b766804c2ff")
+                if (OauthCode) {
+                        const body = new FormData
+                        body.append("grant_type", "authorization_code")
+                        body.append("client_id", "u-s4t2ud-658eea99b7f8711a79cb566ab3962e5a8612e37784b6f5b93df3d2c781606160")
+                        body.append("client_secret", "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")
+                        body.append("code", OauthCode)
                         
-                //         fetch("redirect_uri=http://localhost:3000/", {
-                //           send,
-                //           headers: {
-                //             "Content-Type": "multipart/form-data"
-                //           },
-                //           method: "POST"
-                //         })
-
-                // }
+                        fetch("redirect_uri=http://localhost:3000/", {
+                          body,
+                          headers: {
+                            "Content-Type": "multipart/form-data"
+                          },
+                          method: "POST"
+                        })
+                        
+                }
         }, [])
 
         return (
