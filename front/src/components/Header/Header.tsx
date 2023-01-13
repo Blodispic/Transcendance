@@ -8,7 +8,7 @@ const Header: React.FC = () => {
   return (
    <div className='mynavbar'>
      {/* <div className='logo'> */}
-       <a href="/Home">logo</a>
+       <a href="/">logo</a>
      {/* </div> */}
      <div className='navbar-right'>
         <a href="/Game"> Game </a>
