@@ -6,6 +6,7 @@ import  Header  from './components/Header/Header';
 import SecondComponent from './components/Chat/SecondComponent';
 import './styles/styles.scss';
 import { createBrowserRouter, Outlet, RouterProvider, } from "react-router-dom";
+import Chat from './components/Chat/Chat'
 
 const Layout = () => (
   <>
@@ -28,7 +29,8 @@ const router = createBrowserRouter([
     },
     {
       path: "/Chat",
-      element: <SecondComponent />,
+      element: <Chat />,
+    //   element: <SecondComponent />,
     },
     {
       path: "/Profile",

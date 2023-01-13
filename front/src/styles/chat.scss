@@ -1,0 +1,25 @@
+#chat-container {
+	display: flex;
+	justify-content: center;
+
+	background-color: #5680E9;
+}
+
+.chat {
+	height: 100px;
+
+	.header {
+		display: flex;
+		text-align: left;
+	}
+	
+	.body {
+		display: flex;
+		text-align: left;
+	}
+	
+	.footer {
+		display: flex;
+		text-align: left;
+	}
+}
