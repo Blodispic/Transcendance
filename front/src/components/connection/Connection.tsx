@@ -18,7 +18,7 @@ export default function Connection() {
                         body.append("client_secret", "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")
                         body.append("code", OauthCode)
                         
-                        fetch("redirect_uri=http://localhost:3000/", {
+                        fetch("http://localhost:3000/user", {
                           body,
                           headers: {
                             "Content-Type": "multipart/form-data"

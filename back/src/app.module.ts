@@ -14,7 +14,7 @@ import { UserModule } from './user/user.module';
       password: 'admin',
       entities: [User],
       synchronize: true,
-      dropSchema: true    //A ENLEVER QUAND PLUS BESOIN (ça reset la db a chaque changement)
+      dropSchema: true,    //A ENLEVER QUAND PLUS BESOIN (ça reset la db a chaque changement)
     }),
     UserModule,
   ],
