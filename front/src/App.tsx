@@ -1,6 +1,9 @@
 import { useEffect, useState } from "react";
 import { Circle, Layer, Rect, Stage } from "react-konva";
+import io from 'socket.io-client';
 import "./styles/game.scss";
+
+const socket = io("http://" + window.location.hostname + ":3000");
 
 export interface Vec2 {
 	x: number;
@@ -96,10 +99,27 @@ resetState(gameStateDefault);
 
 function App() {
 	const [gameState, setGameState] = useState<GameState>(gameStateDefault);
+	const [isConnected, setIsConnected] = useState(socket.connected);
+
 	useEffect(() => {
 		setInterval(() => {
 			updateState(setGameState);
 		}, 1000 / 60);
+
+		socket.on('connect', () => {
+			setIsConnected(true);
+			console.log("Connected");
+		  });
+	  
+		  socket.on('disconnect', () => {
+			setIsConnected(false);
+			console.log("Disconnected");
+		  });
+
+		  socket.on("UpdateState", (newGameState: GameState) => {
+			setGameState(newGameState);
+			console.log(newGameState);
+		  });
 
 		document.addEventListener("keydown", keyEvent);
 		document.addEventListener("keyup", keyEvent);
@@ -376,6 +396,12 @@ function keyEvent(event: KeyboardEvent) {
 		//move left
 		move2.right = false;
 	}
+	// console.log(move1);
+	socket.emit("InputKeyboard", move1);
+	// socket.on("TrueInput", (move: Move) => {
+	// 	move1 = move;
+	// 	console.log(move);
+	//   });
 }
 
 function updateState(setGameState: Function) {
