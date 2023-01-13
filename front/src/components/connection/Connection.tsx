@@ -29,27 +29,33 @@ export default function Connection() {
 
                 const oauthCode = searchParams.get('code'); // Tu lui dit de recuperer le parametre "code" dans l'url
                 if (oauthCode) {
-
-                        //BACKK!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                        const fetchToken = async () => {
-                                const response = await fetch('https://api.intra.42.fr/oauth/token', {
-                                        method: 'POST',
-                                        headers: {
-                                                'Content-Type': 'application/json',
-                                        },
-                                        body: JSON.stringify({
-                                                grant_type: "authorization_code",
-                                                client_id: api_key,
-                                                client_secret: private_key,
-                                                code: oauthCode,
-                                                redirect_uri: redirect_uri,
-                                        }),
-                                });
-                                const data = await response.json();
-                                setToken(data.access_token);
-                        }
-                        fetchToken();
-                        //////////////////////////////////////////////////
+                        
+                        fetch('http://localhost:4000/Oauth/token', {
+                                method: 'POST',
+                                body: JSON.stringify({code: oauthCode}),
+                            })
+                        // .then(data => console.log(data))
+                        // .catch(error => console.error(error))
+                        // //BACKK!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                        // const fetchToken = async () => {
+                        //         const response = await fetch('https://api.intra.42.fr/oauth/token', {
+                        //                 method: 'POST',
+                        //                 headers: {
+                        //                         'Content-Type': 'application/json',
+                        //                 },
+                        //                 body: JSON.stringify({
+                        //                         grant_type: "authorization_code",
+                        //                         client_id: api_key,
+                        //                         client_secret: private_key,
+                        //                         code: oauthCode,
+                        //                         redirect_uri: redirect_uri,
+                        //                 }),
+                        //         });
+                        //         const data = await response.json();
+                        //         setToken(data.access_token);
+                        // }
+                        // fetchToken();
+                        // //////////////////////////////////////////////////
                 
                 
                 }
