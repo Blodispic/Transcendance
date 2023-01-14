@@ -5,6 +5,8 @@ import { AppService } from './app.service';
 import { User } from './user/entities/user.entity';
 import { UserModule } from './user/user.module';
 import { OauthModule } from './oauth/oauth.module';
+import { ConfigModule } from '@nestjs/config';
+
 @Module({
   imports: [
     TypeOrmModule.forRoot({
@@ -17,6 +19,7 @@ import { OauthModule } from './oauth/oauth.module';
       synchronize: true,
       dropSchema: true,    //A ENLEVER QUAND PLUS BESOIN (ça reset la db a chaque changement)
     }),
+    ConfigModule.forRoot(),
     UserModule,
     OauthModule,
   ],

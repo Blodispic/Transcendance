@@ -38,7 +38,7 @@ export default function Connection() {
                 if (oauthCode) {
                     
              
-                        fetch('http://localhost:4000/Oauth/token', {
+                        fetch('http://localhost:4000/oauth/token', {
                                 method: 'POST',
                                 headers: {
                                         'Content-Type': 'application/json',
