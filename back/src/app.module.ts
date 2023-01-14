@@ -4,7 +4,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { User } from './user/entities/user.entity';
 import { UserModule } from './user/user.module';
-import { TestModule } from './test/test.module';
+import { OauthModule } from './oauth/oauth.module';
 @Module({
   imports: [
     TypeOrmModule.forRoot({
@@ -18,7 +18,7 @@ import { TestModule } from './test/test.module';
       dropSchema: true,    //A ENLEVER QUAND PLUS BESOIN (ça reset la db a chaque changement)
     }),
     UserModule,
-    TestModule,
+    OauthModule,
   ],
   controllers: [AppController],
   providers: [AppService],

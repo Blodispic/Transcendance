@@ -36,22 +36,19 @@ export default function Connection() {
                
                 const oauthCode = searchParams.get('code'); // Tu lui dit de recuperer le parametre "code" dans l'url
                 if (oauthCode) {
-                        navigate('/Home');
-
+                    
              
-            
-                    //BACKK!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!   
-                        // const getInfos = async (token: string) => {
-                        //         const response = await fetch('https://api.intra.42.fr/v2/me', {
-                        //                 method: 'GET',
-                        //                 headers: {
-                        //                         'Authorization': `Bearer ${token}`,
-                        //                 },
-                        //         });
-                        //         const data = await response.json();
-                        //         console.log(data);
-                        // }
-
+                        fetch('http://localhost:4000/Oauth/token', {
+                                method: 'POST',
+                                headers: {
+                                        'Content-Type': 'application/json',
+                                },
+                                body: JSON.stringify({code: oauthCode}),
+                            })
+                        navigate('/Home');
+                        // .then(data => console.log(data))
+                        // .catch(error => console.error(error))
+                        // //BACKK!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
                         // const fetchToken = async () => {
                         //         const response = await fetch('https://api.intra.42.fr/oauth/token', {
                         //                 method: 'POST',
