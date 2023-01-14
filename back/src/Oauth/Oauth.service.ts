@@ -31,7 +31,6 @@ export class OauthService {
     // if (!response.ok) {
     //   throw new Error(`AuthService getToken failed, HTTP status ${response.status}`);
     // }
-
     const data = await response.json();
     return this.getInfo(data.access_token);
 
