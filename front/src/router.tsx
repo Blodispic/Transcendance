@@ -6,6 +6,7 @@ import  Header  from './components/Header/Header';
 import SecondComponent from './components/Chat/SecondComponent';
 import './styles/styles.scss';
 import { createBrowserRouter, Outlet, RouterProvider, } from "react-router-dom";
+import NameForm from "./components/connection/form_name_avatar"
 
 const Layout = () => (
   <>
@@ -19,6 +20,10 @@ const router = createBrowserRouter([
   {
     element: <Layout />,
     children: [
+      {
+        path: "/test",
+        element: <NameForm />,
+      },
     {
       path: "/",
       element: <Connection />,
