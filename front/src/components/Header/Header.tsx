@@ -3,7 +3,7 @@ import '../../styles/nav.scss'
 import { Link } from 'react-router-dom';
 
 
-const Header: React.FC = () => {
+export default function Header() {
 
 
   return (
@@ -42,5 +42,3 @@ const Header: React.FC = () => {
   </div>
   );
 }
-
-export default Header;

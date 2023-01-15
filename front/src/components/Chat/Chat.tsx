@@ -1,13 +1,12 @@
 import * as React from "react";
 import  Header  from '../Header/Header';
 
-export default class SecondComponent extends React.Component <{}> {
-        
-        public render() {
+export default function Chat() {
+
                 return (
                         <div className="centreText">
-                                <h1>༼ つ  ͡° ͜ʖ ͡° ༽つ</h1>
+                                <h1>CHAT</h1>
                         </div>
                 );
-                }
+
 }
