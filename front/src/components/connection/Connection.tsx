@@ -2,7 +2,7 @@ import * as React from "react";
 import Header from '../Header/Header';
 import { useState, useEffect } from 'react';
 import { Form, useSearchParams } from "react-router-dom";
-import '../../styles/nav.scss'
+import '../../styles/connection.scss'
 import { Link } from 'react-router-dom';
 import { useNavigate } from "react-router-dom";
 import NameForm from "./form_name_avatar"
@@ -52,9 +52,10 @@ export default function Connection() {
 
     return (
         <div>
+            {/* //myVar == false &&  */}
             <button className="button">
-                <a href={getAuthorizeHref()} onClick={handleClick}>
-                    Connect with Intra
+                <a  onClick={handleClick}>
+                    Connect with Intra 
                 </a>
             </button>
             {
