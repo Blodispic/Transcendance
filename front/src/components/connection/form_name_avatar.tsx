@@ -1,17 +1,18 @@
 import React, { useState } from 'react';
 import '../../styles/connection.scss'
 import { User } from "../../interface/User";
+import { Link } from 'react-router-dom';
 
-const NameForm = () => {
+export default function NameForm() {
 
     const [firstName, setFirstName] = useState('');
 
     return (
-        <div className='button'>
+        <div className='center button'>
             <form>
                 <label >
                     Name:
-                    <input type="text" value={firstName} onChange={e => setFirstName(e.target.value)} />
+                    <input type="text" name="user" value={firstName} onChange={e => setFirstName(e.target.value)} />
                 </label>
 
                 <label >
@@ -19,13 +20,13 @@ const NameForm = () => {
                     <input type="file" name="avatar" accept="image/png, image/jpeg" />
                 </label>
 
-                <label>
-                    <input type="submit" value="ok" />
-                </label>
+                <Link to="/Game">
+                    <button>
+                        <a>okk</a>
+                    </button>
+                </Link>
                 <a>{firstName}</a>
             </form >
         </div >
     );
 };
-
-export default NameForm;

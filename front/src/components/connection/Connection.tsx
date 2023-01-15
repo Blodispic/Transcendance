@@ -32,7 +32,7 @@ export default function Connection() {
 
     }
 
-     useEffect(() => {
+    useEffect(() => {
         const oauthCode = searchParams.get('code'); // Tu lui dit de recuperer le parametre "code" dans l'url
 
         if (oauthCode) {
@@ -52,14 +52,16 @@ export default function Connection() {
 
     return (
         <div>
-            {/* //myVar == false &&  */}
-            <button className="button">
-                <a  onClick={handleClick}>
-                    Connect with Intra 
-                </a>
-            </button>
             {
-                myVar == true && 
+                myVar == false &&
+                <button className="button center pulse pointer" >
+                    <a onClick={handleClick}>
+                        Connect with Intra
+                    </a>
+                </button>
+            }
+            {
+                myVar == true &&
                 <NameForm />
             }
         </div>
