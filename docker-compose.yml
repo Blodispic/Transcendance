@@ -10,6 +10,21 @@ services:
       POSTGRES_USER: admin
     ports: 
       - "5432:5432"
+    env_file:
+      - docker.env
+
+
+  pgadmin:
+    # links:
+    # - postgres:postgres
+    container_name: pgadmin
+    image: dpage/pgadmin4
+    ports:
+    - "8080:80"
+    # volumes:
+    # - /data/pgadmin:/root/.pgadmin
+    env_file:
+    - docker.env
 
 
       #
