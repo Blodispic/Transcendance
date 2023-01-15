@@ -32,6 +32,9 @@ services:
       #    depends_on:
       #      - PostgreSQL
       #    image: back
+    # environment:
+    #   REACT_APP_42_API_CLIENT: 42_API_CLIENT
+    #   REACT_APP_42_API_SECRET: 42_API_SECRET
       #    container_name: back
       #    restart: always
       #    init: true
