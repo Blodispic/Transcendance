@@ -1,7 +1,7 @@
 import * as React from 'react';
 
 import Game from './components/Game/Game'
-import FirstComponent from './components/connection/FirstComponent';
+import Connection from './components/connection/Connection';
 import  Header  from './components/Header/Header';
 import SecondComponent from './components/Chat/SecondComponent';
 import './styles/styles.scss';
@@ -15,6 +15,7 @@ const Layout = () => (
   </>
 );
 
+
 const router = createBrowserRouter([
   {
     element: <Layout />,
@@ -25,11 +26,11 @@ const router = createBrowserRouter([
       },
     {
       path: "/",
-      element: <FirstComponent />,
+      element: <Connection />,
     },
     {
       path: "/Home",
-      element: <FirstComponent />,
+      element: <SecondComponent />,
     },
     {
       path: "/Chat",
