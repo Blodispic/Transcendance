@@ -4,19 +4,40 @@
     width: 100%;
     height: 100%;
 	background-color: #c1c8e4;
-}
+    background-size: 300% 300%;
+    background-image: linear-gradient(
+          -45deg, 
+          rgba(193,200,228,1) 0%, 
+          rgba(195,208,248,1) 25%, 
+          rgb(150, 182, 219) 51%, 
+          rgb(173, 222, 233) 100%
+    );  
+    animation: AnimateBG 20s ease infinite;
+  }
+  
+  @keyframes AnimateBG { 
+    0%{background-position:0% 50%}
+    50%{background-position:100% 50%}
+    100%{background-position:0% 50%}
+  }
 
 .centreText {
     text-align: center;
 }
 
-.button {
 
-    margin-top: 30%;
-    background-color:black;
-    color: white;
-
+@-webkit-keyframes button {
+  0% {
+    box-shadow: 0 0 0 0 var(--hover);
+  }
 }
+
+@keyframes button {
+  0% {
+    box-shadow: 0 0 0 0 var(--hover);
+  }
+}
+
 h1 {
     font-size: 150px;
 }

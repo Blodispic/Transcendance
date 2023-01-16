@@ -1,11 +1,13 @@
 import * as React from 'react';
 
 import Game from './components/Game/Game'
-import FirstComponent from './components/connection/FirstComponent';
+import Profile from './components/Profile/Profile'
+import Connection from './components/connection/Connection';
 import  Header  from './components/Header/Header';
-import SecondComponent from './components/Chat/SecondComponent';
+import Chat from './components/Chat/Chat';
 import './styles/styles.scss';
 import { createBrowserRouter, Outlet, RouterProvider, } from "react-router-dom";
+import NameForm from "./components/connection/form_name_avatar"
 
 const Layout = () => (
   <>
@@ -14,25 +16,26 @@ const Layout = () => (
   </>
 );
 
+
 const router = createBrowserRouter([
   {
     element: <Layout />,
     children: [
     {
       path: "/",
-      element: <FirstComponent />,
+      element: <Connection />,
     },
     {
       path: "/Home",
-      element: <FirstComponent />,
+
     },
     {
       path: "/Chat",
-      element: <SecondComponent />,
+      element: <Chat />,
     },
     {
       path: "/Profile",
-      element: <SecondComponent />,
+      element: <Profile />,
     },
     {
       path: "/Game",
