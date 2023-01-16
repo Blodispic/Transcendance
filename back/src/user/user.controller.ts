@@ -38,12 +38,12 @@ export class UserController {
     return this.userService.remove(+id);
   }
  
-  @Post('/addfriend/:id')
+  @Post('addfriend/:id')
   async addFriend(@Param('id') id: number, @Body() friend: User) {
       return await this.userService.addFriend(id, friend);
   }
 
-  @Delete('/deletefriend/:id')
+  @Delete('deletefriend/:id')
     async deleteFriend(@Param('id') id: number, @Body() friend: User) {
         return await this.userService.removeFriend(id, friend);
     }
