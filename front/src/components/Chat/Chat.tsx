@@ -14,16 +14,6 @@ function Chat() {
 
 	return (
 		<div id="chat-container">
-		{/* <div className="layer">
-			<div className="header">
-				<span className="font-link"> Welcome to Chat </span>
-			</div>
-			<div className="body"></div>
-			<div className="footer">
-				<input type="text" placeholder="Type a message..." />
-				<input type="submit" value="send" className="button" />			
-			</div>
-		</div> */}
 			<div className="chat-list">
 				<ul>
 					<li>chat room 1</li>
@@ -31,18 +21,18 @@ function Chat() {
 				</ul>
 			</div>
 
-			<div className="messages">
-				<p> messages </p>
-				<div className="message-input">
-					<input id="text-message" type="text" placeholder="type message here"></input>
-					{/* <textarea> message input </textarea> */}
-					{/* <div className="input-container">
-						<input type="text" placeholder="type message here" />
-					</div> */}
+			<div className="chat-messages">
+				{/* <div className="__message">
+					<div>message test 1</div>
+				</div> */}
+			<div className="chat-input">
+				{/* <form id="chat-input"> */}
+				<input id="text-message" type="text" placeholder="type message here"></input>
 				<input type="submit" value="send" className="button" />			
-
-				</div>
+				{/* </form> */}
 			</div>
+			</div>
+
 
 
 			<div className="user-list">

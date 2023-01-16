@@ -1,70 +1,13 @@
 #chat-container {
 
-	display: -webkit-flex;
 	display: flex;
 	width: 100%;
 	height: 100%;
-	
-	// .layer {
-	// 	z-index: index 2;
-	// 	border-radius: 30px;
-	// 	width: 400px;
-	// 	height: 600px;
-	// }
-
-	// .header {
-	// 	padding-top: 10px;
-	// 	text-align: center;
-	// 	font-size: 30px;
-	// }
-	
-	// .footer {
-	// 	padding-left: 10px;
-	// 	font-size: 20px;
-	// }
 
 	.font-link {
 		font-family: 'Fredoka One', cursive;
 	}
 	
-	.button {
-		display: inline-block;
-		width: auto;
-		border-radius: 15px;
-		font-size: 15pt;
-		text-align: center;
-		cursor: pointer;
-		padding: 8px 8px;
-		background: #ff7f7f;
-		color: #ffffff; //font color
-		transition: .3s;
-		border: 2px solid #ff7f7f;
-		margin-left: 5px;
-	  }
-	  
-	  .button:hover {
-		box-shadow: none;
-		color: #ff7f7f;
-		background: #ffffff;
-	  }
-	  
-	input {
-		width: 90%;
-		flex: 0 0 auto;
-		border: 1px solid black;
-		padding: 10px;
-		border-radius: 15px;
-	}
-	
-	// input:placeholder-shown {
-	// 	border-color: teal;
-	// 	color: purple;
-	// 	font-size: x-large;
-	// 	font-style: italic;
-	// 	border-radius: 10px;
-	// 	width: 300px;
-	// }
-
 	.chat-list {
 		float: left;
 		width: 20%;
@@ -77,23 +20,71 @@
 		padding: 0;
 	}
 	
-	.messages {
-		float: left;
-		padding: 20px;
+	.chat-messages {
+		float:none;
 		width: 90%;
+		padding: 20px;
 		background-color: rgb(211, 211, 211);
-		padding: 10;
+		overflow-y: scroll;
+
+		transform: rotate(180deg);
+		direction: rtl;
+		height: calc(100vh - 50px);
+
+		.__message {
+			font-size: 20px;
+			color: black;
+			background-color: rgb(160, 220, 226);
+			max-width: 700px;
+			position: relative;
+			border-radius: 15px;
+			padding: 10px;
+			margin: 20px 0px;
+			transform: rotate(180deg);
+			direction: ltr;
+		}
 	}
 
-	.message-input {
-		padding-top: 100%;
+	.chat-input {
 		display: flex;
+		max-width: 900px;
+		margin: 0 auto;
+		align-items: center;
+		
+		input { //message input box
+			// margin-top: 100%;
+			margin: 30px 0;
+			width: 90%;
+			border: 1px solid rgb(164, 161, 161);
+			padding: 10px;
+			text-align: left;
+			border-radius: 15px;
+			transform: rotate(180deg);
+			direction: ltr;
+		}
+
+		.button {
+			display: inline-block;
+			width: auto;
+			border-radius: 15px;
+			font-size: 15pt;
+			text-align: center;
+			cursor: pointer;
+			padding: 8px 8px;
+			background: #ff7f7f;
+			color: #ffffff; //font color
+			transition: .3s;
+			border: 2px solid #ff7f7f;
+			margin-left: 5px;
+		  }
+		  
+		  .button:hover {
+			box-shadow: none;
+			color: #ff7f7f;
+			background: #ffffff;
+		  }
 	}
 
-	textarea {
-		width: 100%;
-		max-width: 100%;
-	}
 
 	.user-list {
 		float: right;
