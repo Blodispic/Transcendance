@@ -6,7 +6,7 @@ import { getFileInfo } from 'prettier';
 export class OauthController {
   constructor(private readonly oauthService: OauthService) {}
 
-  @Post('/token')
+  @Post('token')
   async getToken(@Body() body: any) { 
      console.log(body);
 

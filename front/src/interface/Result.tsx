@@ -1,7 +1,7 @@
 export interface Result {
-    username1: string;
-    username2: string;
+    Winner: string;
+    Loser: string;
     
-    avatar1: string;
-    avatar2: string;
+    Winner_avatar: string;
+    Loser_avatar: string;
 }
