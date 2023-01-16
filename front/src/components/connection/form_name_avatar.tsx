@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import '../../styles/connection.scss'
-import { User } from "../../interface/User";
+import { IUser } from "../../interface/User";
 import { Link } from 'react-router-dom';
 
 export default function NameForm() {
@@ -20,11 +20,11 @@ export default function NameForm() {
                     <input type="file" name="avatar" accept="image/png, image/jpeg" />
                 </label>
 
-                <Link to="/Game">
+                {/* <Link to="/Game"> */}
                     <button>
                         <a>okk</a>
                     </button>
-                </Link>
+                {/* </Link> */}
                 <a>{firstName}</a>
             </form >
         </div >

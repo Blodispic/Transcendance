@@ -55,7 +55,7 @@ export default function Connection() {
             {
                 myVar == false &&
                 <button className="button center pulse pointer" >
-                    <a onClick={handleClick}>
+                    <a href={getAuthorizeHref()} onClick={handleClick}>
                         Connect with Intra
                     </a>
                 </button>
