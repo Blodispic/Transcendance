@@ -117,13 +117,10 @@ function App() {
 		  });
 
 		  socket.on("UpdateState", (newGameState: GameState) => {
-			let updatedGame: GameState = gameStateDefault;
-			updatedGame.ball = newGameState.ball;
-			updatedGame.player1 = newGameState.player1;
-			updatedGame.player2 = newGameState.player2;
-			updatedGame.resetCooldown = newGameState.resetCooldown;
-			setGameState(updatedGame);
-			console.log(newGameState);
+			console.log(newGameState.ball.position.x);
+			setGameState(newGameState);
+			// setGameState(convertState(newGameState));
+			console.log(convertState(newGameState));
 		  });
 
 		document.addEventListener("keydown", keyEvent);
@@ -186,6 +183,33 @@ function App() {
 			</h3>
 		</div>
 	);
+}
+
+function convertState(state: GameState) {
+	let newState: GameState = gameStateDefault;
+	newState.ball.position.x = state.ball.position.x * (state.client_area.x / GAME_INTERNAL_WIDTH);
+	newState.ball.position.y = state.ball.position.y * (state.client_area.y / (GAME_INTERNAL_WIDTH * GAME_RATIO));
+	newState.ball.speed.x = state.ball.speed.x * (state.client_area.x / GAME_INTERNAL_WIDTH);
+	newState.ball.speed.y = state.ball.speed.y * (state.client_area.y / (GAME_INTERNAL_WIDTH * GAME_RATIO));
+	newState.ball.previous.x = state.ball.previous.x * (state.client_area.x / GAME_INTERNAL_WIDTH);
+	newState.ball.previous.y = state.ball.previous.y * (state.client_area.y / (GAME_INTERNAL_WIDTH * GAME_RATIO));
+
+	newState.ball.cooldown = state.ball.cooldown;
+
+	newState.player1 = state.player1;
+	newState.player1.paddle.position.x = state.player1.paddle.position.x * (state.client_area.x / GAME_INTERNAL_WIDTH);
+	newState.player1.paddle.position.y = state.player1.paddle.position.y * (state.client_area.y / (GAME_INTERNAL_WIDTH * GAME_RATIO));
+	newState.player1.paddle.speed.x = state.player1.paddle.speed.x * (state.client_area.x / GAME_INTERNAL_WIDTH);
+	newState.player1.paddle.speed.y = state.player1.paddle.speed.y * (state.client_area.y / (GAME_INTERNAL_WIDTH * GAME_RATIO));
+
+	newState.player2 = state.player2;
+	newState.player2.paddle.position.x = state.player2.paddle.position.x * (state.client_area.x / GAME_INTERNAL_WIDTH);
+	newState.player2.paddle.position.y = state.player2.paddle.position.y * (state.client_area.y / (GAME_INTERNAL_WIDTH * GAME_RATIO));
+	newState.player2.paddle.speed.x = state.player2.paddle.speed.x * (state.client_area.x / GAME_INTERNAL_WIDTH);
+	newState.player2.paddle.speed.y = state.player2.paddle.speed.y * (state.client_area.y / (GAME_INTERNAL_WIDTH * GAME_RATIO));
+
+	newState.resetCooldown = state.resetCooldown;
+	return newState;
 }
 
 function updateGameState(state: GameState) {

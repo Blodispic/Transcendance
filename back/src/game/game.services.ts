@@ -66,10 +66,9 @@ class Game {
     constructor(server: Server) {
         this.server = server;
         let gameState: GameState = gameStateDefault;
-        // while (1)
-        //     this.updateState(gameState);
+        this.resetState(gameState); 
         setInterval(() => {
-            this.updateState(gameState);
+            gameState = this.updateState(gameState);
         }, 1000 / 60);
     }
     
@@ -81,7 +80,7 @@ class Game {
         this.server.on("InputKeyboard", (newMove: Move)=> {
             move1 = newMove;
         })
-        if (state.resetCooldown === 0)
+        if (state.resetCooldown <= 0)
         {
             this.movePlayer(state.player1, state);
             this.movePlayer(state.player2, state);
@@ -90,6 +89,10 @@ class Game {
         }
         else
             state.resetCooldown--;
+        // console.log("resetCooldown = " + state.resetCooldown);
+        // console.log("ballPosition = x: " + Math.round(state.ball.position.x));
+        // console.log("ballPosition = y: " + Math.round(state.ball.position.y) + "\n");
+
         return state;
     }
     paddleCollision(ball: Ball, player: Player) {
@@ -258,6 +261,11 @@ class Game {
 
     updateState(gameState: GameState)
     {
-        this.server.emit("UpdateState", this.updateGameState({ ...gameState }));
+        gameState = this.updateGameState({ ...gameState });
+        console.log("resetCooldown = " + gameState.resetCooldown);
+        console.log("ballPosition = x: " + Math.round(gameState.ball.position.x));
+        console.log("ballPosition = y: " + Math.round(gameState.ball.position.y) + "\n");
+        this.server.emit("UpdateState", gameState);
+        return gameState;
     }
 }

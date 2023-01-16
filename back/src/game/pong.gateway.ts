@@ -8,7 +8,7 @@ export interface Move {
 }
 
 @WebSocketGateway({
-	cors: {
+	cors: { //Might remove it after merge since it's already in main.ts
 		origin: '*',
 	},
 })
@@ -23,9 +23,9 @@ export class PongGateway implements OnGatewayConnection, OnGatewayInit {
 	}
 
 	handleConnection(client: any, ...args: any[]) {
-		console.log("Coucou");
+		console.log("Connected");
 	}
-	
+
 	@SubscribeMessage("InputKeyboard")
 	HandleInput(@MessageBody() input: any, @ConnectedSocket() client: Socket)
 	{
