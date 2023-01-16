@@ -37,4 +37,14 @@ export class UserController {
   remove(@Param('id') id: string) {
     return this.userService.remove(+id);
   }
+
+  @Post('addfriend/:id')
+  async addFriend(@Param('id') id: number) {
+      return await this.userService.addFriend(id);
+  }
+
+  @Delete('deletefriend/:id')
+  async deleteFriend(@Param('id') id: number) {
+      return await this.userService.deleteFriend(id);
+  }
 }

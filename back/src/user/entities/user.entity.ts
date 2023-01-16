@@ -1,4 +1,5 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, PrimaryGeneratedColumn, ManyToMany } from "typeorm";
+import { User as UserEntity } from './user.entity';
 
 @Entity()
 export class User {
@@ -20,5 +21,6 @@ export class User {
   @Column({ default: true })
   isActive: boolean;
 
-  // ON vera le reste plus tard
+  @ManyToMany((user: { friends: UserEntity; }) => user.friends)
+    friends: UserEntity[];
 }
