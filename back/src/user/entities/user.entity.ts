@@ -12,7 +12,7 @@ export class User {
   email: string;
 
   @Column()
-  password: string;
+  status: string;
 
   // @Column()
   // avatar: HTMLImageElement;

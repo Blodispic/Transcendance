@@ -22,7 +22,7 @@ export default function NameForm() {
 
                 <Link to="/Game">
                     <button>
-                        <a>okk</a>
+                        <a>ok</a>
                     </button>
                 </Link>
                 <a>{firstName}</a>

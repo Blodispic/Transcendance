@@ -1,7 +1,20 @@
 import { Injectable } from '@nestjs/common';
+import { UserService } from '../user/user.service';
 
 @Injectable()
 export class OauthService {
+
+  constructor(private usersService: UserService) { }
+
+  async validateUser(username: string): Promise<any> {
+    const user = await this.usersService.getByUsername(username);
+    if (user) {
+      const { ...result } = user;
+      return result;
+    }
+    return null;
+  }
+
   async getToken(oauthCode: string): Promise<any> {
     console.log("test");
     const api_key = process.env.API42_UID;
@@ -9,7 +22,7 @@ export class OauthService {
     const redirect_uri = process.env.REDIRECT_URI;
 
     console.log("est");
-    
+
     const body = {
       grant_type: "authorization_code",
       client_id: api_key,
@@ -19,7 +32,7 @@ export class OauthService {
     };
 
     console.log(body);
-    
+
     const response = await fetch('https://api.intra.42.fr/oauth/token', {
       method: 'POST',
       headers: {
@@ -38,11 +51,13 @@ export class OauthService {
 
   async getInfo(token: string) {
     const response = await fetch('https://api.intra.42.fr/v2/me', {
-        method: 'GET',
-        headers: {'Authorization': `Bearer ${token}`,
-        },
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
     });
     const data = await response.json();
+
     return data
   }
 }
