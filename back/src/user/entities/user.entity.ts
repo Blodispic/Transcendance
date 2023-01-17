@@ -14,6 +14,8 @@ export class User {
   @Column()
   status: string;
 
+  @Column()
+  elo: number;
   // @Column()
   // avatar: HTMLImageElement;
 

@@ -71,9 +71,12 @@ export class OauthService {
       "username": data.login,
       "email": data.email,
       "status": "online",
+      "elo": 1000,
     }
+
+    await this.usersService.create(userReturn)
   
-    return await this.usersService.create(userReturn);
+    return userReturn;
     
 
     // }
