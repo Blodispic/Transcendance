@@ -8,7 +8,6 @@ import { UserService } from './user.service';
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
-  // @Get("create1")
   @Post()
   async create(@Body() createUserDto: CreateUserDto): Promise<User> {
     try {
@@ -30,12 +29,6 @@ export class UserController {
 
   @Patch(':id')
   update(@Param('id') id: string, @Body() user: any, updateUserDto: UpdateUserDto) {
-    if(user.login) 
-      updateUserDto.username = user.login;
-    if(user.email) 
-      updateUserDto.email = user.email;
-    if(user.password) 
-      updateUserDto.password = user.password;
     return this.userService.update(+id, updateUserDto);
   }
 
@@ -47,6 +40,11 @@ export class UserController {
   @Post('addfriend/:id')
   async addFriend(@Param('id') id: number, @Body() friend: User) {
       return await this.userService.addFriend(id, friend);
+  }
+
+  @Post(':id/addfriend/:friendId')
+  async addFriendbyId(@Param('id') id: number, @Param('friendId') friendId: number) {
+      return await this.userService.addFriendById(id, friendId);
   }
 
   @Delete('deletefriend/:id')

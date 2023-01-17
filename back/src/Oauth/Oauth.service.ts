@@ -57,6 +57,25 @@ export class OauthService {
       },
     });
     const data = await response.json();
+    
+    const user = await this.usersService.getByUsername(data.login)
+    
+    if (user)
+      return (user);
+
+    // }
+    //Creation nouveau user
+
+    // will replace data with user and send user from info in data
+    //Create a user with the new data, cf: image on discord
+    // Need to create username (login: )
+    // Need to create elo with a base of ? (1000?, 0?), we probably will take it from a define
+    // Need to create avatar that will take a link (image: )
+    // Friend vide
+    // History vide 
+
+    //Sinon
+    //return await user = findonebyid
 
     return data
   }
