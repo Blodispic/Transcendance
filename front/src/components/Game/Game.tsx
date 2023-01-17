@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Circle, Layer, Rect, Stage } from "react-konva";
 import io from 'socket.io-client';
-import "./styles/game.scss";
+import "../../styles/game.scss";
 
 const socket = io("http://" + window.location.hostname + ":3000");
 
@@ -97,7 +97,7 @@ let gameStateDefault: GameState = {
 
 resetState(gameStateDefault);
 
-function App() {
+export default function Game() {
 	const [gameState, setGameState] = useState<GameState>(gameStateDefault);
 	const [isConnected, setIsConnected] = useState(socket.connected);
 
@@ -454,4 +454,10 @@ function keyEvent(event: KeyboardEvent) {
 	}
 	socket.emit("Move1", move1);
 	socket.emit("Move2", move2);
+}
+
+function updateState(setGameState: Function) {
+	setGameState((prev: GameState) => {
+		return updateGameState({ ...prev });
+	});
 }
