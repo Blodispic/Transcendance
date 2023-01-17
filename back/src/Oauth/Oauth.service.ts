@@ -43,7 +43,14 @@ export class OauthService {
         },
     });
     const data = await response.json();
-    return data
+    const user4 = {
+      "username": "rozhouddd",
+      "email": "rozhou@42.frddd",
+      "status": "online",
+      "id": 8,
+      "isActive": true
+  }
+    return data;
   }
 }
 

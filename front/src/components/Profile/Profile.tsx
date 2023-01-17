@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useSearchParams } from "react-router-dom";
+import { useParams, useSearchParams } from "react-router-dom";
 import Fetchid from '../utils/fetch_id';
 import { IUser } from '../../interface/User';
 import { useEffect, useState } from 'react';
@@ -8,12 +8,14 @@ import '../../styles/profile.scss';
 
 export default function Profile() {
 
-        const [User, setUser] = useState<IUser>();
+        const [User, setUser] = useState<IUser | undefined>(undefined);
         const [searchParams] = useSearchParams()
-        let id = searchParams.get('id');
+        let { id } = useParams();
 
         useEffect(() => {
                 if (id) {
+                        console.log(id);
+                        
                         const fetchid = async () => {
                                 const response = await fetch(`http://localhost:4000/user/${id}`, {
                                         method: 'Get',
@@ -21,8 +23,11 @@ export default function Profile() {
                                                 'Content-Type': 'application/json',
                                         },
                                 })
+                                let data = await response.json();
+                                console.log(data);
                                 let user: IUser = await response.json();
                                 setUser(user);
+                                console.log(user);
                         }
                         fetchid()
                 }

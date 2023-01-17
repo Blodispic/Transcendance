@@ -6,6 +6,8 @@ import '../../styles/connection.scss'
 import { Link } from 'react-router-dom';
 import { useNavigate } from "react-router-dom";
 import NameForm from "./form_name_avatar"
+import { IUser } from "../../interface/User";
+import { NULL } from "sass";
 
 
 
@@ -24,6 +26,7 @@ export default function Connection() {
     let buttonclick: boolean = false;
     let navigate = useNavigate();
     const [searchParams] = useSearchParams()
+    let [user, setUser] = useState<IUser | undefined>(undefined);
 
 
     function handleClick() {
@@ -37,13 +40,34 @@ export default function Connection() {
 
         if (oauthCode) {
             const fetchcode = async () => {
-                await fetch('http://localhost:4000/oauth/token', {
+                const response = await fetch('http://localhost:4000/oauth/token', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                     },
                     body: JSON.stringify({ code: oauthCode }),
                 })
+                    .then(async response => {
+                        const data = await response.json();
+                        // check for error response
+                        if (!response.ok) {
+                            // get error message from body or default to response statusText
+                            const error = (data && data) || response.statusText;
+                            return Promise.reject(error);
+                        }
+                        else {
+                            setUser(data);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('There was an error!', error);
+                    });
+
+                // let user: IUser = await response.json();
+                // setUser(user);
+                // console.log(user);                
+                if (myVar == false)
+                    setMyvar(true);
             }
             fetchcode();
             //  navigate('/Home');
@@ -55,14 +79,14 @@ export default function Connection() {
             {
                 myVar == false &&
                 <button className="button center pulse pointer" >
-                    <a href={getAuthorizeHref()} onClick={handleClick}>
+                    <a href={getAuthorizeHref()}>
                         Connect with Intra
                     </a>
                 </button>
             }
             {
-                myVar == true &&
-                <NameForm />
+                myVar == true && user != undefined &&
+                <NameForm user={user} /> 
             }
         </div>
     );
