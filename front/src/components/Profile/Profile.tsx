@@ -15,7 +15,7 @@ export default function Profile() {
         useEffect(() => {
                 if (id) {
                         console.log(id);
-                        
+
                         const fetchid = async () => {
                                 const response = await fetch(`http://localhost:4000/user/${id}`, {
                                         method: 'Get',
@@ -23,8 +23,7 @@ export default function Profile() {
                                                 'Content-Type': 'application/json',
                                         },
                                 })
-                                let data = await response.json();
-                                console.log(data);
+
                                 let user: IUser = await response.json();
                                 setUser(user);
                                 console.log(user);
@@ -36,7 +35,7 @@ export default function Profile() {
         if (User == undefined) {
                 return (
                         <div className='center'>
-                                <h1>LOADING ... </h1>
+                                <h1>USER DONT EXIST </h1>
                         </div>
                 );
         }
@@ -57,14 +56,18 @@ export default function Profile() {
                                                 <span>test</span>
                                                 <span>test</span>
                                                 <span>test</span>
-                                                <span>test</span>
+
+                                                <div className='rank'>
+                                                        <span>RANK</span>
+                                                        <span className='rank'>GOLD II </span>
+                                                </div>
                                         </div>
 
                                         <div className='block'>
 
                                                 <div className='block'>
-                                                        <span>RANK</span>
-                                                        <span className='rank'>GOLD II </span>
+                                                        <span>{User.username}</span>
+
                                                 </div>
 
                                                 <div className=' block'>

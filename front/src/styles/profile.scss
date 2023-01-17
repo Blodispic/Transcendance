@@ -14,6 +14,8 @@
 
     .left-part {
         width: 300px;
+        align-self: center;
+        text-align: -webkit-center;
         .avatar {
 
             height: 130px;
@@ -21,7 +23,7 @@
             border-radius: 50%;
             padding-right: 15px;
             margin: 10px;
-            display: flex;
+
             align-self: center;
             overflow: hidden;
 
@@ -80,7 +82,10 @@
         }
 
         .rank {
-            color: #FFD700;
+            display: flex;
+            .rank {
+                 color: #FFD700;
+            }
         }
     }
 

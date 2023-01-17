@@ -24,7 +24,7 @@ export default function NameForm(props: { user: IUser }) {
             const fetch_name_avatar = async () => {
                 console.log("fetch name avatar");
 
-                const response = await fetch(`http://localhost:4000/user/${user.login}`, {
+                const response = await fetch(`http://localhost:4000/user/${user.id}`, {
                     method: 'PATCH',
                     headers: {
                         'Content-Type': 'application/json',
