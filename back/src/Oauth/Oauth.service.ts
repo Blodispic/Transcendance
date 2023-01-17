@@ -16,12 +16,9 @@ export class OauthService {
   }
 
   async getToken(oauthCode: string): Promise<any> {
-    console.log("test");
     const api_key = process.env.API42_UID;
     const private_key = process.env.API42_SECRET;
     const redirect_uri = process.env.REDIRECT_URI;
-
-    console.log("est");
 
     const body = {
       grant_type: "authorization_code",
@@ -32,7 +29,7 @@ export class OauthService {
     };
 
     console.log(body);
-
+    
     const response = await fetch('https://api.intra.42.fr/oauth/token', {
       method: 'POST',
       headers: {
@@ -45,6 +42,8 @@ export class OauthService {
     //   throw new Error(`AuthService getToken failed, HTTP status ${response.status}`);
     // }
     const data = await response.json();
+    console.log(data);
+    
     return this.getInfo(data.access_token);
 
   }
@@ -58,10 +57,24 @@ export class OauthService {
     });
     const data = await response.json();
     
-    const user = await this.usersService.getByUsername(data.login)
+    const user = await this.usersService.getByUsername(data.login);
+    console.log(data);
+    console.log(data.login);
+    console.log(data.email);
+    console.log(user);
     
     if (user)
       return (user);
+    if (data.error)
+      return (data.error);
+    const userReturn = {
+      "username": data.login,
+      "email": data.email,
+      "status": "online",
+    }
+  
+    return await this.usersService.create(userReturn);
+    
 
     // }
     //Creation nouveau user
@@ -76,8 +89,6 @@ export class OauthService {
 
     //Sinon
     //return await user = findonebyid
-
-    return data
   }
 }
 
