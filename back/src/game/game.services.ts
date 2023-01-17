@@ -1,5 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { Socket } from "dgram";
+import { start } from "repl";
 import { Server } from "socket.io";
 import { Ball, GameState, Move, Player, Vec2 } from "./game.interfaces";
 
@@ -55,8 +56,19 @@ let gameStateDefault: GameState = {
 
 @Injectable()
 export class GameService {
+    public game: Game;
+    // constructor() {}
+
     startGame(server: Server) {
-        let game = new Game(server);
+        this.game = new Game(server);
+    }
+
+    updateMove1(move1: Move) {
+        this.game.updateMove1(move1);
+    }
+
+    updateMove2(move1: Move) {
+        this.game.updateMove2(move1);
     }
 }
 
@@ -72,13 +84,42 @@ class Game {
         }, 1000 / 60);
     }
     
+    updateMove1(newMove1:Move)
+    {
+        console.log("Move1 received: left:" + newMove1.left + " right: " + newMove1.right);
+        move1 = newMove1;
+    }
+
+    updateMove2(newMove2:Move)
+    {
+    console.log("Move2 received: left:" + newMove2.left + " right: " + newMove2.right);
+        move2 = newMove2;
+    }
+
     updateGameState(state: GameState) {
         state.scale = state.client_area.x / state.area.x;
     
         state.player1.input = { ...move1 };
         state.player2.input = { ...move2 };
-        this.server.on("InputKeyboard", (newMove: Move)=> {
-            move1 = newMove;
+        // this.server.on("Players", (newState: GameState)=> {
+        //     state.player1.input = newState.player1.input;
+        //     state.player2.input = newState.player2.input;
+        // })
+        // this.server.on("Player", (newPlayer: Player)=> {
+        //     if (newPlayer.side === 0)
+        //     {
+        //         state.player1.paddle.position = newPlayer.paddle.position;
+        //     }
+        //     else
+        //         state.player2.paddle.position = newPlayer.paddle.position;
+        // })
+        this.server.on("Move1", (newMove1: Move) => {
+            console.log("Move1 received: left:" + newMove1.left + " right: " + newMove1.right);
+            move1 = newMove1;
+        })
+        this.server.on("Move2", (newMove2: Move) => { 
+            console.log("Move2 received: left:" + newMove2.left + " right: " + newMove2.right);
+            move2 = newMove2;
         })
         if (state.resetCooldown <= 0)
         {
@@ -89,10 +130,6 @@ class Game {
         }
         else
             state.resetCooldown--;
-        // console.log("resetCooldown = " + state.resetCooldown);
-        // console.log("ballPosition = x: " + Math.round(state.ball.position.x));
-        // console.log("ballPosition = y: " + Math.round(state.ball.position.y) + "\n");
-
         return state;
     }
     paddleCollision(ball: Ball, player: Player) {
@@ -262,9 +299,12 @@ class Game {
     updateState(gameState: GameState)
     {
         gameState = this.updateGameState({ ...gameState });
-        console.log("resetCooldown = " + gameState.resetCooldown);
-        console.log("ballPosition = x: " + Math.round(gameState.ball.position.x));
-        console.log("ballPosition = y: " + Math.round(gameState.ball.position.y) + "\n");
+        // console.log("resetCooldown = " + gameState.resetCooldown);
+        // console.log("ballPosition = x: " + Math.round(gameState.ball.position.x));
+        // console.log("ballPosition = y: " + Math.round(gameState.ball.position.y));
+
+        // console.log("padlePosition = x: " + Math.round(gameState.player1.paddle.position.x));
+        // console.log("padlePosition = y: " + Math.round(gameState.player1.paddle.position.y) + "\n");
         this.server.emit("UpdateState", gameState);
         return gameState;
     }

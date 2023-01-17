@@ -26,9 +26,15 @@ export class PongGateway implements OnGatewayConnection, OnGatewayInit {
 		console.log("Connected");
 	}
 
-	@SubscribeMessage("InputKeyboard")
-	HandleInput(@MessageBody() input: any, @ConnectedSocket() client: Socket)
+	@SubscribeMessage("Move1")
+	HandleMove1(@MessageBody() input: any, @ConnectedSocket() client: Socket)
 	{
-		this.server.emit("TrueInput", input);
+		this.gameService.updateMove1(input);
+	}
+
+	@SubscribeMessage("Move2")
+	HandleMove2(@MessageBody() input: any, @ConnectedSocket() client: Socket)
+	{
+		this.gameService.updateMove2(input);
 	}
 }
