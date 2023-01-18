@@ -14,7 +14,7 @@
 	height: 100%;
 
 
-	.chat-list {
+	.left-sidebar {
 		float: left;
 		width: 20%;
 		background-color: var(--sub-color2);
@@ -24,8 +24,8 @@
 	.chat-body{
 
 		float:none;
-		width: 100%;
-		padding: 20px 0px 20px 15px;
+		width: 60%;
+		// padding: 20px 0px 20px 15px;
 		background-color: var(--secondary-color);
 		align-items: center;
 
@@ -51,25 +51,23 @@
 			}
 		}
 		
-		form {
-			input {
+		form input {
 				font-family: 'Fredoka One', cursive;
 				font-size: 20px;
 
 				color: rgb(111, 106, 106);
 				padding: 0px 0px 0px 15px;
-				width: 65%;
+				width: 56%;
 				height: 5%;
 				background: rgba($color: lightgray, $alpha: 0.5);
 				border-radius: 10px;
 				position: absolute;
 				border: none;
 				bottom: 0;
-			}
 		}
 	}
 	
-	.user-list {
+	.right-sidebar {
 		float: right;
 		width: 20%;
 		background-color: var(--sub-color2);
