@@ -1,0 +1,52 @@
+.center {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.pulse:hover,
+.pulse:focus {
+    -webkit-animation: button 1s;
+    animation: button 1s;
+    box-shadow: 0 0 0 2em transparent;
+}
+
+.pointer {
+       cursor: pointer; 
+}
+
+.button {
+    
+    font-family: 'Fredoka One', cursive;
+    border-radius: 2px;
+    padding: 10px 16px;
+    background-color: #34495E;
+    border-color: #34495e;
+
+    button {
+        cursor: pointer;
+        margin-left: 40%;
+        display: flex;
+        a{
+            color: black;
+        }
+    }
+    label, 
+    a {
+        color: white;
+    }
+    --hover: #5e768fb4;
+}
+
+
+
+label {
+    display: block;
+    font: 1rem 'Fira Sans', sans-serif;
+}
+
+input,
+label {
+    margin: 0.4rem 0;
+}

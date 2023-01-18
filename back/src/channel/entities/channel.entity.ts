@@ -1,6 +1,7 @@
-import { Column, PrimaryGeneratedColumn } from "typeorm";
+import { User } from "src/user/entities/user.entity";
+import { Column, Entity, JoinTable, ManyToMany, PrimaryGeneratedColumn } from "typeorm";
 
-
+@Entity()
 export class Channel {
 	@PrimaryGeneratedColumn()
 	id: number;
@@ -11,5 +12,7 @@ export class Channel {
 	// @Column()		a rajouter mais de manière optionnelle
 	// password: string;
 
-
+	@ManyToMany(() => User)
+	@JoinTable()
+	users: User[]
 }

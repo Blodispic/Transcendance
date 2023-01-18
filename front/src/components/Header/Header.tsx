@@ -3,7 +3,7 @@ import '../../styles/nav.scss'
 import { Link } from 'react-router-dom';
 
 
-const Header: React.FC = () => {
+export default function Header() {
 
 
   return (
@@ -11,7 +11,7 @@ const Header: React.FC = () => {
 
       <div className='navbar-left'>
 
-        <Link to="/Home">
+        <Link to="/">
           <img className='logo' src={require('../../assets/logo.gif')} />
         </Link>
         
@@ -42,5 +42,3 @@ const Header: React.FC = () => {
   </div>
   );
 }
-
-export default Header;
