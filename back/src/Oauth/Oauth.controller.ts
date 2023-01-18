@@ -10,6 +10,6 @@ export class OauthController {
   async getToken(@Body() body: any) { 
      console.log(body);
 
-      return this.oauthService.getToken(body.code);
+     return await this.oauthService.getToken(body.code);
   }
 }
