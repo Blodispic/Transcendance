@@ -303,8 +303,8 @@ class Game {
         // console.log("ballPosition = x: " + Math.round(gameState.ball.position.x));
         // console.log("ballPosition = y: " + Math.round(gameState.ball.position.y));
 
-        // console.log("padlePosition = x: " + Math.round(gameState.player1.paddle.position.x));
-        // console.log("padlePosition = y: " + Math.round(gameState.player1.paddle.position.y) + "\n");
+        console.log("padlePosition = x: " + Math.round(gameState.player1.paddle.position.x));
+        console.log("padlePosition = y: " + Math.round(gameState.player1.paddle.position.y) + "\n");
         this.server.emit("UpdateState", gameState);
         return gameState;
     }
