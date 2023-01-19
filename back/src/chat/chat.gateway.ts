@@ -3,7 +3,7 @@ import { WebSocketGateway, OnGatewayInit, OnGatewayConnection, OnGatewayDisconne
 import { userInfo } from "os";
 import { Server, Socket } from "socket.io";
 import { AppService } from "src/app.service";
-import { ChannelService } from "src/channel/channel.service";
+import { ChannelService } from "src/chat/channel/channel.service";
 import { Chat } from "./chat.entity";
 import { MessageChannelDto } from "./dto/message-channel.dto";
 

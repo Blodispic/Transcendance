@@ -4,11 +4,11 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { User } from './user/entities/user.entity';
 import { UserModule } from './user/user.module';
-import { ChannelModule } from './channel/channel.module';
+import { ChannelModule } from './chat/channel/channel.module';
 import { OauthModule } from './oauth/oauth.module';
 import { ConfigModule } from '@nestjs/config';
 import { ChatGateway } from './chat/chat.gateway';
-import { Channel } from './channel/entities/channel.entity';
+import { Channel } from './chat/channel/entities/channel.entity';
 
 @Module({
   imports: [
@@ -16,7 +16,7 @@ import { Channel } from './channel/entities/channel.entity';
       type: 'postgres',
       host: 'localhost',
       port: 5432,
-      username: 'postgres',
+      username: 'admin',
       password: 'admin',
       entities: [User, Channel],
       synchronize: true,

@@ -1,4 +1,4 @@
-import { Channel } from "src/channel/entities/channel.entity";
+import { Channel } from "src/chat/channel/entities/channel.entity";
 import { Column, Entity, JoinTable, ManyToMany, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity()
