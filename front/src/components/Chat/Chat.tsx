@@ -13,8 +13,6 @@ back will broadcast to everyone on channel
 in front, listen for the message on channel
 */
 
-
-
 function ChannelList() {
 	return <ul>
 		<li>channel 1</li>
