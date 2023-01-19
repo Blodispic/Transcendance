@@ -13,25 +13,8 @@ export class AppController {
   }
 
   @Get(':imgpath')
-  seeUploadedFile(@Param('imgpath') image: any, @Res() res: any) {
+  seeAvatar(@Param('imgpath') image: any, @Res() res: any) {
   return res.sendFile(image, { root: './files' });
 }
 
-  @Post()
-  @UseInterceptors(
-    FileInterceptor('image', {
-      storage: diskStorage({
-        destination: './files',
-        filename: editFileName,
-      }),
-      fileFilter: imageFileFilter,
-    }),
-  )
-  async uploadedFile(@UploadedFile() file: any) {
-    const response = {
-      originalname: file.originalname,
-      filename: file.filename,
-    };
-    return response;
-  }
 }

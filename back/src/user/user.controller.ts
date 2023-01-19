@@ -32,7 +32,7 @@ export class UserController {
 
   @Post(':id/setavatar')
   @UseInterceptors(
-    FileInterceptor('image', {
+    FileInterceptor('file', {
       storage: diskStorage({
         destination: './files',
         filename: editFileName,

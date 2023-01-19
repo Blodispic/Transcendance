@@ -36,7 +36,6 @@ export class User {
 	@Column({ default: 0 })
 	loose: number;
 
-  
   @OneToMany(type => Results, result => result.user)
   results: Results[];
 }
