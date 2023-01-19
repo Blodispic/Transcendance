@@ -1,3 +1,4 @@
+import { ResultModule } from './results/results.module';
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
@@ -10,6 +11,7 @@ import { MulterModule } from '@nestjs/platform-express';
 
 @Module({
   imports: [
+    ResultModule,
     TypeOrmModule.forRoot({
       type: 'postgres',
       host: 'localhost',
@@ -30,4 +32,4 @@ import { MulterModule } from '@nestjs/platform-express';
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {}
+export class AppModule { }

@@ -1,4 +1,5 @@
-import { Column, Entity, PrimaryGeneratedColumn, ManyToMany, JoinTable } from "typeorm";
+import { Results } from "src/results/entities/results.entity";
+import { Column, Entity, PrimaryGeneratedColumn, ManyToMany, JoinTable, OneToMany } from "typeorm";
 
 @Entity()
 export class User {
@@ -14,7 +15,7 @@ export class User {
   @Column()
   status: string;
 
-  @Column()
+  @Column({ default: 1000 })
   elo: number;
   
   @Column()
@@ -26,4 +27,17 @@ export class User {
   @ManyToMany(type => User, user => user.friends)
   @JoinTable()
     friends: User[];
+
+  //      STATISTIQUES        //
+  
+  @Column({ default: 0 })
+	win: number;
+
+	@Column({ default: 0 })
+	loose: number;
+
+  
+  @OneToMany(type => Results, result => result.user)
+  results: Results[];
 }
+

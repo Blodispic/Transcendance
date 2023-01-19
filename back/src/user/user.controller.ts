@@ -25,6 +25,11 @@ export class UserController {
     return this.userService.findAll();
   }
 
+  @Get(':id')
+  findOne(@Param('id') id: number) {
+    return this.userService.getById(id);
+  }
+
   @Post(':id/setavatar')
   @UseInterceptors(
     FileInterceptor('image', {
@@ -38,12 +43,6 @@ export class UserController {
   async setAvatar(@Param('id') id: number, @UploadedFile() file: any) {
     await this.userService.setAvatar(id, file);
     return { message: 'Avatar set successfully' };
-  }
-
-
-  @Get(':id')
-  findOne(@Param('id') id: number) {
-    return this.userService.getById(id);
   }
 
   @Patch(':id')
