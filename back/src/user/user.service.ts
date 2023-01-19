@@ -64,7 +64,7 @@ export class UserService {
     if (user)
     {
       user.avatar = file.filename;
-      await this.usersRepository.save(user);
+      return await this.usersRepository.save(user);
     }
     return ('User not found');
   }
