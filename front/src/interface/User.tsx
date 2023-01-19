@@ -1,10 +1,13 @@
 
 import { Result } from "./Result";
 
-export interface User {
+export interface IUser {
+
+    login: string;
     username: string;
     avatar: string;
+    status: string;
     elo: number;
-    friends?: User[];
+    friends?: IUser[];
     history?: Result[];
 }

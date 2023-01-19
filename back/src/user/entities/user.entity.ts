@@ -1,5 +1,6 @@
-import { Channel } from "src/channel/entities/channel.entity";
-import { Column, Entity, JoinTable, ManyToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Channel } from "src/chat/channel/entities/channel.entity";
+import { Results } from "src/results/entities/results.entity";
+import { Column, Entity, PrimaryGeneratedColumn, ManyToMany, JoinTable, OneToMany } from "typeorm";
 
 @Entity()
 export class User {
@@ -13,10 +14,13 @@ export class User {
   email: string;
 
   @Column()
-  password: string;
+  status: string;
 
-  // @Column()
-  // avatar: HTMLImageElement;
+  @Column({ default: 1000 })
+  elo: number;
+  
+  @Column()
+  avatar: string;
 
   @Column({ default: true })
   isActive: boolean;
@@ -26,4 +30,20 @@ export class User {
 
 
   // ON vera le reste plus tard
+  @ManyToMany(type => User, user => user.friends)
+  @JoinTable()
+    friends: User[];
+
+  //      STATISTIQUES        //
+  
+  @Column({ default: 0 })
+	win: number;
+
+	@Column({ default: 0 })
+	loose: number;
+
+  
+  @OneToMany(type => Results, result => result.user)
+  results: Results[];
 }
+
