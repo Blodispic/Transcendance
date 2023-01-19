@@ -34,11 +34,24 @@ export class UserService {
     })
   }
 
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
+  async update(id: number, updateUserDto: UpdateUserDto) {
+    const user = await this.usersRepository.findOneBy({
+      id: id
+    })
+    if (user)
+    {
+      this.usersRepository.merge(user, updateUserDto);
+      return await this.usersRepository.save(user);
+    }
+    return 'There is no user to update';
   }
 
-  remove(id: number) {
+  async remove(id: number) {
+    const user = await this.usersRepository.findOneBy({
+      id: id
+    })
+    if (!user)
+      return ('Cant delete an inexistant user');
     this.usersRepository.delete(id);
     return `This action removes a #${id} user`;
   }
