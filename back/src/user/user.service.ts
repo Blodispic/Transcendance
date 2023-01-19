@@ -13,6 +13,7 @@ export class UserService {
   ) { }
 
   async create(createUserDto: CreateUserDto): Promise<User> {
+
     const user: User = this.usersRepository.create(createUserDto);
     const result = await this.usersRepository.insert(user);
     return { ...user, ...result.generatedMaps[0] };
@@ -54,6 +55,18 @@ export class UserService {
       return ('Cant delete an inexistant user');
     this.usersRepository.delete(id);
     return `This action removes a #${id} user`;
+  }
+
+  async setAvatar(id: number, file: any) {
+    const user = await this.usersRepository.findOneBy({
+      id: id
+    })
+    if (user)
+    {
+      user.avatar = file.filename;
+      await this.usersRepository.save(user);
+    }
+    return ('User not found');
   }
 
   //ID est le user actuel, friend est le user a ajouter de type User

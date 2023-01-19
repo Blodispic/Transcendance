@@ -16,8 +16,9 @@ export class User {
 
   @Column()
   elo: number;
-  // @Column()
-  // avatar: HTMLImageElement;
+  
+  @Column()
+  avatar: string;
 
   @Column({ default: true })
   isActive: boolean;

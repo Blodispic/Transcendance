@@ -6,6 +6,7 @@ import { User } from './user/entities/user.entity';
 import { UserModule } from './user/user.module';
 import { OauthModule } from './Oauth/Oauth.module';
 import { ConfigModule } from '@nestjs/config';
+import { MulterModule } from '@nestjs/platform-express';
 
 @Module({
   imports: [
@@ -18,6 +19,9 @@ import { ConfigModule } from '@nestjs/config';
       entities: [User],
       synchronize: true,
       dropSchema: true,    //A ENLEVER QUAND PLUS BESOIN (ça reset la db a chaque changement)
+    }),
+    MulterModule.register({
+      dest: './files',
     }),
     ConfigModule.forRoot(),
     UserModule,

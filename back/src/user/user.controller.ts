@@ -1,4 +1,7 @@
-import { BadRequestException, Body, Controller, Post, Delete, Get, Param, Patch } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Post, Delete, Get, Param, Patch, UseInterceptors, UploadedFile } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { diskStorage } from 'multer';
+import { editFileName, imageFileFilter } from 'src/app.service';
 import { CreateUserDto } from '../user/dto/create-user.dto';
 import { UpdateUserDto } from '../user/dto/update-user.dto';
 import { User } from './entities/user.entity';
@@ -21,6 +24,22 @@ export class UserController {
   findAll() {
     return this.userService.findAll();
   }
+
+  @Post(':id/setavatar')
+  @UseInterceptors(
+    FileInterceptor('image', {
+      storage: diskStorage({
+        destination: './files',
+        filename: editFileName,
+      }),
+      fileFilter: imageFileFilter,
+    }),
+  )
+  async setAvatar(@Param('id') id: number, @UploadedFile() file: any) {
+    await this.userService.setAvatar(id, file);
+    return { message: 'Avatar set successfully' };
+  }
+
 
   @Get(':id')
   findOne(@Param('id') id: number) {
