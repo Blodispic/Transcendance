@@ -3,11 +3,17 @@ import * as React from "react";
 import { io } from "socket.io-client";
 import '../../styles/chat.scss'
 
-const socket = io("http://localhost:3000")
+// const socket = io("http://localhost:3000") //put backend's port number
+const socket = io("http://" + window.location.hostname + ":4000");
 
 /*
-FRONT -> emit message -> BACK
+receive message from back
+emit - sendmessagechannel
+back will broadcast to everyone on channel
+in front, listen for the message on channel
 */
+
+
 
 function ChannelList() {
 	return <ul>
@@ -33,58 +39,61 @@ function UserList() {
 
 function Chat(this: any) {
 
-const [inputMessage, setInputMessage] = React.useState("");
-
-//array of message
-const [messages, setMessages] = React.useState<Message[]>([]);
-
-type Message = {
-	inputText: string;
-	//user(sender)
-	//time
-}
-
-// receive input
+	const [newInput, setNewInput] = React.useState("");
+	const [messageList, setMessageList] = React.useState<any[]>([]);
+	// const newInput = document.getElementById('newInput');
+	// const messageList = document.getElementById('messageList');
+	
 const handleInput = (e: React.ChangeEvent<HTMLInputElement>) => {
 	e.preventDefault();
-	console.log(e.target.value);
-	setInputMessage(e.target.value);
+	setNewInput(e.target.value);
 };
 
-// take new input string and store to 'Messages' array
-const buildMessage = (e: React.FormEvent<HTMLFormElement>) => {
+// const buildMessage = (e: React.FormEvent<HTMLFormElement>) => {
+// 	e.preventDefault();
+// 	if (!inputMessage)
+// 		return ;
+// 	const newMessage: Message = {
+// 		inputText: inputMessage,
+// 	};
+// 	setMessageList([newMessage, ...messageList]);
+// 	socket.emit("sendMessage", { inputMessage });
+// 	setInputMessage("");
+// }
+
+const handleSubmitNewMessage = (e: React.FormEvent<HTMLFormElement>) => {
 	e.preventDefault();
-	if (!inputMessage)
-		return ;
-	const newMessage: Message = {
-		inputText: inputMessage,
-	};
-	setMessages([newMessage, ...messages]);
-	setInputMessage(inputMessage);
+	socket.emit('sendMessage', { newInput });
+	setNewInput("");
+}
+
+socket.on("recMessage", ( data ) => {
+	console.log({data: newInput});
+	buildNewMessage({data: newInput});
+})
+
+const buildNewMessage = (data: any) => {
+	setMessageList([...messageList, data]);
 }
 	return (
 		<div id="chat-container">
-			
-			{/* left side bar */}
 			<div className="left-sidebar">
 				<ChannelList></ChannelList>
+				<DMList></DMList>
 			</div>
-			{/* main chat window in the middle */}
 			<div className="chat-body">
 				<div className="chat-messages">
-					{messages.map(message => (
-						<div className="__wrap">
-							{message.inputText}
+					{messageList.map(chat => (
+						<div key={chat.value} className="__wrap">
+							{chat.value}
 						</div>
 					))}
 				</div>
-				{/* input text box */}
-				<form onSubmit={(e) => buildMessage(e)}>
+				<form onSubmit={(e) => handleSubmitNewMessage(e)}>
 					<input type="text" onChange={(e) => handleInput(e)} placeholder="type message here"/>
 				</form>
-			</div>
 
-			{/* right side bar */}
+			</div>
 			<div className="right-sidebar">
 				<UserList></UserList>
 			</div>
