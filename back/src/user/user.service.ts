@@ -41,18 +41,12 @@ export class UserService {
     })
     if (user)
     {
-      console.log('User exists');
-      console.log(id);
+      //Si vous voulez plus de chose a update, mettez le dans le body et faites un if
       if (userUpdate.username)
-      {
-        console.log("there is a username to update"); 
-        await this.usersRepository.update(id, userUpdate.username);
-      }
+        user.username = userUpdate.username;
       if (userUpdate.avatar)
-      await this.usersRepository.update(id, userUpdate.avatar);
-      return await this.usersRepository.findOneBy({
-        id: id
-      });
+        user.avatar = userUpdate.avatar
+      return await this.usersRepository.save(user);
     }
     return 'There is no user to update';
   }
