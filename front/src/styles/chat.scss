@@ -6,6 +6,16 @@
 	--highlight: #8860D0;
 }
 
+img {
+	width: 40px;
+	height: 40px;
+	.user-avatar {
+		display: inline-block;
+		width: 3%;
+	}
+}
+
+
 #chat-container {
 	font-family: 'Fredoka One', cursive;
 
@@ -26,7 +36,7 @@
 		padding: 20px 0px;
 		background-color: rgba(232, 232, 232, 0.966);
 		align-items: center;
-
+		
 		.chat-messages {
 			height: calc(100vh - 150px);
 			overflow-y: scroll;
@@ -41,7 +51,7 @@
 				border-radius: 15px;
 				padding: 20px;
 				margin: 20px;
-				word-wrap: break-word;
+				word-wrap: break-word
 			}
 		}
 

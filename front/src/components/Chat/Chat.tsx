@@ -30,9 +30,7 @@ function UserList() {
 	</ul>
 }
 
-function Chat() {
-
-	
+function ChatBody() {
 	const [newInput, setNewInput] = React.useState("");
 	const [messageList, setMessageList] = React.useState<any[]>([]);
 
@@ -56,25 +54,35 @@ function Chat() {
 	const buildNewMessage = (data: any) => {
 		setMessageList([...messageList, data]);
 	}
+
+	return (
+		<div className="chat-body">
+			<div className="chat-messages">
+				{messageList.map((chat) => (
+					<div key={chat.newInput} className="__wrap">
+					<div className="user-avatar"><img src="https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/160/apple/81/woman-gesturing-ok-type-1-2_1f646-1f3fb-200d-2640-fe0f.png"></img></div>
+					{chat.newInput}
+					</div>
+				))}
+			</div>
+			<form id="input_form" onSubmit={(e) => { handleSubmitNewMessage(e); }}>
+				<input type="text" onChange={(e) => { setNewInput(e.target.value) }}
+					placeholder="type message here" value={newInput} />
+			</form>
+
+		</div>
+	);
+}
+
+function Chat() {
 	return (
 		<div id="chat-container">
 			<div className="left-sidebar">
 				<ChannelList />
 			</div>
-			<div className="chat-body">
-				<div className="chat-messages">
-					{messageList.map((chat) => (
-						<div key={chat.newInput} className="__wrap">
-							{chat.newInput}
-						</div>
-					))}
-				</div>
-				<form id="input_form" onSubmit={(e) => { handleSubmitNewMessage(e); }}>
-					<input type="text" onChange={(e) => { setNewInput(e.target.value) }}
-						placeholder="type message here" value={newInput} />
-				</form>
 
-			</div>
+			<ChatBody />
+			
 			<div className="right-sidebar">
 				<UserList />
 			</div>
