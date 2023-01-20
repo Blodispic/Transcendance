@@ -55,6 +55,8 @@ export default function Connection() {
                         }
                         else {
                             dispatch(setUser(data));
+                            console.log(data);
+                            
                         }
                     })
                     .catch(error => {

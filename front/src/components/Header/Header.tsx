@@ -31,7 +31,7 @@ export default function Header() {
           </span>
         </Link>
 
-        <Link to="/Profile">
+        <Link to="/Profile/2">
           <span className="font-link">
             Profile
           </span>  

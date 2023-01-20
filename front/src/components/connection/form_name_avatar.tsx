@@ -15,7 +15,8 @@ export default function NameForm() {
     const formData = new FormData();
     const myUser = useAppSelector(state => state.user);
 
-    const fetch_name_avatar = async () => {
+    const fetch_name_avatar = async (e:any) => {
+        e.preventDefault();
         if (myUser.user != undefined) {
             formData.append('newname', newname);
             if (file)
@@ -54,7 +55,7 @@ export default function NameForm() {
                     file && avatar != '' &&
                     <img src={avatar} />
                 }
-                <button onClick={() => fetch_name_avatar()}>
+                <button onClick={(e) => fetch_name_avatar(e)}>
                     <a>okk</a>
                 </button>
                 <a>{newname}</a>

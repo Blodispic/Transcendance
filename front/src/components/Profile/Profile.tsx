@@ -34,6 +34,8 @@ export default function Profile() {
         //         }
         // }, [])
 
+        console.log(myUser);
+        
         if (myUser.user == undefined) {
                 return (
                         <div className='center'>
