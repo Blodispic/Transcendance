@@ -3,41 +3,33 @@ import '../../styles/connection.scss'
 import { IUser } from "../../interface/User";
 import { Link } from 'react-router-dom';
 import { userInfo } from 'os';
+import { stringify } from 'querystring';
 
 export default function NameForm(props: { user: IUser }) {
-    const { user } = props;
 
-    const [firstName, setFirstName] = useState('');
+    const { user } = props;
+    const [newname, setNewname] = useState('');
     const [file, setFile] = useState<File | undefined>(undefined);
     const [avatar, setavatar] = useState<string>('');
+    const formData = new FormData();
 
 
+    const fetch_name_avatar = async () => {
 
-    useEffect(() => {
-        console.log("test");
+        formData.append('newname', newname);
+        if (file)
+            formData.append('file', file);
 
-        console.log(firstName);
-        console.log(file);
-        console.log(avatar);
-
-        if (firstName != '' && file && avatar != '') { // a changer le avatar est pas obligatoire ca dois plutot etre un name && button/submit
-            const fetch_name_avatar = async () => {
-                console.log("fetch name avatar");
-
-                const response = await fetch(`http://localhost:4000/user/${user.id}`, {
-                    method: 'PATCH',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        newName: firstName,
-                        newAvatar: file,
-                    }),
-                })
-            }
-            fetch_name_avatar()
-        }
-    },)
+            console.log(user.id);
+            
+        const response = await fetch(`http://localhost:4000/user/${user.id}`, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            },
+            body: formData,
+        })
+    }
 
     const onChangeFile = (e: any) => {
         const myFile: File = e.target.files[0];
@@ -50,7 +42,7 @@ export default function NameForm(props: { user: IUser }) {
             <form>
                 <label >
                     Name:
-                    <input type="text" name="user" value={firstName} onChange={e => setFirstName(e.target.value)} />
+                    <input type="text" name="user" value={newname} onChange={e => setNewname(e.target.value)} />
                 </label>
 
                 <label >
@@ -61,13 +53,10 @@ export default function NameForm(props: { user: IUser }) {
                     file && avatar != '' &&
                     <img src={avatar} />
                 }
-
-                {/* <Link to="/Game"> */}
-                <button>
+                <button onClick={() => fetch_name_avatar()}>
                     <a>okk</a>
                 </button>
-                {/* </Link> */}
-                <a>{firstName}</a>
+                <a>{newname}</a>
                 <a>{avatar}</a>
             </form >
         </div >

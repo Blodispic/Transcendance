@@ -65,7 +65,7 @@ export default function Connection() {
 
                 // let user: IUser = await response.json();
                 // setUser(user);
-                // console.log(user);                
+                console.log(user);                
                 if (myVar == false)
                     setMyvar(true);
             }

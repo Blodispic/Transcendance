@@ -1,11 +1,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
-
-import  Header  from './components/Header/Header';
-import router from './router';
-import { createBrowserRouter, RouterProvider, } from "react-router-dom";
 import reportWebVitals from './reportWebVitals';
+import App from './App';
 
  
 const root = ReactDOM.createRoot(
@@ -14,7 +11,7 @@ const root = ReactDOM.createRoot(
 
 root.render(
   <div  className='container' >
-    <RouterProvider router={router} />
+    <App/>
   </div>
 );
 
