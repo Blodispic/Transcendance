@@ -20,6 +20,8 @@ export default function NameForm(props: { user: IUser }) {
         if (file)
             formData.append('file', file);
 
+            console.log("ICIIIIIII");
+            
             console.log(user.id);
             
         const response = await fetch(`http://localhost:4000/user/${user.id}`, {

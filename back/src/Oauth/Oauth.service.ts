@@ -43,14 +43,27 @@ export class OauthService {
         },
     });
     const data = await response.json();
-    const user4 = {
-      "username": "rozhouddd",
-      "email": "rozhou@42.frddd",
+    // const user = await this.usersService.getByUsername(data.login);
+    console.log(data);
+    console.log(data.login);
+    console.log(data.email);
+    // console.log(user);
+    
+    // if (user)
+      // return (user);
+    // if (data.error)
+      // return (data.error);
+    const userReturn = {
+      "username": data.login,
+      "email": data.email,
       "status": "online",
-      "id": 8,
-      "isActive": true
-  }
-    return user4;
+      "elo": 1000,
+    }
+
+    // await this.usersService.create(userReturn)
+  
+    return userReturn;
+    
   }
 }
 
