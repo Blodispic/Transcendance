@@ -59,7 +59,6 @@ const buildNewMessage = (data: any) => {
 		<div id="chat-container">
 			<div className="left-sidebar">
 				<ChannelList></ChannelList>
-				<DMList></DMList>
 			</div>
 			<div className="chat-body">
 				<div className="chat-messages">
@@ -70,7 +69,8 @@ const buildNewMessage = (data: any) => {
 					))}
 				</div>
 				<form id="input_form" onSubmit={(e) => {handleSubmitNewMessage(e); }}>
-					<input type="text" onChange={(e) => {setNewInput(e.target.value)}} placeholder="type message here" value={newInput}/>
+					<input type="text" onChange={(e) => {setNewInput(e.target.value)}} 
+							placeholder="type message here" value={newInput}/>
 				</form>
 
 			</div>
