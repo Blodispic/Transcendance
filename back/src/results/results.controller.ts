@@ -4,7 +4,7 @@ import { ResultService } from "./results.service";
 
 @Controller('results')
 export class ResultController {
-  constructor(private readonly resultService: ResultService) {}
+  constructor(private readonly resultService: ResultService) { }
 
   @Post()
   async createResult(@Body() resultDto: ResultDto) {

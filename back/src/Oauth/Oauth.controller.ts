@@ -4,12 +4,12 @@ import { getFileInfo } from 'prettier';
 
 @Controller('oauth')
 export class OauthController {
-  constructor(private readonly oauthService: OauthService) {}
+  constructor(private readonly oauthService: OauthService) { }
 
   @Post('token')
-  async getToken(@Body() body: any) { 
-     console.log(body);
+  async getToken(@Body() body: any) {
+    console.log(body);
 
-      return this.oauthService.getToken(body.code);
+    return this.oauthService.getToken(body.code);
   }
 }

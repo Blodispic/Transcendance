@@ -4,6 +4,7 @@ import { IUser } from "../../interface/User";
 import { Link } from 'react-router-dom';
 import { userInfo } from 'os';
 import { stringify } from 'querystring';
+import { useAppSelector } from '../../redux/Hook';
 
 export default function NameForm() {
 
@@ -12,25 +13,23 @@ export default function NameForm() {
     const [file, setFile] = useState<File | undefined>(undefined);
     const [avatar, setavatar] = useState<string>('');
     const formData = new FormData();
-
+    const myUser = useAppSelector(state => state.user);
 
     const fetch_name_avatar = async () => {
-
-        formData.append('newname', newname);
-        if (file)
-            formData.append('file', file);
+        if (myUser.user != undefined) {
+            formData.append('newname', newname);
+            if (file)
+                formData.append('file', file);
 
             console.log("ICIIIIIII");
-            
-
-            
-        const response = await fetch(`http://localhost:4000/user/${user.id}`, {
-            method: 'PATCH',
-            headers: {
-                'Content-Type': 'multipart/form-data',
-            },
-            body: formData,
-        })
+            const response = await fetch(`http://localhost:4000/user/${myUser.user.id}`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                },
+                body: formData,
+            })
+        }
     }
 
     const onChangeFile = (e: any) => {
