@@ -35,21 +35,31 @@ export class UserService {
     })
   }
 
-  async update(id: number, updateUserDto: UpdateUserDto) {
+  async update(id: number, userUpdate: any) {
     const user = await this.usersRepository.findOneBy({
-      id: id
+      id: id,
     })
     if (user)
     {
-      this.usersRepository.merge(user, updateUserDto);
-      return await this.usersRepository.save(user);
+      console.log('User exists');
+      console.log(id);
+      if (userUpdate.username)
+      {
+        console.log("there is a username to update"); 
+        await this.usersRepository.update(id, userUpdate.username);
+      }
+      if (userUpdate.avatar)
+      await this.usersRepository.update(id, userUpdate.avatar);
+      return await this.usersRepository.findOneBy({
+        id: id
+      });
     }
     return 'There is no user to update';
   }
 
   async remove(id: number) {
     const user = await this.usersRepository.findOneBy({
-      id: id
+      id: id,
     })
     if (!user)
       return ('Cant delete an inexistant user');
@@ -59,7 +69,7 @@ export class UserService {
 
   async setAvatar(id: number, file: any) {
     const user = await this.usersRepository.findOneBy({
-      id: id
+      id: id,
     })
     if (user)
     {

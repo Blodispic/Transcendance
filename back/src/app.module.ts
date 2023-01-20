@@ -8,26 +8,27 @@ import { UserModule } from './user/user.module';
 import { OauthModule } from './Oauth/Oauth.module';
 import { ConfigModule } from '@nestjs/config';
 import { MulterModule } from '@nestjs/platform-express';
+import { Results } from './results/entities/results.entity';
 
 @Module({
   imports: [
-    ResultModule,
     TypeOrmModule.forRoot({
       type: 'postgres',
       host: 'localhost',
       port: 5432,
       username: 'admin',
       password: 'admin',
-      entities: [User],
+      entities: [User, Results],
       synchronize: true,
-      dropSchema: true,    //A ENLEVER QUAND PLUS BESOIN (ça reset la db a chaque changement)
+      //dropSchema: true,    //A ENLEVER QUAND PLUS BESOIN (ça reset la db a chaque changement)
     }),
     MulterModule.register({
       dest: './files',
     }),
     ConfigModule.forRoot(),
-    UserModule,
     OauthModule,
+    ResultModule,
+    UserModule,
   ],
   controllers: [AppController],
   providers: [AppService],

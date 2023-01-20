@@ -7,7 +7,7 @@ export class Results {
   id: number;
 
   @ManyToOne(type => User, user => user.results)
-  user: User;
+  user: User;  
 
   @Column()
   winner: string;

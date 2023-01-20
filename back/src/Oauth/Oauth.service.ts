@@ -72,6 +72,7 @@ export class OauthService {
       "email": data.email,
       "status": "online",
       "elo": 1000,
+      "avatar": data.image,
     }
 
     await this.usersService.create(userReturn)

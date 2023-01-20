@@ -1,4 +1,4 @@
-import { Results } from "src/results/entities/results.entity";
+import { Results } from "../../results/entities/results.entity";
 import { Column, Entity, PrimaryGeneratedColumn, ManyToMany, JoinTable, OneToMany } from "typeorm";
 
 @Entity()
@@ -21,9 +21,6 @@ export class User {
   @Column()
   avatar: string;
 
-  @Column({ default: true })
-  isActive: boolean;
-
   @ManyToMany(type => User, user => user.friends)
   @JoinTable()
     friends: User[];
@@ -38,5 +35,8 @@ export class User {
 
   @OneToMany(type => Results, result => result.user)
   results: Results[];
+
+  @Column({ default: true })
+  isActive: boolean;
 }
 
