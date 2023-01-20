@@ -9,7 +9,7 @@ import { UserService } from './user.service';
 
 @Controller('user')
 export class UserController {
-  constructor(private readonly userService: UserService) { }
+  constructor(private readonly userService: UserService) {}
 
   @Post()
   async create(@Body() createUserDto: CreateUserDto): Promise<User> {
@@ -40,8 +40,8 @@ export class UserController {
       fileFilter: imageFileFilter,
     }),
   )
-  async setAvatar(@Param('id') id: number, @UploadedFile() file: any) {
-    await this.userService.setAvatar(id, file);
+  async setAvatar(@Param('id') id: number, @UploadedFile() file: any, @Body('username') username: string) {
+    await this.userService.setAvatar(id, username, file);
     return { message: 'Avatar set successfully' };
   }
 
@@ -54,19 +54,19 @@ export class UserController {
   remove(@Param('id') id: string) {
     return this.userService.remove(+id);
   }
-
+ 
   @Post('addfriend/:id')
   async addFriend(@Param('id') id: number, @Body() friend: User) {
-    return await this.userService.addFriend(id, friend);
+      return await this.userService.addFriend(id, friend);
   }
 
   @Post(':id/addfriend/:friendId')
   async addFriendbyId(@Param('id') id: number, @Param('friendId') friendId: number) {
-    return await this.userService.addFriendById(id, friendId);
+      return await this.userService.addFriendById(id, friendId);
   }
 
   @Delete('deletefriend/:id')
-  async deleteFriend(@Param('id') id: number, @Body() friend: User) {
-    return await this.userService.removeFriend(id, friend);
-  }
+    async deleteFriend(@Param('id') id: number, @Body() friend: User) {
+        return await this.userService.removeFriend(id, friend);
+    }
 }
