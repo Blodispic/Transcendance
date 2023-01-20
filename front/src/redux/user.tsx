@@ -1,29 +1,35 @@
-import { createSlice } from '@reduxjs/toolkit'
+import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { useReducer } from 'react'
+import { IUser, UserStatus } from '../interface/User';
+
+interface StateTest {
+    user: IUser | undefined,
+    loading: boolean,
+}
+
+const initialUser: StateTest = {
+    user: undefined,
+    loading: true,
+}
 
 export const userSlice = createSlice({
     name: 'user',
-    initialState: {
-        username: '',
-        status: false,
-        avatar: '',
-    },
+    initialState: initialUser,
     reducers: {
-
-        // change_name: (state, action) => {
-        //     state.username = action;
-        // },
-        change_status: (state) => {
-            if (state.status == true)
-                state.status = false;
-            else
-                state.status = true;
+        setUser: (state, {payload}: PayloadAction<IUser>) => {
+            state.user = payload
+        },  
+         change_name: (state, {payload}: PayloadAction<string>) => {
+            state.user!.username = payload;
         },
-        // change_avatar (state, action) {
-        //     state.status = action;
-        // },
-    }
+        change_status: (state, {payload}: PayloadAction<UserStatus>) => {
+           state.user!.status = payload;
+        },
+        change_avatar (state, {payload}: PayloadAction<string>) {
+            state.user!.avatar = payload;
+        },
+    },
 })
 
-export const {change_status} = userSlice.actions
+export const {setUser, change_status, change_name, change_avatar} = userSlice.actions
 export default userSlice.reducer

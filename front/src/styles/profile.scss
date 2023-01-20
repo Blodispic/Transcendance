@@ -6,12 +6,15 @@
 
 .profile-header {
 
+
+
     width: 100%;
-    padding-top: 0%;
     height: 350px;
     display: flex;
-    background: url(https://cdn.intra.42.fr/coalition/cover/305/téléchargement__2_.png);
-
+    background-image: url(https://cdn.intra.42.fr/coalition/cover/305/téléchargement__2_.png);
+    background-size: cover;
+    background-position: center;
+    
     .left-part {
         width: 300px;
         align-self: center;

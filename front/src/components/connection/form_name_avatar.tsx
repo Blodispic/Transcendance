@@ -5,9 +5,9 @@ import { Link } from 'react-router-dom';
 import { userInfo } from 'os';
 import { stringify } from 'querystring';
 
-export default function NameForm(props: { user: IUser }) {
+export default function NameForm() {
 
-    const { user } = props;
+
     const [newname, setNewname] = useState('');
     const [file, setFile] = useState<File | undefined>(undefined);
     const [avatar, setavatar] = useState<string>('');
@@ -22,7 +22,7 @@ export default function NameForm(props: { user: IUser }) {
 
             console.log("ICIIIIIII");
             
-            console.log(user.id);
+
             
         const response = await fetch(`http://localhost:4000/user/${user.id}`, {
             method: 'PATCH',
