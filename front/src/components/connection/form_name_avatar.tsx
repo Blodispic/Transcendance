@@ -20,7 +20,7 @@ export default function NameForm() {
         if (myUser.user != undefined) {
             formData.append('username', newname);
             if (file)
-                formData.append('avatar', file);
+                formData.append('file', file);
 
             console.log("ICIIIIIII");
             // await fetch(`http://localhost:4000/user/${myUser.user.id}`, {
