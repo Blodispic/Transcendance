@@ -13,10 +13,8 @@ export class UserService {
   ) { }
 
   async create(createUserDto: CreateUserDto): Promise<User> {
-
     const user: User = this.usersRepository.create(createUserDto);
-    const result = await this.usersRepository.insert(user);
-    return { ...user, ...result.generatedMaps[0] };
+    return this.usersRepository.save(user);
   }
 
   findAll() {
