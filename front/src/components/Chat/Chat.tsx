@@ -23,42 +23,43 @@ function DMList() {
 }
 
 function UserList() {
-	return 	<ul>
+	return <ul>
 		<li> user1 </li>
 		<li> user2 </li>
 		<li> user3 </li>
 	</ul>
 }
 
-function Chat(this: any) {
+function Chat() {
 
-const [newInput, setNewInput] = React.useState("");
-const [messageList, setMessageList] = React.useState<any[]>([]);
 	
-const handleInput = (e: React.ChangeEvent<HTMLInputElement>) => {
-	if (e.target.value == "")
-		return ;
-	setNewInput(e.target.value);
-};
+	const [newInput, setNewInput] = React.useState("");
+	const [messageList, setMessageList] = React.useState<any[]>([]);
 
-const handleSubmitNewMessage = (e: React.FormEvent<HTMLFormElement>) => {
-	e.preventDefault();
-	if (newInput != "")
-		socket.emit('sendMessage', { newInput });
-	setNewInput("");
-}
+	const handleInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+		if (e.target.value == "")
+			return;
+		setNewInput(e.target.value);
+	};
 
-socket.on('recMessage', ( data ) => {
-	buildNewMessage(data);
-})
+	const handleSubmitNewMessage = (e: React.FormEvent<HTMLFormElement>) => {
+		e.preventDefault();
+		if (newInput != "")
+			socket.emit('sendMessage', { newInput });
+		setNewInput("");
+	}
 
-const buildNewMessage = (data: any) => {
-	setMessageList([...messageList, data]);
-}
+	socket.on('recMessage', (data) => {
+		buildNewMessage(data);
+	})
+
+	const buildNewMessage = (data: any) => {
+		setMessageList([...messageList, data]);
+	}
 	return (
 		<div id="chat-container">
 			<div className="left-sidebar">
-				<ChannelList></ChannelList>
+				<ChannelList />
 			</div>
 			<div className="chat-body">
 				<div className="chat-messages">
@@ -68,14 +69,14 @@ const buildNewMessage = (data: any) => {
 						</div>
 					))}
 				</div>
-				<form id="input_form" onSubmit={(e) => {handleSubmitNewMessage(e); }}>
-					<input type="text" onChange={(e) => {setNewInput(e.target.value)}} 
-							placeholder="type message here" value={newInput}/>
+				<form id="input_form" onSubmit={(e) => { handleSubmitNewMessage(e); }}>
+					<input type="text" onChange={(e) => { setNewInput(e.target.value) }}
+						placeholder="type message here" value={newInput} />
 				</form>
 
 			</div>
 			<div className="right-sidebar">
-				<UserList></UserList>
+				<UserList />
 			</div>
 		</div>
 	);
