@@ -15,21 +15,31 @@ export default function NameForm() {
     const formData = new FormData();
     const myUser = useAppSelector(state => state.user);
 
-    const fetch_name_avatar = async (e:any) => {
+    const fetch_name_avatar = async (e: any) => {
         e.preventDefault();
         if (myUser.user != undefined) {
-            formData.append('newname', newname);
+            formData.append('username', newname);
             if (file)
-                formData.append('file', file);
+                formData.append('avatar', file);
 
             console.log("ICIIIIIII");
-            const response = await fetch(`http://localhost:4000/user/${myUser.user.id}`, {
-                method: 'PATCH',
-                headers: {
-                    'Content-Type': 'multipart/form-data',
-                },
+            // await fetch(`http://localhost:4000/user/${myUser.user.id}`, {
+            //     method: 'PATCH',
+            //     headers: {
+            //         'Content-Type': 'application/json',
+            //     },
+            //     body: JSON.stringify({ username: newname }),
+            // })
+            const response = await fetch(`http://localhost:4000/user/${myUser.user.id}/setavatar`, {
+                method: 'POST',
+                // headers: {
+                //     'Content-Type': 'multipart/form-data',
+                // },
                 body: formData,
             })
+            formData.delete('newname');
+            if (file)
+                formData.delete('file');
         }
     }
 
