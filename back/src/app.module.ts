@@ -5,8 +5,11 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { User } from './user/entities/user.entity';
 import { UserModule } from './user/user.module';
-import { OauthModule } from './Oauth/Oauth.module';
+import { ChannelModule } from './channel/channel.module';
+import { OauthModule } from './oauth/oauth.module';
 import { ConfigModule } from '@nestjs/config';
+import { ChatGateway } from './chat/chat.gateway';
+import { Channel } from './channel/entities/channel.entity';
 import { MulterModule } from '@nestjs/platform-express';
 import { Results } from './results/entities/results.entity';
 
@@ -18,7 +21,7 @@ import { Results } from './results/entities/results.entity';
       port: 5432,
       username: 'admin',
       password: 'admin',
-      entities: [User, Results],
+      entities: [User, Results, Channel],
       synchronize: true,
       //dropSchema: true,    //A ENLEVER QUAND PLUS BESOIN (ça reset la db a chaque changement)
     }),
@@ -27,10 +30,11 @@ import { Results } from './results/entities/results.entity';
     }),
     ConfigModule.forRoot(),
     OauthModule,
+    ChannelModule,
     ResultModule,
     UserModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, ChatGateway],
 })
 export class AppModule { }
