@@ -1,3 +1,4 @@
+import { Channel } from "src/channel/entities/channel.entity";
 import { Results } from "../../results/entities/results.entity";
 import { Column, Entity, PrimaryGeneratedColumn, ManyToMany, JoinTable, OneToMany } from "typeorm";
 
@@ -38,5 +39,10 @@ export class User {
 
   @Column({ default: true })
   isActive: boolean;
+
+  @ManyToMany(() => Channel)
+	channels: Channel[]
+
+
 }
 
