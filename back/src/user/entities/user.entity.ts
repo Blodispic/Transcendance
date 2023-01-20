@@ -17,21 +17,21 @@ export class User {
 
   @Column({ default: 1000 })
   elo: number;
-  
+
   @Column()
   avatar: string;
 
   @ManyToMany(type => User, user => user.friends)
   @JoinTable()
-    friends: User[];
+  friends: User[];
 
   //      STATISTIQUES        //
-  
-  @Column({ default: 0 })
-	win: number;
 
-	@Column({ default: 0 })
-	loose: number;
+  @Column({ default: 0 })
+  win: number;
+
+  @Column({ default: 0 })
+  loose: number;
 
   @OneToMany(type => Results, result => result.user)
   results: Results[];

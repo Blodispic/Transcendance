@@ -5,7 +5,7 @@ import { AppService, editFileName, imageFileFilter } from './app.service';
 
 @Controller()
 export class AppController {
-  constructor(private readonly appService: AppService) {}
+  constructor(private readonly appService: AppService) { }
 
   @Get()
   getHello(): string {
@@ -14,7 +14,7 @@ export class AppController {
 
   @Get(':imgpath')
   seeAvatar(@Param('imgpath') image: any, @Res() res: any) {
-  return res.sendFile(image, { root: './files' });
-}
+    return res.sendFile(image, { root: './files' });
+  }
 
 }

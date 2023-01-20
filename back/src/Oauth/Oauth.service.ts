@@ -6,15 +6,6 @@ export class OauthService {
 
   constructor(private usersService: UserService) { }
 
-  async validateUser(username: string): Promise<any> {
-    const user = await this.usersService.getByUsername(username);
-    if (user) {
-      const { ...result } = user;
-      return result;
-    }
-    return null;
-  }
-
   async getToken(oauthCode: string): Promise<any> {
     const api_key = process.env.API42_UID;
     const private_key = process.env.API42_SECRET;
@@ -29,7 +20,7 @@ export class OauthService {
     };
 
     console.log(body);
-    
+
     const response = await fetch('https://api.intra.42.fr/oauth/token', {
       method: 'POST',
       headers: {
@@ -42,8 +33,7 @@ export class OauthService {
     //   throw new Error(`AuthService getToken failed, HTTP status ${response.status}`);
     // }
     const data = await response.json();
-    console.log(data);
-    
+
     return this.getInfo(data.access_token);
 
   }
@@ -56,13 +46,9 @@ export class OauthService {
       },
     });
     const data = await response.json();
-    
+
     const user = await this.usersService.getByUsername(data.login);
-    console.log(data);
-    console.log(data.login);
-    console.log(data.email);
-    console.log(user);
-    
+
     if (user)
       return (user);
     if (data.error)
@@ -74,25 +60,9 @@ export class OauthService {
       "elo": 1000,
       "avatar": data.image.link,
     }
-
     await this.usersService.create(userReturn)
-  
     return userReturn;
-    
 
-    // }
-    //Creation nouveau user
-
-    // will replace data with user and send user from info in data
-    //Create a user with the new data, cf: image on discord
-    // Need to create username (login: )
-    // Need to create elo with a base of ? (1000?, 0?), we probably will take it from a define
-    // Need to create avatar that will take a link (image: )
-    // Friend vide
-    // History vide 
-
-    //Sinon
-    //return await user = findonebyid
   }
 }
 
