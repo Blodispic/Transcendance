@@ -47,7 +47,7 @@ export default function Profile() {
 
                                 <div className="left-part">
                                         <div className='avatar'>
-                                                <img className='logo' src='https://cdn.intra.42.fr/users/8a772a427f00bdd6cf517fb8953d8813/elabasqu.jpg' />
+                                                <img className='logo' src={User.avatar} />
                                         </div>
                                 </div>
                                 <div className='info-header'>
@@ -71,7 +71,7 @@ export default function Profile() {
                                                 </div>
 
                                                 <div className=' block'>
-                                                        <span >CONNECTED</span>
+                                                        <span >{User.status}</span>
                                                 </div>
                                         </div>
                                 </div>

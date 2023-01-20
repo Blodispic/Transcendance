@@ -65,11 +65,12 @@ export default function Connection() {
 
                 // let user: IUser = await response.json();
                 // setUser(user);
-                console.log(user);                
-                if (myVar == false)
-                    setMyvar(true);
+                // console.log(user);                
+
             }
             fetchcode();
+            if (myVar == false)
+                setMyvar(true);
             //  navigate('/Home');
         }
     }, [])
@@ -86,7 +87,7 @@ export default function Connection() {
             }
             {
                 myVar == true && user != undefined &&
-                <NameForm user={user} /> 
+                <NameForm user={user} />
             }
         </div>
     );

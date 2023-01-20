@@ -1,4 +1,5 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Results } from "../../results/entities/results.entity";
+import { Column, Entity, PrimaryGeneratedColumn, ManyToMany, JoinTable, OneToMany } from "typeorm";
 
 @Entity()
 export class User {
@@ -12,13 +13,30 @@ export class User {
   email: string;
 
   @Column()
-  password: string;
+  status: string;
 
-  // @Column()
-  // avatar: HTMLImageElement;
+  @Column({ default: 1000 })
+  elo: number;
+  
+  @Column()
+  avatar: string;
+
+  @ManyToMany(type => User, user => user.friends)
+  @JoinTable()
+    friends: User[];
+
+  //      STATISTIQUES        //
+  
+  @Column({ default: 0 })
+	win: number;
+
+	@Column({ default: 0 })
+	loose: number;
+
+  @OneToMany(type => Results, result => result.user)
+  results: Results[];
 
   @Column({ default: true })
   isActive: boolean;
-
-  // ON vera le reste plus tard
 }
+
