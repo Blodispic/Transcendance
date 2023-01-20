@@ -1,3 +1,4 @@
+import { ResultModule } from './results/results.module';
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
@@ -9,6 +10,8 @@ import { OauthModule } from './oauth/oauth.module';
 import { ConfigModule } from '@nestjs/config';
 import { ChatGateway } from './chat/chat.gateway';
 import { Channel } from './channel/entities/channel.entity';
+import { MulterModule } from '@nestjs/platform-express';
+import { Results } from './results/entities/results.entity';
 
 @Module({
   imports: [
@@ -18,17 +21,20 @@ import { Channel } from './channel/entities/channel.entity';
       port: 5432,
       username: 'admin',
       password: 'admin',
-      entities: [User, Channel],
+      entities: [User, Results, Channel],
       synchronize: true,
-      // dropSchema: true,    //A ENLEVER QUAND PLUS BESOIN (ça reset la db a chaque changement)
+      //dropSchema: true,    //A ENLEVER QUAND PLUS BESOIN (ça reset la db a chaque changement)
+    }),
+    MulterModule.register({
+      dest: './files',
     }),
     ConfigModule.forRoot(),
-    UserModule,
     OauthModule,
     ChannelModule,
+    ResultModule,
+    UserModule,
   ],
   controllers: [AppController],
   providers: [AppService, ChatGateway],
 })
-export class AppModule {}
-
+export class AppModule { }
