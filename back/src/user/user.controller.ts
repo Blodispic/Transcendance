@@ -13,11 +13,11 @@ export class UserController {
 
   @Post()
   async create(@Body() createUserDto: CreateUserDto): Promise<User> {
-    try {
+    // try {
       return await this.userService.create(createUserDto);
-    } catch (error) {
-      throw new BadRequestException(error.detail);
-    }
+    // } catch (error) {
+      // throw new BadRequestException(error.detail);
+    // }
   }
 
   @Get()

@@ -1,5 +1,5 @@
 import { Channel } from "src/chat/channel/entities/channel.entity";
-import { Results } from "src/results/entities/results.entity";
+// import { Results } from "src/results/entities/results.entity";
 import { Column, Entity, PrimaryGeneratedColumn, ManyToMany, JoinTable, OneToMany } from "typeorm";
 
 @Entity()
@@ -13,13 +13,13 @@ export class User {
   @Column({ unique: true })
   email: string;
 
-  @Column()
+  @Column( { default: ""})
   status: string;
 
   @Column({ default: 1000 })
   elo: number;
   
-  @Column()
+  @Column( { default: "" })
   avatar: string;
 
   @Column({ default: true })
@@ -43,7 +43,7 @@ export class User {
 	loose: number;
 
   
-  @OneToMany(type => Results, result => result.user)
-  results: Results[];
+  // @OneToMany(type => Results, result => result.user)
+  // results: Results[];
 }
 

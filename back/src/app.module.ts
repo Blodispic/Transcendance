@@ -1,4 +1,4 @@
-import { ResultModule } from './results/results.module';
+// import { ResultModule } from './results/results.module';
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
@@ -14,12 +14,12 @@ import { MulterModule } from '@nestjs/platform-express';
 
 @Module({
   imports: [
-    ResultModule,
+    // ResultModule,
     TypeOrmModule.forRoot({
       type: 'postgres',
       host: 'localhost',
       port: 5432,
-      username: 'admin',
+      username: 'postgres',
       password: 'admin',
       entities: [User, Channel],
       synchronize: true,
