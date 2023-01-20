@@ -17,7 +17,7 @@
 	.left-sidebar {
 		float: left;
 		width: 20%;
-		background-color: var(--sub-color2);
+		background-color: lightgray;//var(--sub-color2);
 		padding: 10px;
 	}
 
@@ -26,12 +26,12 @@
 		float:none;
 		width: 60%;
 		// padding: 20px 0px 20px 15px;
-		background-color: var(--secondary-color);
+		background-color: rgba(232, 232, 232, 0.966);//var(--secondary-color);
 		align-items: center;
 
 		.chat-messages {
-			transform: rotate(180deg);
-			direction: rtl;
+			// transform: rotate(180deg);
+			// direction: rtl;
 			height: calc(100vh - 150px);
 			overflow-y: scroll;
 			
@@ -45,8 +45,8 @@
 				border-radius: 15px;
 				padding: 10px;
 				margin: 20px; // 0px;
-				transform: rotate(180deg);
-				direction: ltr;
+				// transform: rotate(180deg);
+				// direction: ltr;
 				word-wrap: break-word;
 			}
 		}
@@ -65,12 +65,33 @@
 				border: none;
 				bottom: 0;
 		}
+		.button {
+			display: inline-block;
+			width: auto;
+			border-radius: 15px;
+			font-size: 15pt;
+			text-align: center;
+			cursor: pointer;
+			padding: 8px 8px;
+			background: var(--primary-color);
+			color: var(--secondary-color); //font color
+			transition: .3s;
+			border: 2px solid var(--primary-color);
+			margin-left: 5px;
+		}
+		
+		.button:hover {
+			box-shadow: none;
+			color: var(--primary-color);
+			background: var(--secondary-color);
+		}
+
 	}
 	
 	.right-sidebar {
 		float: right;
 		width: 20%;
-		background-color: var(--sub-color2);
+		background-color: lightgray; //var(--sub-color2);
 		padding: 10px;
 	}
 
@@ -93,23 +114,3 @@
 		// 		border-radius: 15px;
 		// 	}
 			
-		// 	.button {
-		// 		display: inline-block;
-		// 		width: auto;
-		// 		border-radius: 15px;
-		// 		font-size: 15pt;
-		// 		text-align: center;
-		// 		cursor: pointer;
-		// 		padding: 8px 8px;
-		// 		background: var(--primary-color);
-		// 		color: var(--secondary-color); //font color
-		// 		transition: .3s;
-		// 		border: 2px solid var(--primary-color);
-		// 		margin-left: 5px;
-		// 	}
-			
-		// 	.button:hover {
-		// 		box-shadow: none;
-		// 		color: var(--primary-color);
-		// 		background: var(--secondary-color);
-		// 	}
