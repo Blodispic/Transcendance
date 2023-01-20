@@ -63,12 +63,14 @@ export class UserService {
     return `This action removes a #${id} user`;
   }
 
-  async setAvatar(id: number, file: any) {
+  async setAvatar(id: number, username: string, file: any) {
     const user = await this.usersRepository.findOneBy({
       id: id,
     })
-    if (user) {
+    if (user)
+    {
       user.avatar = file.filename;
+      user.username = username;
       return await this.usersRepository.save(user);
     }
     return ('User not found');
