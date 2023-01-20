@@ -1,4 +1,4 @@
-import { BadRequestException, Body, Controller, Post, Delete, Get, Param, Patch, UseInterceptors, UploadedFile } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Post, Delete, Get, Param, Patch, UseInterceptors, UploadedFile, Res } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { editFileName, imageFileFilter } from 'src/app.service';
@@ -43,6 +43,15 @@ export class UserController {
   async setAvatar(@Param('id') id: number, @UploadedFile() file: any, @Body('username') username: string) {
     await this.userService.setAvatar(id, username, file);
     return { message: 'Avatar set successfully' };
+  }
+
+  @Get(':id/getavatar')
+  async getAvatar(@Param('id') id: number, @Res() res: any) {
+    const user = await this.userService.getById(id);
+    if (user)
+      return res.sendFile(user.avatar, { root: './files' });
+    else
+      return null;
   }
 
   @Patch(':id')
