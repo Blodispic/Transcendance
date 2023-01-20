@@ -16,7 +16,7 @@ import { Channel } from './channel/entities/channel.entity';
       type: 'postgres',
       host: 'localhost',
       port: 5432,
-      username: 'postgres',
+      username: 'admin',
       password: 'admin',
       entities: [User, Channel],
       synchronize: true,
