@@ -1,42 +1,30 @@
-import * as React from 'react';
-import { useParams, useSearchParams } from "react-router-dom";
-import Fetchid from '../utils/fetch_id';
-import { IUser } from '../../interface/User';
 import { useEffect, useState } from 'react';
-import { userInfo } from 'os';
+import { useParams, useSearchParams } from "react-router-dom";
+import { IUser } from '../../interface/User';
 import '../../styles/profile.scss';
-import { useAppSelector } from '../../redux/Hook';
 
 export default function Profile() {
-
-        const [User, setUser] = useState<IUser | undefined>(undefined);
+        const [user, setUser] = useState<IUser | undefined>(undefined);
         const [searchParams] = useSearchParams()
+        let avatar: string = "";
         let { id } = useParams();
-        const myUser = useAppSelector(state => state.user);
 
-        // useEffect(() => {
-        //         if (id) {
-        //                 console.log(id);
+        useEffect(() => {
+                if (id) {
+                        const fetchid = async () => {
+                                const response = await fetch(`http://localhost:4000/user/${id}`, {
+                                        method: 'GET',
+                                })
+                                setUser(await response.json());
+                        }
+                        fetchid()
+                }
+        }, [])
 
-        //                 const fetchid = async () => {
-        //                         const response = await fetch(`http://localhost:4000/user/${id}`, {
-        //                                 method: 'Get',
-        //                                 headers: {
-        //                                         'Content-Type': 'application/json',
-        //                                 },
-        //                         })
+        console.log(user);
+        console.log("avatar", avatar);
 
-        //                         let user: IUser = await response.json();
-        //                         setUser(user);
-        //                         console.log(user);
-        //                 }
-        //                 fetchid()
-        //         }
-        // }, [])
-
-        console.log(myUser);
-        
-        if (myUser.user == undefined) {
+        if (user == undefined || avatar == undefined) {
                 return (
                         <div className='center'>
                                 <h1>USER DONT EXIST </h1>
@@ -45,12 +33,10 @@ export default function Profile() {
         }
         return (
                 <div className='all'>
-
                         <div className='profile-header'>
-
                                 <div className="left-part">
                                         <div className='avatar'>
-                                                <img className='logo' src={myUser.user.avatar} />
+                                                <img className='logo' src={`http://localhost:4000/user/${id}/avatar`} />
                                         </div>
                                 </div>
                                 <div className='info-header'>
@@ -69,12 +55,12 @@ export default function Profile() {
                                         <div className='block'>
 
                                                 <div className='block'>
-                                                        <span>{myUser.user.username}</span>
+                                                        <span>{user.username}</span>
 
                                                 </div>
 
                                                 <div className=' block'>
-                                                        <span >{myUser.user.status}</span>
+                                                        <span >{user.status}</span>
                                                 </div>
                                         </div>
                                 </div>

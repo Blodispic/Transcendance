@@ -1,10 +1,10 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
+import { Results } from "src/results/entities/results.entity";
 import { Repository } from "typeorm";
 import { CreateUserDto } from "../user/dto/create-user.dto";
 import { UpdateUserDto } from "../user/dto/update-user.dto";
 import { User } from "./entities/user.entity";
-import { Results } from "src/results/entities/results.entity";
 
 @Injectable()
 export class UserService {
@@ -26,9 +26,15 @@ export class UserService {
     return this.usersRepository.find();
   }
 
-  getById(id: number) {
+  getById(id: number): Promise<User | null> {
     return this.usersRepository.findOneBy({
       id: id
+    })
+  }
+
+  getByLogin(login: string): Promise<User | null> {
+    return this.usersRepository.findOneBy({
+      login: login
     })
   }
 

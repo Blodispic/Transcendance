@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnprocessableEntityException } from '@nestjs/common';
 import { extname } from 'path';
 
 @Injectable()
@@ -8,9 +8,9 @@ export class AppService {
   }
 }
 
-export const imageFileFilter = (req: any, file: any, callback: any) => {
+export const imageFilter = (req: any, file: any, callback: any) => {
   if (!file.originalname.match(/\.(jpg|jpeg|png|gif)$/)) {
-    return callback(new Error('Only image files are allowed!'), false);
+    return callback(new UnprocessableEntityException('Only image files are allowed!'), false);
   }
   callback(null, true);
 };

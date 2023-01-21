@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { CreateUserDto } from 'src/user/dto/create-user.dto';
 import { UserService } from '../user/user.service';
 
 @Injectable()
@@ -33,6 +34,7 @@ export class OauthService {
     //   throw new Error(`AuthService getToken failed, HTTP status ${response.status}`);
     // }
     const data = await response.json();
+    console.log(data);
 
     return this.getInfo(data.access_token);
 
@@ -47,21 +49,24 @@ export class OauthService {
     });
     const data = await response.json();
 
-    const user = await this.usersService.getByUsername(data.login);
+    console.log(data);
+
+    const user = await this.usersService.getByLogin(data.login);
+
+    console.log(user);
 
     if (user)
       return (user);
+
     if (data.error)
       return (data.error);
-    const userReturn = {
-      "username": data.login,
-      "email": data.email,
-      "status": "online",
-      "avatar": data.image.link,
+    const userDto: CreateUserDto = {
+      username: data.login,
+      login: data.login,
+      email: data.email,
+      intra_avatar: data.image.link,
     }
-    await this.usersService.create(userReturn)
-    return this.usersService.getByUsername(userReturn.username);
-
+    return await this.usersService.create(userDto);
   }
 }
 
