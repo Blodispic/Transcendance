@@ -2,6 +2,7 @@ import { Injectable } from "@nestjs/common";
 import { Socket } from "dgram";
 import { start } from "repl";
 import { Server } from "socket.io";
+import { Results } from "src/results/entities/results.entity";
 import { Ball, GameState, Move, Player, Vec2 } from "./game.interfaces";
 
 const GAME_RATIO = 1.5;
@@ -27,6 +28,7 @@ let balldefault: Ball = {
 let gameStateDefault: GameState = {
     area: { x: GAME_INTERNAL_WIDTH, y: GAME_INTERNAL_WIDTH * GAME_RATIO },
     scale: 1,
+    scoreMax: 10,
     resetCooldown: 60,
     client_area: vector_zero(),
     player1: {
@@ -52,6 +54,7 @@ let gameStateDefault: GameState = {
         side: 1,
     },
     ball: balldefault,
+    gameFinished: false,
 };
 
 @Injectable()
@@ -73,65 +76,58 @@ export class GameService {
 }
 
 class Game {
-    server: Server;
+	server: Server;
 
-    constructor(server: Server) {
-        this.server = server;
-        let gameState: GameState = gameStateDefault;
-        this.resetState(gameState); 
-        setInterval(() => {
-            gameState = this.updateState(gameState);
-        }, 1000 / 60);
-    }
-    
-    updateMove1(newMove1:Move)
-    {
-        console.log("Move1 received: left:" + newMove1.left + " right: " + newMove1.right);
-        move1 = newMove1;
-    }
+	constructor(server: Server) {
+		this.server = server;
+		let gameState: GameState = gameStateDefault;
+		this.resetState(gameState); 
+		setInterval(() => {
+		    gameState = this.updateState(gameState);
+		}, 1000 / 60);
+	}
 
-    updateMove2(newMove2:Move)
-    {
-    console.log("Move2 received: left:" + newMove2.left + " right: " + newMove2.right);
-        move2 = newMove2;
-    }
+	updateMove1(newMove1:Move)
+	{
+	    console.log("Move1 received: left:" + newMove1.left + " right: " + newMove1.right);
+	    move1 = newMove1;
+	}
 
-    updateGameState(state: GameState) {
-        state.scale = state.client_area.x / state.area.x;
-    
-        state.player1.input = { ...move1 };
-        state.player2.input = { ...move2 };
-        // this.server.on("Players", (newState: GameState)=> {
-        //     state.player1.input = newState.player1.input;
-        //     state.player2.input = newState.player2.input;
-        // })
-        // this.server.on("Player", (newPlayer: Player)=> {
-        //     if (newPlayer.side === 0)
-        //     {
-        //         state.player1.paddle.position = newPlayer.paddle.position;
-        //     }
-        //     else
-        //         state.player2.paddle.position = newPlayer.paddle.position;
-        // })
-        this.server.on("Move1", (newMove1: Move) => {
-            console.log("Move1 received: left:" + newMove1.left + " right: " + newMove1.right);
-            move1 = newMove1;
-        })
-        this.server.on("Move2", (newMove2: Move) => { 
-            console.log("Move2 received: left:" + newMove2.left + " right: " + newMove2.right);
-            move2 = newMove2;
-        })
-        if (state.resetCooldown <= 0)
-        {
-            this.movePlayer(state.player1, state);
-            this.movePlayer(state.player2, state);
-            this.wallCollision(state.ball, state);
-            this.moveBall(state.ball);
-        }
-        else
-            state.resetCooldown--;
-        return state;
-    }
+	updateMove2(newMove2:Move)
+	{
+	console.log("Move2 received: left:" + newMove2.left + " right: " + newMove2.right);
+	    move2 = newMove2;
+	}
+
+	updateGameState(state: GameState) {
+		state.scale = state.client_area.x / state.area.x;
+		
+		state.player1.input = { ...move1 };
+		state.player2.input = { ...move2 };
+		if (state.player1.score === state.scoreMax || state.player2.score === state.scoreMax)
+		{
+			state.gameFinished = true;
+		}
+		this.server.on("Move1", (newMove1: Move) => {
+			console.log("Move1 received: left:" + newMove1.left + " right: " + newMove1.right);
+			move1 = newMove1;
+		})
+		this.server.on("Move2", (newMove2: Move) => { 
+			console.log("Move2 received: left:" + newMove2.left + " right: " + newMove2.right);
+			move2 = newMove2;
+		})
+		if (state.resetCooldown <= 0 && state.gameFinished === false)
+		{
+			this.movePlayer(state.player1, state);
+			this.movePlayer(state.player2, state);
+			this.wallCollision(state.ball, state);
+			this.moveBall(state.ball);
+		}
+		else if (state.gameFinished === false)
+			state.resetCooldown--;
+		return state;
+	}
+
     paddleCollision(ball: Ball, player: Player) {
         if (ball.cooldown === 0) {
             if (
@@ -212,9 +208,21 @@ class Game {
             if (ball.position.y > state.area.y - ballRadius) {
                 this.resetState(state);
                 state.player2.score++;
+                if (state.player2.score === state.scoreMax)
+                {
+                    //END THE GAME
+				    state.gameFinished = true;
+					let result: any = {winner: state.player2.name, looser: state.player1.name, winner_score: state.player2.score.toString(), looser_score: state.player1.score.toString()};
+                }
             } else if (ball.position.y < 0 + ballRadius) {
-                this.resetState(state);
+				this.resetState(state);
                 state.player1.score++;
+                if (state.player1.score === state.scoreMax)
+                {
+					//END THE GAME
+				    state.gameFinished = true;
+					let result: any = {winner: state.player1.name, looser: state.player2.name, winner_score: state.player1.score.toString(), looser_score: state.player2.score.toString()};
+                }
             }
         }
     }
@@ -225,6 +233,10 @@ class Game {
             x: state.area.x / 2 - paddleDimensions.x / 2,
             y: state.area.y - paddleDimensions.y,
         };
+        if (state.player1.score === state.scoreMax || state.player2.score === state.scoreMax)
+		    state.gameFinished = true;
+	    else
+		    state.gameFinished = false;
         state.player1.paddle.speed = { x: 0, y: 0 };
         state.player1.paddle.angle = 0;
     
