@@ -27,7 +27,7 @@ import { Results } from './results/entities/results.entity';
       dropSchema: true,    //A ENLEVER QUAND PLUS BESOIN (ça reset la db a chaque changement)
     }),
     MulterModule.register({
-      dest: './files',
+      dest: './storage/images/',
     }),
     ConfigModule.forRoot(),
     UserModule,
