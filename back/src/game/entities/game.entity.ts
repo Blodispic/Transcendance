@@ -2,7 +2,7 @@ import { Entity, Column, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 import { User } from "src/user/entities/user.entity";
 
 @Entity()
-export class Game {
+export class GameInfo {
   @PrimaryGeneratedColumn()
   id: number;
 

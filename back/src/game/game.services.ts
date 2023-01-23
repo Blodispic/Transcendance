@@ -5,16 +5,15 @@ import { start } from "repl";
 import { Server } from "socket.io";
 import { Results } from "src/results/entities/results.entity";
 import { User } from "src/user/entities/user.entity";
+import { UserService } from "src/user/user.service";
 import { Repository } from "typeorm";
+import { GameInfo } from "./entities/game.entity";
 import { Ball, GameState, Move, Player, Vec2 } from "./game.interfaces";
 
 @Injectable()
 export class GameService {
     constructor(
-        @InjectRepository(Game)
-        private readonly gameRepository: Repository<Game>,
-        @InjectRepository(User)
-        private readonly userRepository: Repository<User>
+        private readonly userService: UserService,
       ) {}
     public game: Game;
     public waitingRoom: User[] = [];
