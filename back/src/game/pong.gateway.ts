@@ -27,13 +27,13 @@ export class PongGateway implements OnGatewayConnection, OnGatewayInit {
 	}
 
 	@SubscribeMessage("Move1")
-	HandleMove1(@MessageBody() input: any, @ConnectedSocket() client: Socket)
+	HandleMove1(@MessageBody() input: Move, @ConnectedSocket() client: Socket)
 	{
 		this.gameService.updateMove1(input);
 	}
 
 	@SubscribeMessage("Move2")
-	HandleMove2(@MessageBody() input: any, @ConnectedSocket() client: Socket)
+	HandleMove2(@MessageBody() input: Move, @ConnectedSocket() client: Socket)
 	{
 		this.gameService.updateMove2(input);
 	}
