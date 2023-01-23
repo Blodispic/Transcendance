@@ -452,8 +452,10 @@ function keyEvent(event: KeyboardEvent) {
 		//move left
 		move2.right = false;
 	}
-	socket.emit("Move1", move1);
-	socket.emit("Move2", move2);
+	if (key === "ArrowLeft" || key === "ArrowRight")
+		socket.emit("Move1", move1);
+	else
+		socket.emit("Move2", move2);
 }
 
 function updateState(setGameState: Function) {
