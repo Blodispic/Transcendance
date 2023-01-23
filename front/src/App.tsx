@@ -1,12 +1,17 @@
 import React from 'react';
-
+import { RouterProvider } from "react-router-dom";
+import { useAppSelector } from './redux/Hook';
+import router from './router';
 
 function App() {
-  return (
-    <>
+  const myUser = useAppSelector(state => state.user);
 
-      <h1>Hello world</h1>
-    </>
+  console.log("MY USER", myUser.user);
+
+  return (
+    <div>
+      <RouterProvider router={router} />
+    </div>
   );
 }
 

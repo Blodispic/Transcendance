@@ -1,5 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
+import { Results } from "src/results/entities/results.entity";
 import { Repository } from "typeorm";
 import { CreateUserDto } from "../user/dto/create-user.dto";
 import { UpdateUserDto } from "../user/dto/update-user.dto";
@@ -17,13 +18,23 @@ export class UserService {
     return this.usersRepository.save(user);
   }
 
+  async save(updateUserDto: UpdateUserDto) {
+    return (this.usersRepository.save(updateUserDto));
+  }
+
   findAll() {
     return this.usersRepository.find();
   }
 
-  getById(id: number) {
+  getById(id: number): Promise<User | null> {
     return this.usersRepository.findOneBy({
       id: id
+    })
+  }
+
+  getByLogin(login: string): Promise<User | null> {
+    return this.usersRepository.findOneBy({
+      login: login
     })
   }
 
@@ -58,12 +69,14 @@ export class UserService {
     return `This action removes a #${id} user`;
   }
 
-  async setAvatar(id: number, file: any) {
+  async setAvatar(id: number, username: string, file: any) {
     const user = await this.usersRepository.findOneBy({
       id: id,
     })
-    if (user) {
+    if (user)
+    {
       user.avatar = file.filename;
+      user.username = username;
       return await this.usersRepository.save(user);
     }
     return ('User not found');
@@ -114,5 +127,15 @@ export class UserService {
     const user = await this.usersRepository.findOneBy({ id: id });
     const friend = await this.usersRepository.findOneBy({ id: friendId });
     return user;
+  }
+
+  async getResults(id: number): Promise<Results[]> {
+    const user = await this.usersRepository.findOne({
+      relations: {
+        friends: true,
+      },
+      where: { id: id }
+    });
+    return user ? user.results : [];
   }
 }

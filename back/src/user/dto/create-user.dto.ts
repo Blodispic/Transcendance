@@ -5,8 +5,15 @@ export class CreateUserDto {
 	@IsNotEmpty()
 	username: string;
 
+	@IsString()
+	@IsNotEmpty()
+	login: string;
+
 	@IsEmail()
 	@IsNotEmpty()
 	email: string;
 
+	@IsEmail()
+	@IsNotEmpty()
+	intra_avatar: string;
 }

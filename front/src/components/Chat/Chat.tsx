@@ -1,7 +1,7 @@
 import { toUnicode } from "punycode";
-import * as React from "react";
 import { io } from "socket.io-client";
 import '../../styles/chat.scss'
+import React from "react";
 
 const socket = io("http://" + window.location.hostname + ":4000");
 
@@ -30,7 +30,7 @@ function UserList() {
 	</ul>
 }
 
-function Chat() {
+export default function Chat() {
 
 	
 	const [newInput, setNewInput] = React.useState("");
@@ -81,5 +81,3 @@ function Chat() {
 		</div>
 	);
 }
-
-export default Chat

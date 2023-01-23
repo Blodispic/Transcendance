@@ -24,10 +24,10 @@ import { Results } from './results/entities/results.entity';
       password: 'admin',
       entities: [User, Results, Channel],
       synchronize: true,
-      //dropSchema: true,    //A ENLEVER QUAND PLUS BESOIN (ça reset la db a chaque changement)
+      dropSchema: true,    //A ENLEVER QUAND PLUS BESOIN (ça reset la db a chaque changement)
     }),
     MulterModule.register({
-      dest: './files',
+      dest: './storage/images',
     }),
     ConfigModule.forRoot(),
     UserModule,

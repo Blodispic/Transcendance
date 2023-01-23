@@ -11,22 +11,30 @@ export class User {
   username: string;
 
   @Column({ unique: true })
+  login: string;
+
+  @Column({ unique: true })
   email: string;
 
-  @Column()
-  status: string;
-
-  @Column({ default: 1000 })
-  elo: number;
-
-  @Column()
+  @Column({
+    nullable: true,
+  })
   avatar: string;
+
+  @Column()
+  intra_avatar: string;
 
   @ManyToMany(type => User, user => user.friends)
   @JoinTable()
   friends: User[];
 
+  @ManyToMany(() => Channel)
+  channels: Channel[]
+
   //      STATISTIQUES        //
+
+  @Column({ default: 1000 })
+  elo: number;
 
   @Column({ default: 0 })
   win: number;
@@ -36,13 +44,4 @@ export class User {
 
   @OneToMany(type => Results, result => result.user)
   results: Results[];
-
-  @Column({ default: true })
-  isActive: boolean;
-
-  @ManyToMany(() => Channel)
-	channels: Channel[]
-
-
 }
-
