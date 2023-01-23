@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import Game from './components/Game/Game'
+import GameApp from './components/Game/Game'
 import Profile from './components/Profile/Profile'
 import Connection from './components/connection/Connection';
 import Header from './components/Header/Header';
@@ -47,11 +47,11 @@ const router = createBrowserRouter([
       },
       {
         path: "/Game",
-        element: <Game />,
+        element: <GameApp />,
       },
       {
         path: "/Game/:id",
-        element: <Game />,
+        element: <GameApp />,
       },
 
     ]

@@ -33,7 +33,9 @@
     "postgre": "^0.1.8",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^7.2.0",
-    "typeorm": "^0.3.11"
+    "socket.io": "^4.5.4",
+    "typeorm": "^0.3.11",
+    "websocket": "^1.0.34"
   },
   "devDependencies": {
     "@nestjs/cli": "^9.0.0",

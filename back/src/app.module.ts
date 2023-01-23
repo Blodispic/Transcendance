@@ -5,6 +5,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { User } from './user/entities/user.entity';
 import { UserModule } from './user/user.module';
+import { GameModule } from './game/game.module';
 import { ChannelModule } from './channel/channel.module';
 import { OauthModule } from './oauth/oauth.module';
 import { ConfigModule } from '@nestjs/config';
@@ -26,9 +27,11 @@ import { Results } from './results/entities/results.entity';
       dropSchema: true,    //A ENLEVER QUAND PLUS BESOIN (ça reset la db a chaque changement)
     }),
     MulterModule.register({
-      dest: './files',
+      dest: './storage/images',
     }),
     ConfigModule.forRoot(),
+    UserModule,
+    GameModule,
     OauthModule,
     ChannelModule,
     ResultModule,
