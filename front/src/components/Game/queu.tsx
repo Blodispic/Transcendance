@@ -3,14 +3,15 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useAppSelector } from '../../redux/Hook';
 
-default function function_adam() {
-
-
-}
-
 export default function Queu() {
 
     const myUser = useAppSelector(state => state.user);
+
+    function function_adam() {
+
+        return ();
+
+    }
 
 
     useEffect(() => {
