@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
 import { CreateUserDto } from 'src/user/dto/create-user.dto';
 import { UserService } from '../user/user.service';
 
@@ -8,7 +7,6 @@ export class OauthService {
 
   constructor(
     private usersService: UserService,
-    private jwtService: JwtService
     ) { }
 
   async getToken(oauthCode: string): Promise<any> {
@@ -64,7 +62,7 @@ export class OauthService {
     if (data.error)
       return (data.error);
 
-    const token = this.jwtService.sign(data.login);
+    const token = "test";
 
     const userDto: CreateUserDto = {
       username: data.login,
