@@ -13,6 +13,7 @@ import { ChatGateway } from './chat/chat.gateway';
 import { Channel } from './channel/entities/channel.entity';
 import { MulterModule } from '@nestjs/platform-express';
 import { Results } from './results/entities/results.entity';
+import { FriendRequest } from './user/entities/friend-request.entity';
 
 @Module({
   imports: [
@@ -22,7 +23,7 @@ import { Results } from './results/entities/results.entity';
       port: 5432,
       username: 'admin',
       password: 'admin',
-      entities: [User, Results, Channel],
+      entities: [User, Results, Channel, FriendRequest],
       synchronize: true,
       dropSchema: true,    //A ENLEVER QUAND PLUS BESOIN (ça reset la db a chaque changement)
     }),

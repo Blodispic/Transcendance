@@ -5,12 +5,16 @@ import { Repository } from "typeorm";
 import { CreateUserDto } from "../user/dto/create-user.dto";
 import { UpdateUserDto } from "../user/dto/update-user.dto";
 import { User } from "./entities/user.entity";
+import { FriendRequest } from "./entities/friend-request.entity";
+import { FriendRequestDto } from "./dto/friend-request.dto";
 
 @Injectable()
 export class UserService {
   constructor(
     @InjectRepository(User)
-    private usersRepository: Repository<User>,
+    private readonly usersRepository: Repository<User>,
+    @InjectRepository(FriendRequest)
+    private readonly friendRequestRepository: Repository<FriendRequest>,
   ) { }
 
   async create(createUserDto: CreateUserDto): Promise<User> {
@@ -79,8 +83,7 @@ export class UserService {
     const user = await this.usersRepository.findOneBy({
       id: id,
     })
-    if (user)
-    {
+    if (user) {
       user.avatar = file.filename;
       user.username = username;
       return await this.usersRepository.save(user);
@@ -88,18 +91,44 @@ export class UserService {
     return ('User not found');
   }
 
+  async sendFriendRequest(friendId: number, creator: User) {
+    if (friendId === creator.id) {
+      return ("You can't add yourself");
+    }
+    const friend = await this.usersRepository.findOneBy({ id: friendId });
+    if (!friend) {
+      return ('User does not exist');
+    }
+    const existingRequest = await this.friendRequestRepository.findOne({
+      where: [{ creator: creator }, { receiver: friend }]
+    });
+
+    if (existingRequest) {
+      return ('Friend request already sent');
+    }
+    const friendRequest: FriendRequestDto = {
+      creator,
+      receiver: friend,
+      status: 'pending'
+    }
+    await this.friendRequestRepository.save(friendRequest);
+    return ('Friend request sent');
+  }
+
   //ID est le user actuel, friend est le user a ajouter de type User
   //On push dans le tableau le user friend et on save user qui a été changé dans userRepository
-  async addFriend(id: number, friend: User): Promise<User | null> {
-    const user = await this.usersRepository.findOne({ where: { id } });
-    if (user) {
+  async addFriend(friendId: number, user: User): Promise<User | null> {
+    const friend = await this.usersRepository.findOne({ where: { id: friendId } });
+    if (friend) {
+      friend.friends.push(user);
       user.friends.push(friend);
-      return await this.usersRepository.save(user);
+      this.usersRepository.save(user)
+      return await this.usersRepository.save(friend);
     }
     return (null);
   }
 
-  async addFriendById(id: number, friendId: number): Promise<User | null> {
+  async addFriendById(friendId: number, id: number): Promise<User | null> {
     const user = await this.usersRepository.findOne({
       relations: {
         friends: true,

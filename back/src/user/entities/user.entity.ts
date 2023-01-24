@@ -1,8 +1,9 @@
 import { Channel } from "src/channel/entities/channel.entity";
 import { Results } from "../../results/entities/results.entity";
 import { Column, Entity, PrimaryGeneratedColumn, ManyToMany, JoinTable, OneToMany } from "typeorm";
+import { FriendRequest } from "./friend-request.entity";
 
-@Entity()
+@Entity('user')
 export class User {
   
   @Column()
@@ -28,7 +29,7 @@ export class User {
   @Column()
   intra_avatar: string;
 
-  @ManyToMany(type => User, user => user.friends)
+  @ManyToMany(() => User, user => user.friends)
   @JoinTable()
   friends: User[];
 
@@ -46,6 +47,12 @@ export class User {
   @Column({ default: 0 })
   loose: number;
 
-  @OneToMany(type => Results, result => result.user)
+  @OneToMany(() => Results, result => result.user)
   results: Results[];
+
+  @OneToMany(() => FriendRequest, friendRequest => friendRequest.creator)
+  sendFriendRequests: FriendRequest[];
+
+  @OneToMany(() => FriendRequest, friendRequest => friendRequest.receiver)
+  receiveFriendRequests: FriendRequest[];
 }
