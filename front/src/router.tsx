@@ -8,6 +8,7 @@ import Chat from './components/Chat/Chat';
 import './styles/styles.scss';
 import { createBrowserRouter, Outlet, RouterProvider, } from "react-router-dom";
 import NameForm from "./components/connection/form_name_avatar"
+import Queu from './components/Game/queu';
 
 const Layout = () => (
   <>
@@ -47,13 +48,12 @@ const router = createBrowserRouter([
       },
       {
         path: "/Game",
-        element: <GameApp />,
+        element: <Queu />,
       },
       {
         path: "/Game/:id",
         element: <GameApp />,
       },
-
     ]
   }
 ]);

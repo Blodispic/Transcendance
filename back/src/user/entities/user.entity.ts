@@ -4,6 +4,10 @@ import { Column, Entity, PrimaryGeneratedColumn, ManyToMany, JoinTable, OneToMan
 
 @Entity()
 export class User {
+  
+  @Column()
+  access_token: string;
+
   @PrimaryGeneratedColumn()
   id: number;
 

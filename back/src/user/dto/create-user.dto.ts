@@ -16,4 +16,9 @@ export class CreateUserDto {
 	@IsEmail()
 	@IsNotEmpty()
 	intra_avatar: string;
+
+	@IsString()
+	@IsNotEmpty()
+	access_token: string;
+  
 }

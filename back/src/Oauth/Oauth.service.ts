@@ -1,11 +1,15 @@
 import { Injectable } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
 import { CreateUserDto } from 'src/user/dto/create-user.dto';
 import { UserService } from '../user/user.service';
 
 @Injectable()
 export class OauthService {
 
-  constructor(private usersService: UserService) { }
+  constructor(
+    private usersService: UserService,
+    private jwtService: JwtService
+    ) { }
 
   async getToken(oauthCode: string): Promise<any> {
     const api_key = process.env.API42_UID;
@@ -40,11 +44,11 @@ export class OauthService {
 
   }
 
-  async getInfo(token: string) {
+  async getInfo(intra_token: string) {
     const response = await fetch('https://api.intra.42.fr/v2/me', {
       method: 'GET',
       headers: {
-        'Authorization': `Bearer ${token}`,
+        'Authorization': `Bearer ${intra_token}`,
       },
     });
     const data = await response.json();
@@ -57,14 +61,17 @@ export class OauthService {
 
     if (user)
       return (user);
-
     if (data.error)
       return (data.error);
+
+    const token = this.jwtService.sign(data.login);
+
     const userDto: CreateUserDto = {
       username: data.login,
       login: data.login,
       email: data.email,
       intra_avatar: data.image.link,
+      access_token: token
     }
     return await this.usersService.create(userDto);
   }
