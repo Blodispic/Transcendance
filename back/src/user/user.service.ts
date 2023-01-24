@@ -18,6 +18,11 @@ export class UserService {
   ) { }
 
   async create(createUserDto: CreateUserDto): Promise<User> {
+    const check = await this.usersRepository.findOneBy({
+      login: createUserDto.login
+    })
+    if (check)
+      return (check);
     const user: User = this.usersRepository.create(createUserDto);
     return this.usersRepository.save(user);
   }
@@ -107,13 +112,25 @@ export class UserService {
       return ('Friend request already sent');
     }
     const friendRequest: FriendRequestDto = {
-      creator,
+      creator: creator,
       receiver: friend,
       status: 'pending'
     }
+
     await this.friendRequestRepository.save(friendRequest);
     return ('Friend request sent');
   }
+
+  async GetFriendRequestStatus(friendId: number, creator: User) {
+    const friendRequest = await this.friendRequestRepository.findOne({
+      where: [{ creator: creator }, { receiver: { id: friendId } }]
+    });
+    if (!friendRequest) {
+      return ('Friend request does not exist');
+    }
+    return friendRequest.status;
+  }
+
 
   //ID est le user actuel, friend est le user a ajouter de type User
   //On push dans le tableau le user friend et on save user qui a été changé dans userRepository

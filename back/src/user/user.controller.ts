@@ -27,10 +27,19 @@ export class UserController {
     return this.userService.getById(id);
   }
 
-  @Post('Access_token')
+  @Get('Access_token')
   GetbyAccessToken(@Body() accessToken: string) {
     return this.userService.GetByAccessToken(accessToken);
   }
+
+  @Get('friend-request/status/:friendId')
+  async GetFriendRequestStatus(@Param('friendId') friendId: number, @Body() user: User) {
+    if (user)
+      return this.userService.GetFriendRequestStatus(friendId, user);
+    else
+      return ("User not found");
+  }
+
 
   @Patch(':id/avatar')
   @UseInterceptors(
@@ -74,7 +83,8 @@ export class UserController {
   @Post('friend-request/send/:friendId')
   sendFriendRequest(
     @Param('friendId') friendId: number, @Body() user: User) {
-    return this.userService.sendFriendRequest(friendId, user)
+    if (user)
+      return this.userService.sendFriendRequest(friendId, user)
   }
 
 
