@@ -1,19 +1,15 @@
 import { Injectable } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
+import { CreateUserDto } from 'src/user/dto/create-user.dto';
 import { UserService } from '../user/user.service';
 
 @Injectable()
 export class OauthService {
 
-  constructor(private usersService: UserService) { }
-
-  async validateUser(username: string): Promise<any> {
-    const user = await this.usersService.getByUsername(username);
-    if (user) {
-      const { ...result } = user;
-      return result;
-    }
-    return null;
-  }
+  constructor(
+    private usersService: UserService,
+    private jwtService: JwtService
+    ) { }
 
   async getToken(oauthCode: string): Promise<any> {
     const api_key = process.env.API42_UID;
@@ -29,7 +25,7 @@ export class OauthService {
     };
 
     console.log(body);
-    
+
     const response = await fetch('https://api.intra.42.fr/oauth/token', {
       method: 'POST',
       headers: {
@@ -43,55 +39,42 @@ export class OauthService {
     // }
     const data = await response.json();
     console.log(data);
-    
+
     return this.getInfo(data.access_token);
 
   }
 
-  async getInfo(token: string) {
+  async getInfo(intra_token: string) {
     const response = await fetch('https://api.intra.42.fr/v2/me', {
       method: 'GET',
       headers: {
-        'Authorization': `Bearer ${token}`,
+        'Authorization': `Bearer ${intra_token}`,
       },
     });
     const data = await response.json();
-    
-    const user = await this.usersService.getByUsername(data.login);
+
     console.log(data);
-    console.log(data.login);
-    console.log(data.email);
+
+    const user = await this.usersService.getByLogin(data.login);
+
     console.log(user);
-    
+
     if (user)
       return (user);
     if (data.error)
       return (data.error);
-    const userReturn = {
-      "username": data.login,
-      "email": data.email,
-      "status": "online",
-      "elo": 1000,
+
+    const payload = { username: data.login }
+    const token = await this.jwtService.sign(payload);
+
+    const userDto: CreateUserDto = {
+      username: data.login,
+      login: data.login,
+      email: data.email,
+      intra_avatar: data.image.link,
+      access_token: token
     }
-
-    await this.usersService.create(userReturn)
-  
-    return userReturn;
-    
-
-    // }
-    //Creation nouveau user
-
-    // will replace data with user and send user from info in data
-    //Create a user with the new data, cf: image on discord
-    // Need to create username (login: )
-    // Need to create elo with a base of ? (1000?, 0?), we probably will take it from a define
-    // Need to create avatar that will take a link (image: )
-    // Friend vide
-    // History vide 
-
-    //Sinon
-    //return await user = findonebyid
+    return await this.usersService.create(userDto);
   }
 }
 

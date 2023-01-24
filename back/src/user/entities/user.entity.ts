@@ -1,9 +1,13 @@
-import { Channel } from "src/chat/channel/entities/channel.entity";
-// import { Results } from "src/results/entities/results.entity";
+import { Channel } from "src/channel/entities/channel.entity";
+import { Results } from "../../results/entities/results.entity";
 import { Column, Entity, PrimaryGeneratedColumn, ManyToMany, JoinTable, OneToMany } from "typeorm";
 
 @Entity()
 export class User {
+  
+  @Column()
+  access_token: string;
+
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -11,39 +15,37 @@ export class User {
   username: string;
 
   @Column({ unique: true })
+  login: string;
+
+  @Column({ unique: true })
   email: string;
 
-  @Column( { default: ""})
-  status: string;
+  @Column({
+    nullable: true,
+  })
+  avatar: string;
+
+  @Column()
+  intra_avatar: string;
+
+  @ManyToMany(type => User, user => user.friends)
+  @JoinTable()
+  friends: User[];
+
+  @ManyToMany(() => Channel)
+  channels: Channel[]
+
+  //      STATISTIQUES        //
 
   @Column({ default: 1000 })
   elo: number;
-  
-  @Column( { default: "" })
-  avatar: string;
 
-  @Column({ default: true })
-  isActive: boolean;
-
-  @ManyToMany(() => Channel)
-	channels: Channel[]
-
-
-  // ON vera le reste plus tard
-  @ManyToMany(type => User, user => user.friends)
-  @JoinTable()
-    friends: User[];
-
-  //      STATISTIQUES        //
-  
   @Column({ default: 0 })
-	win: number;
+  win: number;
 
-	@Column({ default: 0 })
-	loose: number;
+  @Column({ default: 0 })
+  loose: number;
 
-  
-  // @OneToMany(type => Results, result => result.user)
-  // results: Results[];
+  @OneToMany(type => Results, result => result.user)
+  results: Results[];
 }
-

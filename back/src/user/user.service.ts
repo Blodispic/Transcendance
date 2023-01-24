@@ -1,5 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
+import { Results } from "src/results/entities/results.entity";
 import { Repository } from "typeorm";
 import { CreateUserDto } from "../user/dto/create-user.dto";
 import { UpdateUserDto } from "../user/dto/update-user.dto";
@@ -12,21 +13,34 @@ export class UserService {
     private usersRepository: Repository<User>,
   ) { }
 
-  create(createUserDto: CreateUserDto) {
-
+  async create(createUserDto: CreateUserDto): Promise<User> {
     const user: User = this.usersRepository.create(createUserDto);
-    // const result = await this.usersRepository.insert(user);
-    // return { ...user, ...result.generatedMaps[0] };
     return this.usersRepository.save(user);
+  }
+
+  async save(updateUserDto: UpdateUserDto) {
+    return (this.usersRepository.save(updateUserDto));
   }
 
   findAll() {
     return this.usersRepository.find();
   }
 
-  getById(id: number) {
+  getById(id: number): Promise<User | null> {
     return this.usersRepository.findOneBy({
       id: id
+    })
+  }
+
+  getByLogin(login: string): Promise<User | null> {
+    return this.usersRepository.findOneBy({
+      login: login
+    })
+  }
+
+  GetByAccessToken(accessToken: string) {
+    return this.usersRepository.findOneBy({
+      access_token: accessToken
     })
   }
 
@@ -36,13 +50,16 @@ export class UserService {
     })
   }
 
-  async update(id: number, updateUserDto: UpdateUserDto) {
+  async update(id: number, userUpdate: any) {
     const user = await this.usersRepository.findOneBy({
-      id: id
+      id: id,
     })
-    if (user)
-    {
-      this.usersRepository.merge(user, updateUserDto);
+    if (user) {
+      //Si vous voulez plus de chose a update, mettez le dans le body et faites un if
+      if (userUpdate.username)
+        user.username = userUpdate.username;
+      if (userUpdate.avatar)
+        user.avatar = userUpdate.avatar
       return await this.usersRepository.save(user);
     }
     return 'There is no user to update';
@@ -50,7 +67,7 @@ export class UserService {
 
   async remove(id: number) {
     const user = await this.usersRepository.findOneBy({
-      id: id
+      id: id,
     })
     if (!user)
       return ('Cant delete an inexistant user');
@@ -58,13 +75,14 @@ export class UserService {
     return `This action removes a #${id} user`;
   }
 
-  async setAvatar(id: number, file: any) {
+  async setAvatar(id: number, username: string, file: any) {
     const user = await this.usersRepository.findOneBy({
-      id: id
+      id: id,
     })
     if (user)
     {
       user.avatar = file.filename;
+      user.username = username;
       return await this.usersRepository.save(user);
     }
     return ('User not found');
@@ -72,27 +90,25 @@ export class UserService {
 
   //ID est le user actuel, friend est le user a ajouter de type User
   //On push dans le tableau le user friend et on save user qui a été changé dans userRepository
-  async addFriend( id: number, friend: User ): Promise<User | null> {
-    const user = await this.usersRepository.findOne({where: {id}});
-    if (user)
-    {
+  async addFriend(id: number, friend: User): Promise<User | null> {
+    const user = await this.usersRepository.findOne({ where: { id } });
+    if (user) {
       user.friends.push(friend);
       return await this.usersRepository.save(user);
     }
     return (null);
   }
 
-  async addFriendById( id: number, friendId: number ): Promise<User | null> {
+  async addFriendById(id: number, friendId: number): Promise<User | null> {
     const user = await this.usersRepository.findOne({
       relations: {
         friends: true,
       },
-      where: {id: id}});
-    const friend = await this.usersRepository.findOne({where: {id: friendId}});
-    if (user && friend && id != friendId)
-    {
-      if(!user.friends)
-      {
+      where: { id: id }
+    });
+    const friend = await this.usersRepository.findOne({ where: { id: friendId } });
+    if (user && friend && id != friendId) {
+      if (!user.friends) {
         user.friends = [];
         console.log("No friends");
       }
@@ -108,14 +124,24 @@ export class UserService {
     return user;
   }
 
-  async removeFriend( id: number, friend: User ){
-    const user = await this.usersRepository.findOneBy({id: id});
+  async removeFriend(id: number, friend: User) {
+    const user = await this.usersRepository.findOneBy({ id: id });
     return user;
   }
 
-  async removeFriendById( id: number, friendId: number ) {
-    const user = await this.usersRepository.findOneBy({id: id});
-    const friend = await this.usersRepository.findOneBy({id: friendId});
+  async removeFriendById(id: number, friendId: number) {
+    const user = await this.usersRepository.findOneBy({ id: id });
+    const friend = await this.usersRepository.findOneBy({ id: friendId });
     return user;
+  }
+
+  async getResults(id: number): Promise<Results[]> {
+    const user = await this.usersRepository.findOne({
+      relations: {
+        friends: true,
+      },
+      where: { id: id }
+    });
+    return user ? user.results : [];
   }
 }

@@ -1,6 +1,10 @@
 import { useEffect, useState } from "react";
 import { Circle, Layer, Rect, Stage } from "react-konva";
+import io from 'socket.io-client';
 import "../../styles/game.scss";
+
+const socket = io("http://" + window.location.hostname + ":4000");
+
 
 export interface Vec2 {
 	x: number;
@@ -94,12 +98,34 @@ let gameStateDefault: GameState = {
 
 resetState(gameStateDefault);
 
-function Game() {
+function GameApp() {
 	const [gameState, setGameState] = useState<GameState>(gameStateDefault);
+	const [isConnected, setIsConnected] = useState(socket.connected);
+
 	useEffect(() => {
 		setInterval(() => {
 			updateState(setGameState);
 		}, 1000 / 60);
+
+		socket.on('connect', () => {
+			setIsConnected(true);
+			console.log("Connected");
+		});
+	  
+		  socket.on('disconnect', () => {
+			setIsConnected(false);
+			console.log("Disconnected");
+		});
+
+		socket.on("UpdateState", (newGameState: GameState) => {
+			// console.log("ball.x before: " + newGameState.ball.position.x);
+			// let newState: GameState = convertState(newGameState);
+
+			newGameState = convertState(newGameState);
+			// console.log("ball.x after: " + newGameState.ball.position.x);
+			setGameState(newGameState);
+			// setGameState(convertState(newGameState));
+		});
 
 		document.addEventListener("keydown", keyEvent);
 		document.addEventListener("keyup", keyEvent);
@@ -108,6 +134,8 @@ function Game() {
 		return () => {
 			document.removeEventListener("keydown", keyEvent);
 			document.removeEventListener("keyup", keyEvent);
+			// socket.offAny();
+			socket.removeAllListeners()
 		};
 	}, []);
 
@@ -128,7 +156,7 @@ function Game() {
 						cornerRadius={30}
 						width={gameState.area.x}
 						height={gameState.area.y}
-						fill="#8860D0"
+						fill="#C1C8E4"
 					/>
 				</Layer>
 				<Layer>
@@ -163,13 +191,62 @@ function Game() {
 	);
 }
 
+function convertState(state: GameState) {
+	state.client_area.x = Math.min((window.innerWidth * 70) / 100, GAME_INTERNAL_WIDTH);
+	state.client_area.y = state.client_area.x * GAME_RATIO;
+	let newState: GameState = gameStateDefault;
+
+	newState.ball.position.x = state.ball.position.x * (state.client_area.x / GAME_INTERNAL_WIDTH);
+	newState.ball.position.y = state.ball.position.y * (state.client_area.y / (GAME_INTERNAL_WIDTH * GAME_RATIO));
+
+	newState.ball.speed.x = state.ball.speed.x * (state.client_area.x / GAME_INTERNAL_WIDTH);
+	newState.ball.speed.y = state.ball.speed.y * (state.client_area.y / (GAME_INTERNAL_WIDTH * GAME_RATIO));
+	newState.ball.previous.x = state.ball.previous.x * (state.client_area.x / GAME_INTERNAL_WIDTH);
+	newState.ball.previous.y = state.ball.previous.y * (state.client_area.y / (GAME_INTERNAL_WIDTH * GAME_RATIO));
+
+	newState.ball.cooldown = state.ball.cooldown;
+
+	// newState.player1 = state.player1;
+	newState.player1.input = state.player1.input;
+	newState.player1.name = state.player1.name;
+	newState.player1.score = state.player1.score;
+	newState.player1.side = state.player1.side;
+
+	newState.player1.paddle.position.x = state.player1.paddle.position.x * (state.client_area.x / GAME_INTERNAL_WIDTH);
+	newState.player1.paddle.position.y = state.player1.paddle.position.y * (state.client_area.y / (GAME_INTERNAL_WIDTH * GAME_RATIO));
+	newState.player1.paddle.speed.x = state.player1.paddle.speed.x * (state.client_area.x / GAME_INTERNAL_WIDTH);
+	newState.player1.paddle.speed.y = state.player1.paddle.speed.y * (state.client_area.y / (GAME_INTERNAL_WIDTH * GAME_RATIO));
+
+	// newState.player2 = state.player2;
+	newState.player2.input = state.player2.input;
+	newState.player2.name = state.player2.name;
+	newState.player2.score = state.player2.score;
+	newState.player2.side = state.player2.side;
+
+	newState.player2.paddle.position.x = state.player2.paddle.position.x * (state.client_area.x / GAME_INTERNAL_WIDTH);
+	newState.player2.paddle.position.y = state.player2.paddle.position.y * (state.client_area.y / (GAME_INTERNAL_WIDTH * GAME_RATIO));
+	newState.player2.paddle.speed.x = state.player2.paddle.speed.x * (state.client_area.x / GAME_INTERNAL_WIDTH);
+	newState.player2.paddle.speed.y = state.player2.paddle.speed.y * (state.client_area.y / (GAME_INTERNAL_WIDTH * GAME_RATIO));
+
+	newState.resetCooldown = state.resetCooldown;
+
+	// console.log("padlePosition = x: " + Math.round(newState.player1.paddle.position.x));
+	// console.log("padlePosition = y: " + Math.round(newState.player1.paddle.position.y) + "\n");
+	console.log("resetCooldown = " + newState.resetCooldown);
+	console.log("ballPosition = x: " + Math.round(newState.ball.position.x));
+	console.log("ballPosition = y: " + Math.round(newState.ball.position.y));
+
+	return newState;
+}
+
 function updateGameState(state: GameState) {
-	state.client_area.x = Math.min((window.innerWidth * 70) / 100, 700);
+	state.client_area.x = Math.min((window.innerWidth * 70) / 100, state.area.x);
 	state.client_area.y = state.client_area.x * GAME_RATIO;
 	state.scale = state.client_area.x / state.area.x;
 
 	state.player1.input = { ...move1 };
 	state.player2.input = { ...move2 };
+	// socket.emit("Players", state);
 	if (state.resetCooldown === 0)
 	{
 		movePlayer(state.player1, state);
@@ -376,6 +453,10 @@ function keyEvent(event: KeyboardEvent) {
 		//move left
 		move2.right = false;
 	}
+	if (key === "ArrowLeft" || key === "ArrowRight")
+		socket.emit("Move1", move1);
+	else
+		socket.emit("Move2", move2);
 }
 
 function updateState(setGameState: Function) {
@@ -384,4 +465,4 @@ function updateState(setGameState: Function) {
 	});
 }
 
-export default Game;
+export default GameApp;

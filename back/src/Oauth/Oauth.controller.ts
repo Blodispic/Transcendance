@@ -29,4 +29,5 @@ export class OauthController {
     
     return token;
   }
+
 }

@@ -1,9 +1,8 @@
-import { BadRequestException, Body, Controller, Post, Delete, Get, Param, Patch, UseInterceptors, UploadedFile } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, Req, Res, UploadedFile, UseInterceptors } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { Request, Response } from 'express';
 import { diskStorage } from 'multer';
-import { editFileName, imageFileFilter } from 'src/app.service';
-import { CreateUserDto } from '../user/dto/create-user.dto';
-import { UpdateUserDto } from '../user/dto/update-user.dto';
+import { editFileName, imageFilter } from 'src/app.service';
 import { User } from './entities/user.entity';
 import { UserService } from './user.service';
 
@@ -21,8 +20,8 @@ export class UserController {
   }
 
   @Get()
-  async findAll() {
-    return await this.userService.findAll();
+  findAll() {
+    return this.userService.findAll();
   }
 
   @Get(':id')
@@ -30,24 +29,43 @@ export class UserController {
     return this.userService.getById(id);
   }
 
-  @Post(':id/setavatar')
+  @Post('Access_token')
+  GetbyAccessToken(@Body() accessToken: string) {
+    return this.userService.GetByAccessToken(accessToken);
+  }
+
+  @Patch(':id/avatar')
   @UseInterceptors(
-    FileInterceptor('image', {
+    FileInterceptor('file', {
       storage: diskStorage({
-        destination: './files',
+        destination: './storage/images/',
         filename: editFileName,
       }),
-      fileFilter: imageFileFilter,
+      fileFilter: imageFilter,
     }),
   )
-  async setAvatar(@Param('id') id: number, @UploadedFile() file: any) {
-    await this.userService.setAvatar(id, file);
+  async setAvatar(@Param('id') id: number, @UploadedFile() file: any, @Body('username') username: string) {
+    await this.userService.setAvatar(id, username, file);
     return { message: 'Avatar set successfully' };
   }
 
+  @Get(':id/avatar')
+  async getAvatar(@Param('id') id: number, @Req() req: Request, @Res() res: Response) {
+    const user = await this.userService.getById(id);
+    if (user) {
+      if (user.avatar) {
+        return res.sendFile(user.avatar, { root: './storage/images/' });
+      } else {
+        return res.redirect(user.intra_avatar)
+      }
+    } else {
+      return null;
+    }
+  }
+
   @Patch(':id')
-  update(@Param('id') id: string, @Body() user: any, updateUserDto: UpdateUserDto) {
-    return this.userService.update(+id, updateUserDto);
+  update(@Param('id') id: string, @Body() user: any) {
+    return this.userService.update(+id, user);
   }
 
   @Delete(':id')
@@ -57,16 +75,16 @@ export class UserController {
  
   @Post('addfriend/:id')
   async addFriend(@Param('id') id: number, @Body() friend: User) {
-      return await this.userService.addFriend(id, friend);
+    return await this.userService.addFriend(id, friend);
   }
 
   @Post(':id/addfriend/:friendId')
   async addFriendbyId(@Param('id') id: number, @Param('friendId') friendId: number) {
-      return await this.userService.addFriendById(id, friendId);
+    return await this.userService.addFriendById(id, friendId);
   }
 
   @Delete('deletefriend/:id')
-    async deleteFriend(@Param('id') id: number, @Body() friend: User) {
-        return await this.userService.removeFriend(id, friend);
-    }
+  async deleteFriend(@Param('id') id: number, @Body() friend: User) {
+    return await this.userService.removeFriend(id, friend);
+  }
 }

@@ -3,41 +3,45 @@ import '../../styles/connection.scss'
 import { IUser } from "../../interface/User";
 import { Link } from 'react-router-dom';
 import { userInfo } from 'os';
+import { stringify } from 'querystring';
+import { useAppSelector } from '../../redux/Hook';
 
-export default function NameForm(props: { user: IUser }) {
-    const { user } = props;
+export default function NameForm() {
 
-    const [firstName, setFirstName] = useState('');
+
+    const [newname, setNewname] = useState('');
     const [file, setFile] = useState<File | undefined>(undefined);
     const [avatar, setavatar] = useState<string>('');
+    const formData = new FormData();
+    const myUser = useAppSelector(state => state.user);
 
+    const fetch_name_avatar = async (e: any) => {
+        e.preventDefault();
+        if (myUser.user != undefined) {
+            formData.append('username', newname);
+            if (file)
+                formData.append('file', file);
 
-
-    useEffect(() => {
-        console.log("test");
-
-        console.log(firstName);
-        console.log(file);
-        console.log(avatar);
-
-        if (firstName != '' && file && avatar != '') { // a changer le avatar est pas obligatoire ca dois plutot etre un name && button/submit
-            const fetch_name_avatar = async () => {
-                console.log("fetch name avatar");
-
-                const response = await fetch(`http://localhost:4000/user/${user.login}`, {
-                    method: 'PATCH',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        newName: firstName,
-                        newAvatar: file,
-                    }),
-                })
-            }
-            fetch_name_avatar()
+            console.log("ICIIIIIII");
+            // await fetch(`http://localhost:4000/user/${myUser.user.id}`, {
+            //     method: 'PATCH',
+            //     headers: {
+            //         'Content-Type': 'application/json',
+            //     },
+            //     body: JSON.stringify({ username: newname }),
+            // })
+            const response = await fetch(`http://localhost:4000/user/${myUser.user.id}/avatar`, {
+                method: 'PATCH',
+                // headers: {
+                //     'Content-Type': 'multipart/form-data',
+                // },
+                body: formData,
+            })
+            formData.delete('newname');
+            if (file)
+                formData.delete('file');
         }
-    },)
+    }
 
     const onChangeFile = (e: any) => {
         const myFile: File = e.target.files[0];
@@ -50,7 +54,7 @@ export default function NameForm(props: { user: IUser }) {
             <form>
                 <label >
                     Name:
-                    <input type="text" name="user" value={firstName} onChange={e => setFirstName(e.target.value)} />
+                    <input type="text" name="user" value={newname} onChange={e => setNewname(e.target.value)} />
                 </label>
 
                 <label >
@@ -61,13 +65,10 @@ export default function NameForm(props: { user: IUser }) {
                     file && avatar != '' &&
                     <img src={avatar} />
                 }
-
-                {/* <Link to="/Game"> */}
-                <button>
+                <button onClick={(e) => fetch_name_avatar(e)}>
                     <a>okk</a>
                 </button>
-                {/* </Link> */}
-                <a>{firstName}</a>
+                <a>{newname}</a>
                 <a>{avatar}</a>
             </form >
         </div >
