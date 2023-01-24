@@ -2,18 +2,10 @@ import { toUnicode } from "punycode";
 import * as React from "react";
 import { io } from "socket.io-client";
 import '../../styles/chat.scss'
+import { ChannelList } from "./Channel";
+import { FormSetChannel } from "./Channel";
 
 const socket = io("http://" + window.location.hostname + ":4000");
-
-function ChannelList() {
-	const chanList = [
-		<li>chan 1</li>,
-		<li>chan 2</li>
-	]
-	return <ul>
-		{chanList}
-	</ul>
-}
 
 function DMList() {
 	return <ul>
@@ -59,9 +51,14 @@ function ChatBody() {
 		<div className="chat-body">
 			<div className="chat-messages">
 				{messageList.map((chat) => (
+
 					<div key={chat.newInput} className="__wrap">
-					<div className="user-avatar"><img src="https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/160/apple/81/woman-gesturing-ok-type-1-2_1f646-1f3fb-200d-2640-fe0f.png"></img></div>
-					{chat.newInput}
+						<div className="message_info">
+							<span className="user-avatar"><img src="https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/160/apple/81/woman-gesturing-ok-type-1-2_1f646-1f3fb-200d-2640-fe0f.png"></img></span>
+							UserName
+							<span className="timestamp"> 0000/00/00 00:00</span>
+						</div>
+						<p>{chat.newInput}</p>
 					</div>
 				))}
 			</div>
@@ -75,14 +72,21 @@ function ChatBody() {
 }
 
 function Chat() {
+	const [chanelSet, setChanelSet] = React.useState(false)
 	return (
 		<div id="chat-container">
 			<div className="left-sidebar">
 				<ChannelList />
 			</div>
 
-			<ChatBody />
-			
+			{ chanelSet == false &&
+				<FormSetChannel />
+			}
+			{ chanelSet == true &&
+				<ChatBody />
+			}
+
+
 			<div className="right-sidebar">
 				<UserList />
 			</div>

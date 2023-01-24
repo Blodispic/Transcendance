@@ -6,14 +6,14 @@
 	--highlight: #8860D0;
 }
 
-img {
-	width: 40px;
-	height: 40px;
-	.user-avatar {
-		display: inline-block;
-		width: 3%;
-	}
-}
+// img {
+// 	width: 40px;
+// 	height: 40px;
+// 	// .user-avatar {
+// 	// 	display: inline-block;
+// 	// 	width: 3%;
+// 	// }
+// }
 
 
 #chat-container {
@@ -27,6 +27,11 @@ img {
 		float: left;
 		width: 20%;
 		padding: 10px;
+
+		.title {
+			font-size: large;
+			justify-content: space-between;
+		}
 	}
 
 	.chat-body{
@@ -36,10 +41,13 @@ img {
 		padding: 20px 0px;
 		background-color: rgba(232, 232, 232, 0.966);
 		align-items: center;
+		display: flex;
 		
 		.chat-messages {
 			height: calc(100vh - 150px);
 			overflow-y: scroll;
+			flex: 1; //take up the space
+
 			
 			.__wrap {
 				font-size: 20px;
@@ -51,7 +59,31 @@ img {
 				border-radius: 15px;
 				padding: 20px;
 				margin: 20px;
-				word-wrap: break-word
+				word-wrap: break-word;
+
+				.message_info{
+					align-content: space-between;
+
+					.timestamp {
+						color: rgb(166, 166, 166);
+						font-size: small;
+						margin-left: 10px;
+					}
+					.user-avatar {
+						display: inline-block;
+						width: 3%;
+						margin-right: 30px;
+						img {
+							width: 40px;
+							height: 40px;
+							// .user-avatar {
+								// 	display: inline-block;
+								// 	width: 3%;
+								// }
+							}
+							
+						}
+				}
 			}
 		}
 
@@ -69,24 +101,23 @@ img {
 				border: none;
 				bottom: 0;
 			}
-		.button {
-			display: inline-block;
-			width: auto;
-			border-radius: 15px;
-			font-size: 15pt;
+
+		.create-channel {
+			position: inherit;
+			width: 100%;
+			height: 300px;
+			background-color: var(--sub-color1);
 			text-align: center;
-			cursor: pointer;
-			padding: 8px 8px;
-			background: var(--primary-color);
-			color: var(--secondary-color);
-			transition: .3s;
-			border: 2px solid var(--primary-color);
-			margin-left: 5px;
-		}
-		.button:hover {
-			box-shadow: none;
-			color: var(--primary-color);
-			background: var(--secondary-color);
+			
+			input {
+				border-radius: 10px;
+				font-size: 20px;
+				border: transparent;
+			}
+			button {
+				margin-top: 50px;
+				font-size: 20px;
+			}
 		}
 	}
 	
@@ -95,4 +126,28 @@ img {
 		width: 20%;
 		padding: 10px;
 	}
+
+button {
+	font-family: 'Fredoka One', cursive;
+	display: inline-block;
+	width: auto;
+	border-radius: 30px;
+	font-size: small;
+	text-align: center;
+	cursor: pointer;
+	padding: 5px 5px;
+	background: var(--primary-color);
+	color: var(--secondary-color);
+	transition: .3s;
+	border: 2px solid var(--primary-color);
+	margin-left: 5px;
+}
+
+button:hover {
+	box-shadow: none;
+	color: var(--primary-color);
+	background: var(--secondary-color);
+	cursor: pointer;
+}
+
 }
