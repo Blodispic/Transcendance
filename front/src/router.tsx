@@ -8,6 +8,9 @@ import Chat from './components/Chat/Chat';
 import './styles/styles.scss';
 import { createBrowserRouter, Outlet, RouterProvider, } from "react-router-dom";
 import NameForm from "./components/connection/form_name_avatar"
+import Queu from './components/Game/queu';
+import { Navigate } from "react-router-dom";
+import { useAppSelector } from './redux/Hook';
 
 const Layout = () => (
   <>
@@ -16,15 +19,15 @@ const Layout = () => (
   </>
 );
 
-// function requireAuth(nextState: any, replace: any, next: any) {
-//   if (!authenticated) {
-//     replace({
-//       pathname: "/login",
-//       state: { nextPathname: nextState.location.pathname }
-//     });
-//   }
-//   next();
-// }
+
+const ProtectedRoute = (props: { children: any }) => {
+  const user = useAppSelector(state => state.user);
+  if (!user.user) {
+    // user is not authenticated
+    return <Navigate to="/" />;
+  }
+  return props;
+};
 
 const router = createBrowserRouter([
   {
@@ -47,6 +50,10 @@ const router = createBrowserRouter([
       },
       {
         path: "/Game",
+        element: <Queu />,
+      },
+      {
+        path: "/Game/:id",
         element: <GameApp />,
       },
     ]

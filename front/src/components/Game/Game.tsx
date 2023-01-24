@@ -5,6 +5,7 @@ import "../../styles/game.scss";
 
 const socket = io("http://" + window.location.hostname + ":4000");
 
+
 export interface Vec2 {
 	x: number;
 	y: number;

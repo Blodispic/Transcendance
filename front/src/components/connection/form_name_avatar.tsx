@@ -23,6 +23,7 @@ export default function NameForm() {
                 formData.append('file', file);
 
             console.log("ICIIIIIII");
+            
             // await fetch(`http://localhost:4000/user/${myUser.user.id}`, {
             //     method: 'PATCH',
             //     headers: {

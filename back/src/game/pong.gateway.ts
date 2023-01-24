@@ -24,12 +24,12 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 	}
 
 	handleConnection(client: any, ...args: any[]) {
-		console.log("Client: " + client + " Connected");
+		console.log("Client: " + client.id + " Connected");
 		//Need to add user to userList
 	}
 
 	handleDisconnect(client: any) {
-		console.log("Client: " + client + " Disconnected");
+		console.log("Client: " + client.id + " Disconnected");
 		//Need to remove user from userList
 	}
 
