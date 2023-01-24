@@ -30,19 +30,25 @@ export class GameService {
 			const user2 = this.waitingRoom.shift();
 			let player1: Player = {
 				paddle: {
-					position: vector_zero(),
+					position: {
+						x: GAME_INTERNAL_WIDTH / 2 - paddleDimensions.x / 2,
+						y: GAME_INTERNAL_WIDTH * GAME_RATIO - paddleDimensions.y,
+					},
 					speed: vector_zero(),
 					angle: 0,
 				},
 				input: inputdefault,
-				name: "Player2",
+				name: "Player1",
 				score: 0,
 				side: 0,
 				socket: this.waitingRoomSocket.shift(),
 			};
 			let player2: Player = {
 				paddle: {
-					position: vector_zero(),
+					position: {
+						x: GAME_INTERNAL_WIDTH / 2 - paddleDimensions.x / 2,
+						y: 0,
+					},
 					speed: vector_zero(),
 					angle: 0,
 				},
@@ -81,6 +87,27 @@ export class GameService {
 		{
 			if (this.gameRoom[roomId].gameState.player2.socket == client)
 				this.gameRoom[roomId].updateMove2(move2);
+			roomId++;
+		}
+	}
+
+	EndGame(client: string)
+	{
+		let roomId : number = 0;
+		while (roomId < this.gameRoom.length)
+		{
+			if (this.gameRoom[roomId].gameState.player1.socket == client)
+			{
+				delete this.gameRoom[roomId];
+				console.log("Room removed");
+				break;
+			}
+			else if (this.gameRoom[roomId].gameState.player2.socket == client)
+			{
+				delete this.gameRoom[roomId];
+				console.log("Room removed");
+				break;
+			}
 			roomId++;
 		}
 	}
@@ -279,8 +306,11 @@ class Game {
 	            if (state.player2.score === state.scoreMax)
 	            {
 	                //END THE GAME
+					console.log("Player2 Wins");
 					state.gameFinished = true;
 					let result: any = {winner: state.player2.name, looser: state.player1.name, winner_score: state.player2.score.toString(), looser_score: state.player1.score.toString()};
+					this.server.to(this.gameState.player1.socket).emit("GameEnd", result);
+					this.server.to(this.gameState.player2.socket).emit("GameEnd", result);
 	            }
 	        } else if (ball.position.y < 0 + ballRadius) {
 				this.resetState(state);
@@ -288,9 +318,12 @@ class Game {
 	            if (state.player1.score === state.scoreMax)
 	            {
 					//END THE GAME
+					console.log("Player1 Wins");
 				    state.gameFinished = true;
 					let result: any = {winner: state.player1.name, looser: state.player2.name, winner_score: state.player1.score.toString(), looser_score: state.player2.score.toString()};
-	            }
+					this.server.to(this.gameState.player1.socket).emit("GameEnd", result);
+					this.server.to(this.gameState.player2.socket).emit("GameEnd", result);
+				}
 	        }
 	    }
 	}
@@ -304,7 +337,6 @@ class Game {
 	    if (state.player1.score === state.scoreMax || state.player2.score === state.scoreMax)
 		{
 			state.gameFinished = true;
-
 		}
 	    else
 		{

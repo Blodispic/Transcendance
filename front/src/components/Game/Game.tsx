@@ -3,6 +3,8 @@ import { Circle, Layer, Rect, Stage, Text } from "react-konva";
 import io from 'socket.io-client';
 import "../../styles/game.scss";
 import {useLocation} from 'react-router-dom';
+import {Victory, Defeat} from "./Result";
+
 
 export const socket = io("http://" + window.location.hostname + ":4000");
 
@@ -105,6 +107,7 @@ resetState(gameStateDefault);
 export default function GameApp() {
 	const [gameState, setGameState] = useState<GameState>(gameStateDefault);
 	const [isConnected, setIsConnected] = useState(socket.connected);
+	let [myVar, setMyvar] = useState<boolean | undefined> (undefined)
 
 	useEffect(() => {
 		setInterval(() => {
@@ -129,6 +132,15 @@ export default function GameApp() {
 			// console.log("ball.x after: " + newGameState.ball.position.x);
 			setGameState(newGameState);
 			// setGameState(convertState(newGameState));
+		});
+
+		socket.on("GameEnd", (result:any) => {
+			console.log(result.winner + " won");
+			if (result.winner === gameState.player1)
+				myVar = true;
+			else if (result.winner === gameState.player2)
+				myVar = false;
+			socket.emit("GameEnd", null);
 		});
 
 		document.addEventListener("keydown", keyEvent);
@@ -199,6 +211,14 @@ export default function GameApp() {
 			<h3>
 				{gameState.player1.name} : {gameState.player1.score}
 			</h3>
+			{
+				myVar == true && 
+				<Victory/>
+			}
+					{
+				myVar == false && 
+				<Defeat/>
+			}
 		</div>
 	);
 }
@@ -271,7 +291,6 @@ function updateGameState(state: GameState) {
 	}
 	else if (state.gameFinished === false)
 		state.resetCooldown--;
-	console.log(state.gameFinished);
 	return state;
 }
 

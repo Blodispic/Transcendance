@@ -19,7 +19,6 @@ export default function Queue() {
 		navigate("/game/" + roomId, {state: {Id: roomId}});
 	});
 
-
     useEffect(() => {
         const fetchuser = async () => {
             const response = await fetch(`http://localhost:4000/game/`, {
@@ -34,7 +33,7 @@ export default function Queue() {
         <button className="center pulse pointer" onClick={(e) => addToWaitingRoom()} >
             <Link to="/Game/">
                 <a>
-                    play at foot-pong
+                    Add to Waiting Room
                 </a>
             </Link>
         </button>

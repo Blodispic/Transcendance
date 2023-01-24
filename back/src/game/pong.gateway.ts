@@ -25,6 +25,7 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 
 	handleConnection(client: any, ...args: any[]) {
 		console.log("Client: " + client.id + " Connected");
+		client.handshake.auth
 		//Need to add user to userList
 	}
 
@@ -39,6 +40,12 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 		console.log("Add " + user.username + " to waiting room.");
 		this.gameService.addToWaitingRoom(user, client.id);
 		this.gameService.startGame(this.server);
+	}
+
+	@SubscribeMessage("GameEnd")
+	HandleEnd(@MessageBody() input: Move, @ConnectedSocket() client: Socket)
+	{
+		this.gameService.EndGame(client.id);
 	}
 
 	@SubscribeMessage("Move1")
