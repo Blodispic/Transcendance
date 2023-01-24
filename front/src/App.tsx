@@ -13,14 +13,18 @@ function App() {
   const token = cookies.get('Token');
 
   const get_user = async () => {
+    console.log("token", token);
+    
     const response = await fetch(`${process.env.REACT_APP_BACK}/user/access_token`, {
-      method: 'GET',
+      method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ toekn: token }),
+      body: JSON.stringify({ token: token }),
     })
     const data = await response.json();
+    console.log("data",data);
+    
     dispatch(setUser(data));
   }
 
