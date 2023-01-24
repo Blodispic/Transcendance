@@ -18,6 +18,7 @@ export interface Player {
 	paddle: Paddle;
 	input: Move;
 	name: string;
+	socket: any;
 	score: number;
 	side: number;
 }
