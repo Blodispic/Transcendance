@@ -7,11 +7,6 @@ export default function Queu() {
 
     const myUser = useAppSelector(state => state.user);
 
-    function function_adam() {
-
-        return ();
-
-    }
 
 
     useEffect(() => {
@@ -25,7 +20,7 @@ export default function Queu() {
     }, [])
 
     return (
-        <button className="center pulse pointer" onClick={(e) => function_adam(e)} >
+        <button className="center pulse pointer" onClick={(e) => (e)} >
             <Link to="/Game/">
                 <a>
                     play at foot-pong

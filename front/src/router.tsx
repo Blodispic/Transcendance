@@ -20,14 +20,28 @@ const Layout = () => (
 );
 
 
+
 const ProtectedRoute = (props: { children: any }) => {
   const user = useAppSelector(state => state.user);
-  if (!user.user) {
+  console.log(user);
+
+  if (user.user == undefined || (user.user != undefined && user.user.username == undefined)) {
     // user is not authenticated
     return <Navigate to="/" />;
   }
-  return props;
+  return props.children;
 };
+
+
+const PublicRoute = (props: { children: any }) => {
+  const user = useAppSelector(state => state.user);
+  if (user.user) {
+    // user is authenticated
+    return <Navigate to="/" />;
+  }
+  return props.children;
+};
+
 
 const router = createBrowserRouter([
   {
@@ -35,26 +49,41 @@ const router = createBrowserRouter([
     children: [
       {
         path: "/",
-        element: <Connection />,
+        element:
+          // <PublicRoute>
+            <Connection />,
+          // </PublicRoute>
       },
       {
         path: "/Home",
       },
       {
         path: "/Chat",
-        element: <Chat />,
+        element:
+          <ProtectedRoute>
+            <Chat />
+          </ProtectedRoute>
       },
       {
         path: "/Profile/:id",
-        element: <Profile />,
+        element:
+          <ProtectedRoute>
+            <Profile />
+          </ProtectedRoute>,
       },
       {
         path: "/Game",
-        element: <Queu />,
+        element:
+          <ProtectedRoute>
+            <Queu />,
+          </ProtectedRoute>,
       },
       {
         path: "/Game/:id",
-        element: <GameApp />,
+        element:
+          <ProtectedRoute>
+            <GameApp />,
+          </ProtectedRoute>,
       },
     ]
   }

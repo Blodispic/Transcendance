@@ -9,7 +9,7 @@ export default function Header() {
 
   const myUser = useAppSelector(state => state.user);
   console.log(myUser);
-  
+
   return (
     <div className='mynavbar'>
 
@@ -35,14 +35,25 @@ export default function Header() {
           </span>
         </Link>
 
-        {
-        myUser.user != undefined &&
-          <Link to={`/Profile/${myUser.user.id}`}>
+        <div>
+          {
+            myUser.user != undefined &&
+            <Link to={`/Profile/${myUser.user.id}`}>
+              <span className="font-link">
+                Profile
+              </span>
+            </Link>
+          }
+
+          {
+             myUser.user == undefined &&
+             <Link to={`/`}>
             <span className="font-link">
               Profile
             </span>
-          </Link>
-        }
+            </Link>
+          }
+        </div>
       </div>
 
     </div>
