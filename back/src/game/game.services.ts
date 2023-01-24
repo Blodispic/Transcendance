@@ -1,9 +1,45 @@
 import { Injectable } from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
 import { Socket } from "dgram";
 import { start } from "repl";
 import { Server } from "socket.io";
 import { Results } from "src/results/entities/results.entity";
+import { User } from "src/user/entities/user.entity";
+import { UserService } from "src/user/user.service";
+import { Repository } from "typeorm";
+import { GameInfo } from "./entities/game.entity";
 import { Ball, GameState, Move, Player, Vec2 } from "./game.interfaces";
+
+@Injectable()
+export class GameService {
+    constructor(
+        private readonly userService: UserService,
+      ) {}
+    public game: Game;
+    public waitingRoom: User[] = [];
+
+    async addToWaitingRoom(user: User) {
+        this.waitingRoom.push(user);
+    }
+
+    startGame(server: Server) {
+        if (this.waitingRoom.length >= 2) {
+            const user1 = this.waitingRoom.shift();
+            const user2 = this.waitingRoom.shift();
+            this.game = new Game(server);
+        }
+        else
+            return ('Waiting for more Players...');
+    }
+
+    updateMove1(move1: Move) {
+        this.game.updateMove1(move1);
+    }
+
+    updateMove2(move1: Move) {
+        this.game.updateMove2(move1);
+    }
+}
 
 const GAME_RATIO = 1.5;
 const GAME_INTERNAL_WIDTH = 700;
@@ -56,24 +92,6 @@ let gameStateDefault: GameState = {
     ball: balldefault,
     gameFinished: false,
 };
-
-@Injectable()
-export class GameService {
-    public game: Game;
-    // constructor() {}
-
-    startGame(server: Server) {
-        this.game = new Game(server);
-    }
-
-    updateMove1(move1: Move) {
-        this.game.updateMove1(move1);
-    }
-
-    updateMove2(move1: Move) {
-        this.game.updateMove2(move1);
-    }
-}
 
 class Game {
 	server: Server;

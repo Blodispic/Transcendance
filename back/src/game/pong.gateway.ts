@@ -1,5 +1,6 @@
 import {ConnectedSocket, MessageBody, OnGatewayConnection, OnGatewayInit, SubscribeMessage, WebSocketGateway, WebSocketServer} from "@nestjs/websockets";
 import { Server, Socket } from "socket.io";
+import { User } from "src/user/entities/user.entity";
 import { GameService } from "./game.services";
 
 export interface Move {
@@ -24,6 +25,12 @@ export class PongGateway implements OnGatewayConnection, OnGatewayInit {
 
 	handleConnection(client: any, ...args: any[]) {
 		console.log("Connected");
+	}
+
+	@SubscribeMessage("addToWaitingRoom")
+	HandleAddToWaitingRoom(@MessageBody() user: User, @ConnectedSocket() client: Socket)
+	{
+		this.gameService.addToWaitingRoom(user);
 	}
 
 	@SubscribeMessage("Move1")
