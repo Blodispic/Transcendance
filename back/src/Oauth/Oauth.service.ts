@@ -64,7 +64,8 @@ export class OauthService {
     if (data.error)
       return (data.error);
 
-    const token = this.jwtService.sign(data.login);
+    const payload = { username: data.login }
+    const token = await this.jwtService.sign(payload);
 
     const userDto: CreateUserDto = {
       username: data.login,

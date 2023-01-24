@@ -13,7 +13,6 @@ import { ChatGateway } from './chat/chat.gateway';
 import { Channel } from './channel/entities/channel.entity';
 import { MulterModule } from '@nestjs/platform-express';
 import { Results } from './results/entities/results.entity';
-import { TokenModule } from './token/token.module';
 
 @Module({
   imports: [
@@ -37,7 +36,6 @@ import { TokenModule } from './token/token.module';
     ChannelModule,
     ResultModule,
     UserModule,
-    TokenModule,
   ],
   controllers: [AppController],
   providers: [AppService, ChatGateway],

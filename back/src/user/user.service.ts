@@ -38,6 +38,12 @@ export class UserService {
     })
   }
 
+  GetByAccessToken(accessToken: string) {
+    return this.usersRepository.findOneBy({
+      access_token: accessToken
+    })
+  }
+
   getByUsername(username: string) {
     return this.usersRepository.findOneBy({
       username: username
