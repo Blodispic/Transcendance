@@ -1,12 +1,14 @@
 import * as React from 'react';
 
-import Game from './components/Game/Game'
+import GameApp from './components/Game/Game'
+import Profile from './components/Profile/Profile'
 import Connection from './components/connection/Connection';
-import  Header  from './components/Header/Header';
-import SecondComponent from './components/Chat/SecondComponent';
+import Header from './components/Header/Header';
+import Chat from './components/Chat/Chat';
 import './styles/styles.scss';
 import { createBrowserRouter, Outlet, RouterProvider, } from "react-router-dom";
 import NameForm from "./components/connection/form_name_avatar"
+import Queu from './components/Game/queu';
 
 const Layout = () => (
   <>
@@ -15,35 +17,43 @@ const Layout = () => (
   </>
 );
 
+// function requireAuth(nextState: any, replace: any, next: any) {
+//   if (!authenticated) {
+//     replace({
+//       pathname: "/login",
+//       state: { nextPathname: nextState.location.pathname }
+//     });
+//   }
+//   next();
+// }
 
 const router = createBrowserRouter([
   {
     element: <Layout />,
     children: [
       {
-        path: "/test",
-        element: <NameForm />,
+        path: "/",
+        element: <Connection />,
       },
-    {
-      path: "/",
-      element: <Connection />,
-    },
-    {
-      path: "/Home",
-      element: <SecondComponent />,
-    },
-    {
-      path: "/Chat",
-      element: <SecondComponent />,
-    },
-    {
-      path: "/Profile",
-      element: <SecondComponent />,
-    },
-    {
-      path: "/Game",
-      element: <Game />,
-    },
+      {
+        path: "/Home",
+      },
+      {
+        path: "/Chat",
+        element: <Chat />,
+      },
+      {
+        path: "/Profile/:id",
+        element: <Profile />,
+      },
+      {
+        path: "/Game",
+        element: <Queu />,
+      },
+      {
+        path: "/Game/:id",
+        element: <GameApp />,
+      },
     ]
   }
 ]);

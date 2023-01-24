@@ -2,11 +2,14 @@ import * as React from "react";
 import Header from '../Header/Header';
 import { useState, useEffect } from 'react';
 import { Form, useSearchParams } from "react-router-dom";
-import '../../styles/nav.scss'
+import '../../styles/connection.scss'
 import { Link } from 'react-router-dom';
 import { useNavigate } from "react-router-dom";
 import NameForm from "./form_name_avatar"
-
+import { IUser } from "../../interface/User";
+import { NULL } from "sass";
+import { useAppDispatch, useAppSelector } from "../../redux/Hook";
+import { setUser } from "../../redux/user";
 
 
 
@@ -20,11 +23,9 @@ export const getAuthorizeHref = (): string => {
 export default function Connection() {
 
     const [myVar, setMyvar] = useState(false)
-
-    let buttonclick: boolean = false;
-    let navigate = useNavigate();
     const [searchParams] = useSearchParams()
-
+    const dispatch = useAppDispatch();
+    const myUser = useAppSelector(state => state.user);
 
     function handleClick() {
         if (myVar == false)
@@ -32,33 +33,54 @@ export default function Connection() {
 
     }
 
-     useEffect(() => {
+    useEffect(() => {
         const oauthCode = searchParams.get('code'); // Tu lui dit de recuperer le parametre "code" dans l'url
 
         if (oauthCode) {
             const fetchcode = async () => {
-                await fetch('http://localhost:4000/oauth/token', {
+                const response = await fetch('http://localhost:4000/oauth/token', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                     },
                     body: JSON.stringify({ code: oauthCode }),
                 })
+                    .then(async response => {
+                        const data = await response.json();
+                        // check for error response
+                        if (!response.ok) {
+                            // get error message from body or default to response statusText
+                            const error = (data && data) || response.statusText;
+                            return Promise.reject(error);
+                        }
+                        else {
+                            dispatch(setUser(data));
+                            console.log(data);
+                            
+                        }
+                    })
+                    .catch(error => {
+                        console.error('There was an error!', error);
+                    });
             }
             fetchcode();
-            //  navigate('/Home');
+            if (myVar == false)
+                setMyvar(true);
         }
     }, [])
 
     return (
         <div>
-            <button className="button">
-                <a href={getAuthorizeHref()} onClick={handleClick}>
-                    Connect with Intra
-                </a>
-            </button>
             {
-                myVar == true && 
+                myVar == false &&
+                <button className="button center pulse pointer" >
+                    <a href={getAuthorizeHref()}>
+                        Connect with Intra
+                    </a>
+                </button>
+            }
+            {
+                myVar == true && myUser.user != undefined &&
                 <NameForm />
             }
         </div>
