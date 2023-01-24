@@ -57,12 +57,14 @@ export class GameService {
 			if (user2)
 				player2.name = user2.username;
 			this.gameRoom.push(new Game(server, player1, player2));
+			server.to(player1.socket).emit("RoomStart", this.gameRoom.length, player1);
+			server.to(player2.socket).emit("RoomStart", this.gameRoom.length, player2);
 		}
 		else
 			return ('Waiting for more Players...');
 	}
 
-	updateMove1(move1: Move, client: Socket) {
+	updateMove1(move1: Move, client: string) {
 		let roomId : number = 0;
 		while (roomId < this.gameRoom.length)
 		{
@@ -72,7 +74,7 @@ export class GameService {
 		}
 	}
 
-	updateMove2(move2: Move, client: Socket) {
+	updateMove2(move2: Move, client: string) {
 		let roomId : number = 0;
 		while (roomId < this.gameRoom.length)
 		{
@@ -119,7 +121,7 @@ let gameStateDefault: GameState = {
 		name: "Player1",
 		score: 0,
 		side: 0,
-		socket: 0,
+		socket: "",
 	},
 	player2: {
 		paddle: {
@@ -131,7 +133,7 @@ let gameStateDefault: GameState = {
 		name: "Player2",
 		score: 0,
 		side: 1,
-		socket: 0,
+		socket: "",
 	},
 	ball: balldefault,
 	gameFinished: false,
@@ -301,7 +303,7 @@ class Game {
 	    if (state.player1.score === state.scoreMax || state.player2.score === state.scoreMax)
 		{
 			state.gameFinished = true;
-			
+
 		}
 	    else
 		{
@@ -377,18 +379,19 @@ class Game {
 	    player.paddle.position.x += player.paddle.speed.x;
 	    player.paddle.position.y += player.paddle.speed.y;
 	}
-	
+
 	updateState(gameState: GameState)
 	{
 	    gameState = this.updateGameState({ ...gameState });
 	    // console.log("resetCooldown = " + gameState.resetCooldown);
 	    // console.log("ballPosition = x: " + Math.round(gameState.ball.position.x));
 	    // console.log("ballPosition = y: " + Math.round(gameState.ball.position.y));
-		
+
 	    // console.log("padlePosition = x: " + Math.round(gameState.player1.paddle.position.x));
 	    // console.log("padlePosition = y: " + Math.round(gameState.player1.paddle.position.y) + "\n");
 		// console.log(gameState.gameFinished);
-	    this.server.emit("UpdateState", gameState);
+		this.server.to(this.gameState.player1.socket).emit("UpdateState", gameState);
+		this.server.to(this.gameState.player2.socket).emit("UpdateState", gameState);
 	    return gameState;
 	}
 }

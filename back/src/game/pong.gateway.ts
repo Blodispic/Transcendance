@@ -36,19 +36,19 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 	@SubscribeMessage("addToWaitingRoom")
 	HandleAddToWaitingRoom(@MessageBody() user: User, @ConnectedSocket() client: Socket)
 	{
-		this.gameService.addToWaitingRoom(user, client);
+		this.gameService.addToWaitingRoom(user, client.id);
 		this.gameService.startGame(this.server);
 	}
 
 	@SubscribeMessage("Move1")
 	HandleMove1(@MessageBody() input: Move, @ConnectedSocket() client: Socket)
 	{
-		this.gameService.updateMove1(input, client);
+		this.gameService.updateMove1(input, client.id);
 	}
 
 	@SubscribeMessage("Move2")
 	HandleMove2(@MessageBody() input: Move, @ConnectedSocket() client: Socket)
 	{
-		this.gameService.updateMove2(input);
+		this.gameService.updateMove2(input, client.id);
 	}
 }
