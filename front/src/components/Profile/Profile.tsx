@@ -12,7 +12,7 @@ export default function Profile() {
         useEffect(() => {
                 if (id) {
                         const fetchid = async () => {
-                                const response = await fetch(`http://localhost:4000/user/${id}`, {
+                                const response = await fetch(`${process.env.REACT_APP_BACK}/user/${id}`, {
                                         method: 'POST',
                                 })
                                 setUser(await response.json());
@@ -36,7 +36,7 @@ export default function Profile() {
                         <div className='profile-header'>
                                 <div className="left-part">
                                         <div className='avatar'>
-                                                <img className='logo' src={`http://localhost:4000/user/${id}/avatar`} />
+                                                <img className='logo' src={`${process.env.REACT_APP_BACK}/user/${id}/avatar`} />
                                         </div>
                                 </div>
                                 <div className='info-header'>

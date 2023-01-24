@@ -39,7 +39,7 @@ export default function Connection() {
 
         if (oauthCode) {
             const fetchcode = async () => {
-                const response = await fetch('http://localhost:4000/oauth/token', {
+                const response = await fetch(`${process.env.REACT_APP_BACK}/oauth/token`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',

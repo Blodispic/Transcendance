@@ -23,19 +23,10 @@ export default function NameForm() {
                 formData.append('file', file);
 
             console.log("ICIIIIIII");
-            
-            // await fetch(`http://localhost:4000/user/${myUser.user.id}`, {
-            //     method: 'PATCH',
-            //     headers: {
-            //         'Content-Type': 'application/json',
-            //     },
-            //     body: JSON.stringify({ username: newname }),
-            // })
-            const response = await fetch(`http://localhost:4000/user/${myUser.user.id}/avatar`, {
+
+
+            const response = await fetch(`${process.env.REACT_APP_BACK}/user/${myUser.user.id}/avatar`, {
                 method: 'PATCH',
-                // headers: {
-                //     'Content-Type': 'multipart/form-data',
-                // },
                 body: formData,
             })
             formData.delete('newname');
