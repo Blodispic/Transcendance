@@ -2,16 +2,22 @@ import React from 'react';
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useAppSelector } from '../../redux/Hook';
+import { socket, Player } from './Game';
+import { useNavigate } from "react-router-dom";
 
-export default function Queu() {
+export default function Queue() {
 
-    const myUser = useAppSelector(state => state.user);
+	const myUser = useAppSelector(state => state.user);
+	const navigate = useNavigate();
 
-    function function_adam() {
+	function addToWaitingRoom() {
+		socket.emit("addToWaitingRoom", myUser.user);
+		return ;
+	}
 
-        return ();
-
-    }
+	socket.on("RoomStart", (roomId: number, player: Player) => {
+		navigate("/game/" + roomId, {state: {Id: roomId}});
+	});
 
 
     useEffect(() => {
@@ -25,7 +31,7 @@ export default function Queu() {
     }, [])
 
     return (
-        <button className="center pulse pointer" onClick={(e) => function_adam(e)} >
+        <button className="center pulse pointer" onClick={(e) => addToWaitingRoom()} >
             <Link to="/Game/">
                 <a>
                     play at foot-pong

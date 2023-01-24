@@ -59,6 +59,7 @@ export class GameService {
 			this.gameRoom.push(new Game(server, player1, player2));
 			server.to(player1.socket).emit("RoomStart", this.gameRoom.length, player1);
 			server.to(player2.socket).emit("RoomStart", this.gameRoom.length, player2);
+			console.log("RoomStart ID: " + this.gameRoom.length);
 		}
 		else
 			return ('Waiting for more Players...');

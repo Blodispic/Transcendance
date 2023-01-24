@@ -2,9 +2,9 @@ import { useEffect, useState } from "react";
 import { Circle, Layer, Rect, Stage, Text } from "react-konva";
 import io from 'socket.io-client';
 import "../../styles/game.scss";
+import {useLocation} from 'react-router-dom';
 
-const socket = io("http://" + window.location.hostname + ":4000");
-
+export const socket = io("http://" + window.location.hostname + ":4000");
 
 export interface Vec2 {
 	x: number;
@@ -485,6 +485,7 @@ function keyEvent(event: KeyboardEvent) {
 		socket.emit("Move1", move1);
 	else
 		socket.emit("Move2", move2);
+	// socket.removeAllListeners()
 }
 
 function updateState(setGameState: Function) {
