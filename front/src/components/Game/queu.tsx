@@ -1,5 +1,4 @@
-import React from 'react';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useAppSelector } from '../../redux/Hook';
 
@@ -11,7 +10,7 @@ export default function Queu() {
 
     useEffect(() => {
         const fetchuser = async () => {
-            const response = await fetch(`${process.env.REACT_APP_BACK}/game/`, {
+            await fetch(`${process.env.REACT_APP_BACK}/game/`, {
                 method: 'POST',
                 body: JSON.stringify({ id: myUser.user!.id }),
             })

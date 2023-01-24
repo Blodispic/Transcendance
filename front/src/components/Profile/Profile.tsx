@@ -1,11 +1,10 @@
 import { useEffect, useState } from 'react';
-import { useParams, useSearchParams } from "react-router-dom";
+import { useParams} from "react-router-dom";
 import { IUser } from '../../interface/User';
 import '../../styles/profile.scss';
 
 export default function Profile() {
         const [user, setUser] = useState<IUser | undefined>(undefined);
-        const [searchParams] = useSearchParams()
         let avatar: string = "";
         let { id } = useParams();
 
@@ -24,7 +23,7 @@ export default function Profile() {
         console.log(user);
         console.log("avatar", avatar);
 
-        if (user == undefined || avatar == undefined) {
+        if (user === undefined || avatar === undefined) {
                 return (
                         <div className='center'>
                                 <h1>USER DONT EXIST </h1>

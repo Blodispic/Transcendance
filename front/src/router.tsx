@@ -6,8 +6,7 @@ import Connection from './components/connection/Connection';
 import Header from './components/Header/Header';
 import Chat from './components/Chat/Chat';
 import './styles/styles.scss';
-import { createBrowserRouter, Outlet, RouterProvider, } from "react-router-dom";
-import NameForm from "./components/connection/form_name_avatar"
+import { createBrowserRouter, Outlet } from "react-router-dom";
 import Queu from './components/Game/queu';
 import { Navigate } from "react-router-dom";
 import { useAppSelector } from './redux/Hook';
@@ -25,7 +24,7 @@ const ProtectedRoute = (props: { children: any }) => {
   const user = useAppSelector(state => state.user);
   console.log(user);
 
-  if (user.user == undefined || (user.user != undefined && user.user.username == undefined)) {
+  if (user.user === undefined || (user.user !== undefined && user.user.username === undefined)) {
     // user is not authenticated
     return <Navigate to="/" />;
   }

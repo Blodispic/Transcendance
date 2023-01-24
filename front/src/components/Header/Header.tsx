@@ -37,7 +37,7 @@ export default function Header() {
 
         <div>
           {
-            myUser.user != undefined &&
+            myUser.user !== undefined &&
             <Link to={`/Profile/${myUser.user.id}`}>
               <span className="font-link">
                 Profile
@@ -46,7 +46,7 @@ export default function Header() {
           }
 
           {
-             myUser.user == undefined &&
+             myUser.user === undefined &&
              <Link to={`/`}>
             <span className="font-link">
               Profile

@@ -1,14 +1,8 @@
-import * as React from "react";
-import Header from '../Header/Header';
 import { useState, useEffect } from 'react';
-import { Form, useSearchParams } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 import '../../styles/connection.scss'
-import { Link } from 'react-router-dom';
-import { useNavigate } from "react-router-dom";
 import NameForm from "./form_name_avatar"
-import { IUser } from "../../interface/User";
-import { NULL } from "sass";
-import { useAppDispatch, useAppSelector } from "../../redux/Hook";
+import { useAppDispatch } from "../../redux/Hook";
 import { setUser } from "../../redux/user";
 import { useCookies } from "react-cookie";
 
@@ -26,20 +20,16 @@ export default function Connection() {
     const [myVar, setMyvar] = useState(false)
     const [searchParams] = useSearchParams()
     const dispatch = useAppDispatch();
-    const myUser = useAppSelector(state => state.user);
-    const [cookies, setCookie] = useCookies(['Token']);
-    function handleClick() {
-        if (myVar == false)
-            setMyvar(true);
-
-    }
-
+    const [,setCookie] = useCookies(['Token']);
+    const redirect = process.env.REACT_APP_BACK;
+    console.log("here",redirect );
+    
     useEffect(() => {
         const oauthCode = searchParams.get('code'); // Tu lui dit de recuperer le parametre "code" dans l'url
 
         if (oauthCode) {
             const fetchcode = async () => {
-                const response = await fetch(`${process.env.REACT_APP_BACK}/oauth/token`, {
+                await fetch(`${process.env.REACT_APP_BACK}/oauth/token`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -64,7 +54,7 @@ export default function Connection() {
                     });
             }
             fetchcode();
-            if (myVar == false)
+            if (myVar === false)
                 setMyvar(true);
         }
     }, [])

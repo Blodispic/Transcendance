@@ -1,5 +1,4 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
-import { useReducer } from 'react'
 import { IUser, UserStatus } from '../interface/User';
 
 interface StateTest {

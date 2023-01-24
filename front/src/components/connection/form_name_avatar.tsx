@@ -1,9 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import { useState } from 'react';
 import '../../styles/connection.scss'
-import { IUser } from "../../interface/User";
-import { Link } from 'react-router-dom';
-import { userInfo } from 'os';
-import { stringify } from 'querystring';
 import { useAppSelector } from '../../redux/Hook';
 
 export default function NameForm() {
@@ -17,21 +13,21 @@ export default function NameForm() {
 
     const fetch_name_avatar = async (e: any) => {
         e.preventDefault();
-        if (myUser.user != undefined) {
-            formData.append('username', newname);
-            if (file)
+        if (myUser.user !== undefined) {
+            if (myUser.user.username !== undefined) {
+                await fetch(`${process.env.REACT_APP_BACK}/user/${myUser.user.id}`, {
+                    method: 'PATCH',
+                    body: JSON.stringify({ username: newname }),
+                })
+            }
+            if (file) {
                 formData.append('file', file);
-
-            console.log("ICIIIIIII");
-
-
-            const response = await fetch(`${process.env.REACT_APP_BACK}/user/${myUser.user.id}/avatar`, {
-                method: 'PATCH',
-                body: formData,
-            })
-            formData.delete('newname');
-            if (file)
+                await fetch(`${process.env.REACT_APP_BACK}/user/${myUser.user.id}/avatar`, {
+                    method: 'PATCH',
+                    body: formData,
+                })
                 formData.delete('file');
+            }
         }
     }
 
@@ -54,14 +50,15 @@ export default function NameForm() {
                     <input type="file" name="avatar" onChange={e => onChangeFile(e)} accept="image/png, image/jpeg" />
                 </label>
                 {
-                    file && avatar != '' &&
+                    file && avatar !== '' &&
                     <img src={avatar} />
                 }
-                <button onClick={(e) => fetch_name_avatar(e)}>
-                    <a>okk</a>
-                </button>
-                <a>{newname}</a>
-                <a>{avatar}</a>
+                {
+                    newname &&
+                    <button onClick={(e) => fetch_name_avatar(e)}>
+                        <a>okk</a>
+                    </button>
+                }
             </form >
         </div >
     );
