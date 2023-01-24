@@ -28,7 +28,7 @@ let balldefault: Ball = {
 let gameStateDefault: GameState = {
     area: { x: GAME_INTERNAL_WIDTH, y: GAME_INTERNAL_WIDTH * GAME_RATIO },
     scale: 1,
-    scoreMax: 10,
+    scoreMax: 3,
     resetCooldown: 60,
     client_area: vector_zero(),
     player1: {
@@ -211,7 +211,7 @@ class Game {
                 if (state.player2.score === state.scoreMax)
                 {
                     //END THE GAME
-				    state.gameFinished = true;
+					state.gameFinished = true;
 					let result: any = {winner: state.player2.name, looser: state.player1.name, winner_score: state.player2.score.toString(), looser_score: state.player1.score.toString()};
                 }
             } else if (ball.position.y < 0 + ballRadius) {
@@ -234,9 +234,14 @@ class Game {
             y: state.area.y - paddleDimensions.y,
         };
         if (state.player1.score === state.scoreMax || state.player2.score === state.scoreMax)
-		    state.gameFinished = true;
+		{
+			state.gameFinished = true;
+
+		}
 	    else
-		    state.gameFinished = false;
+		{
+			state.gameFinished = false;
+		}
         state.player1.paddle.speed = { x: 0, y: 0 };
         state.player1.paddle.angle = 0;
     
@@ -317,6 +322,7 @@ class Game {
 
         // console.log("padlePosition = x: " + Math.round(gameState.player1.paddle.position.x));
         // console.log("padlePosition = y: " + Math.round(gameState.player1.paddle.position.y) + "\n");
+		// console.log(gameState.gameFinished);
         this.server.emit("UpdateState", gameState);
         return gameState;
     }

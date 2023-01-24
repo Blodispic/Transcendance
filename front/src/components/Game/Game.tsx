@@ -70,7 +70,7 @@ let balldefault: Ball = {
 let gameStateDefault: GameState = {
 	area: { x: GAME_INTERNAL_WIDTH, y: GAME_INTERNAL_WIDTH * GAME_RATIO },
 	scale: 1,
-	scoreMax: 10,
+	scoreMax: 3,
 	resetCooldown: 60,
 	client_area: vector_zero(),
 	player1: {
@@ -243,9 +243,9 @@ function convertState(state: GameState) {
 
 	// console.log("padlePosition = x: " + Math.round(newState.player1.paddle.position.x));
 	// console.log("padlePosition = y: " + Math.round(newState.player1.paddle.position.y) + "\n");
-	console.log("resetCooldown = " + newState.resetCooldown);
-	console.log("ballPosition = x: " + Math.round(newState.ball.position.x));
-	console.log("ballPosition = y: " + Math.round(newState.ball.position.y));
+	// console.log("resetCooldown = " + newState.resetCooldown);
+	// console.log("ballPosition = x: " + Math.round(newState.ball.position.x));
+	// console.log("ballPosition = y: " + Math.round(newState.ball.position.y));
 
 	return newState;
 }
@@ -257,7 +257,7 @@ function updateGameState(state: GameState) {
 
 	state.player1.input = { ...move1 };
 	state.player2.input = { ...move2 };
-	if (state.player1.score === state.scoreMax || state.player2.score === state.scoreMax)
+	if (state.gameFinished === false && (state.player1.score === state.scoreMax || state.player2.score === state.scoreMax))
 	{
 		state.gameFinished = true;
 	}
@@ -270,6 +270,7 @@ function updateGameState(state: GameState) {
 	}
 	else if (state.gameFinished === false)
 		state.resetCooldown--;
+	console.log(state.gameFinished);
 	return state;
 }
 
@@ -376,10 +377,8 @@ function resetState(state: GameState) {
 		x: state.area.x / 2 - paddleDimensions.x / 2,
 		y: state.area.y - paddleDimensions.y,
 	};
-	if (state.player1.score === state.scoreMax || state.player2.score === state.scoreMax)
+	if (state.gameFinished === false && (state.player1.score === state.scoreMax || state.player2.score === state.scoreMax))
 		state.gameFinished = true;
-	else
-		state.gameFinished = false;
 	state.player1.paddle.speed = { x: 0, y: 0 };
 	state.player1.paddle.angle = 0;
 
