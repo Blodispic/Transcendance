@@ -25,7 +25,6 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 
 	handleConnection(client: any, ...args: any[]) {
 		console.log("Client: " + client.id + " Connected");
-		client.handshake.auth
 		//Need to add user to userList
 	}
 
