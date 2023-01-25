@@ -6,16 +6,6 @@
 	--highlight: #8860D0;
 }
 
-// img {
-// 	width: 40px;
-// 	height: 40px;
-// 	// .user-avatar {
-// 	// 	display: inline-block;
-// 	// 	width: 3%;
-// 	// }
-// }
-
-
 #chat-container {
 	font-family: 'Fredoka One', cursive;
 
@@ -39,7 +29,7 @@
 		float:none;
 		width: 60%;
 		padding: 20px 0px;
-		background-color: rgba(232, 232, 232, 0.966);
+		background-color: rgb(232, 232, 232);
 		// align-items: center;
 		// display: flex;
 		
@@ -56,7 +46,7 @@
 				color: rgb(111, 106, 106);
 				background-color: rgba($color: rgb(80, 165, 174), $alpha: 0.3);
 				max-width: 700px;
-				position: relative;
+				// position: relative;
 				border-radius: 15px;
 				padding: 20px;
 				margin: 20px;
@@ -77,13 +67,8 @@
 						img {
 							width: 40px;
 							height: 40px;
-							// .user-avatar {
-								// 	display: inline-block;
-								// 	width: 3%;
-								// }
-							}
-							
-						}
+						}	
+					}
 				}
 			}
 		}
@@ -102,23 +87,23 @@
 			}
 
 
-		.create-channel {
-			position: inherit;
-			width: 100%;
-			height: 300px;
-			background-color: var(--sub-color1);
-			text-align: center;
+		// .create-channel {
+		// 	position: inherit;
+		// 	width: 100%;
+		// 	height: 300px;
+		// 	background-color: var(--sub-color1);
+		// 	text-align: center;
 			
-			input {
-				border-radius: 10px;
-				font-size: 20px;
-				border: transparent;
-			}
-			button {
-				margin-top: 50px;
-				font-size: 20px;
-			}
-		}
+		// 	input {
+		// 		border-radius: 10px;
+		// 		font-size: 20px;
+		// 		border: transparent;
+		// 	}
+		// 	button {
+		// 		margin-top: 50px;
+		// 		font-size: 20px;
+		// 	}
+		// }
 	}
 	
 	.right-sidebar {
@@ -137,7 +122,8 @@ button {
 	cursor: pointer;
 	padding: 5px 5px;
 	background: var(--primary-color);
-	color: var(--secondary-color);
+	// color: var(--secondary-color);
+	color: white;
 	transition: .3s;
 	border: 2px solid var(--primary-color);
 	margin-left: 5px;
@@ -148,6 +134,9 @@ button:hover {
 	color: var(--primary-color);
 	background: var(--secondary-color);
 	cursor: pointer;
+}
+
+
 }
 
 .chat-form-popup{
@@ -164,12 +153,12 @@ button:hover {
 }
 
 .chat-form-inner {
-	background-color: white;
+	background-color: var(--sub-color1);
 	width: 500px;
 	height: 300px;
 	justify-content: center;
 	align-items: center;
 	text-align: center;
-}
-
+	position: relative;
+	z-index: 1000;
 }
