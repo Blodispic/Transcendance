@@ -1,10 +1,13 @@
 import { Injectable } from '@nestjs/common';
+import { CreateUserDto } from 'src/user/dto/create-user.dto';
 import { UserService } from '../user/user.service';
 
 @Injectable()
 export class OauthService {
 
-  constructor(private usersService: UserService) { }
+  constructor(
+    private usersService: UserService,
+    ) { }
 
   async getToken(oauthCode: string): Promise<any> {
     const api_key = process.env.API42_UID;
@@ -33,35 +36,42 @@ export class OauthService {
     //   throw new Error(`AuthService getToken failed, HTTP status ${response.status}`);
     // }
     const data = await response.json();
+    console.log(data);
 
     return this.getInfo(data.access_token);
 
   }
 
-  async getInfo(token: string) {
+  async getInfo(intra_token: string) {
     const response = await fetch('https://api.intra.42.fr/v2/me', {
       method: 'GET',
       headers: {
-        'Authorization': `Bearer ${token}`,
+        'Authorization': `Bearer ${intra_token}`,
       },
     });
     const data = await response.json();
 
-    const user = await this.usersService.getByUsername(data.login);
+    console.log(data);
+
+    const user = await this.usersService.getByLogin(data.login);
+
+    console.log(user);
 
     if (user)
       return (user);
     if (data.error)
       return (data.error);
-    const userReturn = {
-      "username": data.login,
-      "email": data.email,
-      "status": "online",
-      "avatar": data.image.link,
-    }
-    await this.usersService.create(userReturn)
-    return this.usersService.getByUsername(userReturn.username);
 
+    const token = "test";
+
+    const userDto: CreateUserDto = {
+      username: data.login,
+      login: data.login,
+      email: data.email,
+      intra_avatar: data.image.link,
+      access_token: token
+    }
+    return await this.usersService.create(userDto);
   }
 }
 

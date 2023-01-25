@@ -1,18 +1,14 @@
-import { Body, Controller, Get, Param, Post } from "@nestjs/common";
-import { ResultDto } from "./dto/results.dto";
+import { Body, Controller, Post } from "@nestjs/common";
 import { ResultService } from "./results.service";
+import { Results } from "./entities/results.entity";
 
 @Controller('results')
 export class ResultController {
   constructor(private readonly resultService: ResultService) { }
 
   @Post()
-  async createResult(@Body() resultDto: ResultDto) {
-    return await this.resultService.createResult(resultDto);
+  async createResults(@Body() resultDto: Results) {
+      return await this.resultService.createResult(resultDto);
   }
-
-  @Get('user/:id')
-  async findResultById(@Param('id') id: number) {
-    return await this.resultService.findResultById(id);
-  }
+  
 }

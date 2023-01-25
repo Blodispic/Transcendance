@@ -1,20 +1,26 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
-
-import  Header  from './components/Header/Header';
+import reportWebVitals from './reportWebVitals';
+import App from './App';
 import router from './router';
 import { createBrowserRouter, RouterProvider, } from "react-router-dom";
-import reportWebVitals from './reportWebVitals';
 
- 
+import { store } from './redux/store';
+import { Provider } from 'react-redux';
+import { CookiesProvider } from 'react-cookie';
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
 
 root.render(
-  <div  className='container' >
-    <RouterProvider router={router} />
+  <div className='container' >
+
+    <Provider store={store}>
+      <CookiesProvider>
+        <App />
+      </CookiesProvider>
+    </Provider>,
   </div>
 );
 

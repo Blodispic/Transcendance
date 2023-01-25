@@ -8,7 +8,9 @@ import { useNavigate } from "react-router-dom";
 import NameForm from "./form_name_avatar"
 import { IUser } from "../../interface/User";
 import { NULL } from "sass";
-
+import { useAppDispatch, useAppSelector } from "../../redux/Hook";
+import { setUser } from "../../redux/user";
+import { useCookies } from "react-cookie";
 
 
 
@@ -22,13 +24,10 @@ export const getAuthorizeHref = (): string => {
 export default function Connection() {
 
     const [myVar, setMyvar] = useState(false)
-
-    let buttonclick: boolean = false;
-    let navigate = useNavigate();
     const [searchParams] = useSearchParams()
-    let [user, setUser] = useState<IUser | undefined>(undefined);
-
-
+    const dispatch = useAppDispatch();
+    const myUser = useAppSelector(state => state.user);
+    const [cookies, setCookie] = useCookies(['Token']);
     function handleClick() {
         if (myVar == false)
             setMyvar(true);
@@ -56,22 +55,17 @@ export default function Connection() {
                             return Promise.reject(error);
                         }
                         else {
-                            setUser(data);
+                            dispatch(setUser(data));
+                            setCookie('Token', data.access_token , { path: '/' });
                         }
                     })
                     .catch(error => {
                         console.error('There was an error!', error);
                     });
-
-                // let user: IUser = await response.json();
-                // setUser(user);
-                // console.log(user);                
-
             }
             fetchcode();
             if (myVar == false)
                 setMyvar(true);
-            //  navigate('/Home');
         }
     }, [])
 
@@ -86,8 +80,8 @@ export default function Connection() {
                 </button>
             }
             {
-                myVar == true && user != undefined &&
-                <NameForm user={user} />
+                myVar == true &&
+                <NameForm />
             }
         </div>
     );

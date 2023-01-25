@@ -1,11 +1,15 @@
 import * as React from 'react';
 import '../../styles/nav.scss'
 import { Link } from 'react-router-dom';
+import { useAppSelector } from '../../redux/Hook';
 
 
 export default function Header() {
 
 
+  const myUser = useAppSelector(state => state.user);
+  console.log(myUser);
+  
   return (
     <div className='mynavbar'>
 
@@ -14,7 +18,7 @@ export default function Header() {
         <Link to="/">
           <img className='logo' src={require('../../assets/logo.gif')} />
         </Link>
-        
+
       </div>
 
       <div className='navbar-right'>
@@ -22,7 +26,7 @@ export default function Header() {
         <Link to="/Game">
           <span className="font-link">
             Game
-          </span>  
+          </span>
         </Link>
 
         <Link to="/Chat">
@@ -31,14 +35,16 @@ export default function Header() {
           </span>
         </Link>
 
-        <Link to="/Profile">
-          <span className="font-link">
-            Profile
-          </span>  
-        </Link>
+        {
+        myUser.user != undefined &&
+          <Link to={`/Profile/${myUser.user.id}`}>
+            <span className="font-link">
+              Profile
+            </span>
+          </Link>
+        }
+      </div>
 
     </div>
-
-  </div>
   );
 }

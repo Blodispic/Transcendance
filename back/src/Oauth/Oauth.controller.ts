@@ -9,7 +9,7 @@ export class OauthController {
   @Post('token')
   async getToken(@Body() body: any) {
     console.log(body);
-
     return this.oauthService.getToken(body.code);
   }
+
 }

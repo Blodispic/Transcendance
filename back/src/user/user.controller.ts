@@ -1,9 +1,8 @@
-import { BadRequestException, Body, Controller, Post, Delete, Get, Param, Patch, UseInterceptors, UploadedFile } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, Req, Res, UploadedFile, UseInterceptors } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { Request, Response } from 'express';
 import { diskStorage } from 'multer';
-import { editFileName, imageFileFilter } from 'src/app.service';
-import { CreateUserDto } from '../user/dto/create-user.dto';
-import { UpdateUserDto } from '../user/dto/update-user.dto';
+import { editFileName, imageFilter } from 'src/app.service';
 import { User } from './entities/user.entity';
 import { UserService } from './user.service';
 
@@ -11,18 +10,9 @@ import { UserService } from './user.service';
 export class UserController {
   constructor(private readonly userService: UserService) { }
 
-  @Post()
-  async create(@Body() createUserDto: CreateUserDto): Promise<User> {
-    try {
-      return await this.userService.create(createUserDto);
-    } catch (error) {
-      throw new BadRequestException(error.detail);
-    }
-  }
-
   @Get()
-  async findAll() {
-    return await this.userService.findAll();
+  findAll() {
+    return this.userService.findAll();
   }
 
   @Get(':id')
@@ -30,19 +20,33 @@ export class UserController {
     return this.userService.getById(id);
   }
 
-  @Post(':id/setavatar')
+  @Patch(':id/avatar')
   @UseInterceptors(
     FileInterceptor('file', {
       storage: diskStorage({
-        destination: './files',
+        destination: './storage/images/',
         filename: editFileName,
       }),
-      fileFilter: imageFileFilter,
+      fileFilter: imageFilter,
     }),
   )
-  async setAvatar(@Param('id') id: number, @UploadedFile() file: any) {
-    await this.userService.setAvatar(id, file);
+  async setAvatar(@Param('id') id: number, @UploadedFile() file: any, @Body('username') username: string) {
+    await this.userService.setAvatar(id, username, file);
     return { message: 'Avatar set successfully' };
+  }
+
+  @Get(':id/avatar')
+  async getAvatar(@Param('id') id: number, @Req() req: Request, @Res() res: Response) {
+    const user = await this.userService.getById(id);
+    if (user) {
+      if (user.avatar) {
+        return res.sendFile(user.avatar, { root: './storage/images/' });
+      } else {
+        return res.redirect(user.intra_avatar)
+      }
+    } else {
+      return null;
+    }
   }
 
   @Patch(':id')

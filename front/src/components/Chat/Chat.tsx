@@ -1,10 +1,10 @@
 import { toUnicode } from "punycode";
-import * as React from "react";
 import { io } from "socket.io-client";
 import '../../styles/chat.scss'
 import { ChannelList } from "./Channel";
+import React from "react";
 
-const socket = io("http://" + window.location.hostname + ":4000");
+// const socket = io("http://" + window.location.hostname + ":4000");
 
 function DMList() {
 	return <ul>
@@ -22,6 +22,7 @@ function UserList() {
 }
 
 function ChatBody() {
+	
 	const [newInput, setNewInput] = React.useState("");
 	const [messageList, setMessageList] = React.useState<any[]>([]);
 
@@ -33,14 +34,14 @@ function ChatBody() {
 
 	const handleSubmitNewMessage = (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
-		if (newInput != "")
-			socket.emit('sendMessage', { newInput });
+		// if (newInput != "")
+			// socket.emit('sendMessage', { newInput });
 		setNewInput("");
 	}
 
-	socket.on('recMessage', (data) => {
-		buildNewMessage(data);
-	})
+	// socket.on('recMessage', (data) => {
+	// 	buildNewMessage(data);
+	// })
 
 	const buildNewMessage = (data: any) => {
 		setMessageList([...messageList, data]);
@@ -70,7 +71,7 @@ function ChatBody() {
 	);
 }
 
-function Chat() {
+export default function Chat() {
 	const [channelSet, setChannelSet] = React.useState(false)
 	const [DmSet, setDmSet] = React.useState(true)
 
@@ -89,5 +90,3 @@ function Chat() {
 		</div>
 	);
 }
-
-export default Chat

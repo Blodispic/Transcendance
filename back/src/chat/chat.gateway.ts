@@ -46,13 +46,13 @@ async handleSendMessageChannel(@ConnectedSocket() client: Socket, @MessageBody()
  }
  
  handleDisconnect(client: Socket) {
-   console.log(`Disconnected: ${client.id}`);
+  //  console.log(`Disconnected: ${client.id}`);
    //Do stuffs
  }
  
  handleConnection(client: Socket, ...args: any[]) {
-  console.log("client id ", client.handshake.headers.authorization)
-   console.log(`Connected ${client.id}`);
+  // console.log("client id ", client.handshake.headers.authorization)
+  //  console.log(`Connected ${client.id}`);
    const token = {
      id: client.handshake.headers.authorization
    }
