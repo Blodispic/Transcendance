@@ -79,11 +79,7 @@ function Chat() {
 			<div className="left-sidebar">
 				<ChannelList />
 			</div>
-{/* 
-			{ channelSet == false && DmSet == false &&
-				<FormSetChannel />
-				// setChannelSet(true);
-			} */}
+			
 			{ channelSet == false && DmSet == true &&
 				<ChatBody />
 			}
