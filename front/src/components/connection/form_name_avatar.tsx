@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import '../../styles/connection.scss'
-import { useAppSelector } from '../../redux/Hook';
+import { useAppDispatch, useAppSelector } from '../../redux/Hook';
+import { log_unlog } from "../../redux/user";
 
 export default function NameForm() {
 
@@ -10,6 +11,7 @@ export default function NameForm() {
     const [avatar, setavatar] = useState<string>('');
     const formData = new FormData();
     const myUser = useAppSelector(state => state.user);
+    const dispatch = useAppDispatch();
 
     const fetch_name_avatar = async (e: any) => {
         e.preventDefault();
@@ -28,6 +30,7 @@ export default function NameForm() {
                 })
                 formData.delete('file');
             }
+            dispatch(log_unlog());
         }
     }
 

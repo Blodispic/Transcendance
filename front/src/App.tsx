@@ -3,18 +3,29 @@ import { useAppDispatch, useAppSelector } from './redux/Hook';
 import router from './router';
 import { Cookies } from 'react-cookie';
 import { setUser } from './redux/user';
+import { useEffect } from "react";
 
 
 
 function App() {
-  const myUser = useAppSelector(state => state.user);
+  const myStore = useAppSelector(state => state.user);
   const dispatch = useAppDispatch();
   const cookies = new Cookies();
   const token = cookies.get('Token');
 
+
+  useEffect(() => {
+    if (myStore.isLog == true) {
+      // export const socket = io("http://" + window.location.hostname + ":4000", {
+      //   auth: {
+      //     user: useAppSelector(state => state.user)
+      //   }
+      // });
+    }
+  }, [])
+
+
   const get_user = async () => {
-    console.log("token", token);
-    
     const response = await fetch(`${process.env.REACT_APP_BACK}/user/access_token`, {
       method: 'POST',
       headers: {
@@ -23,15 +34,16 @@ function App() {
       body: JSON.stringify({ token: token }),
     })
     const data = await response.json();
-    console.log("data",data);
+    console.log("data=", data);
     
     dispatch(setUser(data));
-  }
 
-  if (myUser.user === undefined) {
+  }
+  if (myStore.user === undefined) {
     if (token !== undefined)
       get_user();
   }
+
   return (
     <div>
       <RouterProvider router={router} />

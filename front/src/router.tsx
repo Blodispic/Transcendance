@@ -24,7 +24,7 @@ const ProtectedRoute = (props: { children: any }) => {
   const user = useAppSelector(state => state.user);
   console.log(user);
 
-  if (user.user === undefined || (user.user !== undefined && user.user.username === undefined)) {
+  if (user.isLog == false) {
     // user is not authenticated
     return <Navigate to="/" />;
   }
@@ -34,9 +34,9 @@ const ProtectedRoute = (props: { children: any }) => {
 
 const PublicRoute = (props: { children: any }) => {
   const user = useAppSelector(state => state.user);
-  if (user.user) {
+  if (user.isLog == true) {
     // user is authenticated
-    return <Navigate to="/" />;
+    return <Navigate to="/Home" />;
   }
   return props.children;
 };
@@ -49,9 +49,9 @@ const router = createBrowserRouter([
       {
         path: "/",
         element:
-          // <PublicRoute>
+          <PublicRoute>
             <Connection />,
-          // </PublicRoute>
+           </PublicRoute>
       },
       {
         path: "/Home",
