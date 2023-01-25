@@ -180,8 +180,15 @@ class Game {
 		this.gameState.player1.score = 0;
 		this.gameState.player2.score = 0;
 
-		setInterval(() => {
+		this.gameRoomRun();
+	}
+
+	gameRoomRun()
+	{
+		var intervalId = setInterval(() => {
 			this.gameState = this.updateState(this.gameState);
+			if (this.gameState.gameFinished == true)
+				clearInterval(intervalId);
 		}, 1000 / 60);
 	}
 
@@ -304,8 +311,8 @@ class Game {
 	        this.paddleCollision(ball, state.player2) === 0
 	    ) {
 	        if (ball.position.y > state.area.y - ballRadius) {
-	            this.resetState(state);
 	            state.player2.score++;
+	            this.resetState(state);
 	            if (state.player2.score === state.scoreMax)
 	            {
 	                //END THE GAME
@@ -316,8 +323,8 @@ class Game {
 					this.server.to(this.gameState.player2.socket).emit("GameEnd", result);
 	            }
 	        } else if (ball.position.y < 0 + ballRadius) {
-				this.resetState(state);
 	            state.player1.score++;
+				this.resetState(state);
 	            if (state.player1.score === state.scoreMax)
 	            {
 					//END THE GAME
