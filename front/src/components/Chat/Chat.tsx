@@ -3,7 +3,6 @@ import * as React from "react";
 import { io } from "socket.io-client";
 import '../../styles/chat.scss'
 import { ChannelList } from "./Channel";
-import { FormSetChannel } from "./Channel";
 
 const socket = io("http://" + window.location.hostname + ":4000");
 
@@ -72,21 +71,22 @@ function ChatBody() {
 }
 
 function Chat() {
-	const [chanelSet, setChanelSet] = React.useState(false)
+	const [channelSet, setChannelSet] = React.useState(false)
+	const [DmSet, setDmSet] = React.useState(true)
+
 	return (
 		<div id="chat-container">
 			<div className="left-sidebar">
 				<ChannelList />
 			</div>
-
-			{ chanelSet == false &&
+{/* 
+			{ channelSet == false && DmSet == false &&
 				<FormSetChannel />
-			}
-			{ chanelSet == true &&
+				// setChannelSet(true);
+			} */}
+			{ channelSet == false && DmSet == true &&
 				<ChatBody />
 			}
-
-
 			<div className="right-sidebar">
 				<UserList />
 			</div>
