@@ -210,8 +210,8 @@ export default function GameApp() {
 					<Text
 					  text= {gameState.player1.name.toString() + " wins !"}
 					  visible={gameState.gameFinished}
-					  x={0}
-					  y={0}
+					  x={gameState.area.x / 2 - 150}
+					  y={gameState.area.y / 2}
 					  fontSize={40}
 					  align="center"
 					/>

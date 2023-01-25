@@ -321,55 +321,55 @@ class Game {
 					let result: any = {winner: state.player2.name, looser: state.player1.name, winner_score: state.player2.score.toString(), looser_score: state.player1.score.toString()};
 					this.server.to(this.gameState.player1.socket).emit("GameEnd", result);
 					this.server.to(this.gameState.player2.socket).emit("GameEnd", result);
-	            }
-	        } else if (ball.position.y < 0 + ballRadius) {
-	            state.player1.score++;
+				}
+			} else if (ball.position.y < 0 + ballRadius) {
+				state.player1.score++;
 				this.resetState(state);
-	            if (state.player1.score === state.scoreMax)
-	            {
+				if (state.player1.score === state.scoreMax)
+				{
 					//END THE GAME
 					console.log("Player1 Wins");
-				    state.gameFinished = true;
+					state.gameFinished = true;
 					let result: any = {winner: state.player1.name, looser: state.player2.name, winner_score: state.player1.score.toString(), looser_score: state.player2.score.toString()};
 					this.server.to(this.gameState.player1.socket).emit("GameEnd", result);
 					this.server.to(this.gameState.player2.socket).emit("GameEnd", result);
 				}
-	        }
-	    }
+			}
+		}
 	}
 		
 	resetState(state: GameState) {
-	    state.resetCooldown = 60;
-	    state.player1.paddle.position = {
-	        x: state.area.x / 2 - paddleDimensions.x / 2,
-	        y: state.area.y - paddleDimensions.y,
-	    };
-	    if (state.player1.score === state.scoreMax || state.player2.score === state.scoreMax)
+		state.resetCooldown = 60;
+		state.player1.paddle.position = {
+			x: state.area.x / 2 - paddleDimensions.x / 2,
+			y: state.area.y - paddleDimensions.y,
+		};
+		if (state.player1.score === state.scoreMax || state.player2.score === state.scoreMax)
 		{
 			state.gameFinished = true;
 		}
-	    else
+		else
 		{
 			state.gameFinished = false;
 		}
-	    state.player1.paddle.speed = { x: 0, y: 0 };
-	    state.player1.paddle.angle = 0;
+		state.player1.paddle.speed = { x: 0, y: 0 };
+		state.player1.paddle.angle = 0;
 		
-	    state.player2.paddle.position = {
-	        x: state.area.x / 2 - paddleDimensions.x / 2,
-	        y: 0,
-	    };
-	    state.player2.paddle.speed = { x: 0, y: 0 };
-	    state.player2.paddle.angle = 0;
-		
-	    state.ball.position = { x: state.area.x / 2 - 10, y: state.area.y / 2 - 10 };
-	    state.ball.speed = { x: 5, y: 1 };
-	    state.ball.previous = { x: state.area.x / 2 - 10, y: state.area.y / 2 - 10 };
-		
-	    state.ball.speed.x = (Math.random() * (20) - 10);
-	    if (state.player1.score > state.player2.score)
-	        state.ball.speed.y = Math.random() * (5 - 1.5) + 1.5;
-	    else state.ball.speed.y = -(Math.random() * (5 - 1.5) + 1.5);
+		state.player2.paddle.position = {
+			x: state.area.x / 2 - paddleDimensions.x / 2,
+			y: 0,
+		};
+		state.player2.paddle.speed = { x: 0, y: 0 };
+		state.player2.paddle.angle = 0;
+
+		state.ball.position = { x: state.area.x / 2 - 10, y: state.area.y / 2 - 10 };
+		state.ball.speed = { x: 5, y: 1 };
+		state.ball.previous = { x: state.area.x / 2 - 10, y: state.area.y / 2 - 10 };
+
+		state.ball.speed.x = (Math.random() * (20) - 10);
+		if (state.player1.score > state.player2.score)
+		    state.ball.speed.y = Math.random() * (5 - 1.5) + 1.5;
+		else state.ball.speed.y = -(Math.random() * (5 - 1.5) + 1.5);
 	}
 		
 	moveBall(ball: Ball) {
@@ -397,44 +397,36 @@ class Game {
 	}
 		
 	movePlayer(player: Player, state: GameState) {
-	    player.paddle.speed = { x: 0, y: 0 };
-	    if (player.side === 0) {
-	        if (player.input.left && player.input.right)
-	            player.paddle.speed.y = -4;
-	        else if (player.input.left && player.paddle.position.x > 0)
-	            player.paddle.speed.x = -8;
-	        else if (player.input.right && player.paddle.position.x < state.area.x - paddleDimensions.x)
-	            player.paddle.speed.x = 8;
-	        else if (player.paddle.position.y + paddleDimensions.y < state.area.y)
-	            player.paddle.speed.y = 2;
-	    }
-	    else {
-	        if (player.input.left && player.input.right)
-	            player.paddle.speed.y = 4;
-	        else if (player.input.left && player.paddle.position.x > 0)
-	            player.paddle.speed.x = -8;
-	        else if (player.input.right && player.paddle.position.x < state.area.x - paddleDimensions.x)
-	            player.paddle.speed.x = 8;
-	        else if (player.paddle.position.y > 0)
-	            player.paddle.speed.y = -2;
-	    }
-		
-	    player.paddle.position.x += player.paddle.speed.x;
-	    player.paddle.position.y += player.paddle.speed.y;
+		player.paddle.speed = { x: 0, y: 0 };
+		if (player.side === 0) {
+			if (player.input.left && player.input.right)
+				player.paddle.speed.y = -4;
+			else if (player.input.left && player.paddle.position.x > 0)
+				player.paddle.speed.x = -8;
+			else if (player.input.right && player.paddle.position.x < state.area.x - paddleDimensions.x)
+				player.paddle.speed.x = 8;
+			else if (player.paddle.position.y + paddleDimensions.y < state.area.y)
+				player.paddle.speed.y = 2;
+		}
+		else {
+			if (player.input.left && player.input.right)
+				player.paddle.speed.y = 4;
+			else if (player.input.left && player.paddle.position.x > 0)
+				player.paddle.speed.x = -8;
+			else if (player.input.right && player.paddle.position.x < state.area.x - paddleDimensions.x)
+				player.paddle.speed.x = 8;
+			else if (player.paddle.position.y > 0)
+				player.paddle.speed.y = -2;
+		}
+		player.paddle.position.x += player.paddle.speed.x;
+		player.paddle.position.y += player.paddle.speed.y;
 	}
 
 	updateState(gameState: GameState)
 	{
-	    gameState = this.updateGameState({ ...gameState });
-	    // console.log("resetCooldown = " + gameState.resetCooldown);
-	    // console.log("ballPosition = x: " + Math.round(gameState.ball.position.x));
-	    // console.log("ballPosition = y: " + Math.round(gameState.ball.position.y));
-
-	    // console.log("padlePosition = x: " + Math.round(gameState.player1.paddle.position.x));
-	    // console.log("padlePosition = y: " + Math.round(gameState.player1.paddle.position.y) + "\n");
-		// console.log(gameState.gameFinished);
+		gameState = this.updateGameState({ ...gameState });
 		this.server.to(this.gameState.player1.socket).emit("UpdateState", gameState);
 		this.server.to(this.gameState.player2.socket).emit("UpdateState", gameState);
-	    return gameState;
+		return gameState;
 	}
 }

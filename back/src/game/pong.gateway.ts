@@ -52,14 +52,12 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 	@SubscribeMessage("Move1")
 	HandleMove1(@MessageBody() input: Move, @ConnectedSocket() client: Socket)
 	{
-		if (this.gameService.gameRoom.length > 0)
-			this.gameService.updateMove1(input, client.id);
+		this.gameService.updateMove1(input, client.id);
 	}
 
 	@SubscribeMessage("Move2")
 	HandleMove2(@MessageBody() input: Move, @ConnectedSocket() client: Socket)
 	{
-		if (this.gameService.gameRoom.length > 0)
-			this.gameService.updateMove2(input, client.id);
+		this.gameService.updateMove2(input, client.id);
 	}
 }
