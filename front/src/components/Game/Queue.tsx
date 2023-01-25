@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { useAppSelector } from '../../redux/Hook';
 import { socket, Player } from './Game';
 import { useNavigate } from "react-router-dom";
+// import { socket } from '../../App';
 
 export default function Queue() {
 

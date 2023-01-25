@@ -73,7 +73,7 @@ export class GameService {
 
 	updateMove1(move1: Move, client: string) {
 		let roomId : number = 0;
-		while (roomId < this.gameRoom.length)
+		while (roomId < this.gameRoom.length && this.gameRoom.length > 0)
 		{
 			if (this.gameRoom[roomId].gameState.player1.socket == client)
 				this.gameRoom[roomId].updateMove1(move1);
@@ -83,7 +83,7 @@ export class GameService {
 
 	updateMove2(move2: Move, client: string) {
 		let roomId : number = 0;
-		while (roomId < this.gameRoom.length)
+		while (roomId < this.gameRoom.length && this.gameRoom.length > 0)
 		{
 			if (this.gameRoom[roomId].gameState.player2.socket == client)
 				this.gameRoom[roomId].updateMove2(move2);
@@ -94,19 +94,19 @@ export class GameService {
 	EndGame(client: string)
 	{
 		let roomId : number = 0;
-		while (roomId < this.gameRoom.length)
+		while (roomId < this.gameRoom.length && this.gameRoom.length > 0)
 		{
 			if (this.gameRoom[roomId].gameState.player1.socket == client)
 			{
-				delete this.gameRoom[roomId];
+				this.gameRoom.splice(roomId);
 				console.log("Room removed");
-				break;
+				return;
 			}
 			else if (this.gameRoom[roomId].gameState.player2.socket == client)
 			{
-				delete this.gameRoom[roomId];
+				this.gameRoom.splice(roomId);
 				console.log("Room removed");
-				break;
+				return;
 			}
 			roomId++;
 		}
@@ -177,6 +177,9 @@ class Game {
 		this.resetState(this.gameState); 
 		this.gameState.player1 = user1
 		this.gameState.player2 = user2;
+		this.gameState.player1.score = 0;
+		this.gameState.player2.score = 0;
+
 		setInterval(() => {
 			this.gameState = this.updateState(this.gameState);
 		}, 1000 / 60);

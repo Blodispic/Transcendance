@@ -4,6 +4,7 @@ import io from 'socket.io-client';
 import "../../styles/game.scss";
 import {useLocation} from 'react-router-dom';
 import {Victory, Defeat} from "./Result";
+// import { socket } from "../../App";
 
 
 export const socket = io("http://" + window.location.hostname + ":4000");
@@ -158,6 +159,14 @@ export default function GameApp() {
 	//  Here to modify game page
 	return (
 		<div id="game-container">
+			{
+				myVar == true && 
+				<Victory/>
+			}
+			{
+				myVar == false && 
+				<Defeat/>
+			}
 			<h3>
 				{gameState.player2.name} : {gameState.player2.score}
 			</h3>
@@ -211,14 +220,6 @@ export default function GameApp() {
 			<h3>
 				{gameState.player1.name} : {gameState.player1.score}
 			</h3>
-			{
-				myVar == true && 
-				<Victory/>
-			}
-					{
-				myVar == false && 
-				<Defeat/>
-			}
 		</div>
 	);
 }
