@@ -11,31 +11,38 @@
     width: 100%;
     height: 350px;
     display: flex;
+    flex-direction: column;
+    align-items: center;
     background-image: url(https://cdn.intra.42.fr/coalition/cover/305/téléchargement__2_.png);
     background-size: cover;
     background-position: center;
+
+    .info-container {
+        display: flex;
+        width: 100%;
+        height: 100%;
+
+        .left-part {
+            width: 300px;
+            text-align: -webkit-center;
     
-    .left-part {
-        width: 300px;
-        align-self: center;
-        text-align: -webkit-center;
-        .avatar {
-
-            height: 130px;
-            width: 120px;
-            border-radius: 50%;
-            padding-right: 15px;
-            margin: 10px;
-
-            align-self: center;
-            overflow: hidden;
-
-            .logo {
-                width: 140px;
-                height: auto;
+            .avatar {
+    
+                height: 130px;
+                width: 120px;
+                border-radius: 50%;
+                padding-right: 15px;
+                margin: 10px;
+    
+                align-self: center;
+                overflow: hidden;
+    
+                .logo {
+                    width: 140px;
+                    height: auto;
+                }
             }
         }
-    }
 
     .info-header {
         width: 100%;
@@ -47,7 +54,7 @@
 
             height: 20%;
             padding: 10px;
-            margin: 40px 10px 0 0;
+            margin: 10px 10px 0 0;
 
             flex: 1;
             display: flex;
@@ -61,7 +68,7 @@
         .block {
             display: flex;
             margin-top: 10px;
-            height: 50%;
+            height: 60%;
 
             .block {
                 height: 80%;
@@ -86,13 +93,66 @@
 
         .rank {
             display: flex;
+
             .rank {
-                 color: #FFD700;
+                color: #FFD700;
+            }
+        }
+
+
+    }
+
+    
+
+    }
+
+
+    .search {
+        margin-top: 30px;
+        width: 30%;
+        height: 60px;
+        border-radius: 20px;
+        background-color: rgba(32, 32, 38, 0.82);
+        border-radius: 60px;
+
+        .icon {
+            width: 60px;
+            height: 60px;
+            display: flex;
+            z-index: 1000;
+            cursor: pointer;
+            position: absolute;
+            border-radius: 60px;
+            align-items: center;
+            justify-content: center;
+            font-size: xxx-large;
+        }
+
+        .input {
+            left: 60px;
+            width: 300px;
+            height: 60px;
+            display: flex;
+            position: relative;
+            align-items: center;
+            justify-content: center;
+
+            input {
+                color: cornsilk;
+                background: border-box;
+                top: 0;
+                width: 100%;
+                height: 100%;
+                border: none;
+                outline: none;
+                font-size: 18px;
+                padding: 10px 0;
+                align-items: center;
             }
         }
     }
-
 }
+
 
 .cacher {
 

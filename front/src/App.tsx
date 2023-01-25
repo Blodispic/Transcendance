@@ -22,7 +22,7 @@ function App() {
       //   }
       // });
     }
-  }, [])
+  }, [myStore.isLog])
 
 
   const get_user = async () => {

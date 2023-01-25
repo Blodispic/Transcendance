@@ -44,17 +44,23 @@ const PublicRoute = (props: { children: any }) => {
 
 const router = createBrowserRouter([
   {
+
+    path: "/",
+    element:
+      <PublicRoute>
+        <Connection />
+      </PublicRoute>
+  },
+  {
     element: <Layout />,
     children: [
       {
-        path: "/",
-        element:
-          <PublicRoute>
-            <Connection />,
-           </PublicRoute>
-      },
-      {
+
         path: "/Home",
+        element:
+          <ProtectedRoute>
+
+          </ProtectedRoute>
       },
       {
         path: "/Chat",
@@ -86,6 +92,7 @@ const router = createBrowserRouter([
       },
     ]
   }
+
 ]);
 
 export default router;

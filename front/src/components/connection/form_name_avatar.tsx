@@ -19,6 +19,9 @@ export default function NameForm() {
             if (myUser.user.username !== undefined) {
                 await fetch(`${process.env.REACT_APP_BACK}/user/${myUser.user.id}`, {
                     method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json',
+                      },
                     body: JSON.stringify({ username: newname }),
                 })
             }

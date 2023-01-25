@@ -18,7 +18,7 @@ root.render(
       <CookiesProvider>
         <App />
       </CookiesProvider>
-    </Provider>,
+    </Provider>
   </div>
 );
 
