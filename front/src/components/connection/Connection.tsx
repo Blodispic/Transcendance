@@ -10,6 +10,7 @@ import { IUser } from "../../interface/User";
 import { NULL } from "sass";
 import { useAppDispatch, useAppSelector } from "../../redux/Hook";
 import { setUser } from "../../redux/user";
+import { useCookies } from "react-cookie";
 
 
 
@@ -26,7 +27,7 @@ export default function Connection() {
     const [searchParams] = useSearchParams()
     const dispatch = useAppDispatch();
     const myUser = useAppSelector(state => state.user);
-
+    const [cookies, setCookie] = useCookies(['Token']);
     function handleClick() {
         if (myVar == false)
             setMyvar(true);
@@ -55,8 +56,7 @@ export default function Connection() {
                         }
                         else {
                             dispatch(setUser(data));
-                            console.log(data);
-                            
+                            setCookie('Token', data.access_token , { path: '/' });
                         }
                     })
                     .catch(error => {
@@ -80,7 +80,7 @@ export default function Connection() {
                 </button>
             }
             {
-                myVar == true && myUser.user != undefined &&
+                myVar == true &&
                 <NameForm />
             }
         </div>

@@ -13,7 +13,7 @@ export default function Profile() {
                 if (id) {
                         const fetchid = async () => {
                                 const response = await fetch(`http://localhost:4000/user/${id}`, {
-                                        method: 'GET',
+                                        method: 'POST',
                                 })
                                 setUser(await response.json());
                         }

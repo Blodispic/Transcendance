@@ -23,6 +23,7 @@ export default function NameForm() {
                 formData.append('file', file);
 
             console.log("ICIIIIIII");
+            
             // await fetch(`http://localhost:4000/user/${myUser.user.id}`, {
             //     method: 'PATCH',
             //     headers: {
@@ -66,7 +67,7 @@ export default function NameForm() {
                     <img src={avatar} />
                 }
                 <button onClick={(e) => fetch_name_avatar(e)}>
-                    <a>okk</a>
+                    <a>ok</a>
                 </button>
                 <a>{newname}</a>
                 <a>{avatar}</a>

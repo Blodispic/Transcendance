@@ -8,16 +8,18 @@ import { createBrowserRouter, RouterProvider, } from "react-router-dom";
 
 import { store } from './redux/store';
 import { Provider } from 'react-redux';
+import { CookiesProvider } from 'react-cookie';
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
 
 root.render(
   <div className='container' >
-    
+
     <Provider store={store}>
-     
-      <App />
+      <CookiesProvider>
+        <App />
+      </CookiesProvider>
     </Provider>,
   </div>
 );
