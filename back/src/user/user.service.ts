@@ -41,8 +41,10 @@ export class UserService {
  async GetByAccessToken(access_token: string) {
     console.log(access_token);
      console.log("cadis qioi");
-     const teoken = await this.usersRepository.findOneBy({
-      access_token: access_token
+     const teoken = await this.usersRepository.findOne({
+       where: {
+         access_token: access_token
+       }
     })
     console.log(teoken);
     return teoken;

@@ -7,7 +7,7 @@ import Header from './components/Header/Header';
 import Chat from './components/Chat/Chat';
 import './styles/styles.scss';
 import { createBrowserRouter, Outlet } from "react-router-dom";
-import Queu from './components/Game/queu';
+import Queue from './components/Game/Queue';
 import { Navigate } from "react-router-dom";
 import { useAppSelector } from './redux/Hook';
 
@@ -80,7 +80,7 @@ const router = createBrowserRouter([
         path: "/Game",
         element:
           <ProtectedRoute>
-            <Queu />,
+            <Queue />,
           </ProtectedRoute>,
       },
       {
