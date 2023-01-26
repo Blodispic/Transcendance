@@ -71,11 +71,6 @@ export class OauthService {
       expiresIn: '3600s',
     });
 
-    console.log(token);
-
-    const decoded_access_token = this.jwtService.decode(token, { json: true });
-    console.log(decoded_access_token);
-
     const userDto: CreateUserDto = {
       username: data.login,
       login: data.login,
