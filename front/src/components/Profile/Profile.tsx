@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useParams } from "react-router-dom";
+import { Navigate, useParams } from "react-router-dom";
 import { IUser } from '../../interface/User';
 import '../../styles/profile.scss';
 import { HiOutlineMagnifyingGlassCircle } from "react-icons/hi2";
@@ -9,18 +9,18 @@ import { useAppSelector } from '../../redux/Hook';
 function Search(props: { user: IUser }) {
 
         const { user } = props;
-        const [man, setMan] = useState<string | undefined> (undefined)
+        const [username, setMan] = useState<string | undefined>(undefined)
 
         const search_man = async (e: any) => {
-              
+
                 e.preventDefault();
-                        const response = await fetch(`${process.env.REACT_APP_BACK}user/${man}`, {
-                                method: 'GET',
-                        })
-                        const data = response.json();
-                }
-        
-        
+                const response = await fetch(`${process.env.REACT_APP_BACK}user/username/${username}`, {
+                        method: 'GET',
+                })
+                const user: IUser = await response.json();
+                console.log(user);
+                return <Navigate to={`${process.env.REACT_APP_BACK}Profile/${user.id}`} />;
+        }
 
         return (
                 <div className="search">
@@ -34,13 +34,28 @@ function Search(props: { user: IUser }) {
         )
 }
 
-function Invite_button() {
+function InviteButton(props: { user: IUser }) {
+        const { user } = props;
+      
+        const sendFriendRequest = async () => {
+          const response = await fetch(`${process.env.REACT_APP_BACK}user/friend-request/send/${user.id}`, {
+            method: 'POST',
+            body: JSON.stringify(user),
+            headers: { 'Content-Type': 'application/json' }
+          });
+          const data = await response.json();
+          console.log(data);
+        }
+      
         return (
-                <div>
-                        
-                </div>
+          <button className="pulse pointer" onClick={sendFriendRequest} >
+            <a>
+              Add Friend
+            </a>
+          </button>
         )
-}
+      }
+      
 
 function Header(props: { user: IUser }) {
 
@@ -58,11 +73,11 @@ function Header(props: { user: IUser }) {
                                         <div className='avatar'>
                                                 <img className='logo' src={`${process.env.REACT_APP_BACK}user/${user.id}/avatar`} />
                                         </div>
+                                        {
+                                                // user.username !== myUser.user!.username &&
+                                                <InviteButton user={user} />
+                                        }
                                 </div>
-                                {
-                                        // user.username !== myUser.user!.username &&
-                                        <Invite_button /> 
-                                }
 
 
 
@@ -111,16 +126,17 @@ export default function Profile() {
         useEffect(() => {
                 if (id) {
                         const fetchid = async () => {
-                                const response = await fetch(`${process.env.REACT_APP_BACK}user/${id}`, {
+                                const response = await fetch(`${process.env.REACT_APP_BACK}user/id/${id}`, {
                                         method: 'GET',
                                 })
+
                                 setUser(await response.json());
                         }
                         fetchid()
                         console.log();
 
                 }
-        }, [])
+        }, [id])
 
         console.log(user);
         console.log("avatar", avatar);

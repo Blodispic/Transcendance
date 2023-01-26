@@ -22,10 +22,17 @@ export class UserController {
     return this.userService.create(user)
   }
 
-  @Get(':id')
+  @Get('username/:username')
+  GetbyUsername(@Param('username') username: string){
+    console.log("ici", username);
+    return this.userService.getByUsername(username);
+  }
+
+  @Get('id/:id')
   findOne(@Param('id') id: number) {
     return this.userService.getById(id);
   }
+
 
   @Post('access_token')
   GetbyAccessToken(@Body() token: any) {
@@ -80,23 +87,23 @@ export class UserController {
     return this.userService.remove(+id);
   }
 
-  @Post('friend-request/send/:friendId')
+  @Post('friend-request/send/:id')
   sendFriendRequest(
-    @Param('friendId') friendId: number, @Body() user: User) {
+    @Param('id') id: number, @Body() user: User) {
     if (user)
-      return this.userService.sendFriendRequest(friendId, user)
+      return this.userService.sendFriendRequest(id, user)
   }
 
 
-  @Post('addfriend/:friendId')
-  async addFriend(@Param('friendId') friendId: number, @Body() user: User) {
-    return await this.userService.addFriend(friendId, user);
+  @Post('addfriend/:id')
+  async addFriend(@Param('id') id: number, @Body() user: User) {
+    return await this.userService.addFriend(id, user);
   }
 
-  @Post(':id/addfriend/:friendId')
-  async addFriendbyId(@Param('id') id: number, @Param('friendId') friendId: number) {
-    return await this.userService.addFriendById(friendId, id);
-  }
+  // @Post(':id/addfriend/:id')
+  // async addFriendbyId(@Param('id') id: number, @Param('id') id: number) {
+  //   return await this.userService.addFriendById(id, id);
+  // }
 
   @Delete('deletefriend/:id')
   async deleteFriend(@Param('id') id: number, @Body() friend: User) {

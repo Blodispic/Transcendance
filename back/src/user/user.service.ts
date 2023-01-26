@@ -56,8 +56,8 @@ export class UserService {
     });
   }
 
-  getByUsername(username: string) {
-    return this.usersRepository.findOneBy({
+  async getByUsername(username: string) {
+    return await this.usersRepository.findOneBy({
       username: username
     })
   }
@@ -103,8 +103,8 @@ export class UserService {
   }
 
   async sendFriendRequest(friendId: number, creator: User) {
-    if (friendId === creator.id) {
-      return ("You can't add yourself");
+    if (friendId == creator.id) {
+      return ({message:"You can't add yourself"});
     }
     const friend: User | null = await this.usersRepository.findOne({
       relations: {
@@ -113,7 +113,7 @@ export class UserService {
       where: { id: friendId }
     });
     if (!friend) {
-      return ('Friend does not exist');
+      return ({message:'Friend does not exist'});
     }
 
     const user: User | null = await this.usersRepository.findOne({
@@ -123,7 +123,7 @@ export class UserService {
       where: { id: creator.id }
     });
     if (!user) {
-      return ('User does not exist');
+      return ({message:'User does not exist'});
     }
     const existingRequest = await this.friendRequestRepository.findOne({
       relations: {
@@ -134,7 +134,7 @@ export class UserService {
     });
 
     if (existingRequest) {
-      return ('Friend request already sent');
+      return {message: "Friend request already sent"};
     }
     const friendRequest: FriendRequestDto = {
       creator: creator,
@@ -146,7 +146,7 @@ export class UserService {
     const frienRequestPush: FriendRequest | null = await this.friendRequestRepository.findOne({
       where: [{ creator: creator }, { receiver: friend }]
     });
-    console.log(friend);
+    // console.log(friend);
     if (frienRequestPush)
     {
       if (!friend.receiveFriendRequests)
