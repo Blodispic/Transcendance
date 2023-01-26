@@ -1,10 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import { useState } from 'react';
 import '../../styles/connection.scss'
-import { IUser } from "../../interface/User";
-import { Link } from 'react-router-dom';
-import { userInfo } from 'os';
-import { stringify } from 'querystring';
-import { useAppSelector } from '../../redux/Hook';
+import { useAppDispatch, useAppSelector } from '../../redux/Hook';
+import { log_unlog } from "../../redux/user";
 
 export default function NameForm() {
 
@@ -14,33 +11,29 @@ export default function NameForm() {
     const [avatar, setavatar] = useState<string>('');
     const formData = new FormData();
     const myUser = useAppSelector(state => state.user);
+    const dispatch = useAppDispatch();
 
     const fetch_name_avatar = async (e: any) => {
         e.preventDefault();
-        if (myUser.user != undefined) {
-            formData.append('username', newname);
-            if (file)
+        if (myUser.user !== undefined) {
+            if (myUser.user.username !== undefined) {
+                await fetch(`${process.env.REACT_APP_BACK}/user/${myUser.user.id}`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json',
+                      },
+                    body: JSON.stringify({ username: newname }),
+                })
+            }
+            if (file) {
                 formData.append('file', file);
-
-            console.log("ICIIIIIII");
-            
-            // await fetch(`http://localhost:4000/user/${myUser.user.id}`, {
-            //     method: 'PATCH',
-            //     headers: {
-            //         'Content-Type': 'application/json',
-            //     },
-            //     body: JSON.stringify({ username: newname }),
-            // })
-            const response = await fetch(`http://localhost:4000/user/${myUser.user.id}/avatar`, {
-                method: 'PATCH',
-                // headers: {
-                //     'Content-Type': 'multipart/form-data',
-                // },
-                body: formData,
-            })
-            formData.delete('newname');
-            if (file)
+                await fetch(`${process.env.REACT_APP_BACK}/user/${myUser.user.id}/avatar`, {
+                    method: 'PATCH',
+                    body: formData,
+                })
                 formData.delete('file');
+            }
+            dispatch(log_unlog());
         }
     }
 
@@ -63,14 +56,15 @@ export default function NameForm() {
                     <input type="file" name="avatar" onChange={e => onChangeFile(e)} accept="image/png, image/jpeg" />
                 </label>
                 {
-                    file && avatar != '' &&
+                    file && avatar !== '' &&
                     <img src={avatar} />
                 }
-                <button onClick={(e) => fetch_name_avatar(e)}>
-                    <a>ok</a>
-                </button>
-                <a>{newname}</a>
-                <a>{avatar}</a>
+                {
+                    newname &&
+                    <button onClick={(e) => fetch_name_avatar(e)}>
+                        <a>okk</a>
+                    </button>
+                }
             </form >
         </div >
     );

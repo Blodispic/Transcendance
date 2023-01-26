@@ -20,6 +20,13 @@ export class UserController {
     return this.userService.getById(id);
   }
 
+  @Post('access_token')
+  GetbyAccessToken(@Body() token: string) {
+
+    
+    return this.userService.GetByAccessToken(token);
+  }
+
   @Patch(':id/avatar')
   @UseInterceptors(
     FileInterceptor('file', {
