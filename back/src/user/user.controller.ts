@@ -8,7 +8,16 @@ import { UserService } from './user.service';
 
 @Controller('user')
 export class UserController {
-  constructor(private readonly userService: UserService) { }
+  constructor(private readonly userService: UserService) {}
+
+  @Post()
+  async create(@Body() createUserDto: CreateUserDto): Promise<User> {
+    // try {
+      return await this.userService.create(createUserDto);
+    // } catch (error) {
+      // throw new BadRequestException(error.detail);
+    // }
+  }
 
   @Get()
   findAll() {
@@ -65,7 +74,7 @@ export class UserController {
   remove(@Param('id') id: string) {
     return this.userService.remove(+id);
   }
-
+ 
   @Post('addfriend/:id')
   async addFriend(@Param('id') id: number, @Body() friend: User) {
     return await this.userService.addFriend(id, friend);

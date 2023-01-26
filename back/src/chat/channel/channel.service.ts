@@ -30,11 +30,11 @@ export class ChannelService {
 		const channel: Channel | null = await this.channelRepository.findOne({
 			relations: { users: true },
 			where: {
-				id: addUserDto.chanid
+				id: addUserDto.chanId
 			}
 			});
 		// const user: User | null = await this.userRepository.findOneBy({ id: addUserDto.userid})
-		const user: User | null = await this.userService.getById(addUserDto.userid);
+		const user: User | null = await this.userService.getById(addUserDto.userId);
 		if (channel == null || user == null)
 			throw new NotFoundException();
 		channel.users.push(user);
