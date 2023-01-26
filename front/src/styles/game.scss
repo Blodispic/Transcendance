@@ -6,4 +6,30 @@
 	flex-direction: column;
 
 	background-color: #96a5e1;
+
+	.result-popup{
+		position: fixed;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100vh;
+		background-color: rgba(0, 0, 0, 0.5);
+	
+		// display: flex;
+		justify-content: center;
+		align-items: center;
+	}
+
+	.result-popup-inner {
+		font-family: 'Fredoka One', cursive;
+		background-color: white;
+		width: 500px;
+		height: 300px;
+		justify-content: center;
+		align-items: center;
+		text-align: center;
+		position: absolute;
+		z-index: 100;
+		display: flex;
+	}
 }

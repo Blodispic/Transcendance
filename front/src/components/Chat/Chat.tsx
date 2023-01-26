@@ -12,12 +12,10 @@ function DMList() {
 	</ul>
 }
 
-function UserList() {
-	return <ul>
-		<li> user1 </li>
-		<li> user2 </li>
-		<li> user3 </li>
-	</ul>
+function UserInfo() {
+	return (
+		<h3>UserName</h3>
+	);
 }
 
 function ChatBody() {
@@ -28,13 +26,12 @@ function ChatBody() {
 	const handleSubmitNewMessage = (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
 		if (newInput != "")
-			socket.emit('sendMessage', { newInput }); //
-		// console.log( socket.auth.user.username );
+			socket.emit('sendMessageUser', { newInput }); //
 		setNewInput("");
 	}
 
-	socket.on('recMessage', (data) => {
-		buildNewMessage(data);
+	socket.on('sendMessageUserOk', (messageUserDto) => {
+		buildNewMessage(messageUserDto);
 	})
 
 	const buildNewMessage = (data: any) => {
@@ -58,7 +55,7 @@ function ChatBody() {
 			</div>
 			<form id="input_form" onSubmit={(e) => { handleSubmitNewMessage(e); }}>
 				<input type="text" onChange={(e) => { setNewInput(e.target.value) }}
-					placeholder="type message here" value={newInput} />
+					placeholder="type message here" value={newInput}/>
 			</form>
 
 		</div>
@@ -73,13 +70,14 @@ export default function Chat() {
 		<div id="chat-container">
 			<div className="left-sidebar">
 				<ChannelList />
+				{/* <DMList /> */}
 			</div>
 			
 			{ channelSet == false && DmSet == true &&
 				<ChatBody />
 			}
 			<div className="right-sidebar">
-				<UserList />
+				<UserInfo />
 			</div>
 		</div>
 	);

@@ -3,7 +3,7 @@ import { Circle, Layer, Rect, Stage, Text } from "react-konva";
 import io from 'socket.io-client';
 import "../../styles/game.scss";
 import { useLocation } from 'react-router-dom';
-import { Victory, Defeat } from "./Result";
+import { Victory, Defeat, Result } from "./Result";
 import { socket } from "../../App";
 
 
@@ -109,6 +109,7 @@ export default function GameApp() {
 	const [gameState, setGameState] = useState<GameState>(gameStateDefault);
 	const [isConnected, setIsConnected] = useState(socket.connected);
 	let [myVar, setMyvar] = useState<boolean | undefined>(undefined)
+	const [resultPopup, setResultPopup] = useState(false); //added
 
 	useEffect(() => {		console.log("var = ", myVar);
 		setInterval(() => {
@@ -136,6 +137,8 @@ export default function GameApp() {
 		});
 
 		socket.on("GameEnd", (result: any) => {
+			setResultPopup(true);
+			console.log(resultPopup);
 			console.log("CA PASSE ALALALALALLALALALAL");
 			
 			console.log(result.winner, " won");
@@ -166,15 +169,20 @@ export default function GameApp() {
 	//  Here to modify game page
 	return (
 		<div id="game-container">
-		
-			{
+			{ myVar != undefined &&
+				<Result trigger={resultPopup} setTrigger={setResultPopup}
+				result={myVar} />
+			}
+
+			{/* {
 				myVar == true &&
 				<Victory />
 			}
 			{
 				myVar == false &&
 				<Defeat />
-			}
+			} */}
+			
 			<h3>
 				{gameState.player2.name} : {gameState.player2.score}
 			</h3>

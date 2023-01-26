@@ -17,10 +17,19 @@
 		float: left;
 		width: 20%;
 		padding: 10px;
+		background-color: rgba(32, 32, 38, 0.7);
+		color: white;
 
 		.title {
 			font-size: large;
-			justify-content: space-between;
+			justify-content: center;
+			align-items: center;
+			align-content: center;
+
+			.add-icon {
+				cursor: pointer;
+				float: right;
+			}
 		}
 	}
 
@@ -29,7 +38,7 @@
 		float:none;
 		width: 60%;
 		padding: 20px 0px;
-		background-color: rgb(232, 232, 232);
+		background-color: rgba(62, 62, 74, 0.76);
 		// align-items: center;
 		// display: flex;
 		
@@ -75,23 +84,27 @@
 		form input {
 				font-family: 'Fredoka One', cursive;
 				font-size: 20px;
-				color: rgb(111, 106, 106);
+				color: white;
 				padding: 0px 0px 0px 15px;
 				width: 56%;
 				height: 5%;
-				background: rgba($color: lightgray, $alpha: 0.5);
+				background: rgba($color: rgb(135, 135, 135), $alpha: 0.5);
 				border-radius: 10px;
 				border: none;
 				bottom: 0;
 				width: 98%;
 				height: 70px;
 			}
-	}
+		}
 	
 	.right-sidebar {
 		float: right;
+		color: white;
 		width: 20%;
 		padding: 10px;
+		background-color: rgba(32, 32, 38, 0.7);
+		
+
 	}
 
 button {
@@ -135,12 +148,38 @@ button:hover {
 
 .chat-form-inner {
 	background-color: white;
+	color: black;
 	border-color: var(--sub-color1);
 	width: 500px;
-	height: 300px;
+	height: 350px;
 	justify-content: center;
 	align-items: center;
 	text-align: center;
 	position: relative;
-	z-index: 1000;
+	z-index: 1;
+
+	#channel-input {
+		font-family: 'Fredoka One', cursive;
+		font-size: 15px;
+		color: rgb(111, 106, 106);
+		padding: 0px 0px 0px 15px;
+		width: 300px;
+		height: 40px;
+		background: rgba($color: lightgray, $alpha: 0.5);
+		border-radius: 10px;
+		border: none;
+		bottom: 0;
+		text-align: center;
+	} 
+
+}
+
+// .add-icon {
+// 	cursor: pointer;
+// 	float: right;
+// }
+
+.close-icon {
+	float: right;
+	padding: 10px;
 }
