@@ -50,13 +50,10 @@ export class UserService {
   }
 
   async GetByAccessToken(access_token: any): Promise<User | null> {
-    console.log(access_token);
     const decoded_access_token: any = await this.jwtService.decode(access_token.token, { json: true });
-    console.log(decoded_access_token);
     return this.usersRepository.findOneBy({
       login: decoded_access_token.username
     });
-    return null;
   }
 
   getByUsername(username: string) {
