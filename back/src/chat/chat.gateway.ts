@@ -113,6 +113,7 @@ async handleCreatePublicChannel(@ConnectedSocket() client: Socket, @MessageBody(
     chanId: new_channel.id,
   });
   client.join("chan" + new_channel.id);
+  client.emit("createPublicChannelOk", new_channel.id);
 }
 
 @SubscribeMessage('createPrivateChannel')
