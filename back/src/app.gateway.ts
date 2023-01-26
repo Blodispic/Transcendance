@@ -16,6 +16,7 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
 	handleConnection(client: any, ...args: any[]) {
 		console.log("Client: " + client.id + " Connected");
+		console.log("test: ", client)
 		userList.push(client);
 	}
 

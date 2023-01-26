@@ -3,6 +3,7 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { Request, Response } from 'express';
 import { diskStorage } from 'multer';
 import { editFileName, imageFilter } from 'src/app.service';
+import { CreateUserDto } from './dto/create-user.dto';
 import { User } from './entities/user.entity';
 import { UserService } from './user.service';
 
