@@ -90,7 +90,10 @@ export class UserController {
   sendFriendRequest(
     @Param('id') id: number, @Body() user: User) {
     if (user)
+    {
+      console.log("Try send friend Request")
       return this.userService.sendFriendRequest(id, user)
+    }
   }
 
 

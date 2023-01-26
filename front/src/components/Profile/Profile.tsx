@@ -50,10 +50,8 @@ function InviteButton(props: { user: IUser }) {
         }
       
         return (
-          <button className="pulse pointer" onClick={sendFriendRequest} >
-            <a>
-              Add Friend
-            </a>
+          <button className="button pulse pointer white" onClick={sendFriendRequest} >
+                + Add Friend
           </button>
         )
       }
