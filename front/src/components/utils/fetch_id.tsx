@@ -10,7 +10,7 @@ export default function Fetchid(id: number) {
 
     useEffect(() => {
         const fetchid = async () => {
-            const response = await fetch('http://localhost:4000/user/2', {
+            const response = await fetch(`${process.env.REACT_APP_BACK}/user/2`, {
                 method: 'Get',
                 headers: {
                     'Content-Type': 'application/json',
@@ -28,17 +28,3 @@ export default function Fetchid(id: number) {
 
 }
 
-// export async function Fetchid(id: number) {
-
-//     const response = await fetch('http://localhost:4000/user/2', {
-//         method: 'Get',
-//         headers: {
-//             'Content-Type': 'application/json',
-//         },
-//     })
-//     const user: IUser = await response.json();
-//     console.log(user.username); // ici ca marche 
-
-//     return user;
-
-// }

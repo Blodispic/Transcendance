@@ -1,7 +1,7 @@
 import {ConnectedSocket, MessageBody, OnGatewayConnection, OnGatewayDisconnect, OnGatewayInit, SubscribeMessage, WebSocketGateway, WebSocketServer} from "@nestjs/websockets";
 import { Server, Socket } from "socket.io";
 import { User } from "src/user/entities/user.entity";
-import { GameService } from "./game.services";
+import { GameService } from "./game.service";
 
 export interface Move {
 	left: boolean;

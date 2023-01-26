@@ -2,8 +2,8 @@ import { useEffect, useState } from "react";
 import { Circle, Layer, Rect, Stage, Text } from "react-konva";
 import io from 'socket.io-client';
 import "../../styles/game.scss";
-import {useLocation} from 'react-router-dom';
-import {Victory, Defeat} from "./Result";
+import { useLocation } from 'react-router-dom';
+import { Victory, Defeat } from "./Result";
 // import { socket } from "../../App";
 
 
@@ -108,9 +108,9 @@ resetState(gameStateDefault);
 export default function GameApp() {
 	const [gameState, setGameState] = useState<GameState>(gameStateDefault);
 	const [isConnected, setIsConnected] = useState(socket.connected);
-	let [myVar, setMyvar] = useState<boolean | undefined> (undefined)
+	let [myVar, setMyvar] = useState<boolean | undefined>(undefined)
 
-	useEffect(() => {
+	useEffect(() => {		console.log("var = ", myVar);
 		setInterval(() => {
 			updateState(setGameState);
 		}, 1000 / 60);
@@ -119,8 +119,8 @@ export default function GameApp() {
 			setIsConnected(true);
 			console.log("Connected");
 		});
-	  
-		  socket.on('disconnect', () => {
+
+		socket.on('disconnect', () => {
 			setIsConnected(false);
 			console.log("Disconnected");
 		});
@@ -135,12 +135,18 @@ export default function GameApp() {
 			// setGameState(convertState(newGameState));
 		});
 
-		socket.on("GameEnd", (result:any) => {
-			console.log(result.winner + " won");
-			if (result.winner === gameState.player1)
-				myVar = true;
-			else if (result.winner === gameState.player2)
-				myVar = false;
+		socket.on("GameEnd", (result: any) => {
+			console.log("CA PASSE ALALALALALLALALALAL");
+			
+			console.log(result.winner, " won");
+			console.log(myVar);
+		
+			
+			if (result.winner === gameState.player1.name)
+				setMyvar(true);
+			else if (result.winner === gameState.player2.name)
+				setMyvar(false);
+							console.log(myVar);
 			socket.emit("GameEnd", null);
 		});
 
@@ -153,19 +159,21 @@ export default function GameApp() {
 			document.removeEventListener("keyup", keyEvent);
 			// socket.offAny();
 			socket.removeAllListeners()
-		};
+		};	
+;
 	}, []);
 
 	//  Here to modify game page
 	return (
 		<div id="game-container">
+		
 			{
-				myVar == true && 
-				<Victory/>
+				myVar == true &&
+				<Victory />
 			}
 			{
-				myVar == false && 
-				<Defeat/>
+				myVar == false &&
+				<Defeat />
 			}
 			<h3>
 				{gameState.player2.name} : {gameState.player2.score}
@@ -208,12 +216,12 @@ export default function GameApp() {
 						height={paddleDimensions.y}
 					/>
 					<Text
-					  text= {gameState.player1.name.toString() + " wins !"}
-					  visible={gameState.gameFinished}
-					  x={gameState.area.x / 2 - 150}
-					  y={gameState.area.y / 2}
-					  fontSize={40}
-					  align="center"
+						text={gameState.player1.name.toString() + " wins !"}
+						visible={gameState.gameFinished}
+						x={gameState.area.x / 2 - 150}
+						y={gameState.area.y / 2}
+						fontSize={40}
+						align="center"
 					/>
 				</Layer>
 			</Stage>
@@ -279,12 +287,10 @@ function updateGameState(state: GameState) {
 
 	state.player1.input = { ...move1 };
 	state.player2.input = { ...move2 };
-	if (state.gameFinished === false && (state.player1.score === state.scoreMax || state.player2.score === state.scoreMax))
-	{
+	if (state.gameFinished === false && (state.player1.score === state.scoreMax || state.player2.score === state.scoreMax)) {
 		state.gameFinished = true;
 	}
-	if (state.resetCooldown === 0 && state.gameFinished === false)
-	{
+	if (state.resetCooldown === 0 && state.gameFinished === false) {
 		movePlayer(state.player1, state);
 		movePlayer(state.player2, state);
 		wallCollision(state.ball, state);
@@ -375,16 +381,14 @@ function wallCollision(ball: Ball, state: GameState) {
 		if (ball.position.y > state.area.y - ballRadius) {
 			resetState(state);
 			state.player2.score++;
-			if (state.player2.score === state.scoreMax)
-			{
+			if (state.player2.score === state.scoreMax) {
 				//END THE GAME
 				state.gameFinished = true;
 			}
 		} else if (ball.position.y < 0 + ballRadius) {
 			resetState(state);
 			state.player1.score++;
-			if (state.player1.score === state.scoreMax)
-			{
+			if (state.player1.score === state.scoreMax) {
 				//END THE GAME
 				state.gameFinished = true;
 			}
