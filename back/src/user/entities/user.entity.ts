@@ -6,11 +6,11 @@ import { FriendRequest } from "./friend-request.entity";
 @Entity('user')
 export class User {
   
-  @Column()
-  access_token: string;
-
   @PrimaryGeneratedColumn()
   id: number;
+  
+  @Column()
+  access_token: string;
 
   @Column({ unique: true })
   username: string;
@@ -51,8 +51,10 @@ export class User {
   results: Results[];
 
   @OneToMany(() => FriendRequest, friendRequest => friendRequest.creator)
+  @JoinTable()
   sendFriendRequests: FriendRequest[];
 
   @OneToMany(() => FriendRequest, friendRequest => friendRequest.receiver)
+  @JoinTable()
   receiveFriendRequests: FriendRequest[];
 }
