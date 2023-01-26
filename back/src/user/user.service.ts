@@ -47,10 +47,17 @@ export class UserService {
     })
   }
 
-  GetByAccessToken(accessToken: string) {
-    return this.usersRepository.findOneBy({
-      access_token: accessToken
+ async GetByAccessToken(access_token: string) {
+    console.log(access_token);
+     console.log("cadis qioi");
+     const teoken = await this.usersRepository.findOne({
+       where: {
+         access_token: access_token
+       }
     })
+    console.log(teoken);
+    return teoken;
+    
   }
 
   getByUsername(username: string) {
@@ -64,9 +71,12 @@ export class UserService {
       id: id,
     })
     if (user) {
+     
+      
       //Si vous voulez plus de chose a update, mettez le dans le body et faites un if
       if (userUpdate.username)
         user.username = userUpdate.username;
+
       if (userUpdate.avatar)
         user.avatar = userUpdate.avatar
       return await this.usersRepository.save(user);
