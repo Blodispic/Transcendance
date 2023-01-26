@@ -1,5 +1,5 @@
 import { User } from "src/user/entities/user.entity";
-import { Column, Entity, JoinTable, ManyToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinTable, ManyToMany, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity()
 export class Channel {
@@ -11,6 +11,9 @@ export class Channel {
 
 	// @Column()		a rajouter mais de manière optionnelle
 	// password: string;
+
+	@OneToOne(() => User)
+	owner: User
 
 	@ManyToMany(() => User)
 	@JoinTable()
