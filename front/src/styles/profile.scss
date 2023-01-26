@@ -9,7 +9,7 @@
 
 
     width: 100%;
-    height: 350px;
+    height: 400px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -21,11 +21,11 @@
         display: flex;
         width: 100%;
         height: 100%;
-
+        padding-bottom: 50px;
         .left-part {
             width: 300px;
             text-align: -webkit-center;
-    
+            align-self: center;
             .avatar {
     
                 height: 130px;
@@ -46,8 +46,7 @@
 
     .info-header {
         width: 100%;
-
-
+        text-align: -webkit-center;
 
         .stat-header {
 
@@ -109,7 +108,7 @@
 
     .search {
         margin-top: 30px;
-        width: 30%;
+        width: 50%;
         height: 60px;
         border-radius: 20px;
         background-color: rgba(32, 32, 38, 0.82);
@@ -135,8 +134,7 @@
             display: flex;
             position: relative;
             align-items: center;
-            justify-content: center;
-
+            margin-right: auto;
             input {
                 color: cornsilk;
                 background: border-box;
@@ -145,7 +143,7 @@
                 height: 100%;
                 border: none;
                 outline: none;
-                font-size: 18px;
+                font-size: 20px;
                 padding: 10px 0;
                 align-items: center;
             }

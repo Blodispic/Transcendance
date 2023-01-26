@@ -41,7 +41,7 @@ function Header(props: { user: IUser }) {
                 <div className='profile-header'>
 
 
-                        <Search user={user} />
+                       
 
                         <div className='info-container'>
                                 <div className="left-part">
@@ -53,7 +53,7 @@ function Header(props: { user: IUser }) {
 
 
                                 <div className='info-header'>
-
+                                <Search user={user} />
                                         <div className='stat-header'>
                                                 <span>test</span>
                                                 <span>test</span>

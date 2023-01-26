@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import '../../styles/connection.scss'
 import { useAppDispatch, useAppSelector } from '../../redux/Hook';
-import { log_unlog } from "../../redux/user";
+import { change_name, log_unlog } from "../../redux/user";
 
 export default function NameForm() {
 
@@ -16,15 +16,15 @@ export default function NameForm() {
     const fetch_name_avatar = async (e: any) => {
         e.preventDefault();
         if (myUser.user !== undefined) {
-            if (myUser.user.username !== undefined) {
-                await fetch(`${process.env.REACT_APP_BACK}/user/${myUser.user.id}`, {
-                    method: 'PATCH',
-                    headers: {
-                        'Content-Type': 'application/json',
-                      },
-                    body: JSON.stringify({ username: newname }),
-                })
-            }
+
+            await fetch(`${process.env.REACT_APP_BACK}/user/${myUser.user.id}`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ username: newname }),
+            })
+
             if (file) {
                 formData.append('file', file);
                 await fetch(`${process.env.REACT_APP_BACK}/user/${myUser.user.id}/avatar`, {
@@ -33,6 +33,7 @@ export default function NameForm() {
                 })
                 formData.delete('file');
             }
+            dispatch(change_name(newname));
             dispatch(log_unlog());
         }
     }
