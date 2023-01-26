@@ -9,8 +9,8 @@ export class Channel {
 	@Column({ unique:true })
 	name: string;
 
-	// @Column()		a rajouter mais de manière optionnelle
-	// password: string;
+	@Column({ default : ""})
+	password: string;
 
 	@OneToOne(() => User)
 	owner: User

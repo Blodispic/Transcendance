@@ -66,4 +66,13 @@ export class ChannelService {
 		});
 	  }
 
+	  getByName(name: string) {
+		return this.channelRepository.findOne({
+			relations: { users: true },
+			where: {
+				name: name
+			}
+		});
+	  }
+
 }

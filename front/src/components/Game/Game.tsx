@@ -4,10 +4,10 @@ import io from 'socket.io-client';
 import "../../styles/game.scss";
 import { useLocation } from 'react-router-dom';
 import { Victory, Defeat } from "./Result";
-// import { socket } from "../../App";
+import { socket } from "../../App";
 
 
-export const socket = io("http://" + window.location.hostname + ":4000");
+// export const socket = io("http://" + window.location.hostname + ":4000");
 
 export interface Vec2 {
 	x: number;

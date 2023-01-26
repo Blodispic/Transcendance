@@ -9,12 +9,13 @@ import { User } from "src/user/entities/user.entity";
 import { UserService } from "src/user/user.service";
 import { CreateChannelDto } from "./channel/dto/create-channel.dto";
 import { Chat } from "./chat.entity";
-import { ChatService } from "./chat.service";
 import { JoinChannelDto } from "./dto/join-channel.dto";
 import { LeaveChannelDto } from "./dto/leave-channel.dto";
 import { MessageChannelDto } from "./dto/message-channel.dto";
 import { MessageUserDto } from "./dto/message-user.dto";
-import { Socket } from "./App.gateway.ts"
+import { userList } from "src/app.gateway";
+import { AppGateway } from "src/app.gateway";
+import { CreatePublicChannelDto } from "./dto/create-channel.dto";
 
 @WebSocketGateway({
 	cors: {
@@ -22,7 +23,6 @@ import { Socket } from "./App.gateway.ts"
 	},
    })
 export class ChatGateway
- implements OnGatewayInit, OnGatewayDisconnect
 {
  constructor(
   private channelService: ChannelService,
@@ -32,25 +32,33 @@ export class ChatGateway
  
   @WebSocketServer() server: Server;
  
- @SubscribeMessage('sendMessage')
- async handleSendMessage(@ConnectedSocket() client: Socket, @MessageBody() data: any): Promise<void> {
-	console.log(data)
-  // this.server.to(client.id).emit("cc", "bjr")
-   this.server.emit('recMessage', data);
- }
+//  @SubscribeMessage('sendMessage')
+//  async handleSendMessage(@ConnectedSocket() client: Socket, @MessageBody() data: any): Promise<void> {
+// 	console.log(data)
+//   // this.server.to(client.id).emit("cc", "bjr")
+//    this.server.emit('recMessage', data);
+//  }
  
  @SubscribeMessage('sendMessageUser')
  async handleSendMessageUser(@ConnectedSocket() client: Socket, @MessageBody() messageUserDto: MessageUserDto)/* : Promise<any> */ {
   //  const user = await this.userService.getById(messageUserDto.useridtowho);
-  const socketIdToWho = findSocketfromUser(messageUserDto.usertowho);
-   if (user == null)
-     throw new BadRequestException();
-   this.server.to(socketIdToWho).emit("sendMessageUserOk", messageUserDto.message);
+  const socketIdToWho = this.findSocketFromUser(messageUserDto.usertowho);
+  if (socketIdToWho === null)
+    throw new BadRequestException();
+  this.server.to(socketIdToWho).emit("sendMessageUserOk", messageUserDto.message);
  
   //voir une fois qu'on a un access-token
 
  }
 
+findSocketFromUser(user: User)
+ {
+   userList.forEach(client => {
+     if (client.handshake.auth.user === user)
+      return client;
+   });
+   return null;
+ }
 
 
 @SubscribeMessage('sendMessageChannel')
@@ -66,11 +74,11 @@ async handleSendMessageChannel(@ConnectedSocket() client: Socket, @MessageBody()
 }
 
 @SubscribeMessage('joinChannel')
-async handleJoinChannel(@ConnectedSocket() client: Socket, @MessageBody() joinChannelDto: JoinChannelDto) {
+async handleJoinChannel(@ConnectedSocket() client: Socket, @MessageBody() joinChannelDto: JoinChannelDto) {    
   const channel = await this.channelService.getById(joinChannelDto.chanid);
   if (channel === null)
   {
-    const user = await client.handshake.auth.user;
+    const user = client.handshake.auth.user;
     if (user === null)
       throw new BadRequestException();
     const createChannelDto = { 
@@ -79,8 +87,59 @@ async handleJoinChannel(@ConnectedSocket() client: Socket, @MessageBody() joinCh
     }
     this.channelService.create(createChannelDto);
   }
-  this.channelService.add( { user, chanId: joinChannelDto.chanid});
+  this.channelService.add( { user: client.handshake.auth.user, chanId: joinChannelDto.chanid});
   client.join("chan" + joinChannelDto.chanid);
+}
+
+@SubscribeMessage('createPublicChannel')
+async handleCreatePublicChannel(@ConnectedSocket() client: Socket, @MessageBody() createPublicChannelDto: CreatePublicChannelDto) {    
+  const channel = await this.channelService.getByName(createPublicChannelDto.channame);
+  if (channel != null)
+    throw new BadRequestException();
+    
+  const user = client.handshake.auth.user;
+  if (user === null)
+    throw new BadRequestException();
+  // const createPublicChannelDto = { 
+  //   name: joinChannelDto.channame,
+  //   owner: user,
+  // }
+  const new_channel = await this.channelService.create({
+      name: createPublicChannelDto.channame,
+      owner: user
+     });
+  this.channelService.add({
+    user: user,
+    chanId: new_channel.id,
+  });
+  client.join("chan" + new_channel.id);
+}
+
+@SubscribeMessage('createPrivateChannel')
+async handleCreatePrivateChannel(@ConnectedSocket() client: Socket, @MessageBody() createPrivateChannelDto: CreatePublicChannelDto) {    
+  if (createPrivateChannelDto.password.length === 0)
+    throw new BadRequestException();
+  const channel = await this.channelService.getByName(createPrivateChannelDto.channame);
+  if (channel != null)
+    throw new BadRequestException();
+  
+  const user = client.handshake.auth.user;
+  if (user === null)
+    throw new BadRequestException();
+  // const createPrivateChannelDto = { 
+  //   name: joinChannelDto.channame,
+  //   owner: user,
+  // }
+  const new_channel = await this.channelService.create({
+      name: createPrivateChannelDto.channame,
+      owner: user
+      // password: createPrivateChannelDto.password;
+     });
+  this.channelService.add({
+    user: user,
+    chanId: new_channel.id,
+  });
+  client.join("chan" + new_channel.id);
 }
 
 @SubscribeMessage('leaveChannel')
