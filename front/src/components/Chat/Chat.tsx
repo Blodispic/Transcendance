@@ -1,11 +1,9 @@
 import { toUnicode } from "punycode";
-import { io } from "socket.io-client";
+import { io, Socket } from "socket.io-client";
 import '../../styles/chat.scss'
 import { ChannelList } from "./Channel";
 import React from "react";
 import { socket } from "../../App"
-
-// const socket = io("http://" + window.location.hostname + ":4000");
 
 function DMList() {
 	return <ul>
@@ -27,22 +25,17 @@ function ChatBody() {
 	const [newInput, setNewInput] = React.useState("");
 	const [messageList, setMessageList] = React.useState<any[]>([]);
 
-	const handleInput = (e: React.ChangeEvent<HTMLInputElement>) => {
-		if (e.target.value == "")
-			return;
-		setNewInput(e.target.value);
-	};
-
 	const handleSubmitNewMessage = (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
-		// if (newInput != "")
-			// socket.emit('sendMessage', { newInput });
+		if (newInput != "")
+			socket.emit('sendMessage', { newInput }); //
+		// console.log( socket.auth.user.username );
 		setNewInput("");
 	}
 
-	// socket.on('recMessage', (data) => {
-	// 	buildNewMessage(data);
-	// })
+	socket.on('recMessage', (data) => {
+		buildNewMessage(data);
+	})
 
 	const buildNewMessage = (data: any) => {
 		setMessageList([...messageList, data]);
