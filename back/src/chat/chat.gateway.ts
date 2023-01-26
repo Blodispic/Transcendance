@@ -93,13 +93,14 @@ async handleJoinChannel(@ConnectedSocket() client: Socket, @MessageBody() joinCh
 
 @SubscribeMessage('createPublicChannel')
 async handleCreatePublicChannel(@ConnectedSocket() client: Socket, @MessageBody() createPublicChannelDto: CreatePublicChannelDto) {    
-  const channel = await this.channelService.getByName(createPublicChannelDto.channame);
-  if (channel != null)
-    throw new BadRequestException();
-    
+//   const channel = await this.channelService.getByName(createPublicChannelDto.channame);
+//   if (channel != null)
+//     throw new BadRequestException();
+    console.log(client.handshake.auth.user.username);
+	
   const user = client.handshake.auth.user;
-  if (user === null)
-    throw new BadRequestException();
+//   if (user === null)
+//     throw new BadRequestException();
   // const createPublicChannelDto = { 
   //   name: joinChannelDto.channame,
   //   owner: user,
