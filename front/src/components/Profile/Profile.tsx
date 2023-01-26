@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 import { IUser } from '../../interface/User';
 import '../../styles/profile.scss';
 import { HiOutlineMagnifyingGlassCircle } from "react-icons/hi2";
+import { useAppSelector } from '../../redux/Hook';
 
 
 function Search(props: { user: IUser }) {
@@ -33,9 +34,18 @@ function Search(props: { user: IUser }) {
         )
 }
 
+function Invite_button() {
+        return (
+                <div>
+                        
+                </div>
+        )
+}
+
 function Header(props: { user: IUser }) {
 
         const { user } = props;
+        const myUser = useAppSelector(state => state.user);
 
         return (
                 <div className='profile-header'>
@@ -49,6 +59,10 @@ function Header(props: { user: IUser }) {
                                                 <img className='logo' src={`${process.env.REACT_APP_BACK}user/${user.id}/avatar`} />
                                         </div>
                                 </div>
+                                {
+                                        // user.username !== myUser.user!.username &&
+                                        <Invite_button /> 
+                                }
 
 
 
