@@ -28,7 +28,7 @@ export class UserController {
   }
 
   @Post('access_token')
-  GetbyAccessToken(@Body() token: string) {
+  GetbyAccessToken(@Body() token: any) {
     return this.userService.GetByAccessToken(token);
   }
 

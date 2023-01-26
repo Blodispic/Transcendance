@@ -17,7 +17,7 @@ export default function NameForm() {
         e.preventDefault();
         if (myUser.user !== undefined) {
             if (myUser.user.username !== undefined) {
-                await fetch(`${process.env.REACT_APP_BACK}/user/${myUser.user.id}`, {
+                await fetch(`${process.env.REACT_APP_BACK}user/${myUser.user.id}`, {
                     method: 'PATCH',
                     headers: {
                         'Content-Type': 'application/json',
@@ -27,7 +27,7 @@ export default function NameForm() {
             }
             if (file) {
                 formData.append('file', file);
-                await fetch(`${process.env.REACT_APP_BACK}/user/${myUser.user.id}/avatar`, {
+                await fetch(`${process.env.REACT_APP_BACK}user/${myUser.user.id}/avatar`, {
                     method: 'PATCH',
                     body: formData,
                 })

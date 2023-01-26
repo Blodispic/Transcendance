@@ -13,7 +13,7 @@ function Search(props: { user: IUser }) {
         const search_man = async (e: any) => {
               
                 e.preventDefault();
-                        const response = await fetch(`${process.env.REACT_APP_BACK}/user/${man}`, {
+                        const response = await fetch(`${process.env.REACT_APP_BACK}user/${man}`, {
                                 method: 'GET',
                         })
                         const data = response.json();
@@ -46,7 +46,7 @@ function Header(props: { user: IUser }) {
                         <div className='info-container'>
                                 <div className="left-part">
                                         <div className='avatar'>
-                                                <img className='logo' src={`${process.env.REACT_APP_BACK}/user/${user.id}/avatar`} />
+                                                <img className='logo' src={`${process.env.REACT_APP_BACK}user/${user.id}/avatar`} />
                                         </div>
                                 </div>
 
@@ -97,7 +97,7 @@ export default function Profile() {
         useEffect(() => {
                 if (id) {
                         const fetchid = async () => {
-                                const response = await fetch(`${process.env.REACT_APP_BACK}/user/${id}`, {
+                                const response = await fetch(`${process.env.REACT_APP_BACK}user/${id}`, {
                                         method: 'GET',
                                 })
                                 setUser(await response.json());

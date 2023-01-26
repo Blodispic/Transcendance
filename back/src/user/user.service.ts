@@ -7,6 +7,7 @@ import { UpdateUserDto } from "../user/dto/update-user.dto";
 import { User } from "./entities/user.entity";
 import { FriendRequest } from "./entities/friend-request.entity";
 import { FriendRequestDto } from "./dto/friend-request.dto";
+import { JwtService } from "@nestjs/jwt";
 
 @Injectable()
 export class UserService {
@@ -15,6 +16,7 @@ export class UserService {
     private readonly usersRepository: Repository<User>,
     @InjectRepository(FriendRequest)
     private readonly friendRequestRepository: Repository<FriendRequest>,
+    private jwtService: JwtService,
   ) { }
 
   async create(createUserDto: CreateUserDto): Promise<User> {
@@ -47,17 +49,14 @@ export class UserService {
     })
   }
 
- async GetByAccessToken(access_token: string) {
+  async GetByAccessToken(access_token: any): Promise<User | null> {
     console.log(access_token);
-     console.log("cadis qioi");
-     const teoken = await this.usersRepository.findOne({
-       where: {
-         access_token: access_token
-       }
-    })
-    console.log(teoken);
-    return teoken;
-    
+    const decoded_access_token: any = await this.jwtService.decode(access_token.token, { json: true });
+    console.log(decoded_access_token);
+    return this.usersRepository.findOneBy({
+      login: decoded_access_token.username
+    });
+    return null;
   }
 
   getByUsername(username: string) {
@@ -71,8 +70,8 @@ export class UserService {
       id: id,
     })
     if (user) {
-     
-      
+
+
       //Si vous voulez plus de chose a update, mettez le dans le body et faites un if
       if (userUpdate.username)
         user.username = userUpdate.username;

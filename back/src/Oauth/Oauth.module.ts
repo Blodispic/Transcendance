@@ -14,7 +14,7 @@ import { FriendRequest } from 'src/user/entities/friend-request.entity';
   imports: [UserModule,
     JwtModule.register({
       secret: jwtConstants.secret,
-      signOptions: { expiresIn: '3600s' },
+      signOptions: { expiresIn: '3600s', algorithm: 'HS256' },
     }),
     TypeOrmModule.forFeature([User, FriendRequest]),
   ],
