@@ -8,7 +8,7 @@ export class OauthService {
 
   constructor(
     private usersService: UserService,
-    private jwtService: JwtService
+    private jwtService: JwtService,
     ) { }
 
   async getToken(oauthCode: string): Promise<any> {

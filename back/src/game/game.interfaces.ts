@@ -18,6 +18,7 @@ export interface Player {
 	paddle: Paddle;
 	input: Move;
 	name: string;
+	socket: string;
 	score: number;
 	side: number;
 }
@@ -32,9 +33,11 @@ export interface Ball {
 export interface GameState {
 	area: Vec2;
 	scale: number;
+	scoreMax: number;
 	resetCooldown: number;
 	client_area: Vec2;
 	player1: Player;
 	player2: Player;
 	ball: Ball;
+	gameFinished: boolean;
 }

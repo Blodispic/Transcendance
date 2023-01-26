@@ -1,18 +1,60 @@
-import React from 'react';
 import { RouterProvider } from "react-router-dom";
-import { useAppSelector } from './redux/Hook';
+import { useAppDispatch, useAppSelector } from './redux/Hook';
+import { io } from 'socket.io-client';
 import router from './router';
-import io from 'socket.io-client';
+import { Cookies } from 'react-cookie';
+import { setUser } from './redux/user';
+import { useEffect } from "react";
+
+
+
+// export const socket = io("http://" + window.location.hostname + ":4000", {
+//   auth: {
+//     user: useAppSelector(state => state.user)
+//   }
+// });
 
 function App() {
-  const myUser = useAppSelector(state => state.user);
+  const myStore = useAppSelector(state => state.user);
+  const dispatch = useAppDispatch();
+  const cookies = new Cookies();
+  const token = cookies.get('Token');
 
-  console.log("MY USER", myUser.user);
+
+  useEffect(() => {
+    if (myStore.isLog == true) {
+      // export const socket = io("http://" + window.location.hostname + ":4000", {
+      //   auth: {
+      //     user: useAppSelector(state => state.user)
+      //   }
+      // });
+    }
+  }, [myStore.isLog])
+
+
+  const get_user = async () => {
+    const response = await fetch(`${process.env.REACT_APP_BACK}/user/access_token`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ token: token }),
+    })
+    const data = await response.json();
+    console.log("data=", data);
+    
+    dispatch(setUser(data));
+
+  }
+  if (myStore.user === undefined) {
+    if (token !== undefined)
+      get_user();
+  }
 
   return (
-    <div>
+
       <RouterProvider router={router} />
-    </div>
+
   );
 }
 

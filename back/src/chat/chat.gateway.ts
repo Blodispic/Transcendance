@@ -14,6 +14,7 @@ import { JoinChannelDto } from "./dto/join-channel.dto";
 import { LeaveChannelDto } from "./dto/leave-channel.dto";
 import { MessageChannelDto } from "./dto/message-channel.dto";
 import { MessageUserDto } from "./dto/message-user.dto";
+import { Socket } from "./App.gateway.ts"
 
 @WebSocketGateway({
 	cors: {
@@ -40,13 +41,11 @@ export class ChatGateway
  
  @SubscribeMessage('sendMessageUser')
  async handleSendMessageUser(@ConnectedSocket() client: Socket, @MessageBody() messageUserDto: MessageUserDto)/* : Promise<any> */ {
-   const user = await this.userService.getById(messageUserDto.useridtowho);
+  //  const user = await this.userService.getById(messageUserDto.useridtowho);
+  const socketIdToWho = findSocketfromUser(messageUserDto.usertowho);
    if (user == null)
      throw new BadRequestException();
-   // channel.users.forEach(user => {
-   //     this.server.to("user-" + user.id).emit("sendMessageChannel", messageChannelDto);
-   // });
-  //  this.server.to(user.  "chan" + messageUserDto.chanid).emit("sendMessageUserOk", messageChannelDto.message);
+   this.server.to(socketIdToWho).emit("sendMessageUserOk", messageUserDto.message);
  
   //voir une fois qu'on a un access-token
 
@@ -66,17 +65,12 @@ async handleSendMessageChannel(@ConnectedSocket() client: Socket, @MessageBody()
 
 }
 
-@SubscribeMessage('clickChat')
-async handleCliclChat(@ConnectedSocket() client: Socket, @MessageBody() user: User){
-    this.chatService.linkIdtoUser(client, user);
-}
-
 @SubscribeMessage('joinChannel')
 async handleJoinChannel(@ConnectedSocket() client: Socket, @MessageBody() joinChannelDto: JoinChannelDto) {
   const channel = await this.channelService.getById(joinChannelDto.chanid);
   if (channel === null)
   {
-    const user = await this.userService.getById(joinChannelDto.userid);
+    const user = await client.handshake.auth.user;
     if (user === null)
       throw new BadRequestException();
     const createChannelDto = { 
@@ -85,16 +79,17 @@ async handleJoinChannel(@ConnectedSocket() client: Socket, @MessageBody() joinCh
     }
     this.channelService.create(createChannelDto);
   }
-  this.channelService.add( { userId: joinChannelDto.userid, chanId: joinChannelDto.chanid});
+  this.channelService.add( { user, chanId: joinChannelDto.chanid});
   client.join("chan" + joinChannelDto.chanid);
 }
 
 @SubscribeMessage('leaveChannel')
 async handleLeaveChannel(@ConnectedSocket() client: Socket, @MessageBody() leaveChannelDto: LeaveChannelDto) {
   const channel = await this.channelService.getById(leaveChannelDto.chanid);
-  if (channel === null)
+  const user = client.handshake.auth.user;
+  if (channel === null || user === null)
     throw new BadRequestException();
-    this.channelService.rm( { userid: leaveChannelDto.userid, chanid: leaveChannelDto.chanid});
+  this.channelService.rm( { user, chanid: leaveChannelDto.chanid});
   client.leave("chan" + leaveChannelDto.chanid);
 }
 
@@ -103,24 +98,24 @@ async handleLeaveChannel(@ConnectedSocket() client: Socket, @MessageBody() leave
    //Do stuffs
  }
  
- handleDisconnect(client: Socket) {
-   console.log(`Disconnected: ${client.id}`);
+//  handleDisconnect(client: Socket) {
+//    console.log(`Disconnected: ${client.id}`);
 
 
-   //Do stuffs
- }
+//    //Do stuffs
+//  }
  
- handleConnection(client: Socket, ...args: any[]) {
-  // console.log("client id ", client.handshake.headers.authorization)
-   console.log(`Connected ${client.id}`);
-   console.log(client.handshake);
-   console.log(`Connecteddd ${client.id}`);
-  //  const token = {
-  //    id: client.
-  //  }
-  //  console.log("token.id :", token.id);
+//  handleConnection(client: Socket, ...args: any[]) {
+//   // console.log("client id ", client.handshake.headers.authorization)
+//    console.log(`Connected ${client.id}`);
+//    console.log(client.handshake);
+//    console.log(`Connecteddd ${client.id}`);
+//   //  const token = {
+//   //    id: client.
+//   //  }
+//   //  console.log("token.id :", token.id);
    
-  //  client.join("user-" + token.id);
-   //Do stuffs
- }
+//   //  client.join("user-" + token.id);
+//    //Do stuffs
+//  }
 }

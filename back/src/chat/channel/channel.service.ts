@@ -34,7 +34,7 @@ export class ChannelService {
 			}
 			});
 		// const user: User | null = await this.userRepository.findOneBy({ id: addUserDto.userid})
-		const user: User | null = await this.userService.getById(addUserDto.userId);
+		const user = addUserDto.user;
 		if (channel == null || user == null)
 			throw new NotFoundException();
 		channel.users.push(user);
@@ -49,7 +49,8 @@ export class ChannelService {
 			}
 			});
 		// const user: User | null = await this.userRepository.findOneBy({ id: rmUserDto.userid})
-		const user: User | null = await this.userService.getById(rmUserDto.userid);
+		// const user: User | null = await this.userService.getById(rmUserDto.userid);
+		const user = rmUserDto.user;
 		if (channel == null || user == null)
 			throw new NotFoundException();
 		channel.users.splice(channel.users.indexOf(user, 0) ,1);

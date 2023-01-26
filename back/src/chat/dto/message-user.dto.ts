@@ -1,6 +1,5 @@
 export class MessageUserDto {
-	readonly useridtowho: number;
-	readonly useridfromwho: number;
+	readonly usertowho: User;
 	readonly message: string; 
 	// à améliorer
 }

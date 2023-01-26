@@ -30,9 +30,11 @@ export class UserController {
     return this.userService.getById(id);
   }
 
-  @Post('Access_token')
-  GetbyAccessToken(@Body() accessToken: string) {
-    return this.userService.GetByAccessToken(accessToken);
+  @Post('access_token')
+  GetbyAccessToken(@Body() token: string) {
+
+    
+    return this.userService.GetByAccessToken(token);
   }
 
   @Patch(':id/avatar')

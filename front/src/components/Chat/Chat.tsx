@@ -3,7 +3,7 @@ import { io } from "socket.io-client";
 import '../../styles/chat.scss'
 import React from "react";
 
-const socket = io("http://" + window.location.hostname + ":4000");
+// const socket = io("http://" + window.location.hostname + ":4000");
 
 /*
 receive message from back
@@ -51,14 +51,14 @@ export default function Chat() {
 
 	const handleSubmitNewMessage = (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
-		if (newInput != "")
-			socket.emit('sendMessage', { newInput });
+		// if (newInput != "")
+			// socket.emit('sendMessage', { newInput });
 		setNewInput("");
 	}
 
-	socket.on('recMessage', (data) => {
-		buildNewMessage(data);
-	})
+	// socket.on('recMessage', (data) => {
+	// 	buildNewMessage(data);
+	// })
 
 	const buildNewMessage = (data: any) => {
 		setMessageList([...messageList, data]);

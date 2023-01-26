@@ -1,4 +1,6 @@
+import { User } from "src/user/entities/user.entity";
+
 export class AddUserDto {
-	readonly userId: number;
+	readonly user: User;
 	readonly chanId: number;
 }
