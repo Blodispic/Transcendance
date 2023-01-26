@@ -13,7 +13,7 @@ export interface Move {
 		origin: '*',
 	},
 })
-export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect, OnGatewayInit {
+export class PongGateway implements OnGatewayInit {
 	@WebSocketServer()
 	server: Server;
 
@@ -23,15 +23,15 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 		// this.gameService.startGame(this.server);
 	}
 
-	handleConnection(client: any, ...args: any[]) {
-		console.log("Client: " + client.id + " Connected");
-		//Need to add user to userList
-	}
+	// handleConnection(client: any, ...args: any[]) {
+	// 	console.log("Client: " + client.id + " Connected");
+	// 	//Need to add user to userList
+	// }
 
-	handleDisconnect(client: any) {
-		console.log("Client: " + client.id + " Disconnected");
-		//Need to remove user from userList
-	}
+	// handleDisconnect(client: any) {
+	// 	console.log("Client: " + client.id + " Disconnected");
+	// 	//Need to remove user from userList
+	// }
 
 	@SubscribeMessage("addToWaitingRoom")
 	HandleAddToWaitingRoom(@MessageBody() user: User, @ConnectedSocket() client: Socket)

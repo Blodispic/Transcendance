@@ -10,6 +10,7 @@ import { ChannelModule } from './channel/channel.module';
 import { OauthModule } from './Oauth/Oauth.module';
 import { ConfigModule } from '@nestjs/config';
 import { ChatGateway } from './chat/chat.gateway';
+import { AppGateway } from './app.gateway';
 import { Channel } from './channel/entities/channel.entity';
 import { MulterModule } from '@nestjs/platform-express';
 import { Results } from './results/entities/results.entity';
@@ -38,6 +39,6 @@ import { Results } from './results/entities/results.entity';
     UserModule,
   ],
   controllers: [AppController],
-  providers: [AppService, ChatGateway],
+  providers: [AppService, ChatGateway, AppGateway],
 })
 export class AppModule { }

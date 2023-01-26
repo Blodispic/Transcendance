@@ -2,6 +2,7 @@ import { toUnicode } from "punycode";
 import { io } from "socket.io-client";
 import '../../styles/chat.scss'
 import React from "react";
+import { socket } from "../../App"
 
 // const socket = io("http://" + window.location.hostname + ":4000");
 

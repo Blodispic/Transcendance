@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import '../../styles/connection.scss'
 import { useAppDispatch, useAppSelector } from '../../redux/Hook';
-import { log_unlog } from "../../redux/user";
+import { change_name, log_unlog } from "../../redux/user";
 
 export default function NameForm() {
 
@@ -33,6 +33,7 @@ export default function NameForm() {
                 })
                 formData.delete('file');
             }
+            dispatch(change_name(newname));
             dispatch(log_unlog());
         }
     }
