@@ -15,19 +15,18 @@ export class GameService {
 	constructor(
 		private readonly userService: UserService,
 	) {}
-	public waitingRoom: User[] = [];
-	public waitingRoomSocket: any[] = [];
+	public waitingRoom: any[] = [];
 	public gameRoom: Game[] = [];
 
-	async addToWaitingRoom(user: User, client: any) {
-		this.waitingRoom.push(user);
-		this.waitingRoomSocket.push(client);
+	async addToWaitingRoom(client: any) {
+		this.waitingRoom.push(client);
 	}
 
 	startGame(server: Server) {
 		if (this.waitingRoom.length >= 2) {
-			const user1 = this.waitingRoom.shift();
-			const user2 = this.waitingRoom.shift();
+			const socket1 = this.waitingRoom.shift();
+			const socket2 = this.waitingRoom.shift();
+
 			let player1: Player = {
 				paddle: {
 					position: {
@@ -41,7 +40,7 @@ export class GameService {
 				name: "Player1",
 				score: 0,
 				side: 0,
-				socket: this.waitingRoomSocket.shift(),
+				socket: socket1.id,
 			};
 			let player2: Player = {
 				paddle: {
@@ -56,12 +55,10 @@ export class GameService {
 				name: "Player2",
 				score: 0,
 				side: 1,
-				socket: this.waitingRoomSocket.shift(),
+				socket: socket2.id,
 			};
-			if (user1)
-				player1.name = user1.username;
-			if (user2)
-				player2.name = user2.username;
+			player1.name = socket1.handshake.auth.user.username;
+			player2.name = socket2.handshake.auth.user.username;
 			this.gameRoom.push(new Game(server, player1, player2));
 			server.to(player1.socket).emit("RoomStart", this.gameRoom.length, player1);
 			server.to(player2.socket).emit("RoomStart", this.gameRoom.length, player2);
@@ -87,6 +84,17 @@ export class GameService {
 		{
 			if (this.gameRoom[roomId].gameState.player2.socket == client)
 				this.gameRoom[roomId].updateMove2(move2);
+			roomId++;
+		}
+	}
+
+	playerDisconnect(client: string) {
+		let roomId : number = 0;
+		while (roomId < this.gameRoom.length && this.gameRoom.length > 0)
+		{
+			if (this.gameRoom[roomId].gameState.player1.socket === client
+				|| this.gameRoom[roomId].gameState.player2.socket === client)
+				this.gameRoom[roomId].disconnect(client);
 			roomId++;
 		}
 	}
@@ -204,6 +212,39 @@ class Game {
 		move2 = newMove2;
 	}
 
+	disconnect(client: string)
+	{
+		if (this.gameState.player1.socket === client)
+		{
+			console.log(this.gameState.player1.name + " disconnected.");
+			this.gameState.player2.score = this.gameState.scoreMax;
+			this.finishGame();
+		}
+		else if (this.gameState.player2.socket === client)
+		{
+			console.log(this.gameState.player2.name + " disconnected.");
+			this.gameState.player1.score = this.gameState.scoreMax;
+			this.finishGame();
+		}
+	}
+
+	finishGame()
+	{
+		this.gameState.gameFinished = true;
+		if (this.gameState.player1.score === this.gameState.scoreMax)
+		{
+			let result: any = {winner: this.gameState.player1.name, looser: this.gameState.player2.name, winner_score: this.gameState.player1.score.toString(), looser_score: this.gameState.player2.score.toString()};
+			this.server.to(this.gameState.player1.socket).emit("GameEnd", result);
+			this.server.to(this.gameState.player2.socket).emit("GameEnd", result);
+		}
+		else
+		{
+			let result: any = {winner: this.gameState.player2.name, looser: this.gameState.player1.name, winner_score: this.gameState.player2.score.toString(), looser_score: this.gameState.player1.score.toString()};
+			this.server.to(this.gameState.player1.socket).emit("GameEnd", result);
+			this.server.to(this.gameState.player2.socket).emit("GameEnd", result);
+		}
+	}
+
 	updateGameState(state: GameState) {
 		state.scale = state.client_area.x / state.area.x;
 		
@@ -301,38 +342,30 @@ class Game {
 	}
 		
 	wallCollision(ball: Ball, state: GameState) {
-	    if (
-	        ball.position.x + ballRadius > state.area.x ||
-	        ball.position.x - ballRadius < 0
-	    )
-	        ball.speed.x = -ball.speed.x;
-	    if (
-	        this.paddleCollision(ball, state.player1) === 0 &&
-	        this.paddleCollision(ball, state.player2) === 0
-	    ) {
-	        if (ball.position.y > state.area.y - ballRadius) {
-	            state.player2.score++;
-	            this.resetState(state);
-	            if (state.player2.score === state.scoreMax)
-	            {
-	                //END THE GAME
+		if (
+			ball.position.x + ballRadius > state.area.x ||
+			ball.position.x - ballRadius < 0
+		)
+			ball.speed.x = -ball.speed.x;
+		if (
+			this.paddleCollision(ball, state.player1) === 0 &&
+			this.paddleCollision(ball, state.player2) === 0
+		) {
+			if (ball.position.y > state.area.y - ballRadius) {
+				state.player2.score++;
+				this.resetState(state);
+				if (state.player2.score === state.scoreMax) {
+					//END THE GAME
 					console.log("Player2 Wins");
-					state.gameFinished = true;
-					let result: any = {winner: state.player2.name, looser: state.player1.name, winner_score: state.player2.score.toString(), looser_score: state.player1.score.toString()};
-					this.server.to(this.gameState.player1.socket).emit("GameEnd", result);
-					this.server.to(this.gameState.player2.socket).emit("GameEnd", result);
+					this.finishGame();
 				}
 			} else if (ball.position.y < 0 + ballRadius) {
 				state.player1.score++;
 				this.resetState(state);
-				if (state.player1.score === state.scoreMax)
-				{
+				if (state.player1.score === state.scoreMax) {
 					//END THE GAME
 					console.log("Player1 Wins");
-					state.gameFinished = true;
-					let result: any = {winner: state.player1.name, looser: state.player2.name, winner_score: state.player1.score.toString(), looser_score: state.player2.score.toString()};
-					this.server.to(this.gameState.player1.socket).emit("GameEnd", result);
-					this.server.to(this.gameState.player2.socket).emit("GameEnd", result);
+					this.finishGame()
 				}
 			}
 		}

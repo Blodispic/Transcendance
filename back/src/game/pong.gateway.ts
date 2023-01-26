@@ -2,6 +2,7 @@ import {ConnectedSocket, MessageBody, OnGatewayConnection, OnGatewayDisconnect, 
 import { Server, Socket } from "socket.io";
 import { User } from "src/user/entities/user.entity";
 import { GameService } from "./game.service";
+import { userList } from "src/app.gateway";
 
 export interface Move {
 	left: boolean;
@@ -13,7 +14,7 @@ export interface Move {
 		origin: '*',
 	},
 })
-export class PongGateway implements OnGatewayInit {
+export class PongGateway implements OnGatewayDisconnect, OnGatewayInit {
 	@WebSocketServer()
 	server: Server;
 
@@ -28,16 +29,17 @@ export class PongGateway implements OnGatewayInit {
 	// 	//Need to add user to userList
 	// }
 
-	// handleDisconnect(client: any) {
-	// 	console.log("Client: " + client.id + " Disconnected");
-	// 	//Need to remove user from userList
-	// }
+	handleDisconnect(client: any) {
+
+		//Need to remove user from game and make the other player win
+		this.gameService.playerDisconnect(client.id);
+	}
 
 	@SubscribeMessage("addToWaitingRoom")
 	HandleAddToWaitingRoom(@MessageBody() user: User, @ConnectedSocket() client: Socket)
 	{
 		console.log("Add " + user.username + " to waiting room.");
-		this.gameService.addToWaitingRoom(user, client.id);
+		this.gameService.addToWaitingRoom(userList[userList.indexOf(client)] );
 		this.gameService.startGame(this.server);
 	}
 
