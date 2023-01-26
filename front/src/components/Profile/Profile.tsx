@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Navigate, useParams } from "react-router-dom";
+import { Navigate, useNavigate, useParams } from "react-router-dom";
 import { IUser } from '../../interface/User';
 import '../../styles/profile.scss';
 import { HiOutlineMagnifyingGlassCircle } from "react-icons/hi2";
@@ -8,7 +8,8 @@ import { useAppSelector } from '../../redux/Hook';
 
 function Search(props: { user: IUser }) {
 
-        const { user } = props;
+        let { user } = props;
+        const navigate = useNavigate();
         const [username, setMan] = useState<string | undefined>(undefined)
 
         const search_man = async (e: any) => {
@@ -17,9 +18,9 @@ function Search(props: { user: IUser }) {
                 const response = await fetch(`${process.env.REACT_APP_BACK}user/username/${username}`, {
                         method: 'GET',
                 })
-                const user: IUser = await response.json();
-                console.log(user);
-                return <Navigate to={`${process.env.REACT_APP_BACK}Profile/${user.id}`} />;
+                user = await response.json();
+                console.log("Ici front ", user);
+                navigate (`../Profile/${user.id}`);
         }
 
         return (
@@ -37,6 +38,7 @@ function Search(props: { user: IUser }) {
 function InviteButton(props: { user: IUser }) {
         const { user } = props;
       
+        console.log("Ici user", user);
         const sendFriendRequest = async () => {
           const response = await fetch(`${process.env.REACT_APP_BACK}user/friend-request/send/${user.id}`, {
             method: 'POST',
@@ -67,6 +69,7 @@ function Header(props: { user: IUser }) {
 
 
                         <Search user={user} />
+
 
                         <div className='info-container'>
                                 <div className="left-part">

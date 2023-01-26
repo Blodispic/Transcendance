@@ -57,9 +57,11 @@ export class UserService {
   }
 
   async getByUsername(username: string) {
-    return await this.usersRepository.findOneBy({
+    const userfindName = await this.usersRepository.findOneBy({
       username: username
     })
+    console.log("ici Back ", userfindName);
+    return userfindName;
   }
 
   async update(id: number, userUpdate: any) {

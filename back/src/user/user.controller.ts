@@ -24,7 +24,6 @@ export class UserController {
 
   @Get('username/:username')
   GetbyUsername(@Param('username') username: string){
-    console.log("ici", username);
     return this.userService.getByUsername(username);
   }
 
