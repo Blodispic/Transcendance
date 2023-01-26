@@ -3,6 +3,7 @@ import { io } from "socket.io-client";
 import '../../styles/chat.scss'
 import { ChannelList } from "./Channel";
 import React from "react";
+import { socket } from "../../App"
 
 // const socket = io("http://" + window.location.hostname + ":4000");
 
