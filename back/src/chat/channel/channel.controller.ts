@@ -1,4 +1,4 @@
-import { BadRequestException, Body, Controller, Get, Param, Post } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Get, Param, Patch, Post } from '@nestjs/common';
 import { CreateUserDto } from 'src/user/dto/create-user.dto';
 import { ChannelService } from './channel.service';
 import { Channel } from './entities/channel.entity';
@@ -32,6 +32,11 @@ export class ChannelController {
 	@Post('rmUser')
 	async rm(@Body() rmUserDto: RmUserDto) {
 		return await this.channelService.rm(rmUserDto);
+	}
+
+	@Patch(':id')
+	update(@Param('id') id: string, @Body() channel: any) {
+	  return this.channelService.update(+id, channel);
 	}
 
 

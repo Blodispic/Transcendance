@@ -56,7 +56,6 @@ export class UserService {
       if (user)
         return user;
       return {message: "Token user not found"};
-
   }
 
   async getByUsername(username: string) {

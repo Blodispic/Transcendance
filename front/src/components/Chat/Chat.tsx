@@ -1,19 +1,9 @@
 import { toUnicode } from "punycode";
-import { io } from "socket.io-client";
+import { io, Socket } from "socket.io-client";
 import '../../styles/chat.scss'
+import { ChannelList } from "./Channel";
 import React from "react";
-
-// const socket = io("http://" + window.location.hostname + ":4000");
-
-function ChannelList() {
-	const chanList = [
-		<li>chan 1</li>,
-		<li>chan 2</li>
-	]
-	return <ul>
-		{chanList}
-	</ul>
-}
+import { socket } from "../../App"
 
 function DMList() {
 	return <ul>
@@ -30,51 +20,64 @@ function UserList() {
 	</ul>
 }
 
-export default function Chat() {
-
+function ChatBody() {
 	
 	const [newInput, setNewInput] = React.useState("");
 	const [messageList, setMessageList] = React.useState<any[]>([]);
 
-	const handleInput = (e: React.ChangeEvent<HTMLInputElement>) => {
-		if (e.target.value == "")
-			return;
-		setNewInput(e.target.value);
-	};
-
 	const handleSubmitNewMessage = (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
-		// if (newInput != "")
-			// socket.emit('sendMessage', { newInput });
+		if (newInput != "")
+			socket.emit('sendMessage', { newInput }); //
+		// console.log( socket.auth.user.username );
 		setNewInput("");
 	}
 
-	// socket.on('recMessage', (data) => {
-	// 	buildNewMessage(data);
-	// })
+	socket.on('recMessage', (data) => {
+		buildNewMessage(data);
+	})
 
 	const buildNewMessage = (data: any) => {
 		setMessageList([...messageList, data]);
 	}
+
+	return (
+		<div className="chat-body">
+			<div className="chat-messages">
+				{messageList.map((chat) => (
+
+					<div key={chat.newInput} className="__wrap">
+						<div className="message_info">
+							<span className="user-avatar"><img src="https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/160/apple/81/woman-gesturing-ok-type-1-2_1f646-1f3fb-200d-2640-fe0f.png"></img></span>
+							UserName
+							<span className="timestamp"> 0000/00/00 00:00</span>
+						</div>
+						<p>{chat.newInput}</p>
+					</div>
+				))}
+			</div>
+			<form id="input_form" onSubmit={(e) => { handleSubmitNewMessage(e); }}>
+				<input type="text" onChange={(e) => { setNewInput(e.target.value) }}
+					placeholder="type message here" value={newInput} />
+			</form>
+
+		</div>
+	);
+}
+
+export default function Chat() {
+	const [channelSet, setChannelSet] = React.useState(false)
+	const [DmSet, setDmSet] = React.useState(true)
+
 	return (
 		<div id="chat-container">
 			<div className="left-sidebar">
 				<ChannelList />
 			</div>
-			<div className="chat-body">
-				<div className="chat-messages">
-					{messageList.map((chat) => (
-						<div key={chat.newInput} className="__wrap">
-							{chat.newInput}
-						</div>
-					))}
-				</div>
-				<form id="input_form" onSubmit={(e) => { handleSubmitNewMessage(e); }}>
-					<input type="text" onChange={(e) => { setNewInput(e.target.value) }}
-						placeholder="type message here" value={newInput} />
-				</form>
-
-			</div>
+			
+			{ channelSet == false && DmSet == true &&
+				<ChatBody />
+			}
 			<div className="right-sidebar">
 				<UserList />
 			</div>

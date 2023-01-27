@@ -3,6 +3,7 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { Response } from 'express';
 import { diskStorage } from 'multer';
 import { editFileName, imageFilter } from 'src/app.service';
+import { CreateUserDto } from './dto/create-user.dto';
 import { User } from './entities/user.entity';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -10,7 +11,16 @@ import { user } from 'src/game/game.controller';
 
 @Controller('user')
 export class UserController {
-  constructor(private readonly userService: UserService) { }
+  constructor(private readonly userService: UserService) {}
+
+  @Post()
+  async create(@Body() createUserDto: CreateUserDto): Promise<User> {
+    // try {
+      return await this.userService.create(createUserDto);
+    // } catch (error) {
+      // throw new BadRequestException(error.detail);
+    // }
+  }
 
   @Get()
   findAll() {
@@ -107,6 +117,4 @@ export class UserController {
   async deleteFriend(@Param('id') id: number, @Body() friend: User) {
     return await this.userService.removeFriend(id, friend);
   }
-
-
 }

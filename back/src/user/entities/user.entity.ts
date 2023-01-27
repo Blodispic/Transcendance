@@ -1,6 +1,6 @@
-import { Channel } from "src/channel/entities/channel.entity";
 import { Results } from "../../results/entities/results.entity";
 import { Column, Entity, PrimaryGeneratedColumn, ManyToMany, JoinTable, OneToMany } from "typeorm";
+import { Channel } from "src/chat/channel/entities/channel.entity";
 import { FriendRequest } from "./friend-request.entity";
 
 @Entity('user')

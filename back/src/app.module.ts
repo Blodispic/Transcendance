@@ -1,4 +1,3 @@
-import { ResultModule } from './results/results.module';
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
@@ -6,13 +5,15 @@ import { AppService } from './app.service';
 import { User } from './user/entities/user.entity';
 import { UserModule } from './user/user.module';
 import { GameModule } from './game/game.module';
-import { ChannelModule } from './channel/channel.module';
-import { OauthModule } from './Oauth/Oauth.module';
+import { OauthModule } from './oauth/oauth.module';
 import { ConfigModule } from '@nestjs/config';
 import { ChatGateway } from './chat/chat.gateway';
-import { Channel } from './channel/entities/channel.entity';
+import { AppGateway } from './app.gateway';
 import { MulterModule } from '@nestjs/platform-express';
 import { Results } from './results/entities/results.entity';
+import { ChannelModule } from './chat/channel/channel.module';
+import { ResultModule } from './results/results.module';
+import { Channel } from './chat/channel/entities/channel.entity';
 import { FriendRequest } from './user/entities/friend-request.entity';
 
 @Module({
@@ -39,6 +40,6 @@ import { FriendRequest } from './user/entities/friend-request.entity';
     UserModule,
   ],
   controllers: [AppController],
-  providers: [AppService, ChatGateway],
+  providers: [AppService, ChatGateway, AppGateway],
 })
 export class AppModule { }
