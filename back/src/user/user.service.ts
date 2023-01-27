@@ -49,11 +49,14 @@ export class UserService {
     })
   }
 
-  async GetByAccessToken(access_token: any): Promise<User | null> {
-    const decoded_access_token: any = await this.jwtService.decode(access_token.token, { json: true });
-    return this.usersRepository.findOneBy({
-      login: decoded_access_token.username
-    });
+  async GetByAccessToken(access_token: any) {
+      console.log("check token");
+      const decoded_access_token: any = await this.jwtService.decode(access_token.token, { json: true });
+      const user = await this.usersRepository.findOneBy({ login: decoded_access_token.username });
+      if (user)
+        return user;
+      return {message: "Token user not found"};
+
   }
 
   async getByUsername(username: string) {
@@ -171,7 +174,7 @@ export class UserService {
     if (!friendRequest) {
       return {message: "Friend request does not exist"};
     }
-    return friendRequest.status;
+    return {status: friendRequest.status};
   }
 
 

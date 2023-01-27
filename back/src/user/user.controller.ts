@@ -38,12 +38,9 @@ export class UserController {
     return this.userService.GetByAccessToken(token);
   }
 
-  @Get('friend-request/status/:id')
+  @Post('friend-request/status/:id')
   async GetFriendRequestStatus(@Param('id') id: number, @Body() user: User) {
-    if (user)
       return this.userService.GetFriendRequestStatus(id, user);
-    else
-      return ("User not found");
   }
 
   @Get(':id/avatar')
