@@ -38,28 +38,9 @@ export class UserController {
     return this.userService.GetByAccessToken(token);
   }
 
-  @Get('friend-request/status/:friendId')
-  async GetFriendRequestStatus(@Param('friendId') friendId: number, @Body() user: User) {
-    if (user)
-      return this.userService.GetFriendRequestStatus(friendId, user);
-    else
-      return ("User not found");
-  }
-
-
-  @Patch(':id/avatar')
-  @UseInterceptors(
-    FileInterceptor('file', {
-      storage: diskStorage({
-        destination: './storage/images/',
-        filename: editFileName,
-      }),
-      fileFilter: imageFilter,
-    }),
-  )
-  async setAvatar(@Param('id') id: number, @UploadedFile() file: any, @Body('username') username: string) {
-    await this.userService.setAvatar(id, username, file);
-    return { message: 'Avatar set successfully' };
+  @Post('friend-request/status/:id')
+  async GetFriendRequestStatus(@Param('id') id: number, @Body() user: User) {
+      return this.userService.GetFriendRequestStatus(id, user);
   }
 
   @Get(':id/avatar')
@@ -74,6 +55,21 @@ export class UserController {
     } else {
       return null;
     }
+  }
+
+  @Patch(':id/avatar')
+  @UseInterceptors(
+    FileInterceptor('file', {
+      storage: diskStorage({
+        destination: './storage/images/',
+        filename: editFileName,
+      }),
+      fileFilter: imageFilter,
+    }),
+  )
+  async setAvatar(@Param('id') id: number, @UploadedFile() file: any, @Body('username') username: string) {
+    await this.userService.setAvatar(id, username, file);
+    return { message: 'Avatar set successfully' };
   }
 
   @Patch(':id')

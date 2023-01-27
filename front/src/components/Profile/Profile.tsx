@@ -5,25 +5,43 @@ import '../../styles/profile.scss';
 import { HiOutlineMagnifyingGlassCircle } from "react-icons/hi2";
 import { useAppSelector } from '../../redux/Hook';
 
-
-
-
 function InviteButton(props: { user: any }) {
         const { user } = props;
 
+        const pathname = window.location.pathname;
+        const pathArray = pathname.split('/');
+        const friendId = pathArray[pathArray.length - 1];
+        const [status, setStatus] = useState<string>('+ Add Friend');
+
         const sendFriendRequest = async () => {
-                const response = await fetch(`${process.env.REACT_APP_BACK}user/friend-request/send/${user.id}`, {
+                await fetch(`${process.env.REACT_APP_BACK}user/friend-request/send/${friendId}`, {
                         method: 'POST',
                         body: JSON.stringify(user),
                         headers: { 'Content-Type': 'application/json' }
                 });
-                const data = await response.json();
+                setStatus('Pending');
         }
+
+        useEffect(() => {
+                const checkFriendRequest = async () => {
+                        const response = await fetch(`${process.env.REACT_APP_BACK}user/friend-request/status/${friendId}`, {
+                                method: 'POST',
+                                body: JSON.stringify(user),
+                                headers: { 'Content-Type': 'application/json' }
+                        });
+                        const data = await response.json()
+                        if (data.status)
+                                setStatus(data.status);
+                        else
+                                setStatus("+ Add Friend");
+                }
+                checkFriendRequest();
+              }, [friendId, user]);
+              
+
         return (
-                <button className="pulse pointer" onClick={sendFriendRequest} >
-                        <a>
-                                Add Friend
-                        </a>
+                <button className="button pointer white" onClick={sendFriendRequest} >
+                        {status}
                 </button>
         )
 }
@@ -46,17 +64,25 @@ function Search(props: { currentUser: IUser, setcurrentUser: Function }) {
                 navigate(`../Profile/${data.id}`);
 
         }
+
+        const handleKeyDown = (event: any) => {
+                if (event.key === "Enter") {
+                        search_man(event);
+                }
+              };
+
         return (
                 <div className="search">
-                        <div className="icon" onClick={(e) => search_man(e)}>
+                        <div className="icon" onClick={(e) => search_man(e)} >
                                 <HiOutlineMagnifyingGlassCircle />
                         </div>
                         <div className="input">
-                                <input type="text" onChange={e => setMan(e.target.value)} placeholder="Search..." />
+                                <input type="text" onKeyDown={handleKeyDown} onChange={e => setMan(e.target.value)} placeholder="Search..." />
                         </div>
                 </div>
         )
 }
+
 function Header(props: { currentUser: IUser, setCurrentUser: Function }) {
 
         const { currentUser, setCurrentUser } = props;
@@ -73,8 +99,8 @@ function Header(props: { currentUser: IUser, setCurrentUser: Function }) {
                                                 <img className='logo' src={`${process.env.REACT_APP_BACK}user/${currentUser.id}/avatar`} />
                                         </div>
                                         {
-                                                // user.username !== myUser.user!.username &&
-                                                <InviteButton user={currentUser} />
+                                                currentUser.username !== myUser.user!.username &&
+                                                <InviteButton user={myUser.user} />
                                         }
                                 </div>
 
@@ -121,11 +147,11 @@ export default function Profile() {
         const [currentUser, setCurrentUser] = useState<IUser | undefined>(undefined);
         let avatar: string = "";
         let { id } = useParams();
-        
-        useEffect(() => {
-  
 
-                
+        useEffect(() => {
+
+
+
                 if (id) {
                         const fetchid = async () => {
                                 const response = await fetch(`${process.env.REACT_APP_BACK}user/id/${id}`, {
@@ -153,8 +179,8 @@ export default function Profile() {
                         <section>
 
                         </section>
-                        { currentUser &&
-                        <Header currentUser={currentUser} setCurrentUser={setCurrentUser} />
+                        {currentUser &&
+                                <Header currentUser={currentUser} setCurrentUser={setCurrentUser} />
                         }
 
                         <div className='cacher'>
