@@ -11,7 +11,6 @@ import { useAppSelector } from '../../redux/Hook';
 function InviteButton(props: { user: any }) {
         const { user } = props;
 
-
         const sendFriendRequest = async () => {
                 const response = await fetch(`${process.env.REACT_APP_BACK}user/friend-request/send/${user.id}`, {
                         method: 'POST',
