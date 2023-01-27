@@ -67,10 +67,6 @@ function Header(props: { currentUser: IUser, setCurrentUser: Function }) {
 
 
                         <Search currentUser={currentUser} setcurrentUser={setCurrentUser} />
-                        
-                        
-                        //user at exit of function currentuser == user du fetch de la functon search
-
                         <div className='info-container'>
                                 <div className="left-part">
                                         <div className='avatar'>
