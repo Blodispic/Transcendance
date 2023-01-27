@@ -22,38 +22,25 @@ export class UserController {
     return this.userService.create(user)
   }
 
-  @Get(':id')
+  @Get('username/:username')
+  GetbyUsername(@Param('username') username: string){
+    return this.userService.getByUsername(username);
+  }
+
+  @Get('id/:id')
   findOne(@Param('id') id: number) {
     return this.userService.getById(id);
   }
+
 
   @Post('access_token')
   GetbyAccessToken(@Body() token: any) {
     return this.userService.GetByAccessToken(token);
   }
 
-  @Get('friend-request/status/:friendId')
-  async GetFriendRequestStatus(@Param('friendId') friendId: number, @Body() user: User) {
-    if (user)
-      return this.userService.GetFriendRequestStatus(friendId, user);
-    else
-      return ("User not found");
-  }
-
-
-  @Patch(':id/avatar')
-  @UseInterceptors(
-    FileInterceptor('file', {
-      storage: diskStorage({
-        destination: './storage/images/',
-        filename: editFileName,
-      }),
-      fileFilter: imageFilter,
-    }),
-  )
-  async setAvatar(@Param('id') id: number, @UploadedFile() file: any, @Body('username') username: string) {
-    await this.userService.setAvatar(id, username, file);
-    return { message: 'Avatar set successfully' };
+  @Post('friend-request/status/:id')
+  async GetFriendRequestStatus(@Param('id') id: number, @Body() user: User) {
+      return this.userService.GetFriendRequestStatus(id, user);
   }
 
   @Get(':id/avatar')
@@ -70,6 +57,21 @@ export class UserController {
     }
   }
 
+  @Patch(':id/avatar')
+  @UseInterceptors(
+    FileInterceptor('file', {
+      storage: diskStorage({
+        destination: './storage/images/',
+        filename: editFileName,
+      }),
+      fileFilter: imageFilter,
+    }),
+  )
+  async setAvatar(@Param('id') id: number, @UploadedFile() file: any, @Body('username') username: string) {
+    await this.userService.setAvatar(id, username, file);
+    return { message: 'Avatar set successfully' };
+  }
+
   @Patch(':id')
   update(@Param('id') id: string, @Body() user: any) {
     return this.userService.update(+id, user);
@@ -80,23 +82,26 @@ export class UserController {
     return this.userService.remove(+id);
   }
 
-  @Post('friend-request/send/:friendId')
+  @Post('friend-request/send/:id')
   sendFriendRequest(
-    @Param('friendId') friendId: number, @Body() user: User) {
+    @Param('id') id: number, @Body() user: User) {
     if (user)
-      return this.userService.sendFriendRequest(friendId, user)
+    {
+      console.log("Try send friend Request")
+      return this.userService.sendFriendRequest(id, user)
+    }
   }
 
 
-  @Post('addfriend/:friendId')
-  async addFriend(@Param('friendId') friendId: number, @Body() user: User) {
-    return await this.userService.addFriend(friendId, user);
+  @Post('addfriend/:id')
+  async addFriend(@Param('id') id: number, @Body() user: User) {
+    return await this.userService.addFriend(id, user);
   }
 
-  @Post(':id/addfriend/:friendId')
-  async addFriendbyId(@Param('id') id: number, @Param('friendId') friendId: number) {
-    return await this.userService.addFriendById(friendId, id);
-  }
+  // @Post(':id/addfriend/:id')
+  // async addFriendbyId(@Param('id') id: number, @Param('id') id: number) {
+  //   return await this.userService.addFriendById(id, id);
+  // }
 
   @Delete('deletefriend/:id')
   async deleteFriend(@Param('id') id: number, @Body() friend: User) {
