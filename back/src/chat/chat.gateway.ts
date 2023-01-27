@@ -47,7 +47,6 @@ export class ChatGateway
     throw new BadRequestException();
   this.server.to(socketIdToWho).emit("sendMessageUserOk", messageUserDto.message);
  
-  //voir une fois qu'on a un access-token
 
  }
 
@@ -77,18 +76,13 @@ async handleSendMessageChannel(@ConnectedSocket() client: Socket, @MessageBody()
 async handleJoinChannel(@ConnectedSocket() client: Socket, @MessageBody() joinChannelDto: JoinChannelDto) {    
   const channel = await this.channelService.getById(joinChannelDto.chanid);
   if (channel === null)
-  {
-    const user = client.handshake.auth.user;
-    if (user === null)
-      throw new BadRequestException();
-    const createChannelDto = { 
-      name: joinChannelDto.channame,
-      owner: user,
-    }
-    this.channelService.create(createChannelDto);
-  }
-  this.channelService.add( { user: client.handshake.auth.user, chanId: joinChannelDto.chanid});
+    throw new BadRequestException();
+  this.channelService.add({
+    user: client.handshake.auth.user,
+    chanId: channel.id,
+  });
   client.join("chan" + joinChannelDto.chanid);
+  client.emit("joinChannelOK", channel.id);
 }
 
 @SubscribeMessage('createPublicChannel')
@@ -96,17 +90,14 @@ async handleCreatePublicChannel(@ConnectedSocket() client: Socket, @MessageBody(
   const channel = await this.channelService.getByName(createPublicChannelDto.channame);
   if (channel != null)
     throw new BadRequestException();
-console.log(client.handshake.auth.user.username);
-console.log(createPublicChannelDto.channame);
-
-	
-  const user = client.handshake.auth.user;
-  if (user === null)
-    throw new BadRequestException();
-
+    console.log(client.handshake.auth.user.username);
+    console.log(createPublicChannelDto.channame);
+    
+  let user: User = client.handshake.auth.user;
   const new_channel = await this.channelService.create({
       name: createPublicChannelDto.channame,
-      owner: user
+      owner: user,
+      users:[ user ],
      });
   this.channelService.add({
     user: user,

@@ -23,6 +23,9 @@ export class ChannelService {
 
 	create(createChannelDto: CreateChannelDto) {
 		const channel: Channel = this.channelRepository.create(createChannelDto);
+		// this.channelRepository.update(channel);
+		console.log(channel);
+		
 		return this.channelRepository.save(channel);
 	}
 
@@ -56,6 +59,28 @@ export class ChannelService {
 		channel.users.splice(channel.users.indexOf(user, 0) ,1);
 		return this.channelRepository.save(channel);
 	}
+
+	async update(id: number, channelUpdate: any) {
+		console.log("UPDATE");
+		
+		const channel = await this.channelRepository.findOne({
+			relations: { users: true, /* owner: true */ },
+			where: {
+				id,
+			}
+		});
+		if (channel) {
+			if (channelUpdate.channame)
+				channel.name = channelUpdate.channame;
+			// if (channelUpdate.owner)
+			// 	channel.owner = channelUpdate.owner;
+			if (channelUpdate.users)
+				channel.users = channelUpdate.users;
+		
+		  return await this.channelRepository.save(channel);
+		}
+		return 'There is no user to update';
+	  }
 
 	getById(id: number) {
 		return this.channelRepository.findOne({

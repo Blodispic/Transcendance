@@ -21,7 +21,7 @@ export default function Queue() {
 
     useEffect(() => {
         const fetchuser = async () => {
-            await fetch(`${process.env.REACT_APP_BACK}/game/`, {
+            await fetch(`${process.env.REACT_APP_BACK}game/`, {
                 method: 'POST',
                 body: JSON.stringify({ id: myUser.user!.id }),
             })

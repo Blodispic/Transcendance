@@ -16,18 +16,18 @@ export default function NameForm() {
     const fetch_name_avatar = async (e: any) => {
         e.preventDefault();
         if (myUser.user !== undefined) {
-            if (myUser.user.username !== undefined) {
-                await fetch(`${process.env.REACT_APP_BACK}/user/${myUser.user.id}`, {
-                    method: 'PATCH',
-                    headers: {
-                        'Content-Type': 'application/json',
-                      },
-                    body: JSON.stringify({ username: newname }),
-                })
-            }
+
+            await fetch(`${process.env.REACT_APP_BACK}user/${myUser.user.id}`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ username: newname }),
+            })
+
             if (file) {
                 formData.append('file', file);
-                await fetch(`${process.env.REACT_APP_BACK}/user/${myUser.user.id}/avatar`, {
+                await fetch(`${process.env.REACT_APP_BACK}user/${myUser.user.id}/avatar`, {
                     method: 'PATCH',
                     body: formData,
                 })

@@ -1,5 +1,6 @@
+import { channel } from "diagnostics_channel";
 import { User } from "src/user/entities/user.entity";
-import { Column, Entity, JoinTable, ManyToMany, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinTable, ManyToMany, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity()
 export class Channel {
@@ -9,13 +10,13 @@ export class Channel {
 	@Column({ unique:true })
 	name: string;
 
-	// @Column({ default : ""})
-	// password: string;
+	// @Column({ default : undefined})
+	// password: string | undefined;
 
-	@OneToOne(() => User)
+	@ManyToOne(() => User)
 	owner: User
 
-	@ManyToMany(() => User)
+	@ManyToMany(() => User, user => user.channels, { cascade: true })
 	@JoinTable()
 	users: User[]
 }
