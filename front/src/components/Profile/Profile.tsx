@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 import { IUser } from '../../interface/User';
 import '../../styles/profile.scss';
 import { HiOutlineMagnifyingGlassCircle } from "react-icons/hi2";
+import { useAppSelector } from '../../redux/Hook';
 
 
 function Search(props: { user: IUser }) {
@@ -13,7 +14,7 @@ function Search(props: { user: IUser }) {
         const search_man = async (e: any) => {
               
                 e.preventDefault();
-                        const response = await fetch(`${process.env.REACT_APP_BACK}/user/${man}`, {
+                        const response = await fetch(`${process.env.REACT_APP_BACK}user/${man}`, {
                                 method: 'GET',
                         })
                         const data = response.json();
@@ -33,9 +34,18 @@ function Search(props: { user: IUser }) {
         )
 }
 
+function Invite_button() {
+        return (
+                <div>
+                        
+                </div>
+        )
+}
+
 function Header(props: { user: IUser }) {
 
         const { user } = props;
+        const myUser = useAppSelector(state => state.user);
 
         return (
                 <div className='profile-header'>
@@ -46,9 +56,13 @@ function Header(props: { user: IUser }) {
                         <div className='info-container'>
                                 <div className="left-part">
                                         <div className='avatar'>
-                                                <img className='logo' src={`${process.env.REACT_APP_BACK}/user/${user.id}/avatar`} />
+                                                <img className='logo' src={`${process.env.REACT_APP_BACK}user/${user.id}/avatar`} />
                                         </div>
                                 </div>
+                                {
+                                        // user.username !== myUser.user!.username &&
+                                        <Invite_button /> 
+                                }
 
 
 
@@ -97,7 +111,7 @@ export default function Profile() {
         useEffect(() => {
                 if (id) {
                         const fetchid = async () => {
-                                const response = await fetch(`${process.env.REACT_APP_BACK}/user/${id}`, {
+                                const response = await fetch(`${process.env.REACT_APP_BACK}user/${id}`, {
                                         method: 'GET',
                                 })
                                 setUser(await response.json());
