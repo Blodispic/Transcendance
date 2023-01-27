@@ -104,8 +104,8 @@ resetState(gameStateDefault);
 export default function GameApp() {
 	const [gameState, setGameState] = useState<GameState>(gameStateDefault);
 	const [isConnected, setIsConnected] = useState(socket.connected);
-	let [result, setResult] = useState<boolean>()
-	let [intervalId, setIntervalId] = useState<NodeJS.Timer>();
+	const [result, setResult] = useState<boolean>()
+	const [intervalId, setIntervalId] = useState<NodeJS.Timer>();
 
 	useEffect(() => {
 		setIntervalId(
@@ -114,10 +114,8 @@ export default function GameApp() {
 			}, 1000 / 60)
 		);
 
-		socket.on("UpdateState", (newGameState: GameState) => {
-			let convertedState: GameState;
-			convertedState = convertState(newGameState);
-
+		socket.on("UpdateState", (newGameState: GameState) => {	
+			const convertedState: GameState = convertState(newGameState);
 			setGameState(convertedState);
 		});
 
