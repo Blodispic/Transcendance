@@ -92,7 +92,6 @@ function Header(props: { currentUser: IUser, setCurrentUser: Function }) {
                 <div className='profile-header'>
 
 
-                        <Search currentUser={currentUser} setcurrentUser={setCurrentUser} />
                         <div className='info-container'>
                                 <div className="left-part">
                                         <div className='avatar'>
@@ -107,7 +106,7 @@ function Header(props: { currentUser: IUser, setCurrentUser: Function }) {
 
 
                                 <div className='info-header'>
-
+                                <Search currentUser={currentUser} setcurrentUser={setCurrentUser} />
                                         <div className='stat-header'>
                                                 <span>test</span>
                                                 <span>test</span>
