@@ -47,7 +47,6 @@ export class ChatGateway
     throw new BadRequestException();
   this.server.to(socketIdToWho).emit("sendMessageUserOk", messageUserDto.message);
  
-  //voir une fois qu'on a un access-token
 
  }
 
@@ -77,37 +76,28 @@ async handleSendMessageChannel(@ConnectedSocket() client: Socket, @MessageBody()
 async handleJoinChannel(@ConnectedSocket() client: Socket, @MessageBody() joinChannelDto: JoinChannelDto) {    
   const channel = await this.channelService.getById(joinChannelDto.chanid);
   if (channel === null)
-  {
-    const user = client.handshake.auth.user;
-    if (user === null)
-      throw new BadRequestException();
-    const createChannelDto = { 
-      name: joinChannelDto.channame,
-      owner: user,
-    }
-    this.channelService.create(createChannelDto);
-  }
-  this.channelService.add( { user: client.handshake.auth.user, chanId: joinChannelDto.chanid});
+    throw new BadRequestException();
+  this.channelService.add({
+    user: client.handshake.auth.user,
+    chanId: channel.id,
+  });
   client.join("chan" + joinChannelDto.chanid);
+  client.emit("joinChannelOK", channel.id);
 }
 
 @SubscribeMessage('createPublicChannel')
 async handleCreatePublicChannel(@ConnectedSocket() client: Socket, @MessageBody() createPublicChannelDto: CreatePublicChannelDto) {    
-//   const channel = await this.channelService.getByName(createPublicChannelDto.channame);
-//   if (channel != null)
-//     throw new BadRequestException();
+  const channel = await this.channelService.getByName(createPublicChannelDto.channame);
+  if (channel != null)
+    throw new BadRequestException();
     console.log(client.handshake.auth.user.username);
-	
-  const user = client.handshake.auth.user;
-//   if (user === null)
-//     throw new BadRequestException();
-  // const createPublicChannelDto = { 
-  //   name: joinChannelDto.channame,
-  //   owner: user,
-  // }
+    console.log(createPublicChannelDto.channame);
+    
+  let user: User = client.handshake.auth.user;
   const new_channel = await this.channelService.create({
       name: createPublicChannelDto.channame,
-      owner: user
+      owner: user,
+      users:[ user ],
      });
   this.channelService.add({
     user: user,
@@ -117,32 +107,32 @@ async handleCreatePublicChannel(@ConnectedSocket() client: Socket, @MessageBody(
   client.emit("createPublicChannelOk", new_channel.id);
 }
 
-@SubscribeMessage('createPrivateChannel')
-async handleCreatePrivateChannel(@ConnectedSocket() client: Socket, @MessageBody() createPrivateChannelDto: CreatePublicChannelDto) {    
-  if (createPrivateChannelDto.password.length === 0)
-    throw new BadRequestException();
-  const channel = await this.channelService.getByName(createPrivateChannelDto.channame);
-  if (channel != null)
-    throw new BadRequestException();
+// @SubscribeMessage('createPrivateChannel')
+// async handleCreatePrivateChannel(@ConnectedSocket() client: Socket, @MessageBody() createPrivateChannelDto: CreatePublicChannelDto) {    
+//   if (createPrivateChannelDto.password.length === 0)
+//     throw new BadRequestException();
+//   const channel = await this.channelService.getByName(createPrivateChannelDto.channame);
+//   if (channel != null)
+//     throw new BadRequestException();
   
-  const user = client.handshake.auth.user;
-  if (user === null)
-    throw new BadRequestException();
-  // const createPrivateChannelDto = { 
-  //   name: joinChannelDto.channame,
-  //   owner: user,
-  // }
-  const new_channel = await this.channelService.create({
-      name: createPrivateChannelDto.channame,
-      owner: user
-      // password: createPrivateChannelDto.password;
-     });
-  this.channelService.add({
-    user: user,
-    chanId: new_channel.id,
-  });
-  client.join("chan" + new_channel.id);
-}
+//   const user = client.handshake.auth.user;
+//   if (user === null)
+//     throw new BadRequestException();
+//   // const createPrivateChannelDto = { 
+//   //   name: joinChannelDto.channame,
+//   //   owner: user,
+//   // }
+//   const new_channel = await this.channelService.create({
+//       name: createPrivateChannelDto.channame,
+//       owner: user
+//       // password: createPrivateChannelDto.password;
+//      });
+//   this.channelService.add({
+//     user: user,
+//     chanId: new_channel.id,
+//   });
+//   client.join("chan" + new_channel.id);
+// }
 
 @SubscribeMessage('leaveChannel')
 async handleLeaveChannel(@ConnectedSocket() client: Socket, @MessageBody() leaveChannelDto: LeaveChannelDto) {
