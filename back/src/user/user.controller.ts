@@ -38,10 +38,10 @@ export class UserController {
     return this.userService.GetByAccessToken(token);
   }
 
-  @Get('friend-request/status/:friendId')
-  async GetFriendRequestStatus(@Param('friendId') friendId: number, @Body() user: User) {
+  @Get('friend-request/status/:id')
+  async GetFriendRequestStatus(@Param('id') id: number, @Body() user: User) {
     if (user)
-      return this.userService.GetFriendRequestStatus(friendId, user);
+      return this.userService.GetFriendRequestStatus(id, user);
     else
       return ("User not found");
   }

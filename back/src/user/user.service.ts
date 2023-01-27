@@ -141,7 +141,7 @@ export class UserService {
     const friendRequest: FriendRequestDto = {
       creator: creator,
       receiver: friend,
-      status: 'pending'
+      status: 'Pending'
     }
     
     await this.friendRequestRepository.save(friendRequest);
@@ -167,6 +167,7 @@ export class UserService {
     const friendRequest = await this.friendRequestRepository.findOne({
       where: [{ creator: creator }, { receiver: { id: friendId } }]
     });
+    console.log(friendId);
     if (!friendRequest) {
       return {message: "Friend request does not exist"};
     }
