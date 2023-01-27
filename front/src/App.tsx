@@ -22,7 +22,7 @@ function App() {
 
 
   useEffect(() => {
-    if (myStore.isLog == true) {
+    if (myStore.isLog === true) {
       // export const socket = io("http://" + window.location.hostname + ":4000", {
       //   auth: {
       //     user: useAppSelector(state => state.user)
@@ -33,7 +33,7 @@ function App() {
 
 
   const get_user = async () => {
-    const response = await fetch(`${process.env.REACT_APP_BACK}/user/access_token`, {
+    const response = await fetch(`${process.env.REACT_APP_BACK}user/access_token`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

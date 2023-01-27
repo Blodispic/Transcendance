@@ -27,7 +27,7 @@ export default function NameForm() {
 
             if (file) {
                 formData.append('file', file);
-                await fetch(`${process.env.REACT_APP_BACK}/user/${myUser.user.id}/avatar`, {
+                await fetch(`${process.env.REACT_APP_BACK}user/${myUser.user.id}/avatar`, {
                     method: 'PATCH',
                     body: formData,
                 })
