@@ -11,7 +11,7 @@ function InviteButton(props: { user: any }) {
         const pathname = window.location.pathname;
         const pathArray = pathname.split('/');
         const friendId = pathArray[pathArray.length - 1];
-        const [status, setStatus] = useState('+ Add Friend');
+        const [status, setStatus] = useState<string>('+ Add Friend');
 
         const sendFriendRequest = async () => {
                 await fetch(`${process.env.REACT_APP_BACK}user/friend-request/send/${friendId}`, {
@@ -40,7 +40,7 @@ function InviteButton(props: { user: any }) {
               
 
         return (
-                <button className="button pulse pointer white" onClick={sendFriendRequest} >
+                <button className="button pointer white" onClick={sendFriendRequest} >
                         {status}
                 </button>
         )
