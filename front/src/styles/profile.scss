@@ -113,14 +113,12 @@
         background-color: rgba(32, 32, 38, 0.82);
         border-radius: 60px;
 
-        .icon {
+        .icon-search {
             width: 60px;
             height: 60px;
             display: flex;
-            z-index: 1000;
             cursor: pointer;
             position: absolute;
-            border-radius: 60px;
             align-items: center;
             justify-content: center;
             font-size: xxx-large;
@@ -150,6 +148,7 @@
         }
     }
 }
+
 
 .cacher {
     height: 100%;

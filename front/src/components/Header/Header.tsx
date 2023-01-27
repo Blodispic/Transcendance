@@ -1,11 +1,20 @@
-import * as React from 'react';
+import React, { useState } from 'react';
 import '../../styles/nav.scss'
+import '../../styles/profile.scss'
 import { Link } from 'react-router-dom';
 import { useAppSelector } from '../../redux/Hook';
-
-
+import { FaUserAlt } from "react-icons/fa";
 export default function Header() {
 
+  const [dropdown, setDropdown] = useState<boolean>(false);
+
+
+  const dropdownClick = (e: any) => {
+    if (dropdown == false)
+      setDropdown(true);
+    else
+      setDropdown(false);
+  }
 
   const myUser = useAppSelector(state => state.user);
   console.log(myUser);
@@ -34,26 +43,30 @@ export default function Header() {
             Chat
           </span>
         </Link>
+        {
+          myUser.user !== undefined &&
+          <div className='dropdown-container'>
+            <div className="icon-header" onClick={e => dropdownClick(e)} >
+              <FaUserAlt />
+            </div>
+            {
+              dropdown == true &&
+              <div className="dropdown">
+                <ul>
+                  <li>
+                    <Link to={`/Profile/${myUser.user.id}`}>
+                      profile
+                    </Link>
+                  </li>
+                  <li onClick={e => dropdownClick(e)}>
+                    logout
+                  </li>
 
-        <div>
-          {
-            myUser.user !== undefined &&
-            <Link to={`/Profile/${myUser.user.id}`}>
-              <span className="font-link">
-                Profile
-              </span>
-            </Link>
-          }
-
-          {
-             myUser.user === undefined &&
-             <Link to={`/`}>
-            <span className="font-link">
-              Profile
-            </span>
-            </Link>
-          }
-        </div>
+                </ul>
+              </div>
+            }
+          </div>
+        }
       </div>
 
     </div>
