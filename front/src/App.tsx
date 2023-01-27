@@ -27,7 +27,7 @@ function App() {
 
 
   const get_user = async () => {
-    const response = await fetch(`${process.env.REACT_APP_BACK}/user/access_token`, {
+    const response = await fetch(`${process.env.REACT_APP_BACK}user/access_token`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

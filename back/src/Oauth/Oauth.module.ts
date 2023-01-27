@@ -4,6 +4,9 @@ import { OauthService } from './Oauth.service';
 import { UserModule } from 'src/user/user.module';
 import { JwtModule } from '@nestjs/jwt';
 import { jwtConstants } from './constants';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { User } from 'src/user/entities/user.entity';
+import { FriendRequest } from 'src/user/entities/friend-request.entity';
 
 @Module({
   controllers: [OauthController],
@@ -11,7 +14,9 @@ import { jwtConstants } from './constants';
   imports: [UserModule,
     JwtModule.register({
       secret: jwtConstants.secret,
-      signOptions: { expiresIn: '60s' },
-    }),],
+      signOptions: { expiresIn: '3600s', algorithm: 'HS256' },
+    }),
+    TypeOrmModule.forFeature([User, FriendRequest]),
+  ],
 })
 export class OauthModule { }

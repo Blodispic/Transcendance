@@ -29,7 +29,7 @@ export default function Connection() {
 
         if (oauthCode) {
             const fetchcode = async () => {
-                await fetch(`${process.env.REACT_APP_BACK}/oauth/token`, {
+                await fetch(`${process.env.REACT_APP_BACK}oauth/token`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
