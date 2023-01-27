@@ -1,13 +1,9 @@
 import { useEffect, useState } from "react";
 import { Circle, Layer, Rect, Stage, Text } from "react-konva";
-import io from 'socket.io-client';
-import "../../styles/game.scss";
-import { useLocation } from 'react-router-dom';
-import { Victory, Defeat } from "./Result";
+import { useBeforeUnload } from "react-router-dom";
 import { socket } from "../../App";
-
-
-// export const socket = io("http://" + window.location.hostname + ":4000");
+import "../../styles/game.scss";
+import { Defeat, Victory } from "./Result";
 
 export interface Vec2 {
 	x: number;
@@ -108,45 +104,28 @@ resetState(gameStateDefault);
 export default function GameApp() {
 	const [gameState, setGameState] = useState<GameState>(gameStateDefault);
 	const [isConnected, setIsConnected] = useState(socket.connected);
-	let [myVar, setMyvar] = useState<boolean | undefined>(undefined)
+	let [result, setResult] = useState<boolean>()
+	let [intervalId, setIntervalId] = useState<NodeJS.Timer>();
 
-	useEffect(() => {		console.log("var = ", myVar);
-		setInterval(() => {
-			updateState(setGameState);
-		}, 1000 / 60);
-
-		socket.on('connect', () => {
-			setIsConnected(true);
-			console.log("Connected");
-		});
-
-		socket.on('disconnect', () => {
-			setIsConnected(false);
-			console.log("Disconnected");
-		});
+	useEffect(() => {
+		setIntervalId(
+			setInterval(() => {
+				setGameState(updateGameState);
+			}, 1000 / 60)
+		);
 
 		socket.on("UpdateState", (newGameState: GameState) => {
-			// console.log("ball.x before: " + newGameState.ball.position.x);
-			// let newState: GameState = convertState(newGameState);
+			let convertedState: GameState;
+			convertedState = convertState(newGameState);
 
-			newGameState = convertState(newGameState);
-			// console.log("ball.x after: " + newGameState.ball.position.x);
-			setGameState(newGameState);
-			// setGameState(convertState(newGameState));
+			setGameState(convertedState);
 		});
 
 		socket.on("GameEnd", (result: any) => {
-			console.log("CA PASSE ALALALALALLALALALAL");
-			
-			console.log(result.winner, " won");
-			console.log(myVar);
-		
-			
 			if (result.winner === gameState.player1.name)
-				setMyvar(true);
+				setResult(true);
 			else if (result.winner === gameState.player2.name)
-				setMyvar(false);
-							console.log(myVar);
+				setResult(false);
 			socket.emit("GameEnd", null);
 		});
 
@@ -155,26 +134,19 @@ export default function GameApp() {
 
 		// At the end of the component remove the listener using return
 		return () => {
+			clearInterval(intervalId);
 			document.removeEventListener("keydown", keyEvent);
 			document.removeEventListener("keyup", keyEvent);
-			// socket.offAny();
-			socket.removeAllListeners()
-		};	
-;
+			socket.off("UpdateState");
+			console.log("Component destroyed");
+			socket.emit("PlayerLeft");
+		};
 	}, []);
 
 	//  Here to modify game page
 	return (
 		<div id="game-container">
-		
-			{
-				myVar == true &&
-				<Victory />
-			}
-			{
-				myVar == false &&
-				<Defeat />
-			}
+			{ gameState.gameFinished ? (result ? <Victory /> : <Defeat />) : <></> }
 			<h3>
 				{gameState.player2.name} : {gameState.player2.score}
 			</h3>
@@ -235,15 +207,17 @@ export default function GameApp() {
 function convertState(state: GameState) {
 	state.client_area.x = Math.min((window.innerWidth * 70) / 100, GAME_INTERNAL_WIDTH);
 	state.client_area.y = state.client_area.x * GAME_RATIO;
+
 	let newState: GameState = gameStateDefault;
+	newState.scale = state.client_area.x / state.area.x;
 
-	newState.ball.position.x = state.ball.position.x * (state.client_area.x / GAME_INTERNAL_WIDTH);
-	newState.ball.position.y = state.ball.position.y * (state.client_area.y / (GAME_INTERNAL_WIDTH * GAME_RATIO));
+	newState.ball.position.x = state.ball.position.x;//* (state.client_area.x / GAME_INTERNAL_WIDTH);
+	newState.ball.position.y = state.ball.position.y;//* (state.client_area.y / (GAME_INTERNAL_WIDTH * GAME_RATIO));
 
-	newState.ball.speed.x = state.ball.speed.x * (state.client_area.x / GAME_INTERNAL_WIDTH);
-	newState.ball.speed.y = state.ball.speed.y * (state.client_area.y / (GAME_INTERNAL_WIDTH * GAME_RATIO));
-	newState.ball.previous.x = state.ball.previous.x * (state.client_area.x / GAME_INTERNAL_WIDTH);
-	newState.ball.previous.y = state.ball.previous.y * (state.client_area.y / (GAME_INTERNAL_WIDTH * GAME_RATIO));
+	newState.ball.speed.x = state.ball.speed.x;//* (state.client_area.x / GAME_INTERNAL_WIDTH);
+	newState.ball.speed.y = state.ball.speed.y;//* (state.client_area.y / (GAME_INTERNAL_WIDTH * GAME_RATIO));
+	newState.ball.previous.x = state.ball.previous.x;//* (state.client_area.x / GAME_INTERNAL_WIDTH);
+	newState.ball.previous.y = state.ball.previous.y;//* (state.client_area.y / (GAME_INTERNAL_WIDTH * GAME_RATIO));
 
 	newState.ball.cooldown = state.ball.cooldown;
 
@@ -253,10 +227,10 @@ function convertState(state: GameState) {
 	newState.player1.score = state.player1.score;
 	newState.player1.side = state.player1.side;
 
-	newState.player1.paddle.position.x = state.player1.paddle.position.x * (state.client_area.x / GAME_INTERNAL_WIDTH);
-	newState.player1.paddle.position.y = state.player1.paddle.position.y * (state.client_area.y / (GAME_INTERNAL_WIDTH * GAME_RATIO));
-	newState.player1.paddle.speed.x = state.player1.paddle.speed.x * (state.client_area.x / GAME_INTERNAL_WIDTH);
-	newState.player1.paddle.speed.y = state.player1.paddle.speed.y * (state.client_area.y / (GAME_INTERNAL_WIDTH * GAME_RATIO));
+	newState.player1.paddle.position.x = state.player1.paddle.position.x;//* (state.client_area.x / GAME_INTERNAL_WIDTH);
+	newState.player1.paddle.position.y = state.player1.paddle.position.y;//* (state.client_area.y / (GAME_INTERNAL_WIDTH * GAME_RATIO));
+	newState.player1.paddle.speed.x = state.player1.paddle.speed.x;//* (state.client_area.x / GAME_INTERNAL_WIDTH);
+	newState.player1.paddle.speed.y = state.player1.paddle.speed.y;//* (state.client_area.y / (GAME_INTERNAL_WIDTH * GAME_RATIO));
 
 	// newState.player2 = state.player2;
 	newState.player2.input = state.player2.input;
@@ -264,10 +238,10 @@ function convertState(state: GameState) {
 	newState.player2.score = state.player2.score;
 	newState.player2.side = state.player2.side;
 
-	newState.player2.paddle.position.x = state.player2.paddle.position.x * (state.client_area.x / GAME_INTERNAL_WIDTH);
-	newState.player2.paddle.position.y = state.player2.paddle.position.y * (state.client_area.y / (GAME_INTERNAL_WIDTH * GAME_RATIO));
-	newState.player2.paddle.speed.x = state.player2.paddle.speed.x * (state.client_area.x / GAME_INTERNAL_WIDTH);
-	newState.player2.paddle.speed.y = state.player2.paddle.speed.y * (state.client_area.y / (GAME_INTERNAL_WIDTH * GAME_RATIO));
+	newState.player2.paddle.position.x = state.player2.paddle.position.x;//* (state.client_area.x / GAME_INTERNAL_WIDTH);
+	newState.player2.paddle.position.y = state.player2.paddle.position.y;//* (state.client_area.y / (GAME_INTERNAL_WIDTH * GAME_RATIO));
+	newState.player2.paddle.speed.x = state.player2.paddle.speed.x;//* (state.client_area.x / GAME_INTERNAL_WIDTH);
+	newState.player2.paddle.speed.y = state.player2.paddle.speed.y;//* (state.client_area.y / (GAME_INTERNAL_WIDTH * GAME_RATIO));
 
 	newState.resetCooldown = state.resetCooldown;
 
@@ -280,25 +254,27 @@ function convertState(state: GameState) {
 	return newState;
 }
 
-function updateGameState(state: GameState) {
-	state.client_area.x = Math.min((window.innerWidth * 70) / 100, state.area.x);
-	state.client_area.y = state.client_area.x * GAME_RATIO;
-	state.scale = state.client_area.x / state.area.x;
+function updateGameState(prev: GameState) {
+	let newState = { ...prev }
 
-	state.player1.input = { ...move1 };
-	state.player2.input = { ...move2 };
-	if (state.gameFinished === false && (state.player1.score === state.scoreMax || state.player2.score === state.scoreMax)) {
-		state.gameFinished = true;
+	newState.client_area.x = Math.min((window.innerWidth * 70) / 100, newState.area.x);
+	newState.client_area.y = newState.client_area.x * GAME_RATIO;
+	newState.scale = newState.client_area.x / newState.area.x;
+
+	newState.player1.input = { ...move1 };
+	newState.player2.input = { ...move2 };
+	if (newState.gameFinished === false && (newState.player1.score === newState.scoreMax || newState.player2.score === newState.scoreMax)) {
+		newState.gameFinished = true;
 	}
-	if (state.resetCooldown === 0 && state.gameFinished === false) {
-		movePlayer(state.player1, state);
-		movePlayer(state.player2, state);
-		wallCollision(state.ball, state);
-		moveBall(state.ball);
+	if (newState.resetCooldown === 0 && newState.gameFinished === false) {
+		movePlayer(newState.player1, newState);
+		movePlayer(newState.player2, newState);
+		wallCollision(newState.ball, newState);
+		moveBall(newState.ball);
 	}
-	else if (state.gameFinished === false)
-		state.resetCooldown--;
-	return state;
+	else if (newState.gameFinished === false)
+		newState.resetCooldown--;
+	return newState;
 }
 
 function paddleCollision(ball: Ball, player: Player) {
@@ -510,12 +486,6 @@ function keyEvent(event: KeyboardEvent) {
 	else
 		socket.emit("Move2", move2);
 	// socket.removeAllListeners()
-}
-
-function updateState(setGameState: Function) {
-	setGameState((prev: GameState) => {
-		return updateGameState({ ...prev });
-	});
 }
 
 // export default GameApp;

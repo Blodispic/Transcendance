@@ -63,6 +63,8 @@ export class GameService {
 			server.to(player1.socket).emit("RoomStart", this.gameRoom.length, player1);
 			server.to(player2.socket).emit("RoomStart", this.gameRoom.length, player2);
 			console.log("RoomStart ID: " + this.gameRoom.length);
+			console.log("Player1: " + player1.socket);
+			console.log("Player2: " + player2.socket);
 		}
 		else
 			return ('Waiting for more Players...');
@@ -106,13 +108,15 @@ export class GameService {
 		{
 			if (this.gameRoom[roomId].gameState.player1.socket == client)
 			{
-				this.gameRoom.splice(roomId);
+				console.log(roomId);
+				this.gameRoom.splice(roomId, 1);
 				console.log("Room removed");
 				return;
 			}
 			else if (this.gameRoom[roomId].gameState.player2.socket == client)
 			{
-				this.gameRoom.splice(roomId);
+				console.log(roomId);
+				this.gameRoom.splice(roomId, 1);
 				console.log("Room removed");
 				return;
 			}
@@ -180,13 +184,15 @@ class Game {
 	public gameState: GameState;
 
 	constructor(server: Server, user1: Player, user2: Player) {
+		console.log("NEW GAME CREATED");
 		this.server = server;
 		this.gameState = gameStateDefault;
-		this.resetState(this.gameState); 
+		this.gameState.gameFinished = false;
 		this.gameState.player1 = user1
 		this.gameState.player2 = user2;
 		this.gameState.player1.score = 0;
 		this.gameState.player2.score = 0;
+		this.resetState(this.gameState); 
 
 		this.gameRoomRun();
 	}
@@ -247,21 +253,13 @@ class Game {
 
 	updateGameState(state: GameState) {
 		state.scale = state.client_area.x / state.area.x;
-		
+
 		state.player1.input = { ...move1 };
 		state.player2.input = { ...move2 };
 		if (state.player1.score === state.scoreMax || state.player2.score === state.scoreMax)
 		{
 			state.gameFinished = true;
 		}
-		this.server.on("Move1", (newMove1: Move) => {
-			console.log("Move1 received: left:" + newMove1.left + " right: " + newMove1.right);
-			move1 = newMove1;
-		})
-		this.server.on("Move2", (newMove2: Move) => { 
-			console.log("Move2 received: left:" + newMove2.left + " right: " + newMove2.right);
-			move2 = newMove2;
-		})
 		if (state.resetCooldown <= 0 && state.gameFinished === false)
 		{
 			this.movePlayer(state.player1, state);
@@ -322,7 +320,6 @@ class Game {
 	                )
 	                    ball.speed.y = ball.speed.y * (Math.random() * (1 - 0.8) + 0.8);
 	            }
-		
 	            if (
 	                (ball.previous.y < player.paddle.position.y && ball.speed.y > 0) ||
 	                (ball.previous.y > player.paddle.position.y && ball.speed.y < 0)
@@ -340,7 +337,7 @@ class Game {
 	    }
 	    return 0;
 	}
-		
+
 	wallCollision(ball: Ball, state: GameState) {
 		if (
 			ball.position.x + ballRadius > state.area.x ||
@@ -370,7 +367,7 @@ class Game {
 			}
 		}
 	}
-		
+
 	resetState(state: GameState) {
 		state.resetCooldown = 60;
 		state.player1.paddle.position = {
@@ -406,27 +403,27 @@ class Game {
 	}
 		
 	moveBall(ball: Ball) {
-	    ball.previous.x = ball.position.x;
-	    ball.previous.y = ball.position.y;
-	    if (ball.speed.y > 12)
-	        ball.speed.y = 12;
-	    else if (ball.speed.y < -12)
-	        ball.speed.y = -12;
-	    else if (ball.speed.y < 4 && ball.speed.y > 0)
-	        ball.speed.y = 4;
-	    else if (ball.speed.y > -4 && ball.speed.y < 0)
-	        ball.speed.y = -4;
-	    if (ball.speed.x > 15)
-	        ball.speed.x = 15;
-	    else if (ball.speed.x < -15)
-	        ball.speed.x = -15;
-	    else if (ball.speed.x < 1 && ball.speed.x > 0)
-	        ball.speed.x = 1;
-	    else if (ball.speed.x > -1 && ball.speed.x < 0)
-	        ball.speed.x = -1;
-	    ball.position.x += ball.speed.x;
-	    ball.position.y += ball.speed.y;
-	    if (ball.cooldown > 0) ball.cooldown--;
+		ball.previous.x = ball.position.x;
+		ball.previous.y = ball.position.y;
+		if (ball.speed.y > 12)
+			ball.speed.y = 12;
+		else if (ball.speed.y < -12)
+			ball.speed.y = -12;
+		else if (ball.speed.y < 4 && ball.speed.y > 0)
+			ball.speed.y = 4;
+		else if (ball.speed.y > -4 && ball.speed.y < 0)
+			ball.speed.y = -4;
+		if (ball.speed.x > 15)
+			ball.speed.x = 15;
+		else if (ball.speed.x < -15)
+			ball.speed.x = -15;
+		else if (ball.speed.x < 1 && ball.speed.x > 0)
+			ball.speed.x = 1;
+		else if (ball.speed.x > -1 && ball.speed.x < 0)
+			ball.speed.x = -1;
+		ball.position.x += ball.speed.x;
+		ball.position.y += ball.speed.y;
+		if (ball.cooldown > 0) ball.cooldown--;
 	}
 		
 	movePlayer(player: Player, state: GameState) {

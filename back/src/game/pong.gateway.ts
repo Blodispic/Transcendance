@@ -44,11 +44,17 @@ export class PongGateway implements OnGatewayDisconnect, OnGatewayInit {
 	}
 
 	@SubscribeMessage("GameEnd")
-	HandleEnd(@MessageBody() input: Move, @ConnectedSocket() client: Socket)
+	HandleEnd(@MessageBody() input:Move, @ConnectedSocket() client: Socket)
 	{
-		console.log(this.gameService.gameRoom.length);
 		if (this.gameService.gameRoom.length > 0)
 			this.gameService.EndGame(client.id);
+	}
+
+	@SubscribeMessage("PlayerLeft")
+	HandlePlayerLeft(@MessageBody() input:Move, @ConnectedSocket() client: any)
+	{
+		console.log("playerLeft");
+		this.gameService.playerDisconnect(client.id);
 	}
 
 	@SubscribeMessage("Move1")
