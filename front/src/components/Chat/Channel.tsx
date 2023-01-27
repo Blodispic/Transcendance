@@ -1,4 +1,4 @@
-import * as React from "react";
+import {useState} from "react";
 import { HiOutlineXMark, HiPlusCircle } from "react-icons/hi2";
 import { IconBase } from "react-icons/lib";
 import { Value } from "sass";
@@ -6,15 +6,13 @@ import { isFunctionDeclaration } from "typescript";
 import { socket } from "../../App";
 import '../../styles/chat.scss'
 
-
-	
 /**
  * Displays popup form when add channel button is clicked; takes input and sends info to the back
  * @todo handle channel mode + password input
  */
 function CreateChannelPopup(props: any) {
-	const [chanName, setChanName] = React.useState("");
-	// const [chanList, setChanList] = React.useState<any[]>([]); //temporary data type; to be replaced;
+	const [chanName, setChanName] = useState("");
+	// const [chanList, setChanList] = useState<any[]>([]); //temporary data type; to be replaced;
 
 	// socket.on('createPublicChannelOk', (createPublicChannelDto) => {
 	// 	setChanList([...chanList, createPublicChannelDto]);
@@ -31,11 +29,11 @@ function CreateChannelPopup(props: any) {
 	}
 
 	return (props.trigger) ? (
-		<div className="chat-form-popup">
-			<div className="chat-form-inner">
-				<HiOutlineXMark className="close-icon" onClick={() => props.setTrigger(false)} /> <br />
+		<div className="chat-form-popup" onClick={_ => props.setTrigger(false)}>
+			<div className="chat-form-inner" onClick={e => e.stopPropagation()}>
+				<HiOutlineXMark className="close-icon" onClick={_ => props.setTrigger(false)} /> <br />
 				<h3>Channel Name</h3>
-				<input type="text" id="channel-input" onChange={(e) => { setChanName(e.target.value) }} />
+				<input type="text" id="channel-input" onChange={e => { setChanName(e.target.value) }} />
 				<h3>Channel Mode</h3>
 				<input type="radio" name="Mode" value="Public" />Public <span></span>
 				<input type="radio" name="Mode" value="Private" />Private <span></span>
@@ -44,12 +42,12 @@ function CreateChannelPopup(props: any) {
 				{/* <button onClick={() => props.setTrigger(false)}>close</button> */}
 			</div>
 		</div>
-	) : <div></div>;
+	) : <></>;
 }
 
 export function ChannelList() {
-	const [buttonPopup, setButtonPopup] = React.useState(false);
-	const [chanList, setChanList] = React.useState<any[]>([]); //temporary data type; to be replaced;
+	const [buttonPopup, setButtonPopup] = useState(false);
+	const [chanList, setChanList] = useState<any[]>([]); //temporary data type; to be replaced;
 
 	socket.on('createPublicChannelOk', (createPublicChannelDto) => {
 		setChanList([...chanList, createPublicChannelDto]);
@@ -70,3 +68,9 @@ export function ChannelList() {
 		</div>
 	);
 }
+
+// export function Channel() {
+// 	return (
+
+// 	);
+// }
