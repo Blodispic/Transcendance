@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { CreateUserDto } from 'src/user/dto/create-user.dto';
 import { UserService } from '../user/user.service';
+import { jwtConstants } from './constants';
 
 @Injectable()
 export class OauthService {
@@ -64,8 +65,11 @@ export class OauthService {
     if (data.error)
       return (data.error);
 
-    const payload = { username: data.login }
-    const token = await this.jwtService.sign(payload);
+    const payload = { username: data.login, }
+    const token = await this.jwtService.signAsync(payload, {
+      secret: jwtConstants.secret,
+      expiresIn: '3600s',
+    });
 
     const userDto: CreateUserDto = {
       username: data.login,
@@ -77,5 +81,3 @@ export class OauthService {
     return await this.usersService.create(userDto);
   }
 }
-
-

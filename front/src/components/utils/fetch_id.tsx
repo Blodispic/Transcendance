@@ -10,7 +10,7 @@ export default function Fetchid(id: number) {
 
     useEffect(() => {
         const fetchid = async () => {
-            const response = await fetch(`${process.env.REACT_APP_BACK}/user/2`, {
+            const response = await fetch(`${process.env.REACT_APP_BACK}user/2`, {
                 method: 'Get',
                 headers: {
                     'Content-Type': 'application/json',

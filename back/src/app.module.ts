@@ -14,6 +14,7 @@ import { Results } from './results/entities/results.entity';
 import { ChannelModule } from './chat/channel/channel.module';
 import { ResultModule } from './results/results.module';
 import { Channel } from './chat/channel/entities/channel.entity';
+import { FriendRequest } from './user/entities/friend-request.entity';
 
 @Module({
   imports: [
@@ -23,7 +24,7 @@ import { Channel } from './chat/channel/entities/channel.entity';
       port: 5432,
       username: 'admin',
       password: 'admin',
-      entities: [User, Results, Channel],
+      entities: [User, Results, Channel, FriendRequest],
       synchronize: true,
       dropSchema: true,    //A ENLEVER QUAND PLUS BESOIN (ça reset la db a chaque changement)
     }),
