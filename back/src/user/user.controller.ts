@@ -6,7 +6,6 @@ import { editFileName, imageFilter } from 'src/app.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { User } from './entities/user.entity';
 import { UserService } from './user.service';
-import { CreateUserDto } from './dto/create-user.dto';
 import { user } from 'src/game/game.controller';
 
 @Controller('user')
