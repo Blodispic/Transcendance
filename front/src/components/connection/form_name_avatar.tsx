@@ -17,7 +17,7 @@ export default function NameForm() {
         e.preventDefault();
         if (myUser.user !== undefined) {
 
-            await fetch(`${process.env.REACT_APP_BACK}/user/${myUser.user.id}`, {
+            await fetch(`${process.env.REACT_APP_BACK}user/${myUser.user.id}`, {
                 method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json',
