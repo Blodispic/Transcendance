@@ -1,26 +1,12 @@
-import { toUnicode } from "punycode";
-import { io, Socket } from "socket.io-client";
 import '../../styles/chat.scss'
-import { ChannelList } from "./Channel";
+import { Channels } from "./Channel";
 import React, { useState } from "react";
 import { socket } from "../../App"
 import { Tab, TabList, TabPanel, Tabs } from "react-tabs";
 import 'react-tabs/style/react-tabs.css';
+import { DirectMessage } from "./DirectMessage";
 
-function DMList() {
-	return <ul>
-		<li>DM 1</li>
-		<li>DM 2</li>
-	</ul>
-}
-
-function UserInfo() {
-	return (
-		<h3>UserName</h3>
-	);
-}
-
-function ChatBody() {
+export function ChatBody() {
 	
 	const [newInput, setNewInput] = useState("");
 	const [messageList, setMessageList] = useState<any[]>([]);
@@ -65,42 +51,17 @@ function ChatBody() {
 }
 
 export default function Chat() {
-	const [channelSet, setChannelSet] = useState(false)
-	const [DmSet, setDmSet] = useState(true)
-
 	return (
-			<Tabs>
+			<Tabs className="chat-tab">
 				<TabList>
 					<Tab>Channels</Tab>
 					<Tab>DM</Tab>
 				</TabList>
 			<TabPanel>
-				<div id="chat-container">
-					<div className="left-sidebar">
-						<ChannelList />
-					</div>
-
-					{channelSet == false && DmSet == true &&
-						<ChatBody />
-					}
-					<div className="right-sidebar">
-						<UserInfo />
-					</div>
-				</div>
+				<Channels />
 			</TabPanel>
 			<TabPanel>
-				<div id="chat-container">
-					<div className="left-sidebar">
-						<DMList />
-					</div>
-
-					{channelSet == false && DmSet == true &&
-						<ChatBody />
-					}
-					<div className="right-sidebar">
-						<UserInfo />
-					</div>
-				</div>
+				<DirectMessage />
 			</TabPanel>
 			</Tabs>
 	);

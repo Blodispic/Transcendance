@@ -5,6 +5,7 @@ import { Value } from "sass";
 import { isFunctionDeclaration } from "typescript";
 import { socket } from "../../App";
 import '../../styles/chat.scss'
+import { ChatBody } from "./Chat";
 
 /**
  * Displays popup form when add channel button is clicked; takes input and sends info to the back
@@ -45,7 +46,8 @@ function CreateChannelPopup(props: any) {
 	) : <></>;
 }
 
-export function ChannelList() {
+
+function ChannelList() {
 	const [buttonPopup, setButtonPopup] = useState(false);
 	const [chanList, setChanList] = useState<any[]>([]); //temporary data type; to be replaced;
 
@@ -57,7 +59,7 @@ export function ChannelList() {
 	// display channel list (with lock icon on private channel)
 
 	return (
-		<div className="title"> Channels <span><HiPlusCircle className="add-icon" onClick={() => setButtonPopup(true)} /></span>
+		<div className="title"> Channels <span><HiPlusCircle className="add-icon" onClick={() => setButtonPopup(true)} /></span><hr />
 			{/* <button onClick={() => setButtonPopup(true)}>add</button>*/}
 			<CreateChannelPopup trigger={buttonPopup} setTrigger={setButtonPopup} />
 			{chanList.map((chan) => (
@@ -69,8 +71,24 @@ export function ChannelList() {
 	);
 }
 
-// export function Channel() {
-// 	return (
+function ChannelMemberList() {
+	return (
+		<div className="title"> Members <hr />
+		</div>
+	);
+}
 
-// 	);
-// }
+
+export function Channels() {
+	return (
+		<div id="chat-container">
+		<div className="left-sidebar">
+			<ChannelList />
+		</div>
+			<ChatBody />
+		<div className="right-sidebar">
+			<ChannelMemberList />
+		</div>
+	</div>
+	);
+}
