@@ -13,37 +13,30 @@ function InviteButton(props: { user: any }) {
         const friendId = pathArray[pathArray.length - 1];
         const [status, setStatus] = useState('+ Add Friend');
 
-
-        console.log("user = ", user.id);
-        console.log("target id = ", friendId);
         const sendFriendRequest = async () => {
-                const response = await fetch(`${process.env.REACT_APP_BACK}user/friend-request/send/${friendId}`, {
+                await fetch(`${process.env.REACT_APP_BACK}user/friend-request/send/${friendId}`, {
                         method: 'POST',
                         body: JSON.stringify(user),
                         headers: { 'Content-Type': 'application/json' }
                 });
-                const data = await response.json();
-                console.log(data);
-                setStatus('Pending...');
-        }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-        const checkFriendRequest = async () => {
-                const response = await fetch(`${process.env.REACT_APP_BACK}user/friend-request/status/${friendId}`, {
-                        method: 'POST',
-                        body: JSON.stringify(user),
-                        headers: { 'Content-Type': 'application/json' }
-                });
-                const data = await response.json()
-                console.log(data.status);
-                if (data.status)
-                        setStatus(data.status);
-                else
-                        setStatus("+ Add Friend");
+                setStatus('Pending');
         }
 
         useEffect(() => {
+                const checkFriendRequest = async () => {
+                        const response = await fetch(`${process.env.REACT_APP_BACK}user/friend-request/status/${friendId}`, {
+                                method: 'POST',
+                                body: JSON.stringify(user),
+                                headers: { 'Content-Type': 'application/json' }
+                        });
+                        const data = await response.json()
+                        if (data.status)
+                                setStatus(data.status);
+                        else
+                                setStatus("+ Add Friend");
+                }
                 checkFriendRequest();
-              }, [checkFriendRequest]);
+              }, [friendId, user]);
               
 
         return (
