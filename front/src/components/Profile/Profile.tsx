@@ -11,19 +11,24 @@ import { useAppSelector } from '../../redux/Hook';
 function InviteButton(props: { user: any }) {
         const { user } = props;
 
+        const pathname = window.location.pathname;
+        const pathArray = pathname.split('/');
+        const friendId = pathArray[pathArray.length - 1];
+
+        console.log("user = ", user.id);
+        console.log("target id = ", friendId);
         const sendFriendRequest = async () => {
-                const response = await fetch(`${process.env.REACT_APP_BACK}user/friend-request/send/${user.id}`, {
+                const response = await fetch(`${process.env.REACT_APP_BACK}user/friend-request/send/${friendId}`, {
                         method: 'POST',
                         body: JSON.stringify(user),
                         headers: { 'Content-Type': 'application/json' }
                 });
                 const data = await response.json();
+                console.log(data);
         }
         return (
-                <button className="pulse pointer" onClick={sendFriendRequest} >
-                        <a>
-                                Add Friend
-                        </a>
+                <button className="button pulse pointer white" onClick={sendFriendRequest} >
+                                + Add Friend
                 </button>
         )
 }
@@ -69,7 +74,7 @@ function Header(props: { currentUser: IUser, setCurrentUser: Function }) {
                         <Search currentUser={currentUser} setcurrentUser={setCurrentUser} />
                         
                         
-                        //user at exit of function currentuser == user du fetch de la functon search
+                        {/* //user at exit of function currentuser == user du fetch de la functon search */}
 
                         <div className='info-container'>
                                 <div className="left-part">
@@ -77,8 +82,8 @@ function Header(props: { currentUser: IUser, setCurrentUser: Function }) {
                                                 <img className='logo' src={`${process.env.REACT_APP_BACK}user/${currentUser.id}/avatar`} />
                                         </div>
                                         {
-                                                // user.username !== myUser.user!.username &&
-                                                <InviteButton user={currentUser} />
+                                                currentUser.username !== myUser.user!.username &&
+                                                <InviteButton user={myUser.user} />
                                         }
                                 </div>
 

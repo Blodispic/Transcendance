@@ -46,6 +46,19 @@ export class UserController {
       return ("User not found");
   }
 
+  @Get(':id/avatar')
+  async getAvatar(@Param('id') id: number, @Req() req: Request, @Res() res: Response) {
+    const user = await this.userService.getById(id);
+    if (user) {
+      if (user.avatar) {
+        return res.sendFile(user.avatar, { root: './storage/images/' });
+      } else {
+        return res.redirect(user.intra_avatar)
+      }
+    } else {
+      return null;
+    }
+  }
 
   @Patch(':id/avatar')
   @UseInterceptors(
@@ -60,20 +73,6 @@ export class UserController {
   async setAvatar(@Param('id') id: number, @UploadedFile() file: any, @Body('username') username: string) {
     await this.userService.setAvatar(id, username, file);
     return { message: 'Avatar set successfully' };
-  }
-
-  @Get(':id/avatar')
-  async getAvatar(@Param('id') id: number, @Req() req: Request, @Res() res: Response) {
-    const user = await this.userService.getById(id);
-    if (user) {
-      if (user.avatar) {
-        return res.sendFile(user.avatar, { root: './storage/images/' });
-      } else {
-        return res.redirect(user.intra_avatar)
-      }
-    } else {
-      return null;
-    }
   }
 
   @Patch(':id')

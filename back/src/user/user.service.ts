@@ -160,7 +160,7 @@ export class UserService {
       user.sendFriendRequests.push(frienRequestPush);
       await this.usersRepository.save(user);
     }
-    return ('Friend request sent');
+    return {message: "Friend request sent"};
   }
 
   async GetFriendRequestStatus(friendId: number, creator: User) {
@@ -168,7 +168,7 @@ export class UserService {
       where: [{ creator: creator }, { receiver: { id: friendId } }]
     });
     if (!friendRequest) {
-      return ('Friend request does not exist');
+      return {message: "Friend request does not exist"};
     }
     return friendRequest.status;
   }
