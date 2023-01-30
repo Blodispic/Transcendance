@@ -1,6 +1,8 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { HiOutlineXMark, HiPlusCircle } from "react-icons/hi2";
+import { useParams } from "react-router-dom";
 import { socket } from "../../App";
+import { IUser } from "../../interface/User";
 import '../../styles/chat.scss'
 
 /**
@@ -10,11 +12,10 @@ import '../../styles/chat.scss'
 function CreateChannelPopup(props: any) {
 	const [chanName, setChanName] = useState("");
 	const handleCreateNewChan = () => {
-		console.log({ chanName });
 		if (chanName != "")
 			socket.emit('createPublicChannel', { channame: chanName });
 		setChanName("");
-		// channel mode here
+		// add channel mode
 		props.setTrigger(false);
 	}
 
@@ -29,29 +30,66 @@ function CreateChannelPopup(props: any) {
 				<input type="radio" name="Mode" value="Private" />Private <span></span>
 				<input type="radio" name="Mode" value="Protected" />Protected <br /><br />
 				<button onClick={() => handleCreateNewChan()}>Create Channel</button><span></span>
-				{/* <button onClick={() => props.setTrigger(false)}>close</button> */}
 			</div>
 		</div>
 	) : <></>;
 }
 
-function ChannelList() {
-	const [buttonPopup, setButtonPopup] = useState(false);
-	const [chanList, setChanList] = useState<any[]>([]); //temporary data type; to be replaced;
+interface IChannel {
+	id: Number;
+	name: string;
+	owner: IUser;
+	users: IUser[];
+}
 
-	socket.on('createPublicChannelOk', (createPublicChannelDto) => {
-		setChanList([...chanList, createPublicChannelDto]);
+function JoinedChannelList() {
+	const [buttonPopup, setButtonPopup] = useState(false);
+	const [chanInfo, setChanInfo] = useState<IChannel | undefined>(undefined);
+	const [chanList, setChanList] = useState<IChannel[]>([]);
+	let newId = 0;
+
+	socket.on('createPublicChannelOk', (newChanId) => {
+		console.log(newChanId);
+		newId = newChanId;
 	});
-	console.log(chanList);
+
+	useEffect(() => {
+		const getChannel = async () => {
+			console.log('here');
+			if (newId != 0){
+				const response = await fetch(`${process.env.REACT_APP_BACK}channel/${newId}`, {
+					method: 'Get',
+					// }).then((res) => {
+						// 	return res.json();
+						// }).then((data) => {
+							// 	console.log(data);
+					});
+					console.log(response);
+						// setChanInfo( await response.json());
+						// console.log(chanInfo);
+					};
+		}
+		getChannel();
+	}, []);
 
 	return (
-		<div className="title"> Channels <span><HiPlusCircle className="add-icon" onClick={() => setButtonPopup(true)} /></span><hr />
+		<div className="title"> Joined Channels <span><HiPlusCircle className="add-icon" onClick={() => setButtonPopup(true)} /></span><hr />
 			<CreateChannelPopup trigger={buttonPopup} setTrigger={setButtonPopup} />
-			{chanList.map((chan) => (
+			{chanList.map((channel) => (
 				<ul>
-					<p>{chan.chanName}</p>
+					<p>{channel.name}</p>
 				</ul>
 			))}
+		</div>
+	);
+}
+
+function PublicChannelList() { /** to be modified later */
+	return (
+		<div className="title" id="upper-side">Public Channels <hr />
+			<ul>
+				<p>test</p>
+			</ul>
 		</div>
 	);
 }
@@ -63,7 +101,7 @@ function ChannelMemberList() {
 	);
 }
 
-export function ChannelMessages() {
+export function ChannelMessages(/*channelID*/) {
 	
 	const [newInput, setNewInput] = useState("");
 	const [messageList, setMessageList] = useState<any[]>([]);
@@ -112,7 +150,8 @@ export function Channels() {
 	return (
 		<div id="chat-container">
 		<div className="left-sidebar">
-			<ChannelList />
+			<JoinedChannelList />
+			{/* <PublicChannelList /> */}
 		</div>
 			<ChannelMessages />
 		<div className="right-sidebar">
