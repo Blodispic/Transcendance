@@ -15,6 +15,10 @@ import { ChannelModule } from './chat/channel/channel.module';
 import { ResultModule } from './results/results.module';
 import { Channel } from './chat/channel/entities/channel.entity';
 import { FriendRequest } from './user/entities/friend-request.entity';
+import { 2faModule } from './2fa/2fa.module';
+import { TwofaService } from './twofa/twofa.service';
+import { TwofaController } from './twofa/twofa.controller';
+import { TwofaModule } from './twofa/twofa.module';
 
 @Module({
   imports: [
@@ -38,8 +42,9 @@ import { FriendRequest } from './user/entities/friend-request.entity';
     ChannelModule,
     ResultModule,
     UserModule,
+    2faModule, TwofaModule,
   ],
-  controllers: [AppController],
-  providers: [AppService, ChatGateway, AppGateway],
+  controllers: [AppController, TwofaController],
+  providers: [AppService, ChatGateway, AppGateway, TwofaService],
 })
 export class AppModule { }

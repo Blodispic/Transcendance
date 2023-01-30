@@ -9,6 +9,9 @@ export class User {
   @PrimaryGeneratedColumn()
   id: number;
   
+  @Column({ default: false })
+  isTwoFactorAuthenticationEnabled: boolean;
+
   @Column()
   access_token: string;
 

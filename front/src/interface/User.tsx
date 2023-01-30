@@ -14,6 +14,7 @@ export interface IUser {
     username: string;
     avatar: string;
     status: UserStatus;
+    isTwoFactorAuthenticationEnabled: boolean;
     elo: number;
     friends?: IUser[];
     history?: Result[];

@@ -62,7 +62,7 @@ export default function Header() {
               dropdown == true &&
               <div className="dropdown">
                 <ul >
-                  <li>
+                  <li onClick={_ => dropdownClick()}>
                     <Link to={`/Profile/${myUser.user.id}`}>
                       profile
                     </Link>
