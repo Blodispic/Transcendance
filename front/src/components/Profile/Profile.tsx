@@ -73,7 +73,7 @@ function Search(props: { currentUser: IUser, setcurrentUser: Function }) {
 
         return (
                 <div className="search">
-                        <div className="icon" onClick={(e) => search_man(e)} >
+                        <div className="icon-search" onClick={(e) => search_man(e)} >
                                 <HiOutlineMagnifyingGlassCircle />
                         </div>
                         <div className="input">
