@@ -40,8 +40,8 @@ function InviteButton(props: { user: any }) {
               
 
         return (
-                <button className="button pointer white" onClick={sendFriendRequest} >
-                        {status}
+                <button className="button pointer white width_50" onClick={sendFriendRequest} >
+                        <span className='jump'> {status} </span>
                 </button>
         )
 }

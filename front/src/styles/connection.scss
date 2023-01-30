@@ -13,33 +13,29 @@
 }
 
 .pointer {
-       cursor: pointer; 
+    cursor: pointer;
 }
 
 .button {
-    
     font-family: 'Fredoka One', cursive;
     border-radius: 2px;
     padding: 10px 16px;
     background-color: #34495E;
     border-color: #34495e;
-
     button {
         cursor: pointer;
         margin-left: 40%;
         display: flex;
-        a{
+        a {
             color: black;
         }
     }
-    label, 
+    label,
     a {
         color: white;
     }
     --hover: #5e768fb4;
 }
-
-
 
 label {
     display: block;
