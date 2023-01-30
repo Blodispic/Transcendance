@@ -13,10 +13,6 @@ $tab-color: rgb(121, 121, 121);
 	background-color: $tab-color;
 	color: white;
 	font-family: 'Fredoka One', cursive;
-
-	// :hover {
-	// 	background-color: darken($tab-color, $amount: 10);
-	// }
 }
 
 #chat-container {
@@ -58,11 +54,10 @@ $tab-color: rgb(121, 121, 121);
 		// display: flex;
 		
 		.chat-messages {
-			// height: calc(100vh - 100px);
+			height: calc(100vh - 180px);
 			vertical-align: top;
-			height: 90%;
 			overflow-y: scroll;
-			flex: 1; //take up the space
+			flex: 1;
 
 			.__wrap {
 				font-size: 20px;

@@ -1,11 +1,7 @@
-import {useState} from "react";
+import { useState } from "react";
 import { HiOutlineXMark, HiPlusCircle } from "react-icons/hi2";
-import { IconBase } from "react-icons/lib";
-import { Value } from "sass";
-import { isFunctionDeclaration } from "typescript";
 import { socket } from "../../App";
 import '../../styles/chat.scss'
-import { ChatBody } from "./Chat";
 
 /**
  * Displays popup form when add channel button is clicked; takes input and sends info to the back
@@ -13,13 +9,6 @@ import { ChatBody } from "./Chat";
  */
 function CreateChannelPopup(props: any) {
 	const [chanName, setChanName] = useState("");
-	// const [chanList, setChanList] = useState<any[]>([]); //temporary data type; to be replaced;
-
-	// socket.on('createPublicChannelOk', (createPublicChannelDto) => {
-	// 	setChanList([...chanList, createPublicChannelDto]);
-	// });
-	// console.log(chanList);
-
 	const handleCreateNewChan = () => {
 		console.log({ chanName });
 		if (chanName != "")
@@ -46,7 +35,6 @@ function CreateChannelPopup(props: any) {
 	) : <></>;
 }
 
-
 function ChannelList() {
 	const [buttonPopup, setButtonPopup] = useState(false);
 	const [chanList, setChanList] = useState<any[]>([]); //temporary data type; to be replaced;
@@ -56,15 +44,12 @@ function ChannelList() {
 	});
 	console.log(chanList);
 
-	// display channel list (with lock icon on private channel)
-
 	return (
 		<div className="title"> Channels <span><HiPlusCircle className="add-icon" onClick={() => setButtonPopup(true)} /></span><hr />
-			{/* <button onClick={() => setButtonPopup(true)}>add</button>*/}
 			<CreateChannelPopup trigger={buttonPopup} setTrigger={setButtonPopup} />
 			{chanList.map((chan) => (
 				<ul>
-					{chan.chanName}
+					<p>{chan.chanName}</p>
 				</ul>
 			))}
 		</div>
@@ -78,6 +63,50 @@ function ChannelMemberList() {
 	);
 }
 
+export function ChannelMessages() {
+	
+	const [newInput, setNewInput] = useState("");
+	const [messageList, setMessageList] = useState<any[]>([]);
+
+	const handleSubmitNewMessage = (e: React.FormEvent<HTMLFormElement>) => {
+		e.preventDefault();
+		if (newInput != "")
+			socket.emit('sendMessageChannel', { newInput }); //
+		setNewInput("");
+	}
+
+	socket.on('sendMessageChannelOk', (messageChannelDto) => {
+		buildNewMessage(messageChannelDto);
+	})
+
+	const buildNewMessage = (data: any) => {
+		setMessageList([...messageList, data]);
+	}
+
+	return (
+		<div className="chat-body">
+			<div className="chat-messages">
+				{messageList.map((chat) => (
+					<div key={chat.newInput} className="__wrap">
+						<div className="message_info">
+							<span className="user-avatar">
+								<img src="https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/160/apple/81/woman-gesturing-ok-type-1-2_1f646-1f3fb-200d-2640-fe0f.png"></img></span>
+							UserName
+							<span className="timestamp"> 0000/00/00 00:00</span>
+						</div>
+						<p>{chat.newInput}</p>
+					</div>
+				))}
+			</div>
+			<form id="input_form" onSubmit={(e) => { handleSubmitNewMessage(e); }}>
+				<input type="text" onChange={(e) => { setNewInput(e.target.value) }}
+					placeholder="type message here" value={newInput}/>
+			</form>
+
+		</div>
+	);
+}
+
 
 export function Channels() {
 	return (
@@ -85,7 +114,7 @@ export function Channels() {
 		<div className="left-sidebar">
 			<ChannelList />
 		</div>
-			<ChatBody />
+			<ChannelMessages />
 		<div className="right-sidebar">
 			<ChannelMemberList />
 		</div>

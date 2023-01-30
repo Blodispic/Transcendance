@@ -1,10 +1,10 @@
-import '../../styles/chat.scss'
 import { Channels } from "./Channel";
-import React, { useState } from "react";
+import { useState } from "react";
 import { socket } from "../../App"
 import { Tab, TabList, TabPanel, Tabs } from "react-tabs";
-import 'react-tabs/style/react-tabs.css';
 import { DirectMessage } from "./DirectMessage";
+import 'react-tabs/style/react-tabs.css';
+import '../../styles/chat.scss'
 
 export function ChatBody() {
 	
