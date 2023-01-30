@@ -1,10 +1,12 @@
 import { useState, useEffect } from 'react';
-import { useSearchParams } from "react-router-dom";
+import { Navigate, useNavigate, useSearchParams } from "react-router-dom";
 import '../../styles/connection.scss'
 import NameForm from "./form_name_avatar"
-import { useAppDispatch } from "../../redux/Hook";
+import { useAppDispatch, useAppSelector } from "../../redux/Hook";
 import { setUser } from "../../redux/user";
 import { useCookies } from "react-cookie";
+import { IUser } from '../../interface/User';
+import { page } from '../../interface/enum';
 
 
 
@@ -17,17 +19,19 @@ export const getAuthorizeHref = (): string => {
 
 export default function Connection() {
 
-    const [myVar, setMyvar] = useState(false)
+    const [pages, setpages] = useState<page>(page.PAGE_1)
     const [searchParams] = useSearchParams()
-    const dispatch = useAppDispatch();
     const [, setCookie] = useCookies(['Token']);
-    const redirect = process.env.REACT_APP_BACK;
-    console.log("here", redirect);
+    const dispatch = useAppDispatch();
+    const myUser = useAppSelector(state => state.user);
+	const navigate = useNavigate();
 
     useEffect(() => {
         const oauthCode = searchParams.get('code'); // Tu lui dit de recuperer le parametre "code" dans l'url
 
         if (oauthCode) {
+            console.log("ca rentre");
+            
             const fetchcode = async () => {
                 await fetch(`${process.env.REACT_APP_BACK}oauth/token`, {
                     method: 'POST',
@@ -46,6 +50,10 @@ export default function Connection() {
                         }
                         else {
                             dispatch(setUser(data));
+                            if (data.username === "")
+                                setpages(page.PAGE_2);
+                            // else if (myUser.user.double_auth)
+                            //     setpages(page.page_3);
                             setCookie('Token', data.access_token, { path: '/' });
                         }
                     })
@@ -54,15 +62,13 @@ export default function Connection() {
                     });
             }
             fetchcode();
-            if (myVar === false)
-                setMyvar(true);
         }
     }, [])
 
     return (
         <div className='container'>
             {
-                myVar == false &&
+                pages == page.PAGE_1 &&
                 <div className='connection'>
                     <div className='button'>
                     <button className="button pulse pointer color_sign" >
@@ -79,8 +85,13 @@ export default function Connection() {
                 </div>
             }
             {
-                myVar == true &&
+                pages == page.PAGE_2 &&
                 <NameForm />
+            }
+            {
+                pages == page.PAGE_3 &&
+                <NameForm />
+                // <double_auth />
             }
         </div>
     );
