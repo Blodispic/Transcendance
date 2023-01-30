@@ -52,6 +52,12 @@ export class UserController {
       return this.userService.GetFriendRequestStatus(id, user);
   }
 
+  @Post('friends')
+  GetFriends(@Body() user:User)
+  {
+    return this.userService.GetFriendsRequest(user);
+  }
+
   @Get(':id/avatar')
   async getAvatar(@Param('id') id: number, @Req() req: Request, @Res() res: Response) {
     const user = await this.userService.getById(id);

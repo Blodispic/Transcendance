@@ -176,6 +176,17 @@ export class UserService {
     return {status: friendRequest.status};
   }
 
+  async GetFriendsRequest(user: User) {
+    const receiver = await this.usersRepository.findOne({
+      relations: {
+        receiveFriendRequests: true,
+      },
+      where: { id: user.id }
+    })
+    if (receiver)
+      return (receiver.receiveFriendRequests);
+  }
+
 
   //ID est le user actuel, friend est le user a ajouter de type User
   //On push dans le tableau le user friend et on save user qui a été changé dans userRepository

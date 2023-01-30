@@ -4,6 +4,7 @@ import { IUser } from '../../interface/User';
 import '../../styles/profile.scss';
 import { HiOutlineMagnifyingGlassCircle } from "react-icons/hi2";
 import { useAppSelector } from '../../redux/Hook';
+import { ImCheckmark, ImCross } from "react-icons/im";
 
 function InviteButton(props: { user: any }) {
         const { user } = props;
@@ -41,7 +42,7 @@ function InviteButton(props: { user: any }) {
 
         return (
                 <button className="button pointer white width_50" onClick={sendFriendRequest} >
-                        <span className='jump'> {status} </span>
+                        {status}
                 </button>
         )
 }
@@ -138,8 +139,8 @@ function Header(props: { currentUser: IUser, setCurrentUser: Function }) {
 
 };
 
-function Friends() {
-
+function Friends(props: { user: any }) {
+        const { user } = props;
 
         interface FriendsListProps {
                 friends: { name: string, avatar: string, status: string }[];
@@ -148,52 +149,67 @@ function Friends() {
 
         const FriendsList = (props: FriendsListProps) => {
                 return (
-                  <ul className="friends-list">
-                    {props.friends.map(friend => (
-                      <li className="friend-block" key={friend.name}>
-                        <div className="friend-img">
-                          <img src={friend.avatar} alt={friend.name} />
+                        <ul className="friends-list">
+                                {props.friends.map(friend => (
+                                        <li className="friend-block" key={friend.name}>
+                                                <div className="friend-img">
+                                                        <img src={friend.avatar} alt={friend.name} />
+                                                </div>
+                                                <div className="friend-info">
+                                                        <div className="friend-name">{friend.name}</div>
+                                                        <div className="friend-status">{friend.status}</div>
+                                                </div>
+                                                <div className="friend-actions">
+                                                        <button className="accept-button"><ImCheckmark /></button>
+                                                        <button className="refuse-button"><ImCross /></button>
+                                                </div>
+
+                                        </li>
+                                ))}
+                        </ul>
+                )
+        }
+
+
+
+        const FriendsReq = () => {
+                // const friendReq = [
+                // { name: 'Ross', avatar: 'https://img.freepik.com/vecteurs-premium/panda-mignon-tenant-bambou-pouce-vers-haut-icone-vecteur-dessin-anime-illustration-nature-animale-isolee_138676-4817.jpg?w=360', status: 'Online' },
+                // { name: 'Rachel', avatar: 'http://10.1.8.1:4000/user/3/avatar', status: 'Online' },
+                // { name: 'Joey', avatar: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRpamtYxWbURGcTSVFTmsrY16rf3d_I39DhAQ&usqp=CAU', status: 'Online' },
+                // { name: 'Phoebe', avatar: 'https://i.pinimg.com/originals/d0/a2/e2/d0a2e243610bde1be54defdca162e47a.jpg', status: 'Online' },
+                // { name: 'Chandler', avatar: 'https://ih1.redbubble.net/image.1343394098.5639/flat,750x,075,f-pad,750x1000,f8f8f8.jpg', status: 'Online' },
+                // { name: 'Monica', avatar: 'https://www.gamosaurus.com/wp-content/uploads/Users/pikavatarsurf.png', status: 'Online' },
+                // ];
+                const friendReq: any = [];
+                const checkFriendRequest = async () => {
+                        const response = await fetch(`${process.env.REACT_APP_BACK}user/friends`, {
+                                method: 'POST',
+                                body: JSON.stringify(user),
+                                headers: { 'Content-Type': 'application/json' }
+                        });
+                        const data = await response.json()
+
+                };
+                return <FriendsList friends={friendReq} />;
+
+
+        }
+
+                return (
+                        <div className='FriendHeader'>
+
+                                <FriendsReq />
+                                <div className='FriendRequestBlock'>
+                                </div>
+
+                                <div className='FriendListBlock'>
+
+                                </div>
                         </div>
-                        <div className="friend-info">
-                          <div className="friend-name">{friend.name}</div>
-                          <div className="friend-status">{friend.status}</div>
-                        </div>
-                      </li>
-                    ))}
-                  </ul>
-                );
-              };
-              
-
-
-        const Friends = () => {
-                const friends = [
-                        { name: 'Ross', avatar: 'https://img.freepik.com/vecteurs-premium/panda-mignon-tenant-bambou-pouce-vers-haut-icone-vecteur-dessin-anime-illustration-nature-animale-isolee_138676-4817.jpg?w=360', status: 'Online' },
-                        { name: 'Rachel', avatar: 'rachel.jpg', status: 'Online' },
-                        { name: 'Joey', avatar: 'joey.jpg', status: 'Online' },
-                        { name: 'Phoebe', avatar: 'phoebe.jpg', status: 'Online' },
-                        { name: 'Chandler', avatar: 'chandler.jpg', status: 'Online' },
-                        { name: 'Monica', avatar: 'monica.jpg', status: 'Online' },
-                ];
-
-                return <FriendsList friends={friends} />;
-        };
-
-
-
-        return (
-                <div className='FriendHeader'>
-
-                        <Friends />;
-                        <div className='FriendRequestBlock'>
-                        </div>
-
-                        <div className='FriendListBlock'>
-
-                        </div>
-                </div>
-        )
+                )
 }
+
 const icon = document.querySelector(".icon");
 const search = document.querySelector(".search");
 
@@ -240,7 +256,7 @@ export default function Profile() {
                         }
 
                         {
-                                <Friends />
+                                <Friends user={currentUser} />
                         }
                         <div className='cacher'>
 

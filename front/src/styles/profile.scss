@@ -142,24 +142,25 @@
     list-style: none;
     display: flex;
     flex-wrap: wrap;
-    justify-content: space-between;
+    justify-content: left;
 }
 
 .friend-block {
     text-decoration: none;
     background-color: #ccced9;
     border: 1px solid rgb(151, 139, 139);
-    margin-bottom: 3px;
-    width: 30%;
+    margin-bottom: 10px;
+    margin-left: 10px;
+    width: 230px;
     display: flex;
-    align-items: center;
+    align-items: flex-start;
 }
 
 .friend-img {
-    border: 1px solid rgb(0, 0, 0);
+    border: 0.5px solid rgb(0, 0, 0);
     height: 75px;
     width: 75px;
-    margin-right: auto;
+    margin-right: 5px;
 }
 
 .friend-img img {
@@ -169,16 +170,47 @@
 }
 
 .friend-info {
+    font-family: 'Fredoka One', cursive;
     display: flex;
     flex-direction: column;
-    align-items: center;
+    align-items: left;
+    align-items: flex-start
 }
 
 .friend-name {
+    margin-top: 5px;
+    text-align: left;
     margin-bottom: 2px;
 }
 
 .friend-status {
-    font-size: 15px;
     color: #43b581;
+}
+
+.friend-actions {
+    display: flex;
+    margin-left: auto;
+    flex-wrap: wrap;
+    flex-direction: column;
+    height: 100%;
+}
+
+.accept-button,
+.refuse-button {
+    padding: 5px 8px;
+    background-color: #43b581;
+    color: #fff;
+    border: 0;
+    height: 50%;
+    // border-radius: 5px;
+    // font-size: 15px;
+    cursor: pointer;
+}
+
+.accept-button {
+    font-size: medium;
+}
+
+.refuse-button {
+    background-color: #ff6565;
 }
