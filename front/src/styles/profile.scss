@@ -83,9 +83,6 @@
     .plus {
         font-size: 15px;
     }
-    .white {
-        color: white;
-    }
     .search {
         margin-top: 30px;
         width: 50%;
@@ -93,14 +90,12 @@
         border-radius: 20px;
         background-color: rgba(32, 32, 38, 0.82);
         border-radius: 60px;
-        .icon {
+        .icon-search {
             width: 60px;
             height: 60px;
             display: flex;
-            z-index: 1000;
             cursor: pointer;
             position: absolute;
-            border-radius: 60px;
             align-items: center;
             justify-content: center;
             font-size: xxx-large;
@@ -131,6 +126,10 @@
 
 .width_50 {
     width: 50%;
+}
+
+.white {
+    color: white;
 }
 
 .cacher {
@@ -213,4 +212,23 @@
 
 .refuse-button {
     background-color: #ff6565;
+}
+
+.reqButton {
+    font-family: 'Fredoka One', cursive;
+    border-radius: 5px;
+    background-color: #34495E;
+    border-color: #34495e;
+    padding: 10px;
+    label,
+    a {
+        text-decoration: auto;
+        display: block;
+        width: 100%;
+        height: 100%;
+        color: white;
+        line-height: 190px;
+        font-size: x-large;
+    }
+    --hover: #5e768fb4;
 }

@@ -41,7 +41,7 @@ function InviteButton(props: { user: any }) {
 
 
         return (
-                <button className="button pointer white width_50" onClick={sendFriendRequest} >
+                <button className="reqButton pointer white width_50" onClick={sendFriendRequest} >
                         {status}
                 </button>
         )
@@ -74,7 +74,7 @@ function Search(props: { currentUser: IUser, setcurrentUser: Function }) {
 
         return (
                 <div className="search">
-                        <div className="icon" onClick={(e) => search_man(e)} >
+                        <div className="icon-search" onClick={(e) => search_man(e)} >
                                 <HiOutlineMagnifyingGlassCircle />
                         </div>
                         <div className="input">
@@ -139,8 +139,24 @@ function Header(props: { currentUser: IUser, setCurrentUser: Function }) {
 
 };
 
-function Friends(props: { user: any }) {
+function Friends(props: { user: IUser }) {
         const { user } = props;
+        const friendReq: any = [];
+
+        useEffect(() => {
+                const checkFriendRequest = async () => {
+                        const response = await fetch(`${process.env.REACT_APP_BACK}user/friends`, {
+                                method: 'POST',
+                                body: JSON.stringify(user),
+                                headers: { 'Content-Type': 'application/json' }
+                        });
+                        const data = await response.json()
+
+                        console.log("checkdata", data);
+                };
+                checkFriendRequest();
+        })
+console.log("end check data");
 
         interface FriendsListProps {
                 friends: { name: string, avatar: string, status: string }[];
@@ -173,41 +189,31 @@ function Friends(props: { user: any }) {
 
 
         const FriendsReq = () => {
-                // const friendReq = [
-                // { name: 'Ross', avatar: 'https://img.freepik.com/vecteurs-premium/panda-mignon-tenant-bambou-pouce-vers-haut-icone-vecteur-dessin-anime-illustration-nature-animale-isolee_138676-4817.jpg?w=360', status: 'Online' },
-                // { name: 'Rachel', avatar: 'http://10.1.8.1:4000/user/3/avatar', status: 'Online' },
-                // { name: 'Joey', avatar: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRpamtYxWbURGcTSVFTmsrY16rf3d_I39DhAQ&usqp=CAU', status: 'Online' },
-                // { name: 'Phoebe', avatar: 'https://i.pinimg.com/originals/d0/a2/e2/d0a2e243610bde1be54defdca162e47a.jpg', status: 'Online' },
-                // { name: 'Chandler', avatar: 'https://ih1.redbubble.net/image.1343394098.5639/flat,750x,075,f-pad,750x1000,f8f8f8.jpg', status: 'Online' },
-                // { name: 'Monica', avatar: 'https://www.gamosaurus.com/wp-content/uploads/Users/pikavatarsurf.png', status: 'Online' },
-                // ];
-                const friendReq: any = [];
-                const checkFriendRequest = async () => {
-                        const response = await fetch(`${process.env.REACT_APP_BACK}user/friends`, {
-                                method: 'POST',
-                                body: JSON.stringify(user),
-                                headers: { 'Content-Type': 'application/json' }
-                        });
-                        const data = await response.json()
-
-                };
+                const friendReq = [
+                { name: 'Ross', avatar: 'https://img.freepik.com/vecteurs-premium/panda-mignon-tenant-bambou-pouce-vers-haut-icone-vecteur-dessin-anime-illustration-nature-animale-isolee_138676-4817.jpg?w=360', status: 'Online' },
+                { name: 'Rachel', avatar: 'http://10.1.8.1:4000/user/3/avatar', status: 'Online' },
+                { name: 'Joey', avatar: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRpamtYxWbURGcTSVFTmsrY16rf3d_I39DhAQ&usqp=CAU', status: 'Online' },
+                { name: 'Phoebe', avatar: 'https://i.pinimg.com/originals/d0/a2/e2/d0a2e243610bde1be54defdca162e47a.jpg', status: 'Online' },
+                { name: 'Chandler', avatar: 'https://ih1.redbubble.net/image.1343394098.5639/flat,750x,075,f-pad,750x1000,f8f8f8.jpg', status: 'Online' },
+                { name: 'Monica', avatar: 'https://www.gamosaurus.com/wp-content/uploads/Users/pikavatarsurf.png', status: 'Online' },
+                ];
                 return <FriendsList friends={friendReq} />;
 
 
         }
 
-                return (
-                        <div className='FriendHeader'>
+        return (
+                <div className='FriendHeader'>
 
-                                <FriendsReq />
-                                <div className='FriendRequestBlock'>
-                                </div>
-
-                                <div className='FriendListBlock'>
-
-                                </div>
+                        <FriendsReq />
+                        <div className='FriendRequestBlock'>
                         </div>
-                )
+
+                        <div className='FriendListBlock'>
+
+                        </div>
+                </div>
+        )
 }
 
 const icon = document.querySelector(".icon");

@@ -20,10 +20,10 @@ export default function Connection() {
     const [myVar, setMyvar] = useState(false)
     const [searchParams] = useSearchParams()
     const dispatch = useAppDispatch();
-    const [,setCookie] = useCookies(['Token']);
+    const [, setCookie] = useCookies(['Token']);
     const redirect = process.env.REACT_APP_BACK;
-    console.log("here",redirect );
-    
+    console.log("here", redirect);
+
     useEffect(() => {
         const oauthCode = searchParams.get('code'); // Tu lui dit de recuperer le parametre "code" dans l'url
 
@@ -46,7 +46,7 @@ export default function Connection() {
                         }
                         else {
                             dispatch(setUser(data));
-                            setCookie('Token', data.access_token , { path: '/' });
+                            setCookie('Token', data.access_token, { path: '/' });
                         }
                     })
                     .catch(error => {
@@ -60,14 +60,23 @@ export default function Connection() {
     }, [])
 
     return (
-        <div>
+        <div className='container'>
             {
                 myVar == false &&
-                <button className="button center pulse pointer" >
-                    <a href={getAuthorizeHref()}>
-                        Connect with Intra
-                    </a>
-                </button>
+                <div className='connection'>
+                    <div className='button'>
+                    <button className="button pulse pointer color_sign" >
+                        <a href={getAuthorizeHref()}>
+                            log
+                        </a>
+                    </button>
+                    <button className="button pulse pointer color_log" >
+                        <a href={getAuthorizeHref()}>
+                            sign
+                        </a>
+                    </button>
+                    </div>
+                </div>
             }
             {
                 myVar == true &&

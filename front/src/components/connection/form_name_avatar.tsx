@@ -45,7 +45,8 @@ export default function NameForm() {
         setavatar(URL.createObjectURL(myFile));
     }
     return (
-        <div className='center button'>
+        <div className='center form  white'>
+             <div className=' color_sign'>
             <form>
                 <label >
                     Name:
@@ -68,5 +69,6 @@ export default function NameForm() {
                 }
             </form >
         </div >
+        </div>
     );
 };
