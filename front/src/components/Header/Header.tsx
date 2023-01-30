@@ -2,18 +2,27 @@ import React, { useState } from 'react';
 import '../../styles/nav.scss'
 import '../../styles/profile.scss'
 import { Link } from 'react-router-dom';
-import { useAppSelector } from '../../redux/Hook';
+import { useAppDispatch, useAppSelector } from '../../redux/Hook';
 import { FaUserAlt } from "react-icons/fa";
+import { Cookies } from 'react-cookie';
+import { delete_user } from '../../redux/user';
 export default function Header() {
 
   const [dropdown, setDropdown] = useState<boolean>(false);
 
-
-  const dropdownClick = (e: any) => {
+  const cookies = new Cookies();
+  const dispatch = useAppDispatch();
+  
+  const dropdownClick = () => {
     if (dropdown == false)
       setDropdown(true);
     else
       setDropdown(false);
+  }
+  
+  const logout = () => {
+    cookies.remove('Token');
+    dispatch(delete_user())
   }
 
   const myUser = useAppSelector(state => state.user);
@@ -46,19 +55,19 @@ export default function Header() {
         {
           myUser.user !== undefined &&
           <div className='dropdown-container'>
-            <div className="icon-header" onClick={e => dropdownClick(e)} >
+            <div className="icon-header" onClick={_ => dropdownClick()} >
               <FaUserAlt />
             </div>
             {
               dropdown == true &&
               <div className="dropdown">
-                <ul>
+                <ul >
                   <li>
                     <Link to={`/Profile/${myUser.user.id}`}>
                       profile
                     </Link>
                   </li>
-                  <li onClick={e => dropdownClick(e)}>
+                  <li onClick={_ => logout()} >
                     logout
                   </li>
 

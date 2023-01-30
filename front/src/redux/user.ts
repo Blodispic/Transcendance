@@ -35,10 +35,14 @@ export const userSlice = createSlice({
                 state.isLog = true;
             else
                 state.isLog = false;
-        }
+        },
+        delete_user(state) {
+            state.user = undefined;
+            state.isLog = false;
+        },
 
     },
 })
 
-export const { setUser, change_status, change_name, change_avatar, log_unlog} = userSlice.actions
+export const { setUser, change_status, change_name, change_avatar, log_unlog, delete_user} = userSlice.actions
 export default userSlice.reducer
