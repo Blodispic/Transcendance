@@ -137,3 +137,48 @@
     height: 100%;
     background-color: rgba(32, 32, 38);
 }
+
+.friends-list {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+
+.friend-block {
+    text-decoration: none;
+    background-color: #ccced9;
+    border: 1px solid rgb(151, 139, 139);
+    margin-bottom: 3px;
+    width: 30%;
+    display: flex;
+    align-items: center;
+}
+
+.friend-img {
+    border: 1px solid rgb(0, 0, 0);
+    height: 75px;
+    width: 75px;
+    margin-right: auto;
+}
+
+.friend-img img {
+    height: 100%;
+    width: 100%;
+    object-fit: cover;
+}
+
+.friend-info {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.friend-name {
+    margin-bottom: 2px;
+}
+
+.friend-status {
+    font-size: 15px;
+    color: #43b581;
+}

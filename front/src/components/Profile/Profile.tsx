@@ -36,8 +36,8 @@ function InviteButton(props: { user: any }) {
                                 setStatus("+ Add Friend");
                 }
                 checkFriendRequest();
-              }, [friendId, user]);
-              
+        }, [friendId, user]);
+
 
         return (
                 <button className="button pointer white width_50" onClick={sendFriendRequest} >
@@ -69,7 +69,7 @@ function Search(props: { currentUser: IUser, setcurrentUser: Function }) {
                 if (event.key === "Enter") {
                         search_man(event);
                 }
-              };
+        };
 
         return (
                 <div className="search">
@@ -106,7 +106,7 @@ function Header(props: { currentUser: IUser, setCurrentUser: Function }) {
 
 
                                 <div className='info-header'>
-                                <Search currentUser={currentUser} setcurrentUser={setCurrentUser} />
+                                        <Search currentUser={currentUser} setcurrentUser={setCurrentUser} />
                                         <div className='stat-header'>
                                                 <span>test</span>
                                                 <span>test</span>
@@ -137,6 +137,63 @@ function Header(props: { currentUser: IUser, setCurrentUser: Function }) {
         )
 
 };
+
+function Friends() {
+
+
+        interface FriendsListProps {
+                friends: { name: string, avatar: string, status: string }[];
+        }
+
+
+        const FriendsList = (props: FriendsListProps) => {
+                return (
+                  <ul className="friends-list">
+                    {props.friends.map(friend => (
+                      <li className="friend-block" key={friend.name}>
+                        <div className="friend-img">
+                          <img src={friend.avatar} alt={friend.name} />
+                        </div>
+                        <div className="friend-info">
+                          <div className="friend-name">{friend.name}</div>
+                          <div className="friend-status">{friend.status}</div>
+                        </div>
+                      </li>
+                    ))}
+                  </ul>
+                );
+              };
+              
+
+
+        const Friends = () => {
+                const friends = [
+                        { name: 'Ross', avatar: 'https://img.freepik.com/vecteurs-premium/panda-mignon-tenant-bambou-pouce-vers-haut-icone-vecteur-dessin-anime-illustration-nature-animale-isolee_138676-4817.jpg?w=360', status: 'Online' },
+                        { name: 'Rachel', avatar: 'rachel.jpg', status: 'Online' },
+                        { name: 'Joey', avatar: 'joey.jpg', status: 'Online' },
+                        { name: 'Phoebe', avatar: 'phoebe.jpg', status: 'Online' },
+                        { name: 'Chandler', avatar: 'chandler.jpg', status: 'Online' },
+                        { name: 'Monica', avatar: 'monica.jpg', status: 'Online' },
+                ];
+
+                return <FriendsList friends={friends} />;
+        };
+
+
+
+        return (
+                <div className='FriendHeader'>
+
+                        <Friends />;
+                        <div className='FriendRequestBlock'>
+                        </div>
+
+                        <div className='FriendListBlock'>
+
+                        </div>
+                </div>
+        )
+}
 const icon = document.querySelector(".icon");
 const search = document.querySelector(".search");
 
@@ -182,6 +239,9 @@ export default function Profile() {
                                 <Header currentUser={currentUser} setCurrentUser={setCurrentUser} />
                         }
 
+                        {
+                                <Friends />
+                        }
                         <div className='cacher'>
 
                         </div>
