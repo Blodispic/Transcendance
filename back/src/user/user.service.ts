@@ -8,6 +8,7 @@ import { User } from "./entities/user.entity";
 import { FriendRequest } from "./entities/friend-request.entity";
 import { FriendRequestDto } from "./dto/friend-request.dto";
 import { JwtService } from "@nestjs/jwt";
+import { FriendRequestStatus, FriendRequest_Status } from "./interface/friend-request.interface";
 
 @Injectable()
 export class UserService {
@@ -177,15 +178,32 @@ export class UserService {
   }
 
   async GetFriendsRequest(user: User) {
-    const receiver = await this.usersRepository.findOne({
-      relations: {
-        receiveFriendRequests: true,
-      },
-      where: { id: user.id }
-    })
-    if (receiver)
-      return (receiver.receiveFriendRequests);
-  }
+      const receiver = await this.usersRepository.findOne({
+        relations: ['receiveFriendRequests'],
+        where: { id: user.id }
+      });
+      if (!receiver) {
+        return [];
+      }
+      return receiver.receiveFriendRequests.map(request => ({
+        name: request.creator.username,
+        avatar: request.creator.avatar,
+        id: request.creator.id,
+      }));
+    }
+
+    async updateFriendRequestStatus(friendId: number, receiver: User, status: FriendRequestStatus) {
+        const friendRequest = await this.friendRequestRepository.findOne({
+          where: [{ creator: { id: friendId } }, { receiver: receiver }]
+      });
+      if (friendRequest) {
+        if (status.status) {
+          friendRequest.status = status.status;
+        }
+        return await this.friendRequestRepository.save(friendRequest);
+      }
+      return {message: "Friend Request not found"};
+    }
 
 
   //ID est le user actuel, friend est le user a ajouter de type User

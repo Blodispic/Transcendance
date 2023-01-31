@@ -136,31 +136,50 @@ function Header(props: { currentUser: IUser, setCurrentUser: Function }) {
 
                 </div>
         )
-
 };
 
 function Friends(props: { user: IUser }) {
         const { user } = props;
-        const friendReq: any = [];
+        const [friendReq, setFriendReq] = useState<{ name: string, avatar: string, id: number }[]>([]);
 
         useEffect(() => {
-                const checkFriendRequest = async () => {
-                        const response = await fetch(`${process.env.REACT_APP_BACK}user/friends`, {
-                                method: 'POST',
-                                body: JSON.stringify(user),
-                                headers: { 'Content-Type': 'application/json' }
-                        });
-                        const data = await response.json()
-
-                        console.log("checkdata", data);
-                };
-                checkFriendRequest();
-        })
-console.log("end check data");
+          const checkFriendRequest = async () => {
+            const response = await fetch(`${process.env.REACT_APP_BACK}user/friends`, {
+              method: 'POST',
+              body: JSON.stringify(user),
+              headers: { 'Content-Type': 'application/json' }
+            });
+            const data = await response.json();
+            const pendingFriendRequests = data.filter((friendRequest: { status: string; }) => friendRequest.status === "Pending");
+                setFriendReq(data);
+          };
+          checkFriendRequest();
+        }, []);
 
         interface FriendsListProps {
-                friends: { name: string, avatar: string, status: string }[];
+                friends: { name: string, avatar: string, id: number }[];
         }
+
+        const acceptFriendRequest = async (friend: number) => {
+                const response = await fetch(`${process.env.REACT_APP_BACK}user/friends/accept`, {
+                  method: 'POST',
+                  body: JSON.stringify({friend, user}),
+                  headers: { 'Content-Type': 'application/json' }
+                });-
+                const data = await response.json();
+                setFriendReq(prevState => prevState.filter(accepted => accepted.id !== friend));
+              };
+            
+              const declineFriendRequest = async (friend: number) => {
+                const response = await fetch(`${process.env.REACT_APP_BACK}user/friends/decline`, {
+                  method: 'POST',
+                  body: JSON.stringify({friend, user}),
+                  headers: { 'Content-Type': 'application/json' }
+                });
+                const data = await response.json();
+                setFriendReq(prevState => prevState.filter(declined => declined.id !== friend));
+              };
+    
 
 
         const FriendsList = (props: FriendsListProps) => {
@@ -173,11 +192,11 @@ console.log("end check data");
                                                 </div>
                                                 <div className="friend-info">
                                                         <div className="friend-name">{friend.name}</div>
-                                                        <div className="friend-status">{friend.status}</div>
+                                                        <div className="friend-status">Online</div>
                                                 </div>
                                                 <div className="friend-actions">
-                                                        <button className="accept-button"><ImCheckmark /></button>
-                                                        <button className="refuse-button"><ImCross /></button>
+                                                        <button className="accept-button" onClick={() => acceptFriendRequest(friend.id)} ><ImCheckmark /></button>
+                                                        <button className="refuse-button" onClick={() => declineFriendRequest(friend.id)} ><ImCross /></button>
                                                 </div>
 
                                         </li>
@@ -190,12 +209,12 @@ console.log("end check data");
 
         const FriendsReq = () => {
                 const friendReq = [
-                { name: 'Ross', avatar: 'https://img.freepik.com/vecteurs-premium/panda-mignon-tenant-bambou-pouce-vers-haut-icone-vecteur-dessin-anime-illustration-nature-animale-isolee_138676-4817.jpg?w=360', status: 'Online' },
-                { name: 'Rachel', avatar: 'http://10.1.8.1:4000/user/3/avatar', status: 'Online' },
-                { name: 'Joey', avatar: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRpamtYxWbURGcTSVFTmsrY16rf3d_I39DhAQ&usqp=CAU', status: 'Online' },
-                { name: 'Phoebe', avatar: 'https://i.pinimg.com/originals/d0/a2/e2/d0a2e243610bde1be54defdca162e47a.jpg', status: 'Online' },
-                { name: 'Chandler', avatar: 'https://ih1.redbubble.net/image.1343394098.5639/flat,750x,075,f-pad,750x1000,f8f8f8.jpg', status: 'Online' },
-                { name: 'Monica', avatar: 'https://www.gamosaurus.com/wp-content/uploads/Users/pikavatarsurf.png', status: 'Online' },
+                { name: 'Ross', avatar: 'https://img.freepik.com/vecteurs-premium/panda-mignon-tenant-bambou-pouce-vers-haut-icone-vecteur-dessin-anime-illustration-nature-animale-isolee_138676-4817.jpg?w=360', id: 1 },
+                { name: 'Rachel', avatar: 'http://10.1.8.1:4000/user/3/avatar', id: 1 },
+                { name: 'Joey', avatar: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRpamtYxWbURGcTSVFTmsrY16rf3d_I39DhAQ&usqp=CAU', id: 1 },
+                { name: 'Phoebe', avatar: 'https://i.pinimg.com/originals/d0/a2/e2/d0a2e243610bde1be54defdca162e47a.jpg', id: 1 },
+                { name: 'Chandler', avatar: 'https://ih1.redbubble.net/image.1343394098.5639/flat,750x,075,f-pad,750x1000,f8f8f8.jpg', id: 1 },
+                { name: 'Monica', avatar: 'https://www.gamosaurus.com/wp-content/uploads/Users/pikavatarsurf.png', id: 1 },
                 ];
                 return <FriendsList friends={friendReq} />;
 

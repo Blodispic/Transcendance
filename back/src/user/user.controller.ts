@@ -7,6 +7,7 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { User } from './entities/user.entity';
 import { UserService } from './user.service';
 import { user } from 'src/game/game.controller';
+import { FriendRequest } from './entities/friend-request.entity';
 
 @Controller('user')
 export class UserController {
@@ -53,9 +54,22 @@ export class UserController {
   }
 
   @Post('friends')
-  GetFriends(@Body() user:User)
-  {
+  GetFriends(@Body() user:User) {
     return this.userService.GetFriendsRequest(user);
+  }
+
+  @Post("friends/accept")
+  async acceptFriendRequest(@Body() body: { friendId: number, user: User}) {
+    return await this.userService.updateFriendRequestStatus(body.friendId, body.user, {
+    status: "Accepted",
+    });
+  }
+
+  @Post("friends/decline")
+  async declineFriendRequest(@Body() body: { friendId: number, user: User}) {
+    return await this.userService.updateFriendRequestStatus(body.friendId, body.user, {
+    status: "Declined",
+    });
   }
 
   @Get(':id/avatar')
