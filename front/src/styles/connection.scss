@@ -17,10 +17,8 @@
 }
 
 .button {
-
     font-family: 'Fredoka One', cursive;
     border-radius: 5px;
-
     .color_sign {
         background-color: #34495E;
         border-color: #34495e;
@@ -28,19 +26,13 @@
     .color_log {
         background-color: #3352cb;
         border-color: #3255df
-
     }
     >.button {
-
-
-
         padding: 2px;
         width: 200px;
         height: 200px;
-
         label,
         a {
-
             text-decoration: auto;
             display: block;
             width: 100%;
@@ -50,7 +42,6 @@
             font-size: x-large;
         }
     }
-
     --hover: #5e768fb4;
 }
 
@@ -64,15 +55,18 @@
         cursor: pointer;
         margin-left: 40%;
         display: flex;
-        a{
+        a {
             color: black;
         }
     }
-
+    label,
+    a {
+        color: white;
+    }
+    --hover: #5e768fb4;
 }
 
 .connection {
-
     width: 100%;
     height: 90%;
     display: flex;
