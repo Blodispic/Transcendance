@@ -165,7 +165,7 @@ function Friends(props: { user: IUser }) {
                   method: 'POST',
                   body: JSON.stringify({friend, user}),
                   headers: { 'Content-Type': 'application/json' }
-                });-
+                });
                 const data = await response.json();
                 setFriendReq(prevState => prevState.filter(accepted => accepted.id !== friend));
               };
