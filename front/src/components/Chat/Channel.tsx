@@ -1,14 +1,12 @@
 import { useEffect, useState } from "react";
 import { HiOutlineXMark, HiPlusCircle } from "react-icons/hi2";
-import { useParams } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useFetcher, useParams } from "react-router-dom";
 import { socket } from "../../App";
 import { IUser } from "../../interface/User";
+import { useAppSelector } from "../../redux/Hook";
 import '../../styles/chat.scss'
 
-/**
- * Displays popup form when add channel button is clicked; takes input and sends info to the back
- * @todo handle channel mode + password input
- */
 function CreateChannelPopup(props: any) {
 	const [chanName, setChanName] = useState("");
 	const handleCreateNewChan = () => {
@@ -35,51 +33,67 @@ function CreateChannelPopup(props: any) {
 	) : <></>;
 }
 
+/** to be moved to interface directory later */
 interface IChannel {
-	id: Number;
+	id: number;
 	name: string;
 	owner: IUser;
 	users: IUser[];
 }
 
-function JoinedChannelList() {
-	const [buttonPopup, setButtonPopup] = useState(false);
-	const [chanInfo, setChanInfo] = useState<IChannel | undefined>(undefined);
+function ChannelList() {
 	const [chanList, setChanList] = useState<IChannel[]>([]);
-	let newId = 0;
+	const [chanId, setChanId] = useState("");
+	const navigate = useNavigate();
 
 	socket.on('createPublicChannelOk', (newChanId) => {
-		console.log(newChanId);
-		newId = newChanId;
+		getChanId(newChanId);
 	});
 
+	const getChanId = (data: any) => {
+		setChanId(data);
+	}
+	console.log('chanId: ' + chanId);
+	// useEffect(() => {
+	// 	// if (chanId !== 0) {
+	// 		const getChannel =async () => {
+	// 			const response = await fetch(`${process.env.REACT_APP_BACK}channel`, {
+	// 				method: 'Get',
+	// 					});
+	// 					console.log(response);
+	// 					setChanList([...chanList, await response.json()]);
+	// 				}
+	// 				getChannel();
+	// 			// }
+	// 			}, []);
 	useEffect(() => {
-		const getChannel = async () => {
-			console.log('here');
-			if (newId != 0){
-				const response = await fetch(`${process.env.REACT_APP_BACK}channel/${newId}`, {
-					method: 'Get',
-					// }).then((res) => {
-						// 	return res.json();
-						// }).then((data) => {
-							// 	console.log(data);
-					});
-					console.log(response);
-						// setChanInfo( await response.json());
-						// console.log(chanInfo);
-					};
-		}
-		getChannel();
-	}, []);
+		fetch(`${process.env.REACT_APP_BACK}channel/${chanId}`)
+			.then(response => {
+				return response.json();
+			})
+			.then(data => {
+				console.log(data);
+				setChanList([...chanList, data]);
+			});
+	}, [chanId]);
+	return (
+		<div>
+			{chanList.map(chan => (
+				<ul key={chan.name}>
+					<div onClick={_ => navigate(`chan${chan.id}`)}>{chan.name}</div>
+					{/* <Link to={`chan${chan.id}`}>{chan.name}</Link> */}
+				</ul>
+			))}
+		</div>
+	);
+}
+
+function JoinedChannelList() {
+	const [buttonPopup, setButtonPopup] = useState(false);
 
 	return (
 		<div className="title"> Joined Channels <span><HiPlusCircle className="add-icon" onClick={() => setButtonPopup(true)} /></span><hr />
 			<CreateChannelPopup trigger={buttonPopup} setTrigger={setButtonPopup} />
-			{chanList.map((channel) => (
-				<ul>
-					<p>{channel.name}</p>
-				</ul>
-			))}
 		</div>
 	);
 }
@@ -94,69 +108,91 @@ function PublicChannelList() { /** to be modified later */
 	);
 }
 
-function ChannelMemberList() {
+function ChannelMemberList(/**channel ID */) {
 	return (
 		<div className="title"> Members <hr />
 		</div>
 	);
 }
 
-export function ChannelMessages(/*channelID*/) {
-	
+
+function ChannelMessages(props: { currentUser: IUser, setCurrentUser: Function }) {
 	const [newInput, setNewInput] = useState("");
 	const [messageList, setMessageList] = useState<any[]>([]);
+	const [newMessage, setNewMessage] = useState("");
+
+	const { currentUser, setCurrentUser } = props;
+	const myUser = useAppSelector(state => state.user);
 
 	const handleSubmitNewMessage = (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
 		if (newInput != "")
-			socket.emit('sendMessageChannel', { newInput }); //
+			socket.emit('sendMessageChannel', { chanid: 7, userid: 1, message: newInput }); //to be modified later
 		setNewInput("");
 	}
-
-	socket.on('sendMessageChannelOk', (messageChannelDto) => {
-		buildNewMessage(messageChannelDto);
+	socket.on('sendMessageChannelOk', (newMessage) => {
+		console.log(newMessage);
+		buildNewMessage(newMessage);
 	})
 
 	const buildNewMessage = (data: any) => {
-		setMessageList([...messageList, data]);
+		// setMessageList([...messageList, data]);
+		console.log(data);
+		setNewMessage(data);
+		console.log(newMessage);
 	}
 
 	return (
 		<div className="chat-body">
 			<div className="chat-messages">
-				{messageList.map((chat) => (
-					<div key={chat.newInput} className="__wrap">
-						<div className="message_info">
-							<span className="user-avatar">
-								<img src="https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/160/apple/81/woman-gesturing-ok-type-1-2_1f646-1f3fb-200d-2640-fe0f.png"></img></span>
-							UserName
-							<span className="timestamp"> 0000/00/00 00:00</span>
-						</div>
-						<p>{chat.newInput}</p>
+				<div className="__wrap">
+					<div className="message_info">
+						<span className="user-avatar">
+							<img src={`${process.env.REACT_APP_BACK}user/${currentUser.id}/avatar`}></img></span>
+						{currentUser.username}
+						<span className="timestamp"> 0000/00/00 00:00</span>
 					</div>
-				))}
+					<p>{newMessage}</p>
+				</div>
 			</div>
 			<form id="input_form" onSubmit={(e) => { handleSubmitNewMessage(e); }}>
 				<input type="text" onChange={(e) => { setNewInput(e.target.value) }}
-					placeholder="type message here" value={newInput}/>
+					placeholder="type message here" value={newInput} />
 			</form>
 
 		</div>
 	);
 }
 
-
 export function Channels() {
+	const [currentUser, setCurrentUser] = useState<IUser | undefined>(undefined);
+	let avatar: string = "";
+	let { id } = useParams();
+
+	useEffect(() => {
+		if (id) {
+			const fetchid = async () => {
+				const response = await fetch(`${process.env.REACT_APP_BACK}user/id/${id}`, {
+					method: 'GET',
+				})
+				setCurrentUser(await response.json());
+			}
+			fetchid()
+		}
+	}, [id])
+
 	return (
 		<div id="chat-container">
-		<div className="left-sidebar">
-			<JoinedChannelList />
-			{/* <PublicChannelList /> */}
+			<div className="left-sidebar">
+				<JoinedChannelList />
+				<ChannelList />
+			</div>
+			{currentUser &&
+				<ChannelMessages currentUser={currentUser} setCurrentUser={setCurrentUser} />
+			}
+			<div className="right-sidebar">
+				<ChannelMemberList />
+			</div>
 		</div>
-			<ChannelMessages />
-		<div className="right-sidebar">
-			<ChannelMemberList />
-		</div>
-	</div>
 	);
 }
