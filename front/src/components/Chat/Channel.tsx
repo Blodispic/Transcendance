@@ -15,7 +15,7 @@ function CreateChannelPopup(props: any) {
 	const handleCreateNewChan = () => {
 		console.log({chanName});
 		if (chanName != "")
-			socket.emit('joinChannel', {chanName});
+			socket.emit('createChannel', {chanName: chanName, chanType: 0, password: "test"});
 		setChanName("");
 		// channel mode here
 		props.setTrigger(false);

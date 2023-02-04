@@ -6,7 +6,7 @@ import { UserService } from './user.service';
 import { Results } from '../results/entities/results.entity';
 import { FriendRequest } from './entities/friend-request.entity';
 import { JwtModule } from '@nestjs/jwt';
-import { jwtConstants } from 'src/oauth/constants';
+import { jwtConstants } from 'src/Oauth/constants';
 
 @Module({
   controllers: [UserController],

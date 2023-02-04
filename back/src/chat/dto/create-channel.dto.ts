@@ -1,5 +1,5 @@
-export class CreatePublicChannelDto {
-    readonly channame: string;
+export class CreateChannelDto {
+    readonly chanName: string;
 	readonly password?: string;
 	readonly chanType: number;
 }

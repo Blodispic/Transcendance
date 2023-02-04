@@ -16,6 +16,7 @@ import { MessageUserDto } from "./dto/message-user.dto";
 import { userList } from "src/app.gateway";
 import { AppGateway } from "src/app.gateway";
 import { CreatePublicChannelDto } from "./dto/create-channel.dto";
+import { ChanPasswordDto } from "./dto/chan-password.dto";
 
 /*ToDo
   - check if password et password ok pour join chan
@@ -28,6 +29,8 @@ import { CreatePublicChannelDto } from "./dto/create-channel.dto";
   - owner can give owner role to others users
 
   - owner can mute and ban for a fixed term
+
+  - check les messages d'erreur -> throw ? send message: error ?
 
 */
 
@@ -82,7 +85,9 @@ async handleSendMessageChannel(@ConnectedSocket() client: Socket, @MessageBody()
   // channel.users.forEach(user => {
   //     this.server.to("user-" + user.id).emit("sendMessageChannel", messageChannelDto);
   // });
-  this.server.to("chan" + messageChannelDto.chanid).emit("sendMessageChannelOK", messageChannelDto.message);
+
+  const messageChannelok = { message: messageChannelDto.message, user: client.handshake.auth.user}
+  this.server.to("chan" + messageChannelDto.chanid).emit("sendMessageChannelOK", messageChannelok);
 
 }
 
@@ -90,35 +95,39 @@ async handleSendMessageChannel(@ConnectedSocket() client: Socket, @MessageBody()
 async handleJoinChannel(@ConnectedSocket() client: Socket, @MessageBody() joinChannelDto: JoinChannelDto) {    
   const channel = await this.channelService.getById(joinChannelDto.chanid);
   if (channel === null)
-    throw new BadRequestException();
+    throw new BadRequestException(); // no such channel
+  if (channel.password && channel.password != joinChannelDto.password) 
+    throw new BadRequestException(); // wrong password
   this.channelService.add({
     user: client.handshake.auth.user,
     chanId: channel.id,
   });
   client.join("chan" + joinChannelDto.chanid);
   client.emit("joinChannelOK", channel.id);
+  this.server.to("chan" + channel.id).emit("joinChannel", client.handshake.auth.user);
 }
 
-@SubscribeMessage('createPublicChannel')
+@SubscribeMessage('createChannel')
 async handleCreatePublicChannel(@ConnectedSocket() client: Socket, @MessageBody() createPublicChannelDto: CreatePublicChannelDto) {    
-  const channel = await this.channelService.getByName(createPublicChannelDto.channame);
+  const channel = await this.channelService.getByName(createPublicChannelDto.chanName);
+  
   if (channel != null)
-    throw new BadRequestException();
-    console.log(client.handshake.auth.user.username);
-    console.log(createPublicChannelDto.channame);
-    
+    throw new BadRequestException(); //channame already exist, possible ? if private/protected possible ?
+
   let user: User = client.handshake.auth.user;
   const new_channel = await this.channelService.create({
-      name: createPublicChannelDto.channame,
+      name: createPublicChannelDto.chanName,
       owner: user,
       users:[ user ],
+      chanType: createPublicChannelDto.chanType,
+      password: createPublicChannelDto.password,
      });
   this.channelService.add({
     user: user,
     chanId: new_channel.id,
   });
   client.join("chan" + new_channel.id);
-  client.emit("createPublicChannelOk", new_channel.id);
+  client.emit("createChannelOk", new_channel.id);
 }
 
 @SubscribeMessage('leaveChannel')
@@ -126,10 +135,26 @@ async handleLeaveChannel(@ConnectedSocket() client: Socket, @MessageBody() leave
   const channel = await this.channelService.getById(leaveChannelDto.chanid);
   const user = client.handshake.auth.user;
   if (channel === null || user === null)
-    throw new BadRequestException();
+    throw new BadRequestException(); // no such channel/user, shouldn't happened
   this.channelService.rm( { user, chanid: leaveChannelDto.chanid});
   client.leave("chan" + leaveChannelDto.chanid);
+  client.emit("leaveChannelOK", channel.id);
+  this.server.to("chan" + channel.id).emit("leaveChannel", user);
 }
+
+@SubscribeMessage('password') // add and rm or only one ?
+async handlePassword(@ConnectedSocket() client: Socket, @MessageBody() chanPasswordDto: ChanPasswordDto) {
+  const channel = await this.channelService.getById(chanPasswordDto.chanid);
+  const user = client.handshake.auth.user;
+  if (channel === null || user === null)
+    throw new BadRequestException(); // no such channel or user
+  if (channel.owner != user) // for now only the real owner/admin, soon any owner/admin
+    throw new BadRequestException(); // user willing to change password isn't admin/owner
+  // update channel here with new password ( add et rm ?)
+}
+
+
+
 
  afterInit(server: Server) {
 //    console.log(server);
@@ -138,22 +163,7 @@ async handleLeaveChannel(@ConnectedSocket() client: Socket, @MessageBody() leave
  
 //  handleDisconnect(client: Socket) {
 //    console.log(`Disconnected: ${client.id}`);
-
-
-//    //Do stuffs
 //  }
  
-//  handleConnection(client: Socket, ...args: any[]) {
-//   // console.log("client id ", client.handshake.headers.authorization)
-//    console.log(`Connected ${client.id}`);
-//    console.log(client.handshake);
-//    console.log(`Connecteddd ${client.id}`);
-//   //  const token = {
-//   //    id: client.
-//   //  }
-//   //  console.log("token.id :", token.id);
-   
-//   //  client.join("user-" + token.id);
-//    //Do stuffs
-//  }
+
 }

@@ -19,8 +19,8 @@ export class Channel {
 	@Column('int')
 	chanType: ChanType
 
-	@Column()
-	password?: string;
+	@Column({ nullable: true })
+	password: string;
 
 	@ManyToOne(() => User)
 	owner: User
