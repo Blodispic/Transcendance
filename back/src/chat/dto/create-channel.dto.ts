@@ -1,10 +1,5 @@
 export class CreatePublicChannelDto {
     readonly channame: string;
-	// readonly password: string;
-	// à améliorer
+	readonly password?: string;
+	readonly chanType: number;
 }
-
-// export class CreatePrivateChannelDto {
-// 	readonly channame: string;
-// 	readonly password: string;
-// }

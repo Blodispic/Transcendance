@@ -17,6 +17,20 @@ import { userList } from "src/app.gateway";
 import { AppGateway } from "src/app.gateway";
 import { CreatePublicChannelDto } from "./dto/create-channel.dto";
 
+/*ToDo
+  - check if password et password ok pour join chan
+    + password has to be chiffré
+
+  - check if blocked user in case of messageSend
+
+  - owner can add, modify, delete password ( =? change channel's status ?)
+
+  - owner can give owner role to others users
+
+  - owner can mute and ban for a fixed term
+
+*/
+
 @WebSocketGateway({
 	cors: {
 	  origin: '*',
@@ -106,33 +120,6 @@ async handleCreatePublicChannel(@ConnectedSocket() client: Socket, @MessageBody(
   client.join("chan" + new_channel.id);
   client.emit("createPublicChannelOk", new_channel.id);
 }
-
-// @SubscribeMessage('createPrivateChannel')
-// async handleCreatePrivateChannel(@ConnectedSocket() client: Socket, @MessageBody() createPrivateChannelDto: CreatePublicChannelDto) {    
-//   if (createPrivateChannelDto.password.length === 0)
-//     throw new BadRequestException();
-//   const channel = await this.channelService.getByName(createPrivateChannelDto.channame);
-//   if (channel != null)
-//     throw new BadRequestException();
-  
-//   const user = client.handshake.auth.user;
-//   if (user === null)
-//     throw new BadRequestException();
-//   // const createPrivateChannelDto = { 
-//   //   name: joinChannelDto.channame,
-//   //   owner: user,
-//   // }
-//   const new_channel = await this.channelService.create({
-//       name: createPrivateChannelDto.channame,
-//       owner: user
-//       // password: createPrivateChannelDto.password;
-//      });
-//   this.channelService.add({
-//     user: user,
-//     chanId: new_channel.id,
-//   });
-//   client.join("chan" + new_channel.id);
-// }
 
 @SubscribeMessage('leaveChannel')
 async handleLeaveChannel(@ConnectedSocket() client: Socket, @MessageBody() leaveChannelDto: LeaveChannelDto) {

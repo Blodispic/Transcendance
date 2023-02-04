@@ -21,6 +21,7 @@ function App() {
         socket = io("http://" + window.location.hostname + ":4000", {
         auth: {
           token: token,
+          user: myStore.user,
         }
       });
     }
