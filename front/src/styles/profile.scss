@@ -8,7 +8,6 @@
     height: 400px;
     display: flex;
     flex-direction: column;
-    align-items: center;
     background-image: url(https://cdn.intra.42.fr/coalition/cover/305/téléchargement__2_.png);
     background-size: cover;
     background-position: center;
@@ -21,15 +20,13 @@
 
         .left-part {
             width: 300px;
-            text-align: -webkit-center;
             align-self: center;
 
             .avatar {
                 height: 130px;
-                width: 120px;
+                width: 130px;
                 border-radius: 50%;
-                padding-right: 15px;
-                margin: 10px;
+                margin: auto;
                 align-self: center;
                 overflow: hidden;
 
@@ -42,7 +39,6 @@
 
         .info-header {
             width: 100%;
-            text-align: -webkit-center;
 
             .stat-header {
 
@@ -54,7 +50,6 @@
                 flex: 1;
                 display: flex;
                 justify-content: space-around;
-                text-align: center;
                 background-color: rgba(32, 32, 38, 0.85);
                 border-radius: 4px;
 
@@ -68,7 +63,7 @@
                 .block {
                     height: 80%;
                     background-color: rgba(32, 32, 38, 0.85);
-                    padding: 10px;
+
                     margin: 0 20px 0 0;
                     border-radius: 4px;
                     flex: 1;
@@ -104,13 +99,12 @@
 
 
     .search {
-        margin-top: 30px;
         width: 50%;
         height: 60px;
         border-radius: 20px;
         background-color: rgba(32, 32, 38, 0.82);
         border-radius: 60px;
-
+        margin: 30px auto 0 auto;
         .icon-search {
             width: 60px;
             height: 60px;

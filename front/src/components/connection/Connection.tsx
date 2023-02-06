@@ -30,8 +30,6 @@ export default function Connection() {
         const oauthCode = searchParams.get('code'); // Tu lui dit de recuperer le parametre "code" dans l'url
 
         if (oauthCode) {
-            console.log("ca rentre");
-            
             const fetchcode = async () => {
                 await fetch(`${process.env.REACT_APP_BACK}oauth/token`, {
                     method: 'POST',
@@ -73,12 +71,12 @@ export default function Connection() {
                     <div className='button'>
                     <button className="button pulse pointer color_sign" >
                         <a href={getAuthorizeHref()}>
-                            log
+                            sign
                         </a>
                     </button>
                     <button className="button pulse pointer color_log" >
                         <a href={getAuthorizeHref()}>
-                            sign
+                            log
                         </a>
                     </button>
                     </div>
