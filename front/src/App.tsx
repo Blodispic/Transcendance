@@ -17,6 +17,7 @@ function App() {
 
 
   useEffect(() => {
+    console.log(myStore);
     if (myStore.isLog == true && token != undefined) {
         socket = io("http://" + window.location.hostname + ":4000", {
         auth: {

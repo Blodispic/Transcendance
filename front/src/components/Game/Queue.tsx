@@ -4,6 +4,7 @@ import { useAppSelector } from '../../redux/Hook';
 import { Player } from './Game';
 import { useNavigate } from "react-router-dom";
 import { socket } from '../../App';
+import { debug } from 'console';
 
 export default function Queue() {
 
@@ -12,6 +13,7 @@ export default function Queue() {
 
 	function addToWaitingRoom() {
 		socket.emit("addToWaitingRoom", myUser.user);
+        console.log(myUser.user);
 		return ;
 	}
 
@@ -21,9 +23,8 @@ export default function Queue() {
 
     useEffect(() => {
         const fetchuser = async () => {
-            await fetch(`${process.env.REACT_APP_BACK}game/`, {
+            await fetch(`${process.env.REACT_APP_BACK}game/${myUser.user!.id}`, {
                 method: 'POST',
-                body: JSON.stringify({ id: myUser.user!.id }),
             })
         }
         fetchuser()
