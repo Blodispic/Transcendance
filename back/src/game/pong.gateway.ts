@@ -21,12 +21,12 @@ export class PongGateway implements OnGatewayDisconnect, OnGatewayInit {
 	constructor(private gameService: GameService) {}
 
 	afterInit(server: Server) {
-		// this.gameService.startGame(this.se`rver);
+		// this.gameService.startGame(this.server);
 	}
 
 	// handleConnection(client: any, ...args: any[]) {
 	// 	console.log("Client: " + client.id + " Connected");
-	// 	//Need to add user to userList`
+	// 	//Need to add user to userList
 	// }
 
 	handleDisconnect(client: any) {
