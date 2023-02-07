@@ -17,10 +17,10 @@ function App() {
 
 
   useEffect(() => {
-    if (myStore.isLog == true && token != undefined) {
-        socket = io("http://" + window.location.hostname + ":4000", {
+    if (myStore.isLog == true && token != undefined && myStore.user && myStore.user.username) {
+        socket = io(`${process.env.REACT_APP_BACK}`, {
         auth: {
-          token: token,
+          user: myStore.user,
         }
       });
     }
@@ -38,10 +38,8 @@ function App() {
     const data: IUser = await response.json();
     console.log("data=", data);
     
-    console.log(myStore.user);
     dispatch(setUser(data));
     dispatch(log_unlog());
-    console.log(myStore.user);
     
   }
   if (myStore.user === undefined) {
