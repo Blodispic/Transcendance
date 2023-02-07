@@ -1,40 +1,25 @@
-import { toUnicode } from "punycode";
-import { io, Socket } from "socket.io-client";
-import '../../styles/chat.scss'
-import { ChannelList } from "./Channel";
-import React from "react";
+import { Channels } from "./Channel";
+import { useState } from "react";
 import { socket } from "../../App"
+import { Tab, TabList, TabPanel, Tabs } from "react-tabs";
+import { DirectMessage } from "./DirectMessage";
+import 'react-tabs/style/react-tabs.css';
+import '../../styles/chat.scss'
 
-function DMList() {
-	return <ul>
-		<li>DM 1</li>
-		<li>DM 2</li>
-	</ul>
-}
-
-function UserList() {
-	return <ul>
-		<li> user1 </li>
-		<li> user2 </li>
-		<li> user3 </li>
-	</ul>
-}
-
-function ChatBody() {
+export function ChatBody() {
 	
-	const [newInput, setNewInput] = React.useState("");
-	const [messageList, setMessageList] = React.useState<any[]>([]);
+	const [newInput, setNewInput] = useState("");
+	const [messageList, setMessageList] = useState<any[]>([]);
 
 	const handleSubmitNewMessage = (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
 		if (newInput != "")
-			socket.emit('sendMessage', { newInput }); //
-		// console.log( socket.auth.user.username );
+			socket.emit('sendMessageUser', { newInput }); //
 		setNewInput("");
 	}
 
-	socket.on('recMessage', (data) => {
-		buildNewMessage(data);
+	socket.on('sendMessageUserOk', (messageUserDto) => {
+		buildNewMessage(messageUserDto);
 	})
 
 	const buildNewMessage = (data: any) => {
@@ -45,10 +30,10 @@ function ChatBody() {
 		<div className="chat-body">
 			<div className="chat-messages">
 				{messageList.map((chat) => (
-
 					<div key={chat.newInput} className="__wrap">
 						<div className="message_info">
-							<span className="user-avatar"><img src="https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/160/apple/81/woman-gesturing-ok-type-1-2_1f646-1f3fb-200d-2640-fe0f.png"></img></span>
+							<span className="user-avatar">
+								<img src="https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/160/apple/81/woman-gesturing-ok-type-1-2_1f646-1f3fb-200d-2640-fe0f.png"></img></span>
 							UserName
 							<span className="timestamp"> 0000/00/00 00:00</span>
 						</div>
@@ -58,7 +43,7 @@ function ChatBody() {
 			</div>
 			<form id="input_form" onSubmit={(e) => { handleSubmitNewMessage(e); }}>
 				<input type="text" onChange={(e) => { setNewInput(e.target.value) }}
-					placeholder="type message here" value={newInput} />
+					placeholder="type message here" value={newInput}/>
 			</form>
 
 		</div>
@@ -66,21 +51,18 @@ function ChatBody() {
 }
 
 export default function Chat() {
-	const [channelSet, setChannelSet] = React.useState(false)
-	const [DmSet, setDmSet] = React.useState(true)
-
 	return (
-		<div id="chat-container">
-			<div className="left-sidebar">
-				<ChannelList />
-			</div>
-			
-			{ channelSet == false && DmSet == true &&
-				<ChatBody />
-			}
-			<div className="right-sidebar">
-				<UserList />
-			</div>
-		</div>
+			<Tabs className="chat-tab">
+				<TabList>
+					<Tab>Channels</Tab>
+					<Tab>DM</Tab>
+				</TabList>
+			<TabPanel>
+				<Channels />
+			</TabPanel>
+			<TabPanel>
+				<DirectMessage />
+			</TabPanel>
+			</Tabs>
 	);
 }
