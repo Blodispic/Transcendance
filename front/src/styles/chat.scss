@@ -42,6 +42,10 @@ $tab-color: rgb(121, 121, 121);
 				float: right;
 			}
 		}
+
+		.channel-name {
+			cursor: pointer;
+		}
 	}
 
 	.chat-body {

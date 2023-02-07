@@ -58,7 +58,7 @@ function ChannelList() {
 		<div>
 			{chanList.map(chan => (
 				<ul key={chan.name}>
-					<div onClick={_ => navigate(`chan${chan.id}`)}>{chan.name}</div>
+					<div className="channel-name" onClick={_ => navigate(`chan${chan.id}`)}>{chan.name}</div>
 				</ul>
 			))}
 		</div>
