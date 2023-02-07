@@ -1,9 +1,8 @@
 import { useEffect, useState } from "react";
 import { HiOutlineXMark, HiPlusCircle } from "react-icons/hi2";
-import { Link, useNavigate } from "react-router-dom";
-import { useFetcher, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { socket } from "../../App";
-import { IUser } from "../../interface/User";
+import { IChannel } from "../../interface/Channel";
 import { useAppSelector } from "../../redux/Hook";
 import '../../styles/chat.scss'
 
@@ -13,7 +12,6 @@ function CreateChannelPopup(props: any) {
 		if (chanName != "")
 			socket.emit('createPublicChannel', { channame: chanName });
 		setChanName("");
-		// add channel mode
 		props.setTrigger(false);
 	}
 
@@ -33,14 +31,6 @@ function CreateChannelPopup(props: any) {
 	) : <></>;
 }
 
-/** to be moved to interface directory later */
-interface IChannel {
-	id: number;
-	name: string;
-	owner: IUser;
-	users: IUser[];
-}
-
 function ChannelList() {
 	const [chanList, setChanList] = useState<IChannel[]>([]);
 	const [chanId, setChanId] = useState("");
@@ -54,18 +44,6 @@ function ChannelList() {
 		setChanId(data);
 	}
 	console.log('chanId: ' + chanId);
-	// useEffect(() => {
-	// 	// if (chanId !== 0) {
-	// 		const getChannel =async () => {
-	// 			const response = await fetch(`${process.env.REACT_APP_BACK}channel`, {
-	// 				method: 'Get',
-	// 					});
-	// 					console.log(response);
-	// 					setChanList([...chanList, await response.json()]);
-	// 				}
-	// 				getChannel();
-	// 			// }
-	// 			}, []);
 	useEffect(() => {
 		fetch(`${process.env.REACT_APP_BACK}channel/${chanId}`)
 			.then(response => {
@@ -81,7 +59,6 @@ function ChannelList() {
 			{chanList.map(chan => (
 				<ul key={chan.name}>
 					<div onClick={_ => navigate(`chan${chan.id}`)}>{chan.name}</div>
-					{/* <Link to={`chan${chan.id}`}>{chan.name}</Link> */}
 				</ul>
 			))}
 		</div>
@@ -98,7 +75,7 @@ function JoinedChannelList() {
 	);
 }
 
-function PublicChannelList() { /** to be modified later */
+function PublicChannelList() {
 	return (
 		<div className="title" id="upper-side">Public Channels <hr />
 			<ul>
@@ -108,26 +85,24 @@ function PublicChannelList() { /** to be modified later */
 	);
 }
 
-function ChannelMemberList(/**channel ID */) {
+function ChannelMemberList() {
 	return (
 		<div className="title"> Members <hr />
 		</div>
 	);
 }
 
-
-function ChannelMessages(props: { currentUser: IUser, setCurrentUser: Function }) {
+function ChannelMessages() {
 	const [newInput, setNewInput] = useState("");
 	const [messageList, setMessageList] = useState<any[]>([]);
 	const [newMessage, setNewMessage] = useState("");
 
-	const { currentUser, setCurrentUser } = props;
 	const myUser = useAppSelector(state => state.user);
 
 	const handleSubmitNewMessage = (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
 		if (newInput != "")
-			socket.emit('sendMessageChannel', { chanid: 7, userid: 1, message: newInput }); //to be modified later
+			socket.emit('sendMessageChannel', { chanid: 1, userid: 1, message: newInput }); //to be modified later
 		setNewInput("");
 	}
 	socket.on('sendMessageChannelOk', (newMessage) => {
@@ -136,7 +111,6 @@ function ChannelMessages(props: { currentUser: IUser, setCurrentUser: Function }
 	})
 
 	const buildNewMessage = (data: any) => {
-		// setMessageList([...messageList, data]);
 		console.log(data);
 		setNewMessage(data);
 		console.log(newMessage);
@@ -148,8 +122,8 @@ function ChannelMessages(props: { currentUser: IUser, setCurrentUser: Function }
 				<div className="__wrap">
 					<div className="message_info">
 						<span className="user-avatar">
-							<img src={`${process.env.REACT_APP_BACK}user/${currentUser.id}/avatar`}></img></span>
-						{currentUser.username}
+							<img src="https://www.handiclubnimois.fr/wp-content/uploads/2020/10/blank-profile-picture-973460_1280.png"></img></span>
+						Username
 						<span className="timestamp"> 0000/00/00 00:00</span>
 					</div>
 					<p>{newMessage}</p>
@@ -165,31 +139,13 @@ function ChannelMessages(props: { currentUser: IUser, setCurrentUser: Function }
 }
 
 export function Channels() {
-	const [currentUser, setCurrentUser] = useState<IUser | undefined>(undefined);
-	let avatar: string = "";
-	let { id } = useParams();
-
-	useEffect(() => {
-		if (id) {
-			const fetchid = async () => {
-				const response = await fetch(`${process.env.REACT_APP_BACK}user/id/${id}`, {
-					method: 'GET',
-				})
-				setCurrentUser(await response.json());
-			}
-			fetchid()
-		}
-	}, [id])
-
 	return (
 		<div id="chat-container">
 			<div className="left-sidebar">
 				<JoinedChannelList />
-				{/* <ChannelList /> */}
+				<ChannelList />
 			</div>
-			{currentUser &&
-				<ChannelMessages currentUser={currentUser} setCurrentUser={setCurrentUser} />
-			}
+				<ChannelMessages />
 			<div className="right-sidebar">
 				<ChannelMemberList />
 			</div>
