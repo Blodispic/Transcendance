@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import '../../styles/connection.scss'
 import { useAppDispatch, useAppSelector } from '../../redux/Hook';
 import { change_name, log_unlog } from "../../redux/user";
 

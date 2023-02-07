@@ -1,6 +1,5 @@
 import { toUnicode } from "punycode";
 import { io, Socket } from "socket.io-client";
-import '../../styles/chat.scss'
 import { ChannelList } from "./Channel";
 import React from "react";
 import { socket } from "../../App"

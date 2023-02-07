@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import { Navigate, useNavigate, useSearchParams } from "react-router-dom";
-import '../../styles/connection.scss'
 import NameForm from "./form_name_avatar"
 import { useAppDispatch, useAppSelector } from "../../redux/Hook";
 import { setUser } from "../../redux/user";

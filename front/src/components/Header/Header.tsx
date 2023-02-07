@@ -1,6 +1,4 @@
 import React, { useState } from 'react';
-import '../../styles/nav.scss'
-import '../../styles/profile.scss'
 import { Link } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../redux/Hook';
 import { FaUserAlt } from "react-icons/fa";

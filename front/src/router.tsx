@@ -5,7 +5,6 @@ import Profile from './components/Profile/Profile'
 import Connection from './components/connection/Connection';
 import Header from './components/Header/Header';
 import Chat from './components/Chat/Chat';
-import './styles/styles.scss';
 import { createBrowserRouter, Outlet } from "react-router-dom";
 import Queue from './components/Game/Queue';
 import { Navigate } from "react-router-dom";

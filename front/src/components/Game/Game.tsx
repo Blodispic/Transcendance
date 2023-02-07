@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { Circle, Layer, Rect, Stage, Text } from "react-konva";
 import { useBeforeUnload } from "react-router-dom";
 import { socket } from "../../App";
-import "../../styles/game.scss";
 import { Defeat, Victory } from "./Result";
 
 export interface Vec2 {

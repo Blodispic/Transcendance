@@ -2,7 +2,6 @@ import * as React from "react";
 import { Value } from "sass";
 import { isFunctionDeclaration } from "typescript";
 import { socket } from "../../App";
-import '../../styles/chat.scss'
 
 
 /**
