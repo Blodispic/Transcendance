@@ -64,7 +64,7 @@ export default function NameForm() {
                     {
                         newname &&
                         <button onClick={(e) => fetch_name_avatar(e)}>
-                            <a>okk</a>
+                            <a>ok</a>
                         </button>
                     }
                 </form >
