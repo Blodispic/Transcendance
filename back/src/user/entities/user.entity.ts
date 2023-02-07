@@ -24,9 +24,10 @@ export class User {
   @Column({ unique: true })
   email: string;
 
-  @Column({
-    nullable: true,
-  })
+  @Column({ nullable: true })
+  two_factor_secret: string;
+
+  @Column({ nullable: true })
   avatar: string;
 
   @Column()

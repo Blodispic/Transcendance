@@ -7,6 +7,7 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { User } from './entities/user.entity';
 import { UserService } from './user.service';
 import { user } from 'src/game/game.controller';
+import { authenticator } from 'otplib';
 
 @Controller('user')
 export class UserController {
@@ -46,6 +47,22 @@ export class UserController {
   GetbyAccessToken(@Body() token: any) {
     return this.userService.GetByAccessToken(token);
   }
+
+  @Post('2fa/enable')
+  async enable2FA(@Body() user: any) {
+    const realUser = await this.userService.getById(user.id);
+    const secret = authenticator.generateSecret();
+    this.userService.enable2FA(realUser, secret);
+    const qrCode = await this.userService.generateQRCode(secret);
+    return { qrCode };
+  }
+
+  @Post('2fa/check')
+  async checkCode(@Body() user: { id: number, code: string }) {
+      const result = await this.userService.check2FA(user.id, user.code);
+    return { result };
+  }
+  
 
   @Post('friend-request/status/:id')
   async GetFriendRequestStatus(@Param('id') id: number, @Body() user: User) {

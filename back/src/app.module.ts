@@ -5,7 +5,7 @@ import { AppService } from './app.service';
 import { User } from './user/entities/user.entity';
 import { UserModule } from './user/user.module';
 import { GameModule } from './game/game.module';
-import { OauthModule } from './oauth/oauth.module';
+import { OauthModule } from './Oauth/Oauth.module';
 import { ConfigModule } from '@nestjs/config';
 import { ChatGateway } from './chat/chat.gateway';
 import { AppGateway } from './app.gateway';
@@ -15,10 +15,6 @@ import { ChannelModule } from './chat/channel/channel.module';
 import { ResultModule } from './results/results.module';
 import { Channel } from './chat/channel/entities/channel.entity';
 import { FriendRequest } from './user/entities/friend-request.entity';
-import { 2faModule } from './2fa/2fa.module';
-import { TwofaService } from './twofa/twofa.service';
-import { TwofaController } from './twofa/twofa.controller';
-import { TwofaModule } from './twofa/twofa.module';
 
 @Module({
   imports: [
@@ -42,9 +38,8 @@ import { TwofaModule } from './twofa/twofa.module';
     ChannelModule,
     ResultModule,
     UserModule,
-    2faModule, TwofaModule,
   ],
-  controllers: [AppController, TwofaController],
-  providers: [AppService, ChatGateway, AppGateway, TwofaService],
+  controllers: [AppController],
+  providers: [AppService, ChatGateway, AppGateway],
 })
 export class AppModule { }
