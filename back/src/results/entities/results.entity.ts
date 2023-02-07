@@ -6,8 +6,8 @@ export class Results {
   @PrimaryGeneratedColumn()
   id: number;
 
-  // @ManyToOne(type => User, user => user.results)
-  // user: User;
+  @ManyToOne(type => User, user => user.results)
+  user: User;
 
   @Column()
   winner: string;

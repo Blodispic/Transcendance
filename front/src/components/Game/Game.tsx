@@ -46,6 +46,7 @@ export interface GameState {
 	player2: Player;
 	ball: Ball;
 	gameFinished: boolean;
+	extra: boolean;
 }
 
 const GAME_RATIO = 1.5;
@@ -97,6 +98,7 @@ let gameStateDefault: GameState = {
 	},
 	ball: balldefault,
 	gameFinished: false,
+	extra: true,
 };
 
 resetState(gameStateDefault);
@@ -242,6 +244,8 @@ function convertState(state: GameState) {
 	newState.player2.paddle.speed.y = state.player2.paddle.speed.y;//* (state.client_area.y / (GAME_INTERNAL_WIDTH * GAME_RATIO));
 
 	newState.resetCooldown = state.resetCooldown;
+
+	newState.extra = state.extra;
 
 	// console.log("padlePosition = x: " + Math.round(newState.player1.paddle.position.x));
 	// console.log("padlePosition = y: " + Math.round(newState.player1.paddle.position.y) + "\n");
@@ -425,7 +429,9 @@ function moveBall(ball: Ball) {
 function movePlayer(player: Player, state: GameState) {
 	player.paddle.speed = { x: 0, y: 0 };
 	if (player.side === 0) {
-		if (player.input.left && player.input.right)
+		if (state.extra === false && player.input.left && player.input.right)
+			player.paddle.speed.y = 0;
+		else if (state.extra && player.input.left && player.input.right)
 			player.paddle.speed.y = -4;
 		else if (player.input.left && player.paddle.position.x > 0)
 			player.paddle.speed.x = -8;
@@ -435,7 +441,9 @@ function movePlayer(player: Player, state: GameState) {
 			player.paddle.speed.y = 2;
 	}
 	else {
-		if (player.input.left && player.input.right)
+		if (state.extra === false && player.input.left && player.input.right)
+			player.paddle.speed.y = 0;
+		else if (state.extra && player.input.left && player.input.right)
 			player.paddle.speed.y = 4;
 		else if (player.input.left && player.paddle.position.x > 0)
 			player.paddle.speed.x = -8;

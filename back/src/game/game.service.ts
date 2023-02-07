@@ -61,7 +61,7 @@ export class GameService {
 			console.log("Socket2: " ,socket2.handshake.auth.user);
 			player1.name = socket1.handshake.auth.user.username;
 			player2.name = socket2.handshake.auth.user.username;
-			this.gameRoom.push(new Game(this, server, player1, player2));
+			this.gameRoom.push(new Game(this, server, player1, player2, false));
 			server.to(player1.socket).emit("RoomStart", this.gameRoom.length, player1);
 			server.to(player2.socket).emit("RoomStart", this.gameRoom.length, player2);
 			console.log("RoomStart ID: " + this.gameRoom.length);
@@ -70,6 +70,53 @@ export class GameService {
 		}
 		else
 			return ('Waiting for more Players...');
+	}
+
+	startCustomGame(server: Server, userSocket1: any, userSocket2: any, extra: boolean)
+	{
+		const socket1 = userSocket1;
+		const socket2 = userSocket2;
+
+		let player1: Player = {
+			paddle: {
+				position: {
+					x: GAME_INTERNAL_WIDTH / 2 - paddleDimensions.x / 2,
+					y: GAME_INTERNAL_WIDTH * GAME_RATIO - paddleDimensions.y,
+				},
+				speed: vector_zero(),
+				angle: 0,
+			},
+			input: inputdefault,
+			name: "Player1",
+			score: 0,
+			side: 0,
+			socket: socket1.id,
+		};
+		let player2: Player = {
+			paddle: {
+				position: {
+					x: GAME_INTERNAL_WIDTH / 2 - paddleDimensions.x / 2,
+					y: 0,
+				},
+				speed: vector_zero(),
+				angle: 0,
+			},
+			input: inputdefault,
+			name: "Player2",
+			score: 0,
+			side: 1,
+			socket: socket2.id,
+		};
+		console.log("Socket1: " ,socket1.handshake.auth.user);
+		console.log("Socket2: " ,socket2.handshake.auth.user);
+		player1.name = socket1.handshake.auth.user.username;
+		player2.name = socket2.handshake.auth.user.username;
+		this.gameRoom.push(new Game(this, server, player1, player2, extra));
+		server.to(player1.socket).emit("RoomStart", this.gameRoom.length, player1);
+		server.to(player2.socket).emit("RoomStart", this.gameRoom.length, player2);
+		console.log("RoomStart ID: " + this.gameRoom.length);
+		console.log("Player1: " + player1.socket);
+		console.log("Player2: " + player2.socket);
 	}
 
 	updateMove1(move1: Move, client: string) {
@@ -183,6 +230,7 @@ let gameStateDefault: GameState = {
 	},
 	ball: balldefault,
 	gameFinished: false,
+	extra: true,
 };
 
 class Game {
@@ -190,7 +238,7 @@ class Game {
 	public gameState: GameState;
 	gameService: GameService;
 
-	constructor(gameService: GameService, server: Server, user1: Player, user2: Player) {
+	constructor(gameService: GameService, server: Server, user1: Player, user2: Player, extra:boolean) {
 		console.log("NEW GAME CREATED");
 		this.gameService = gameService;
 		this.server = server;
@@ -201,6 +249,7 @@ class Game {
 		this.gameState.player1.score = 0;
 		this.gameState.player2.score = 0;
 		this.resetState(this.gameState); 
+		this.gameState.extra = extra;
 
 		this.gameRoomRun();
 	}
@@ -216,13 +265,13 @@ class Game {
 
 	updateMove1(newMove1:Move)
 	{
-		console.log("Move1 received: left:" + newMove1.left + " right: " + newMove1.right);
+		// console.log("Move1 received: left:" + newMove1.left + " right: " + newMove1.right);
 		move1 = newMove1;
 	}
 
 	updateMove2(newMove2:Move)
 	{
-	console.log("Move2 received: left:" + newMove2.left + " right: " + newMove2.right);
+		// console.log("Move2 received: left:" + newMove2.left + " right: " + newMove2.right);
 		move2 = newMove2;
 	}
 
@@ -441,7 +490,9 @@ class Game {
 	movePlayer(player: Player, state: GameState) {
 		player.paddle.speed = { x: 0, y: 0 };
 		if (player.side === 0) {
-			if (player.input.left && player.input.right)
+			if (state.extra === false && player.input.left && player.input.right)
+				player.paddle.speed.y = 0;
+			else if (state.extra && player.input.left && player.input.right)
 				player.paddle.speed.y = -4;
 			else if (player.input.left && player.paddle.position.x > 0)
 				player.paddle.speed.x = -8;
@@ -451,7 +502,9 @@ class Game {
 				player.paddle.speed.y = 2;
 		}
 		else {
-			if (player.input.left && player.input.right)
+			if (state.extra === false && player.input.left && player.input.right)
+				player.paddle.speed.y = 0;
+			else if (state.extra && player.input.left && player.input.right)
 				player.paddle.speed.y = 4;
 			else if (player.input.left && player.paddle.position.x > 0)
 				player.paddle.speed.x = -8;

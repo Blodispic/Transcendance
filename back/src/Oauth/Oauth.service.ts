@@ -47,6 +47,8 @@ export class OauthService {
       },
     });
     const data = await response.json();
+    console.log("data", data);
+    
     const user = await this.usersService.getByLogin(data.login);
     if (user)
       return (user);
