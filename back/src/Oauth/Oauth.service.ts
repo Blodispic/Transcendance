@@ -60,7 +60,7 @@ export class OauthService {
     });
 
     const userDto: CreateUserDto = {
-      username: data.login,
+      username: "",
       login: data.login,
       email: data.email,
       intra_avatar: data.image.link,

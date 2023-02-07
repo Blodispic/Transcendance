@@ -185,7 +185,7 @@ export function Channels() {
 		<div id="chat-container">
 			<div className="left-sidebar">
 				<JoinedChannelList />
-				<ChannelList />
+				{/* <ChannelList /> */}
 			</div>
 			{currentUser &&
 				<ChannelMessages currentUser={currentUser} setCurrentUser={setCurrentUser} />

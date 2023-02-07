@@ -1,11 +1,29 @@
-import * as React from 'react';
+import React, { useState } from 'react';
 import '../../styles/nav.scss'
+import '../../styles/profile.scss'
 import { Link } from 'react-router-dom';
-import { useAppSelector } from '../../redux/Hook';
-
-
+import { useAppDispatch, useAppSelector } from '../../redux/Hook';
+import { FaUserAlt } from "react-icons/fa";
+import { Cookies } from 'react-cookie';
+import { delete_user } from '../../redux/user';
 export default function Header() {
 
+  const [dropdown, setDropdown] = useState<boolean>(false);
+
+  const cookies = new Cookies();
+  const dispatch = useAppDispatch();
+  
+  const dropdownClick = () => {
+    if (dropdown == false)
+      setDropdown(true);
+    else
+      setDropdown(false);
+  }
+  
+  const logout = () => {
+    cookies.remove('Token');
+    dispatch(delete_user())
+  }
 
   const myUser = useAppSelector(state => state.user);
   console.log(myUser);
@@ -21,39 +39,43 @@ export default function Header() {
 
       </div>
 
-      <div className='navbar-right'>
+      <div className='navbar-right' >
 
-        <Link to="/Game">
-          <span className="font-link">
+        <Link to="/Game" onClick={_ => setDropdown(false)}>
+          <span className="font-link" >
             Game
           </span>
         </Link>
 
-        <Link to="/Chat">
-          <span className="font-link">
+        <Link to="/Chat" onClick={_ => setDropdown(false)}>
+          <span className="font-link" >
             Chat
           </span>
         </Link>
+        {
+          myUser.user !== undefined &&
+          <div className='dropdown-container'>
+            <div className="icon-header" onClick={_ => dropdownClick()} >
+              <FaUserAlt />
+            </div>
+            {
+              dropdown == true &&
+              <div className="dropdown">
+                <ul >
+                  <li>
+                    <Link to={`/Profile/${myUser.user.id}`} onClick={_ => setDropdown(false)}>
+                      profile
+                    </Link>
+                  </li>
+                  <li onClick={_ => {logout(); setDropdown(false); } } >
+                    logout
+                  </li>
 
-        <div>
-          {
-            myUser.user !== undefined &&
-            <Link to={`/Profile/${myUser.user.id}`}>
-              <span className="font-link">
-                Profile
-              </span>
-            </Link>
-          }
-
-          {
-             myUser.user === undefined &&
-             <Link to={`/`}>
-            <span className="font-link">
-              Profile
-            </span>
-            </Link>
-          }
-        </div>
+                </ul>
+              </div>
+            }
+          </div>
+        }
       </div>
 
     </div>
