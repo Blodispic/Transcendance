@@ -1,6 +1,7 @@
 import React from 'react';
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import "../../styles/game.scss";
 
 export function Victory() {
 	return (
