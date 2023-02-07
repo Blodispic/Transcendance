@@ -5,7 +5,7 @@ import { AppService } from './app.service';
 import { User } from './user/entities/user.entity';
 import { UserModule } from './user/user.module';
 import { GameModule } from './game/game.module';
-import { OauthModule } from './oauth/oauth.module';
+import { OauthModule } from './Oauth/Oauth.module';
 import { ConfigModule } from '@nestjs/config';
 import { ChatGateway } from './chat/chat.gateway';
 import { AppGateway } from './app.gateway';

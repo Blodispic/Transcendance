@@ -37,6 +37,7 @@
     font-size: larger;
 
     a {
+    
       background-image: linear-gradient(to left,
           #000 50%,
           #84CEEB 50%,
@@ -46,6 +47,7 @@
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       transition: all 0.2s ease-in-out;
+      text-decoration: none;
 
       &:before {
         content: '';

@@ -7,24 +7,26 @@ import { socket } from '../../App';
 
 export default function Queue() {
 
-	const myUser = useAppSelector(state => state.user);
-	const navigate = useNavigate();
+    const myUser = useAppSelector(state => state.user);
+    const navigate = useNavigate();
 
-	function addToWaitingRoom() {
-		socket.emit("addToWaitingRoom", myUser.user);
-		return ;
-	}
+    function addToWaitingRoom() {
+        socket.emit("addToWaitingRoom", myUser.user);
+        return;
+    }
 
-	socket.on("RoomStart", (roomId: number, player: Player) => {
-		navigate("/game/" + roomId, {state: {Id: roomId}});
-	});
+    socket.on("RoomStart", (roomId: number, player: Player) => {
+        navigate("/game/" + roomId, { state: { Id: roomId } });
+    });
 
     useEffect(() => {
         const fetchuser = async () => {
-            await fetch(`${process.env.REACT_APP_BACK}game/`, {
-                method: 'POST',
-                body: JSON.stringify({ id: myUser.user!.id }),
-            })
+            if (myUser.user) {
+
+                await fetch(`${process.env.REACT_APP_BACK}game/${myUser.user.id}}`, {
+                    method: 'POST',
+                })
+            }
         }
         fetchuser()
     }, [])
@@ -32,9 +34,9 @@ export default function Queue() {
     return (
         <button className="center pulse pointer" onClick={(e) => addToWaitingRoom()} >
             <Link to="/Game/">
-                <a>
+
                     Add to Waiting Room
-                </a>
+
             </Link>
         </button>
     )
