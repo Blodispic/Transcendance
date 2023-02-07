@@ -59,7 +59,7 @@ export class GameService {
 			};
 			player1.name = socket1.handshake.auth.user.username;
 			player2.name = socket2.handshake.auth.user.username;
-			this.gameRoom.push(new Game(server, player1, player2));
+			this.gameRoom.push(new Game(this, server, player1, player2));
 			server.to(player1.socket).emit("RoomStart", this.gameRoom.length, player1);
 			server.to(player2.socket).emit("RoomStart", this.gameRoom.length, player2);
 			console.log("RoomStart ID: " + this.gameRoom.length);
@@ -99,6 +99,10 @@ export class GameService {
 				this.gameRoom[roomId].disconnect(client);
 			roomId++;
 		}
+	}
+
+	save(results: any) {
+		this.userService.createResults(results);
 	}
 
 	EndGame(client: string)
@@ -182,9 +186,11 @@ let gameStateDefault: GameState = {
 class Game {
 	server: Server;
 	public gameState: GameState;
+	gameService: GameService;
 
-	constructor(server: Server, user1: Player, user2: Player) {
+	constructor(gameService: GameService, server: Server, user1: Player, user2: Player) {
 		console.log("NEW GAME CREATED");
+		this.gameService = gameService;
 		this.server = server;
 		this.gameState = gameStateDefault;
 		this.gameState.gameFinished = false;
@@ -240,12 +246,16 @@ class Game {
 		if (this.gameState.player1.score === this.gameState.scoreMax)
 		{
 			let result: any = {winner: this.gameState.player1.name, looser: this.gameState.player2.name, winner_score: this.gameState.player1.score.toString(), looser_score: this.gameState.player2.score.toString()};
+			console.log(result);
+			this.gameService.save(result);
 			this.server.to(this.gameState.player1.socket).emit("GameEnd", result);
 			this.server.to(this.gameState.player2.socket).emit("GameEnd", result);
 		}
 		else
 		{
 			let result: any = {winner: this.gameState.player2.name, looser: this.gameState.player1.name, winner_score: this.gameState.player2.score.toString(), looser_score: this.gameState.player1.score.toString()};
+			console.log(result);
+			this.gameService.save(result);
 			this.server.to(this.gameState.player1.socket).emit("GameEnd", result);
 			this.server.to(this.gameState.player2.socket).emit("GameEnd", result);
 		}
