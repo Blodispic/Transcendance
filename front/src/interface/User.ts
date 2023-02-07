@@ -17,6 +17,7 @@ export interface IUser {
     avatar: string;
     status: UserStatus;
     elo: number;
+    twoFaEnable: boolean;
     friends?: IUser[];
     history?: Result[];
 }

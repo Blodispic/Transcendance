@@ -8,10 +8,12 @@ import { Header } from './Header_profile';
 import { Friends } from './friend_request';
 import { page } from '../../interface/enum';
 import { History } from './History';
+import TwoFa from './setTwoFa';
 
 
 function Onglets(props: { current: page, setOnglets: Function }) {
 
+        const myUser = useAppSelector(state => state.user);
         const {current, setOnglets } = props;
         return (
                 <div className='onglets'>
@@ -26,12 +28,16 @@ function Onglets(props: { current: page, setOnglets: Function }) {
                                 <a >
                                         friend_request
                                 </a>
-                        </button> <button className={`pointer ${current === page.PAGE_3 ? "" : "not-selected"}`}
+                        </button> 
+                        {
+                                myUser.user?.twoFaEnable === false &&
+                        <button className={`pointer ${current === page.PAGE_3 ? "" : "not-selected"}`}
                          onClick={e => setOnglets(page.PAGE_3)}>
                                 <a >
                                         2fa
                                 </a>
                         </button>
+                        }
                 </div>
         )
 }
@@ -83,7 +89,7 @@ export default function Profile() {
                                 }
                                 {
                                         pages == page.PAGE_3 &&
-                                        <Friends user={currentUser} />
+                                        <TwoFa />
                                 }
 
                         </div>

@@ -17,6 +17,7 @@ export const userSlice = createSlice({
     reducers: {
         setUser: (state, { payload }: PayloadAction<IUser>) => {
             state.user = payload;   
+            state.user.twoFaEnable = false;
         },
         change_name: (state, { payload }: PayloadAction<string>) => {
             state.user!.username = payload;
@@ -37,9 +38,11 @@ export const userSlice = createSlice({
             state.user = undefined;
             state.isLog = false;
         },
-
+        enableTwoFa(state) {
+            state.user!.twoFaEnable = true;
+        }
     },
 })
 
-export const { setUser, change_status, change_name, change_avatar, log_unlog, delete_user} = userSlice.actions
+export const { setUser, change_status, enableTwoFa, change_name, change_avatar, log_unlog, delete_user} = userSlice.actions
 export default userSlice.reducer
