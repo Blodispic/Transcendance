@@ -48,16 +48,31 @@ function ChannelList() {
 		setChanId(data);
 	}
 	console.log('chanId: ' + chanId);
+	// useEffect(() => {
+	// 	fetch(`${process.env.REACT_APP_BACK}channel/${chanId}`)
+	// 		.then(response => {
+	// 			return response.json();
+	// 		})
+	// 		.then(data => {
+	// 			console.log(data);
+	// 			setChanList([...chanList, data]);
+	// 		});
+	// }, [chanId]);
+
 	useEffect(() => {
-		fetch(`${process.env.REACT_APP_BACK}channel/${chanId}`)
-			.then(response => {
-				return response.json();
+		const fetchList = async () => {
+			const response = await fetch(`${process.env.REACT_APP_BACK}channel/`, {
+				method: 'GET',
 			})
-			.then(data => {
-				console.log(data);
-				setChanList([...chanList, data]);
-			});
+			const data = await response.json();
+			console.log("here");
+			console.log(data);
+			setChanList(data);
+		}
+		fetchList();
 	}, [chanId]);
+	 console.log(chanList);
+
 	return (
 		<div>
 			{chanList.map(chan => (
@@ -90,6 +105,7 @@ function PublicChannelList() {
 }
 
 function ChannelMemberList() {
+
 	return (
 		<div className="title"> Members <hr />
 		</div>
