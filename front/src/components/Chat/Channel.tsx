@@ -8,23 +8,27 @@ import '../../styles/chat.scss'
 
 function CreateChannelPopup(props: any) {
 	const [chanName, setChanName] = useState("");
+	const [password, setPassword] = useState("");
+	const [privateChan, setPrivateChan] = useState(false);
+
 	const handleCreateNewChan = () => {
 		if (chanName != "")
 			socket.emit('createPublicChannel', { channame: chanName });
 		setChanName("");
+		console.log(password);
+		setPassword("");
 		props.setTrigger(false);
 	}
-
 	return (props.trigger) ? (
 		<div className="chat-form-popup" onClick={_ => props.setTrigger(false)}>
 			<div className="chat-form-inner" onClick={e => e.stopPropagation()}>
 				<HiOutlineXMark className="close-icon" onClick={_ => props.setTrigger(false)} /> <br />
 				<h3>Channel Name</h3>
-				<input type="text" id="channel-input" onChange={e => { setChanName(e.target.value) }} />
+				<input type="text" id="channel-input" placeholder="Insert channel name" onChange={e => { setChanName(e.target.value) }} />
 				<h3>Channel Mode</h3>
 				<input type="radio" name="Mode" value="Public" />Public <span></span>
-				<input type="radio" name="Mode" value="Private" />Private <span></span>
-				<input type="radio" name="Mode" value="Protected" />Protected <br /><br />
+				<input type="radio" name="Mode" value="Protected" />Private <br />
+				<input type="password" id="channel-input" placeholder="Insert password" onChange={e => { setPassword(e.target.value) }} /><br />
 				<button onClick={() => handleCreateNewChan()}>Create Channel</button><span></span>
 			</div>
 		</div>
