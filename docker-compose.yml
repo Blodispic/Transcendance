@@ -1,6 +1,4 @@
-
 version: '3'
-
 services:
   PostgreSQL:
     image: postgres
@@ -10,30 +8,36 @@ services:
       POSTGRES_USER: admin
     ports: 
       - "5432:5432"
+    networks:
+      - Wow
 
+  back:
+    depends_on:
+      - PostgreSQL
+    container_name: back
+    build: ./back
+    image: back
+    ports: 
+      - 4000:4000
+    restart: always
+    init: true
+    networks:
+      - Wow
 
-      #
-      #back:
-      #    depends_on:
-      #      - PostgreSQL
-      #    image: back
-    # environment:
-    #   REACT_APP_42_API_CLIENT: 42_API_CLIENT
-    #   REACT_APP_42_API_SECRET: 42_API_SECRET
-      #    container_name: back
-      #    restart: always
-      #    init: true
-      #
-      #
-      #front :
-      #    depends_on:
-      #      - back
-      #    build: ./srcs/front
-      #    image: front
-      #    container_name: front
-      #    restart: always
-      #    ports:
-      #      - 4000:4000
-      #
+  front:
+    depends_on:
+      - back
+    container_name: front
+    build: ./front
+    image: front
+    ports:
+      - 3000:3000
+    restart: always
+    init: true
+    networks:
+      - Wow
 
-
+networks:
+  Wow:
+    driver: bridge
+    external: false
