@@ -61,7 +61,7 @@ export class GameService {
 			console.log("Socket2: " ,socket2.handshake.auth.user);
 			player1.name = socket1.handshake.auth.user.username;
 			player2.name = socket2.handshake.auth.user.username;
-			this.gameRoom.push(new Game(this, server, player1, player2, false));
+			this.gameRoom.push(new Game(this, server, player1, player2, true));
 			server.to(player1.socket).emit("RoomStart", this.gameRoom.length, player1);
 			server.to(player2.socket).emit("RoomStart", this.gameRoom.length, player2);
 			console.log("RoomStart ID: " + this.gameRoom.length);

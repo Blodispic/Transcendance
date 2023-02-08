@@ -49,6 +49,8 @@ export interface GameState {
 	extra: boolean;
 }
 
+const sound = new Audio("../../assets/ponghitside.ogg");
+
 const GAME_RATIO = 1.5;
 const GAME_INTERNAL_WIDTH = 700;
 
@@ -147,7 +149,8 @@ export default function GameApp() {
 	return (
 		<div id="game-container">
 			{ gameState.gameFinished ? (result ? <Victory /> : <Defeat />) : <></> }
-			<h3>
+			<h3 className="display-player">
+				<img src="https://www.handiclubnimois.fr/wp-content/uploads/2020/10/blank-profile-picture-973460_1280.png" />
 				{gameState.player2.name} : {gameState.player2.score}
 			</h3>
 			<Stage
@@ -197,7 +200,8 @@ export default function GameApp() {
 					/>
 				</Layer>
 			</Stage>
-			<h3>
+			<h3 className="display-player">
+			<img src="https://www.handiclubnimois.fr/wp-content/uploads/2020/10/blank-profile-picture-973460_1280.png" />
 				{gameState.player1.name} : {gameState.player1.score}
 			</h3>
 		</div>
@@ -340,6 +344,7 @@ function paddleCollision(ball: Ball, player: Player) {
 				else ball.position.y -= 5;
 			}
 			ball.cooldown = 1;
+			sound.play();
 			return 1;
 		}
 	}

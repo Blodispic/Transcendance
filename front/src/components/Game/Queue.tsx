@@ -16,6 +16,11 @@ export default function Queue() {
         return;
     }
 
+    function createCustomRoom() {
+        socket.emit("addToWaitingRoom", myUser.user);
+        return;
+    }
+
     socket.on("RoomStart", (roomId: number, player: Player) => {
         navigate("/game/" + roomId, { state: { Id: roomId } });
     });
@@ -32,12 +37,18 @@ export default function Queue() {
     }, [])
 
     return (
-        <button className="center pulse pointer" onClick={(e) => addToWaitingRoom()} >
+        <div>
+            <button className="center pulse pointer" onClick={(e) => addToWaitingRoom()} >
+                <Link to="/Game/">
+                        Add to Waiting Room
+                </Link>
+            </button>
+
+            <button className="center pulse pointer" onClick={(e) => createCustomRoom()} >
             <Link to="/Game/">
-
-                    Add to Waiting Room
-
+                    Create Custom Room
             </Link>
-        </button>
+            </button>
+        </div>
     )
 }
