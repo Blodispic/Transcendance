@@ -57,6 +57,8 @@ export class GameService {
 				side: 1,
 				socket: socket2.id,
 			};
+			console.log("Socket1: " ,socket1.handshake.auth.user);
+			console.log("Socket2: " ,socket2.handshake.auth.user);
 			player1.name = socket1.handshake.auth.user.username;
 			player2.name = socket2.handshake.auth.user.username;
 			this.gameRoom.push(new Game(server, player1, player2));

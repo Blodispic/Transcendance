@@ -15,8 +15,9 @@ import { MessageChannelDto } from "./dto/message-channel.dto";
 import { MessageUserDto } from "./dto/message-user.dto";
 import { userList } from "src/app.gateway";
 import { AppGateway } from "src/app.gateway";
-import { CreatePublicChannelDto } from "./dto/create-channel.dto";
+import { CreateChannelSocketDto } from "./dto/create-channel.dto";
 import { ChanPasswordDto } from "./dto/chan-password.dto";
+// import { ChanPasswordDto } from "./dto/chan-password.dto";
 
 /*ToDo
   - check if password et password ok pour join chan
@@ -108,19 +109,19 @@ async handleJoinChannel(@ConnectedSocket() client: Socket, @MessageBody() joinCh
 }
 
 @SubscribeMessage('createChannel')
-async handleCreatePublicChannel(@ConnectedSocket() client: Socket, @MessageBody() createPublicChannelDto: CreatePublicChannelDto) {    
-  const channel = await this.channelService.getByName(createPublicChannelDto.chanName);
+async handleCreateChannel(@ConnectedSocket() client: Socket, @MessageBody() createChannelDto: CreateChannelSocketDto) {    
+  const channel = await this.channelService.getByName(createChannelDto.chanName);
   
   if (channel != null)
     throw new BadRequestException(); //channame already exist, possible ? if private/protected possible ?
 
   let user: User = client.handshake.auth.user;
   const new_channel = await this.channelService.create({
-      name: createPublicChannelDto.chanName,
+      name: createChannelDto.chanName,
       owner: user,
       users:[ user ],
-      chanType: createPublicChannelDto.chanType,
-      password: createPublicChannelDto.password,
+      chanType: createChannelDto.chanType,
+      password: createChannelDto.password,
      });
   this.channelService.add({
     user: user,

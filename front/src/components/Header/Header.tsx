@@ -39,16 +39,16 @@ export default function Header() {
 
       </div>
 
-      <div className='navbar-right'>
+      <div className='navbar-right' >
 
-        <Link to="/Game">
-          <span className="font-link">
+        <Link to="/Game" onClick={_ => setDropdown(false)}>
+          <span className="font-link" >
             Game
           </span>
         </Link>
 
-        <Link to="/Chat">
-          <span className="font-link">
+        <Link to="/Chat" onClick={_ => setDropdown(false)}>
+          <span className="font-link" >
             Chat
           </span>
         </Link>
@@ -63,11 +63,11 @@ export default function Header() {
               <div className="dropdown">
                 <ul >
                   <li>
-                    <Link to={`/Profile/${myUser.user.id}`}>
+                    <Link to={`/Profile/${myUser.user.id}`} onClick={_ => setDropdown(false)}>
                       profile
                     </Link>
                   </li>
-                  <li onClick={_ => logout()} >
+                  <li onClick={_ => {logout(); setDropdown(false); } } >
                     logout
                   </li>
 
