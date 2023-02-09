@@ -9,6 +9,8 @@ import { Channel } from './entities/channel.entity';
 import { UserService } from 'src/user/user.service';
 import { UserController } from 'src/user/user.controller';
 import { RmUserDto } from './dto/rm-user.dto';
+import { BanUserDto } from '../dto/ban-user.dto';
+import { MuteUserDto } from '../dto/mute-user.dto';
 
 @Injectable()
 export class ChannelService {
@@ -104,4 +106,31 @@ export class ChannelService {
 		});
 	  }
 
+	  async banUser(banUserDto: BanUserDto) {
+		const channel: Channel | null = await this.channelRepository.findOne({
+			relations: { users: true },
+			where: {
+				id: banUserDto.chanid
+			}
+			});
+		const user = await this.userService.getById(banUserDto.userid);
+		if (user === null || channel === null)
+			throw new NotFoundException();
+		channel.banned.push(user);
+		return this.channelRepository.save(channel);
+	}
+
+	async muteUser(muteUserDto: MuteUserDto) {
+		const channel: Channel | null = await this.channelRepository.findOne({
+			relations: { users: true },
+			where: {
+				id: muteUserDto.chanid
+			}
+			});
+		const user = await this.userService.getById(muteUserDto.userid);
+		if (user === null || channel === null)
+			throw new NotFoundException();
+		channel.muted.push(user);
+		return this.channelRepository.save(channel);
+	}
 }

@@ -28,4 +28,12 @@ export class Channel {
 	@ManyToMany(() => User, user => user.channels, { cascade: true })
 	@JoinTable()
 	users: User[]
+
+	@ManyToMany(() => User, user => user.channels, { cascade: true })
+	@JoinTable()
+	banned: User[]
+
+	@ManyToMany(() => User, user => user.channels, { cascade: true })
+	@JoinTable()
+	muted: User[]
 }

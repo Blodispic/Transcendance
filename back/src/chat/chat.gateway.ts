@@ -33,6 +33,8 @@ import { BanUserDto } from "./dto/ban-user.dto";
 
   - check les messages d'erreur -> throw ? send message: error ?
 
+  - ajouter decorateurs dans les DTO (@isOptional ...)
+
 */
 
 @WebSocketGateway({
@@ -189,10 +191,29 @@ async handleChangePassword(@ConnectedSocket() client: Socket, @MessageBody() cha
   client.emit("changePasswordOK", channel.id);
   }
 
-// @SubscribeMessage('BanUser')
-// async handleBanUser(@ConnectedSocket() client: Socket, @MessageBody() banUserDto: BanUserDto) {
-  
-// }
+@SubscribeMessage('BanUser')
+async handleBanUser(@ConnectedSocket() client: Socket, @MessageBody() banUserDto: BanUserDto) {
+  const channel = await this.channelService.getById(banUserDto.chanid);
+  const user = client.handshake.auth.user;
+  if (channel === null || user === null)
+    throw new BadRequestException(); // no such channel or user
+  if (channel.owner != user)
+    throw new BadRequestException();
+  this.channelService.banUser(banUserDto);
+  client.emit("banUserOK", user.id);
+}
+
+@SubscribeMessage('MuteUser')
+async handleMuteUser(@ConnectedSocket() client: Socket, @MessageBody() muteUserDto: MuteUserDto) {
+  const channel = await this.channelService.getById(muteUserDto.chanid);
+  const user = client.handshake.auth.user;
+  if (channel === null || user === null)
+    throw new BadRequestException(); // no such channel or user
+  if (channel.owner != user)
+    throw new BadRequestException();
+  this.channelService.muteUser(muteUserDto);
+  client.emit("muteUserOK", user.id);
+}
 
 
 
