@@ -14,7 +14,7 @@ import { request } from "http";
 @Injectable()
 export class UserService {
   constructor(
-    @InjectRepository(User)
+    @InjectRepository(User) 
     private readonly usersRepository: Repository<User>,
     @InjectRepository(FriendRequest)
     private readonly friendRequestRepository: Repository<FriendRequest>,
@@ -52,12 +52,12 @@ export class UserService {
   }
 
   async GetByAccessToken(access_token: any) {
-    console.log("check token");
-    const decoded_access_token: any = await this.jwtService.decode(access_token.token, { json: true });
-    const user = await this.usersRepository.findOneBy({ login: decoded_access_token.username });
-    if (user)
-      return user;
-    return { message: "Token user not found" };
+      console.log("check token");
+      const decoded_access_token: any = await this.jwtService.decode(access_token.token, { json: true });
+      const user = await this.usersRepository.findOneBy({ login: decoded_access_token.username });
+      if (user)
+        return user;
+      return ("Token user not found");
   }
 
   async getByUsername(username: string) {
@@ -179,7 +179,7 @@ export class UserService {
 
   async GetFriendsRequest(user: User) {
     const receiver = await this.usersRepository.findOne({
-      relations: ['receiveFriendRequests', 'receiveFriendRequests.creator'],
+      relations: ['receiveFriendRequests', 'receiveFriendRequests.creator', 'friends'],
       where: { id: user.id }
     });
     console.log('receiver', receiver);
@@ -193,6 +193,7 @@ export class UserService {
           name: request.creator.username,
           avatar: request.creator.avatar,
           id: request.creator.id,
+          status: request.status,
         };
       }
       else {
@@ -200,6 +201,7 @@ export class UserService {
           name: request.creator.username,
           avatar: request.creator.intra_avatar,
           id: request.creator.id,
+          status: request.status,
         };
       }
       return {};
@@ -220,18 +222,47 @@ export class UserService {
     return { message: "Friend Request not found" };
   }
 
-
-  //ID est le user actuel, friend est le user a ajouter de type User
-  //On push dans le tableau le user friend et on save user qui a été changé dans userRepository
   async addFriend(friendId: number, user: User): Promise<User | null> {
-    const friend = await this.usersRepository.findOne({ where: { id: friendId } });
-    if (friend) {
-      friend.friends.push(user);
-      user.friends.push(friend);
-      this.usersRepository.save(user)
-      return await this.usersRepository.save(friend);
+
+    const realUser = await this.usersRepository.findOne({
+      relations: {
+        friends: true,
+      },
+      where: { id: user.id }
+    });
+
+    const friend = await this.usersRepository.findOne({
+      relations: {
+        friends: true,
+      },
+      where: { id: friendId } 
+    });
+
+    if (realUser && friend && user.id != friendId) {
+      if (!realUser.friends) {
+        realUser.friends = [];
+        console.log("No friends");
+      }
+
+      if (!friend.friends) {
+        friend.friends = [];
+        console.log("No friends");
+      }
+      console.log("friend", friend);
+      console.log("realUser", realUser);
+      
+      realUser.friends.push(friend);
+      friend.friends.push(realUser);
+      await this.usersRepository.save(friend);
+      return await this.usersRepository.save(realUser);
     }
-    return (null);
+    if (!user)
+      console.log("User doesn't exists");
+    if (!friend)
+      console.log("Friend doesn't exists");
+    if (user.id == friendId)
+      console.log("user can't be friend with himself");
+    return user;
   }
 
   async addFriendById(friendId: number, id: number): Promise<User | null> {

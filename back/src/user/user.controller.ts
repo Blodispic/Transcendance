@@ -17,7 +17,7 @@ export class UserController {
   async create(@Body() createUserDto: CreateUserDto): Promise<User> {
     // try {
       return await this.userService.create(createUserDto);
-    // } catch (error) {
+  // } catch (error) 
       // throw new BadRequestException(error.detail);
     // }
   }
@@ -59,7 +59,11 @@ export class UserController {
   }
 
   @Post("friends/accept")
-  async acceptFriendRequest(@Body() body: { friendId: number, user: User}) {
+  async acceptFriendRequest(@Body() body: { friendId: any, user: User}) {
+    console.log("body = ", body);
+    
+    console.log("friendid = ", body.friendId);
+    this.userService.addFriend(body.friendId, body.user);
     return await this.userService.updateFriendRequestStatus(body.friendId, body.user, {
     status: "Accepted",
     });
@@ -120,17 +124,6 @@ export class UserController {
       return this.userService.sendFriendRequest(id, user)
     }
   }
-
-
-  @Post('addfriend/:id')
-  async addFriend(@Param('id') id: number, @Body() user: User) {
-    return await this.userService.addFriend(id, user);
-  }
-
-  // @Post(':id/addfriend/:id')
-  // async addFriendbyId(@Param('id') id: number, @Param('id') id: number) {
-  //   return await this.userService.addFriendById(id, id);
-  // }
 
   @Delete('deletefriend/:id')
   async deleteFriend(@Param('id') id: number, @Body() friend: User) {

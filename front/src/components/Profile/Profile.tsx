@@ -145,16 +145,17 @@ function Friends(props: { user: IUser }) {
         useEffect(() => {
                 const checkFriendRequest = async () => {
                         const response = await fetch(`${process.env.REACT_APP_BACK}user/friends`, {
-                                method: 'POST',
-                                body: JSON.stringify(user),
-                                headers: { 'Content-Type': 'application/json' }
+                          method: 'POST',
+                          body: JSON.stringify(user),
+                          headers: { 'Content-Type': 'application/json' }
                         });
                         const data = await response.json();
                         const pendingFriendRequests = data.filter((friendRequest: { status: string; }) => friendRequest.status === "Pending");
                         console.log('data', data);
                         console.log('pendingFriendRequests', pendingFriendRequests);
-                        setFriendReq(data);
-                };
+                        setFriendReq(pendingFriendRequests);
+                      };
+                      
                 checkFriendRequest();
         }, []);
 
@@ -162,14 +163,15 @@ function Friends(props: { user: IUser }) {
                 friends: { name: string, avatar: string, id: number }[];
         }
 
-        const acceptFriendRequest = async (friend: number) => {
+        const acceptFriendRequest = async (friendId: number) => {
+                console.log("friend = ", friendId);
                 const response = await fetch(`${process.env.REACT_APP_BACK}user/friends/accept`, {
                         method: 'POST',
-                        body: JSON.stringify({ friend, user }),
+                        body: JSON.stringify({ friendId, user }),
                         headers: { 'Content-Type': 'application/json' }
                 });
                 const data = await response.json();
-                setFriendReq(prevState => prevState.filter(accepted => accepted.id !== friend));
+                setFriendReq(prevState => prevState.filter(accepted => accepted.id !== friendId));
         };
 
         const declineFriendRequest = async (friend: number) => {

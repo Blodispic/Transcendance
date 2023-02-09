@@ -51,12 +51,12 @@ export default function NameForm() {
     }
     return (
         <div className='center form  white'>
-             <div className=' color_sign'>
-            <form>
-                <label >
-                    Name:
-                    <input type="text" name="user" value={newname} onChange={e => setNewname(e.target.value)} />
-                </label>
+            <div className=' color_sign'>
+                <form>
+                    <label >
+                        Name:
+                        <input type="text" name="user" value={newname} onChange={e => setNewname(e.target.value)} />
+                    </label>
 
                 <label >
                     profile picture:
