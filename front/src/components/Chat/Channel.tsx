@@ -35,7 +35,7 @@ function CreateChannelPopup(props: any) {
 	) : <></>;
 }
 
-function ChannelList() {
+function ChannelList() { /** Displays all channels */
 	const [chanList, setChanList] = useState<IChannel[]>([]);
 	const [chanId, setChanId] = useState("");
 	const navigate = useNavigate();
@@ -55,7 +55,6 @@ function ChannelList() {
 				method: 'GET',
 			})
 			const data = await response.json();
-			console.log("here");
 			console.log(data);
 			setChanList(data);
 		}
@@ -65,21 +64,33 @@ function ChannelList() {
 	 console.log(chanList);
 
 	return (
-		<div>
+		<div> 
+		<header>All Channels <hr /></header>
 			{chanList.map(chan => (
-				<ul key={chan.name}>
-					<div className="channel-name" onClick={_ => navigate(`/Chat/channel${chan.id}`)}>{chan.name}</div>
+				<ul key={chan.name} >
+					<div onClick={_ => navigate(`/Chat/channel${chan.id}`)}>{chan.name}</div>
 				</ul>
 			))}
 		</div>
 	);
 }
 
-function JoinedChannelList() {
+function JoinedChannelList() { /** Displays only joined channels */
+
+	return (
+		<div className="title"> Joined Channels <hr />
+			test chan1
+		</div>
+	);
+
+}
+
+function AddChannel() {
 	const [buttonPopup, setButtonPopup] = useState(false);
 
 	return (
-		<div className="title"> Joined Channels <span><HiPlusCircle className="add-icon" onClick={() => setButtonPopup(true)} /></span><hr />
+		<div className="add-icon">
+		<HiPlusCircle onClick={() => setButtonPopup(true)} />
 			<CreateChannelPopup trigger={buttonPopup} setTrigger={setButtonPopup} />
 		</div>
 	);
@@ -87,7 +98,7 @@ function JoinedChannelList() {
 
 function PublicChannelList() {
 	return (
-		<div className="title" id="upper-side">Public Channels <hr />
+		<div className="title">Public Channels <hr />
 			<ul>
 				<p>test</p>
 			</ul>
@@ -102,6 +113,7 @@ function ChannelMemberList() {
 		</div>
 	);
 }
+
 
 function ChannelMessages(/*channelId: number*/) {
 	const [newInput, setNewInput] = useState("");
@@ -153,8 +165,9 @@ export function Channels() {
 	return (
 		<div id="chat-container">
 			<div className="left-sidebar">
-				<JoinedChannelList />
+				{/* <JoinedChannelList /> */}
 				<ChannelList />
+				<AddChannel />
 			</div>
 				<ChannelMessages />
 			<div className="right-sidebar">
