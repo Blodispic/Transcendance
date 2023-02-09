@@ -17,6 +17,8 @@ services:
     container_name: back
     build: ./back
     image: back
+    volumes:
+      - ./back:/app
     ports: 
       - 4000:4000
     restart: always
@@ -30,6 +32,8 @@ services:
     container_name: front
     build: ./front
     image: front
+    volumes:
+      - ./front:/app
     ports:
       - 3000:3000
     restart: always
