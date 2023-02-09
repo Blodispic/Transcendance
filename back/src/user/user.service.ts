@@ -12,7 +12,7 @@ import { JwtService } from "@nestjs/jwt";
 @Injectable()
 export class UserService {
   constructor(
-    @InjectRepository(User)
+    @InjectRepository(User) 
     private readonly usersRepository: Repository<User>,
     @InjectRepository(FriendRequest)
     private readonly friendRequestRepository: Repository<FriendRequest>,
@@ -55,7 +55,7 @@ export class UserService {
       const user = await this.usersRepository.findOneBy({ login: decoded_access_token.username });
       if (user)
         return user;
-      return {message: "Token user not found"};
+      return ("Token user not found");
   }
 
   async getByUsername(username: string) {

@@ -16,7 +16,7 @@ export class UserController {
   async create(@Body() createUserDto: CreateUserDto): Promise<User> {
     // try {
       return await this.userService.create(createUserDto);
-    // } catch (error) {
+  // } catch (error) 
       // throw new BadRequestException(error.detail);
     // }
   }
