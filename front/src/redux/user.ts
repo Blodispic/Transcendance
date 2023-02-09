@@ -4,10 +4,12 @@ import { IUser, UserStatus } from '../interface/User';
 interface StateTest {
     user: IUser | undefined,
     isLog: boolean,
+    isOauth: boolean,
 }
 
 const initialUser: StateTest = {
     user: undefined,
+    isOauth: false,
     isLog: false,
 }
 
@@ -28,6 +30,9 @@ export const userSlice = createSlice({
         change_avatar(state, { payload }: PayloadAction<string>) {
             state.user!.avatar = payload;
         },
+        oauth(state) {
+            state.isOauth = true;
+        },
         log_unlog(state) {
             if (state.isLog == false)
                 state.isLog = true;
@@ -37,6 +42,7 @@ export const userSlice = createSlice({
         delete_user(state) {
             state.user = undefined;
             state.isLog = false;
+            state.isOauth = false;
         },
         enableTwoFa(state) {
             state.user!.twoFaEnable = true;
@@ -44,5 +50,5 @@ export const userSlice = createSlice({
     },
 })
 
-export const { setUser, change_status, enableTwoFa, change_name, change_avatar, log_unlog, delete_user} = userSlice.actions
+export const { setUser, change_status, enableTwoFa, change_name, change_avatar, log_unlog, delete_user, oauth} = userSlice.actions
 export default userSlice.reducer

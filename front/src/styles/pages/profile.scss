@@ -152,6 +152,8 @@
 }
 
 .friend-block {
+    border-radius: 4.5px;
+    overflow: hidden;
     text-decoration: none;
     background-color: #ccced9;
     border: 1px solid rgb(151, 139, 139);
@@ -163,7 +165,7 @@
 }
 
 .friend-img {
-    border: 0.5px solid rgb(0, 0, 0);
+    border-right: 0.2px solid rgb(0, 0, 0);
     height: 75px;
     width: 75px;
     margin-right: 5px;

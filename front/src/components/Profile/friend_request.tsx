@@ -34,8 +34,7 @@ export function InviteButton(props: { user: any }) {
             }
             checkFriendRequest();
     }, [friendId, user]);
-
-
+    
     return (
             <button className="reqButton pointer white width_50" onClick={sendFriendRequest} >
                     {status}

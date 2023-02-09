@@ -11,7 +11,7 @@ export const getAuthorizeHref = (): string => {
     return `https://api.intra.42.fr/oauth/authorize?client_id=${api_key}&redirect_uri=${redirect_uri}&response_type=code`;
 }
 
-export function Two_fa() {
+export function Log() {
 
     const [code, setCode] = useState<string | undefined>(undefined);
     return (

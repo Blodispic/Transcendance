@@ -1,12 +1,11 @@
 import { useState, useEffect } from 'react';
 import { Navigate, useNavigate, useSearchParams } from "react-router-dom";
-import NameForm from "./form_name_avatar"
+import NameForm from "./Sign"
 import { useAppDispatch, useAppSelector } from "../../redux/Hook";
-import { log_unlog, setUser } from "../../redux/user";
+import { log_unlog, oauth, setUser } from "../../redux/user";
 import { useCookies } from "react-cookie";
 import { IUser } from '../../interface/User';
-import { page } from '../../interface/enum';
-import { Two_fa } from './Two_fa';
+
 
 
 
@@ -55,7 +54,6 @@ export function Fetchcode(props: { code: string | null }) {
 
 export default function Connection() {
 
-    const [pages, setpages] = useState<page>(page.PAGE_1)
     const [searchParams] = useSearchParams()
     const [, setCookie] = useCookies(['Token']);
     const dispatch = useAppDispatch();
@@ -84,15 +82,19 @@ export default function Connection() {
                         }
                         else {
                             dispatch(setUser(data));
+                            dispatch(oauth());
                             setCookie('Token', data.access_token, { path: '/' });
+
                             console.log("ici => ", myUser)
                             if (data.username === "")
-                                setpages(page.PAGE_2);
+                                navigate("./sign")
                             else if (data.twoFaEnable == true)
-                                setpages(page.PAGE_3);
-                            else
+                                navigate("./log")
+                            else {
                                 dispatch(log_unlog());
+                                navigate("/Home");
                         }
+                    }
                     })
                     .catch(error => {
                         console.error('There was an error!', error);
@@ -104,8 +106,6 @@ export default function Connection() {
 
     return (
         <div className='container'>
-            {
-                pages == page.PAGE_1 &&
                 <div className='connection'>
                     <div className='button'>
                         <button className="button pulse pointer color_sign" >
@@ -120,15 +120,7 @@ export default function Connection() {
                         </button>
                     </div>
                 </div>
-            }
-            {
-                pages == page.PAGE_2 &&
-                <NameForm />
-            }
-            {
-                pages == page.PAGE_3 &&
-                <Two_fa />
-            }
+
         </div>
     );
 }

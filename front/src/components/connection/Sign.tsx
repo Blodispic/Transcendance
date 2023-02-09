@@ -1,8 +1,9 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../redux/Hook';
 import { change_name, log_unlog } from "../../redux/user";
 
-export default function NameForm() {
+export default function Sign() {
 
 
     const [newname, setNewname] = useState('');
@@ -11,10 +12,12 @@ export default function NameForm() {
     const formData = new FormData();
     const myUser = useAppSelector(state => state.user);
     const dispatch = useAppDispatch();
+    const navigate = useNavigate();
+
 
     const fetch_name_avatar = async (e: any) => {
         e.preventDefault();
-        if (myUser.user !== undefined) {
+        if (newname !== '' && myUser.user) {
 
             await fetch(`${process.env.REACT_APP_BACK}user/${myUser.user.id}`, {
                 method: 'PATCH',
@@ -32,8 +35,10 @@ export default function NameForm() {
                 })
                 formData.delete('file');
             }
+            console.log("comment ca ca rentre");
             dispatch(change_name(newname));
             dispatch(log_unlog());
+            navigate("/Home");
         }
     }
 

@@ -40,7 +40,6 @@ function App() {
     
     dispatch(setUser(data));
     dispatch(log_unlog());
-    
   }
   if (myStore.user === undefined) {
     if (token !== undefined)
