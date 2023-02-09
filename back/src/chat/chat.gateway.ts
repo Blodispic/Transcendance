@@ -17,7 +17,7 @@ import { userList } from "src/app.gateway";
 import { AppGateway } from "src/app.gateway";
 import { CreateChannelSocketDto } from "./dto/create-channel.dto";
 import { ChanPasswordDto } from "./dto/chan-password.dto";
-// import { ChanPasswordDto } from "./dto/chan-password.dto";
+import { BanUserDto } from "./dto/ban-user.dto";
 
 /*ToDo
   - check if password et password ok pour join chan
@@ -62,7 +62,7 @@ export class ChatGateway
   //  const user = await this.userService.getById(messageUserDto.useridtowho);
   const socketIdToWho = this.findSocketFromUser(messageUserDto.usertowho);
   if (socketIdToWho === null)
-    throw new BadRequestException();
+    throw new BadRequestException(); // no such user
   this.server.to(socketIdToWho).emit("sendMessageUserOk", messageUserDto.message);
  
 
@@ -82,7 +82,7 @@ findSocketFromUser(user: User)
 async handleSendMessageChannel(@ConnectedSocket() client: Socket, @MessageBody() messageChannelDto: MessageChannelDto)/* : Promise<any> */ {
   const channel = await this.channelService.getById(messageChannelDto.chanid);
   if (channel == null)
-    throw new BadRequestException();
+    throw new BadRequestException(); // no such channel
   // channel.users.forEach(user => {
   //     this.server.to("user-" + user.id).emit("sendMessageChannel", messageChannelDto);
   // });
@@ -143,17 +143,56 @@ async handleLeaveChannel(@ConnectedSocket() client: Socket, @MessageBody() leave
   this.server.to("chan" + channel.id).emit("leaveChannel", user);
 }
 
-@SubscribeMessage('password') // add and rm or only one ?
-async handlePassword(@ConnectedSocket() client: Socket, @MessageBody() chanPasswordDto: ChanPasswordDto) {
+@SubscribeMessage('addPassword')
+async handleAddPassword(@ConnectedSocket() client: Socket, @MessageBody() chanPasswordDto: ChanPasswordDto) {
   const channel = await this.channelService.getById(chanPasswordDto.chanid);
   const user = client.handshake.auth.user;
   if (channel === null || user === null)
     throw new BadRequestException(); // no such channel or user
   if (channel.owner != user) // for now only the real owner/admin, soon any owner/admin
     throw new BadRequestException(); // user willing to change password isn't admin/owner
-  // update channel here with new password ( add et rm ?)
+  this.channelService.update(channel.id, {
+    password: chanPasswordDto.passProp,
+    chanType: 2,
+  });
+  client.emit("addPasswordOK", channel.id);
 }
 
+@SubscribeMessage('rmPassword')
+async handleRmPassword(@ConnectedSocket() client: Socket, @MessageBody() chanPasswordDto: ChanPasswordDto) {
+  const channel = await this.channelService.getById(chanPasswordDto.chanid);
+  const user = client.handshake.auth.user;
+  if (channel === null || user === null)
+    throw new BadRequestException(); // no such channel or user
+  if (channel.owner != user) // for now only the real owner/admin, soon any owner/admin
+    throw new BadRequestException(); // user willing to change password isn't admin/owner
+  this.channelService.update(channel.id, {
+    password: null,
+    chanType: 0,
+  });
+  client.emit("rmPasswordOK", channel.id);
+  }
+
+@SubscribeMessage('changePassword')
+async handleChangePassword(@ConnectedSocket() client: Socket, @MessageBody() chanPasswordDto: ChanPasswordDto) {
+  const channel = await this.channelService.getById(chanPasswordDto.chanid);
+  const user = client.handshake.auth.user;
+  if (channel === null || user === null)
+    throw new BadRequestException(); // no such channel or user
+  if (channel.owner != user) // for now only the real owner/admin, soon any owner/admin
+    throw new BadRequestException(); // user willing to change password isn't admin/owner
+  if (channel.password === null)
+    throw new BadRequestException(); // chan doesn't already have password
+  this.channelService.update(channel.id, {
+    password: chanPasswordDto.passProp,
+  });
+  client.emit("changePasswordOK", channel.id);
+  }
+
+// @SubscribeMessage('BanUser')
+// async handleBanUser(@ConnectedSocket() client: Socket, @MessageBody() banUserDto: BanUserDto) {
+  
+// }
 
 
 

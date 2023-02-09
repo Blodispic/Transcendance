@@ -76,6 +76,10 @@ export class ChannelService {
 			// 	channel.owner = channelUpdate.owner;
 			if (channelUpdate.users)
 				channel.users = channelUpdate.users;
+			if (channelUpdate.password)
+				channel.password = channelUpdate.password;
+			if (channelUpdate.chanType)
+				channel.chanType = channelUpdate.chanType;
 		
 		  return await this.channelRepository.save(channel);
 		}
