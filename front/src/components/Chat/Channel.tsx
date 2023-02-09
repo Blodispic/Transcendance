@@ -48,19 +48,9 @@ function ChannelList() {
 		setChanId(data);
 	}
 	console.log('chanId: ' + chanId);
-	// useEffect(() => {
-	// 	fetch(`${process.env.REACT_APP_BACK}channel/${chanId}`)
-	// 		.then(response => {
-	// 			return response.json();
-	// 		})
-	// 		.then(data => {
-	// 			console.log(data);
-	// 			setChanList([...chanList, data]);
-	// 		});
-	// }, [chanId]);
 
 	useEffect(() => {
-		const fetchList = async () => {
+		const fetchAllList = async () => {
 			const response = await fetch(`${process.env.REACT_APP_BACK}channel/`, {
 				method: 'GET',
 			})
@@ -69,15 +59,16 @@ function ChannelList() {
 			console.log(data);
 			setChanList(data);
 		}
-		fetchList();
+		fetchAllList();
 	}, [chanId]);
+
 	 console.log(chanList);
 
 	return (
 		<div>
 			{chanList.map(chan => (
 				<ul key={chan.name}>
-					<div className="channel-name" onClick={_ => navigate(`chan${chan.id}`)}>{chan.name}</div>
+					<div className="channel-name" onClick={_ => navigate(`/Chat/channel${chan.id}`)}>{chan.name}</div>
 				</ul>
 			))}
 		</div>
@@ -112,7 +103,7 @@ function ChannelMemberList() {
 	);
 }
 
-function ChannelMessages() {
+function ChannelMessages(/*channelId: number*/) {
 	const [newInput, setNewInput] = useState("");
 	const [messageList, setMessageList] = useState<any[]>([]);
 	const [newMessage, setNewMessage] = useState("");

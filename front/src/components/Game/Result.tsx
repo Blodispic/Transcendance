@@ -1,25 +1,19 @@
-import React from 'react';
-import { useEffect, useState } from 'react';
-import { Link, Navigate, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import "../../styles/game.scss";
 
-export function Victory() {
+export function ResultPopup(props: any) {
 	const navigate = useNavigate();
-	return (
-		<div className='result-popup'style={{zIndex: 100}}>
-			<div className='result-popup-inner' onClick={_ => navigate("/Game") }>
-				Congratulations! <br />You won!
-			</div>
-		</div>
-	);
-}
+	let message: string = "";
 
-export function Defeat() {
-	const navigate = useNavigate();
+	if (props.win == true)
+		message = "You won!";
+	else
+		message = "You lost!";
+
 	return (
 		<div className='result-popup' style={{zIndex: 100}}>
 			<div className='result-popup-inner' onClick={_ => navigate("/Game")}>
-				Congratulations! <br />You lost!
+				Congratulations! <br />{message}
 			</div>
 		</div>
 	);
