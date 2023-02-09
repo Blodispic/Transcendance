@@ -1,8 +1,17 @@
 .center {
-    position: absolute;
+    position: fixed;
     left: 50%;
     top: 50%;
     transform: translate(-50%, -50%);
+}
+
+.form-qrcode {
+    margin-top: 15%;
+
+    .qrcode {
+        text-align: center;
+        width: 100%;
+    }
 }
 
 .pulse:hover,

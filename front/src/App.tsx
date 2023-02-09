@@ -37,7 +37,7 @@ function App() {
     })
     const data: IUser = await response.json();
     console.log("data=", data);
-    
+
     dispatch(setUser(data));
     dispatch(log_unlog());
   }

@@ -16,6 +16,7 @@ export interface IUser {
     username: string;
     avatar: string;
     status: UserStatus;
+    isTwoFactorAuthenticationEnabled: boolean;
     elo: number;
     twoFaEnable: boolean;
     friends?: IUser[];

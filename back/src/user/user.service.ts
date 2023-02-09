@@ -8,6 +8,10 @@ import { User } from "./entities/user.entity";
 import { FriendRequest } from "./entities/friend-request.entity";
 import { FriendRequestDto } from "./dto/friend-request.dto";
 import { JwtService } from "@nestjs/jwt";
+import { sign } from 'jsonwebtoken';
+import { authenticator } from "otplib";
+import * as QRCode from 'qrcode';
+
 
 @Injectable()
 export class UserService {
@@ -31,6 +35,24 @@ export class UserService {
 
   async save(updateUserDto: UpdateUserDto) {
     return (this.usersRepository.save(updateUserDto));
+  }
+
+  
+  async generateQRCode(secret: string): Promise<string> {
+    const qrCode = await QRCode.toDataURL(secret);
+    return qrCode;
+  }
+
+  async enable2FA(user: any, secret: string): Promise<void> {
+    user.two_factor_secret = secret;
+    await this.usersRepository.save(user);
+  }
+
+  async check2FA(id: number, userCode: string): Promise<boolean>{
+    const user = await this.usersRepository.findOneBy({id: id});
+    if (user)
+      return authenticator.check(userCode, user.two_factor_secret);
+    return(false);  
   }
 
   findAll() {
