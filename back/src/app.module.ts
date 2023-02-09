@@ -20,7 +20,7 @@ import { FriendRequest } from './user/entities/friend-request.entity';
   imports: [
     TypeOrmModule.forRoot({
       type: 'postgres',
-      host: 'localhost',
+      host: 'PostgreSQL',
       port: 5432,
       username: 'admin',
       password: 'admin',
