@@ -143,17 +143,19 @@ function Friends(props: { user: IUser }) {
         const [friendReq, setFriendReq] = useState<{ name: string, avatar: string, id: number }[]>([]);
 
         useEffect(() => {
-          const checkFriendRequest = async () => {
-            const response = await fetch(`${process.env.REACT_APP_BACK}user/friends`, {
-              method: 'POST',
-              body: JSON.stringify(user),
-              headers: { 'Content-Type': 'application/json' }
-            });
-            const data = await response.json();
-            const pendingFriendRequests = data.filter((friendRequest: { status: string; }) => friendRequest.status === "Pending");
-                setFriendReq(data);
-          };
-          checkFriendRequest();
+                const checkFriendRequest = async () => {
+                        const response = await fetch(`${process.env.REACT_APP_BACK}user/friends`, {
+                                method: 'POST',
+                                body: JSON.stringify(user),
+                                headers: { 'Content-Type': 'application/json' }
+                        });
+                        const data = await response.json();
+                        const pendingFriendRequests = data.filter((friendRequest: { status: string; }) => friendRequest.status === "Pending");
+                        console.log('data', data);
+                        console.log('pendingFriendRequests', pendingFriendRequests);
+                        setFriendReq(data);
+                };
+                checkFriendRequest();
         }, []);
 
         interface FriendsListProps {
@@ -162,24 +164,24 @@ function Friends(props: { user: IUser }) {
 
         const acceptFriendRequest = async (friend: number) => {
                 const response = await fetch(`${process.env.REACT_APP_BACK}user/friends/accept`, {
-                  method: 'POST',
-                  body: JSON.stringify({friend, user}),
-                  headers: { 'Content-Type': 'application/json' }
+                        method: 'POST',
+                        body: JSON.stringify({ friend, user }),
+                        headers: { 'Content-Type': 'application/json' }
                 });
                 const data = await response.json();
                 setFriendReq(prevState => prevState.filter(accepted => accepted.id !== friend));
-              };
-            
-              const declineFriendRequest = async (friend: number) => {
+        };
+
+        const declineFriendRequest = async (friend: number) => {
                 const response = await fetch(`${process.env.REACT_APP_BACK}user/friends/decline`, {
-                  method: 'POST',
-                  body: JSON.stringify({friend, user}),
-                  headers: { 'Content-Type': 'application/json' }
+                        method: 'POST',
+                        body: JSON.stringify({ friend, user }),
+                        headers: { 'Content-Type': 'application/json' }
                 });
                 const data = await response.json();
                 setFriendReq(prevState => prevState.filter(declined => declined.id !== friend));
-              };
-    
+        };
+
 
 
         const FriendsList = (props: FriendsListProps) => {
@@ -208,14 +210,15 @@ function Friends(props: { user: IUser }) {
 
 
         const FriendsReq = () => {
-                const friendReq = [
-                { name: 'Ross', avatar: 'https://img.freepik.com/vecteurs-premium/panda-mignon-tenant-bambou-pouce-vers-haut-icone-vecteur-dessin-anime-illustration-nature-animale-isolee_138676-4817.jpg?w=360', id: 1 },
-                { name: 'Rachel', avatar: 'http://10.1.8.1:4000/user/3/avatar', id: 1 },
-                { name: 'Joey', avatar: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRpamtYxWbURGcTSVFTmsrY16rf3d_I39DhAQ&usqp=CAU', id: 1 },
-                { name: 'Phoebe', avatar: 'https://i.pinimg.com/originals/d0/a2/e2/d0a2e243610bde1be54defdca162e47a.jpg', id: 1 },
-                { name: 'Chandler', avatar: 'https://ih1.redbubble.net/image.1343394098.5639/flat,750x,075,f-pad,750x1000,f8f8f8.jpg', id: 1 },
-                { name: 'Monica', avatar: 'https://www.gamosaurus.com/wp-content/uploads/Users/pikavatarsurf.png', id: 1 },
-                ];
+                // const friendReq = [
+                //         { name: 'Ross', avatar: 'https://img.freepik.com/vecteurs-premium/panda-mignon-tenant-bambou-pouce-vers-haut-icone-vecteur-dessin-anime-illustration-nature-animale-isolee_138676-4817.jpg?w=360', id: 1 },
+                //         { name: 'Rachel', avatar: 'http://10.1.8.1:4000/user/3/avatar', id: 2 },
+                //         { name: 'Joey', avatar: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRpamtYxWbURGcTSVFTmsrY16rf3d_I39DhAQ&usqp=CAU', id: 3 },
+                //         { name: 'Phoebe', avatar: 'https://i.pinimg.com/originals/d0/a2/e2/d0a2e243610bde1be54defdca162e47a.jpg', id: 4 },
+                //         { name: 'Chandler', avatar: 'https://ih1.redbubble.net/image.1343394098.5639/flat,750x,075,f-pad,750x1000,f8f8f8.jpg', id: 5 },
+                //         { name: 'Monica', avatar: 'https://www.gamosaurus.com/wp-content/uploads/Users/pikavatarsurf.png', id: 6 },
+                // ];
+                console.log(friendReq)
                 return <FriendsList friends={friendReq} />;
 
 

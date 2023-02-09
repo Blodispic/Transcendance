@@ -2,6 +2,9 @@ import { useState } from 'react';
 import '../../styles/connection.scss'
 import { useAppDispatch, useAppSelector } from '../../redux/Hook';
 import { change_name, log_unlog } from "../../redux/user";
+import { log } from 'console';
+
+
 
 export default function NameForm() {
 
@@ -14,6 +17,7 @@ export default function NameForm() {
     const dispatch = useAppDispatch();
 
     const fetch_name_avatar = async (e: any) => {
+
         e.preventDefault();
         if (myUser.user !== undefined) {
 
@@ -35,6 +39,7 @@ export default function NameForm() {
             }
             dispatch(change_name(newname));
             dispatch(log_unlog());
+            console.log(myUser);
         }
     }
 
@@ -67,6 +72,9 @@ export default function NameForm() {
                         <a>okk</a>
                     </button>
                 }
+                <label>
+                    {newname}
+                </label>
             </form >
         </div >
         </div>
