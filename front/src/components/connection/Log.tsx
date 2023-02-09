@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Navigate, useSearchParams } from "react-router-dom";
-import { useAppSelector } from "../../redux/Hook";
+import { useAppDispatch, useAppSelector } from "../../redux/Hook";
+import { log_unlog } from "../../redux/user";
 import { Fetchcode } from "./Connection";
 
 
@@ -13,7 +14,31 @@ export const getAuthorizeHref = (): string => {
 
 export function Log() {
 
-    const [code, setCode] = useState<string | undefined>(undefined);
+    const dispatch = useAppDispatch();
+    const [code, setCode] = useState<string>('');
+    const [isValid, setIsValid] = useState<boolean | undefined>(undefined);
+    const myStore = useAppSelector(state => state.user);
+
+    const fetchCodeForQr = async (e: any) => {
+        e.preventDefault();
+        await fetch(`${process.env.REACT_APP_BACK}user/2fa/check`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                user: myStore.user,
+                code: code,
+            }),
+        })
+            .then(async response => {
+                const data = await response.json();
+                setIsValid(data.result);
+                if (data.result === true)
+                    dispatch(log_unlog());
+            })
+            .catch()
+    }
     return (
         <div>
             <div className='center form  white'>
@@ -21,8 +46,18 @@ export function Log() {
                 <form>
                     <label >
                         Code:
-                        <input type="text" name="user" value={code} onChange={e => setCode(e.target.value)} />
+                        <input type="text" value={code} onChange={e => setCode(e.target.value)} />
                     </label>
+                    {
+                        code &&
+                        <button onClick={e => fetchCodeForQr(e)}>
+                            <a>ok</a>
+                        </button>
+                    }
+                    {
+                        isValid === false &&
+                        <a>code faux ou expirer retenter</a>
+                    }
                 </form>
             </div>
         </div>
