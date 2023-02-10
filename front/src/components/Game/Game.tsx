@@ -3,7 +3,7 @@ import { Circle, Layer, Rect, Stage, Text } from "react-konva";
 import { useBeforeUnload } from "react-router-dom";
 import { socket } from "../../App";
 import "../../styles/game.scss";
-import { Defeat, Victory } from "./Result";
+import { ResultPopup } from "./Result";
 
 export interface Vec2 {
 	x: number;
@@ -144,7 +144,8 @@ export default function GameApp() {
 	//  Here to modify game page
 	return (
 		<div id="game-container">
-			{ gameState.gameFinished ? (result ? <Victory /> : <Defeat />) : <></> }
+			{ gameState.gameFinished ? (result ? <ResultPopup win={true} /> : <ResultPopup win={false} />) : <></> }
+			{/* { gameState.gameFinished ? (result ? <Victory /> : <Defeat />) : <></> } */}
 			<h3>
 				{gameState.player2.name} : {gameState.player2.score}
 			</h3>
