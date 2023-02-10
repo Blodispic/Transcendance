@@ -8,30 +8,34 @@ import '../../styles/chat.scss'
 
 function CreateChannelPopup(props: any) {
 	const [chanName, setChanName] = useState("");
+	const [password, setPassword] = useState("");
+	const [privateChan, setPrivateChan] = useState(false);
+
 	const handleCreateNewChan = () => {
 		if (chanName != "")
 			socket.emit('createPublicChannel', { channame: chanName });
 		setChanName("");
+		console.log(password);
+		setPassword("");
 		props.setTrigger(false);
 	}
-
 	return (props.trigger) ? (
 		<div className="chat-form-popup" onClick={_ => props.setTrigger(false)}>
 			<div className="chat-form-inner" onClick={e => e.stopPropagation()}>
 				<HiOutlineXMark className="close-icon" onClick={_ => props.setTrigger(false)} /> <br />
 				<h3>Channel Name</h3>
-				<input type="text" id="channel-input" onChange={e => { setChanName(e.target.value) }} />
+				<input type="text" id="channel-input" placeholder="Insert channel name" onChange={e => { setChanName(e.target.value) }} />
 				<h3>Channel Mode</h3>
 				<input type="radio" name="Mode" value="Public" />Public <span></span>
-				<input type="radio" name="Mode" value="Private" />Private <span></span>
-				<input type="radio" name="Mode" value="Protected" />Protected <br /><br />
+				<input type="radio" name="Mode" value="Protected" />Private <br />
+				<input type="password" id="channel-input" placeholder="Insert password" onChange={e => { setPassword(e.target.value) }} /><br />
 				<button onClick={() => handleCreateNewChan()}>Create Channel</button><span></span>
 			</div>
 		</div>
 	) : <></>;
 }
 
-function ChannelList() {
+function ChannelList() { /** Displays all channels */
 	const [chanList, setChanList] = useState<IChannel[]>([]);
 	const [chanId, setChanId] = useState("");
 	const navigate = useNavigate();
@@ -44,32 +48,49 @@ function ChannelList() {
 		setChanId(data);
 	}
 	console.log('chanId: ' + chanId);
+
 	useEffect(() => {
-		fetch(`${process.env.REACT_APP_BACK}channel/${chanId}`)
-			.then(response => {
-				return response.json();
+		const fetchAllList = async () => {
+			const response = await fetch(`${process.env.REACT_APP_BACK}channel/`, {
+				method: 'GET',
 			})
-			.then(data => {
-				console.log(data);
-				setChanList([...chanList, data]);
-			});
+			const data = await response.json();
+			console.log(data);
+			setChanList(data);
+		}
+		fetchAllList();
 	}, [chanId]);
+
+	 console.log(chanList);
+
 	return (
-		<div>
+		<div> 
+		<header>All Channels <hr /></header>
 			{chanList.map(chan => (
-				<ul key={chan.name}>
-					<div className="channel-name" onClick={_ => navigate(`chan${chan.id}`)}>{chan.name}</div>
+				<ul key={chan.name} >
+					<div onClick={_ => navigate(`/Chat/channel${chan.id}`)}>{chan.name}</div>
 				</ul>
 			))}
 		</div>
 	);
 }
 
-function JoinedChannelList() {
+function JoinedChannelList() { /** Displays only joined channels */
+
+	return (
+		<div className="title"> Joined Channels <hr />
+			test chan1
+		</div>
+	);
+
+}
+
+function AddChannel() {
 	const [buttonPopup, setButtonPopup] = useState(false);
 
 	return (
-		<div className="title"> Joined Channels <span><HiPlusCircle className="add-icon" onClick={() => setButtonPopup(true)} /></span><hr />
+		<div className="add-icon">
+		<HiPlusCircle onClick={() => setButtonPopup(true)} />
 			<CreateChannelPopup trigger={buttonPopup} setTrigger={setButtonPopup} />
 		</div>
 	);
@@ -77,7 +98,7 @@ function JoinedChannelList() {
 
 function PublicChannelList() {
 	return (
-		<div className="title" id="upper-side">Public Channels <hr />
+		<div className="title">Public Channels <hr />
 			<ul>
 				<p>test</p>
 			</ul>
@@ -86,13 +107,15 @@ function PublicChannelList() {
 }
 
 function ChannelMemberList() {
+
 	return (
 		<div className="title"> Members <hr />
 		</div>
 	);
 }
 
-function ChannelMessages() {
+
+function ChannelMessages(/*channelId: number*/) {
 	const [newInput, setNewInput] = useState("");
 	const [messageList, setMessageList] = useState<any[]>([]);
 	const [newMessage, setNewMessage] = useState("");
@@ -142,8 +165,8 @@ export function Channels() {
 	return (
 		<div id="chat-container">
 			<div className="left-sidebar">
-				<JoinedChannelList />
 				<ChannelList />
+				<AddChannel />
 			</div>
 				<ChannelMessages />
 			<div className="right-sidebar">

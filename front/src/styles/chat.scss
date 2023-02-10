@@ -28,18 +28,18 @@ $tab-color: rgb(121, 121, 121);
 		padding: 10px;
 		background-color: rgba(32, 32, 38, 0.7);
 		color: white;
+		position: relative;
+
 		.title {
 			font-size: 20px;
-			justify-content: center;
-			align-items: center;
-			align-content: center;
-			border-bottom: black;
-			.add-icon {
-				cursor: pointer;
-				float: right;
-			}
 		}
-		.channel-name {
+		.add-icon {
+			cursor: pointer;
+			position: absolute;
+			margin: auto;
+		}
+		ul {
+			padding-left: 0px;
 			cursor: pointer;
 		}
 	}
