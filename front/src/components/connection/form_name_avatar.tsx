@@ -45,28 +45,30 @@ export default function NameForm() {
         setavatar(URL.createObjectURL(myFile));
     }
     return (
-        <div className='center button'>
-            <form>
-                <label >
-                    Name:
-                    <input type="text" name="user" value={newname} onChange={e => setNewname(e.target.value)} />
-                </label>
+        <div className='center form  white'>
+            <div className=' color_sign'>
+                <form>
+                    <label >
+                        Name:
+                        <input type="text" name="user" value={newname} onChange={e => setNewname(e.target.value)} />
+                    </label>
 
-                <label >
-                    profile picture:
-                    <input type="file" name="avatar" onChange={e => onChangeFile(e)} accept="image/png, image/jpeg" />
-                </label>
-                {
-                    file && avatar !== '' &&
-                    <img src={avatar} />
-                }
-                {
-                    newname &&
-                    <button onClick={(e) => fetch_name_avatar(e)}>
-                        <a>okk</a>
-                    </button>
-                }
-            </form >
-        </div >
+                    <label >
+                        profile picture:
+                        <input type="file" name="avatar" onChange={e => onChangeFile(e)} accept="image/png, image/jpeg" />
+                    </label>
+                    {
+                        file && avatar !== '' &&
+                        <img src={avatar} />
+                    }
+                    {
+                        newname &&
+                        <button onClick={(e) => fetch_name_avatar(e)}>
+                            <a>ok</a>
+                        </button>
+                    }
+                </form >
+            </div >
+        </div>
     );
 };

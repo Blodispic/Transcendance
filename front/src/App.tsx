@@ -3,8 +3,9 @@ import { useAppDispatch, useAppSelector } from './redux/Hook';
 import { io, Socket } from 'socket.io-client';
 import router from './router';
 import { Cookies } from 'react-cookie';
-import { setUser } from './redux/user';
+import { log_unlog, setUser } from './redux/user';
 import { useEffect } from "react";
+import { IUser } from "./interface/User";
 
 export let socket: Socket;
 
@@ -16,8 +17,8 @@ function App() {
 
 
   useEffect(() => {
-    if (myStore.isLog == true) {
-        socket = io("http://" + window.location.hostname + ":4000", {
+    if (myStore.isLog == true && token != undefined && myStore.user && myStore.user.username) {
+        socket = io(`${process.env.REACT_APP_BACK}`, {
         auth: {
           user: myStore.user,
         }
@@ -34,11 +35,12 @@ function App() {
       },
       body: JSON.stringify({ token: token }),
     })
-    const data = await response.json();
+    const data: IUser = await response.json();
     console.log("data=", data);
     
     dispatch(setUser(data));
-
+    dispatch(log_unlog());
+    
   }
   if (myStore.user === undefined) {
     if (token !== undefined)
