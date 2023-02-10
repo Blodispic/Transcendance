@@ -4,6 +4,7 @@ import { socket } from "../../App"
 import { Tab, TabList, TabPanel, Tabs } from "react-tabs";
 import { DirectMessage } from "./DirectMessage";
 import 'react-tabs/style/react-tabs.css';
+import { useNavigate } from "react-router-dom";
 
 export function ChatBody() {
 	
@@ -50,11 +51,13 @@ export function ChatBody() {
 }
 
 export default function Chat() {
+	const navigate = useNavigate();
+
 	return (
 			<Tabs className="chat-tab">
 				<TabList>
-					<Tab>Channels</Tab>
-					<Tab>DM</Tab>
+					<Tab onClick={_ => navigate(`/Chat/channel`)} >Channels</Tab>
+					<Tab onClick={_ => navigate(`/Chat/dm`)}>DM</Tab>
 				</TabList>
 			<TabPanel>
 				<Channels />

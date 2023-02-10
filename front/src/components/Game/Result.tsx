@@ -1,21 +1,21 @@
 import React from 'react';
 import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
-export function Victory() {
-	return (
-		<h1>
-			"Congratulations you Won!"
-		</h1>
-	);
-}
+export function ResultPopup(props: any) {
+	const navigate = useNavigate();
+	let message: string = "";
 
-export function Defeat() {
-
+	if (props.win == true)
+		message = "You won!";
+	else
+		message = "You lost!";
 
 	return (
-		<h1>
-			"Congratulations you Lost!"
-		</h1>
+		<div className='result-popup' style={{zIndex: 100}}>
+			<div className='result-popup-inner' onClick={_ => navigate("/Game")}>
+				Congratulations! <br />{message}
+			</div>
+		</div>
 	);
 }

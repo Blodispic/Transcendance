@@ -11,7 +11,7 @@ import { JwtService } from "@nestjs/jwt";
 import { sign } from 'jsonwebtoken';
 import { authenticator } from "otplib";
 import * as QRCode from 'qrcode';
-
+import { CreateResultDto } from "src/results/dto/create-result.dto";
 
 @Injectable()
 export class UserService {
@@ -20,6 +20,8 @@ export class UserService {
     private readonly usersRepository: Repository<User>,
     @InjectRepository(FriendRequest)
     private readonly friendRequestRepository: Repository<FriendRequest>,
+    @InjectRepository(Results)
+    private readonly resultsRepository: Repository<Results>,
     private jwtService: JwtService,
   ) { }
 
@@ -31,6 +33,16 @@ export class UserService {
       return (check);
     const user: User = this.usersRepository.create(createUserDto);
     return this.usersRepository.save(user);
+  }
+
+  async createResults(createResultDto: CreateResultDto): Promise<Results> {
+    const check = await this.resultsRepository.findOneBy({
+      winner: createResultDto.winner
+    })
+    if (check)
+      return (check);
+    const result: Results = this.resultsRepository.create(createResultDto);
+    return this.resultsRepository.save(result);
   }
 
   async save(updateUserDto: UpdateUserDto) {
