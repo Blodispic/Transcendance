@@ -100,4 +100,7 @@ export class ChannelService {
 		});
 	  }
 
+	  getAll() {
+		return this.channelRepository.find();
+	  }
 }

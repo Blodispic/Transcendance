@@ -8,14 +8,17 @@ import { User } from "./entities/user.entity";
 import { FriendRequest } from "./entities/friend-request.entity";
 import { FriendRequestDto } from "./dto/friend-request.dto";
 import { JwtService } from "@nestjs/jwt";
+import { CreateResultDto } from "src/results/dto/create-result.dto";
 
 @Injectable()
 export class UserService {
   constructor(
-    @InjectRepository(User)
+    @InjectRepository(User) 
     private readonly usersRepository: Repository<User>,
     @InjectRepository(FriendRequest)
     private readonly friendRequestRepository: Repository<FriendRequest>,
+    @InjectRepository(Results)
+    private readonly resultsRepository: Repository<Results>,
     private jwtService: JwtService,
   ) { }
 
@@ -27,6 +30,16 @@ export class UserService {
       return (check);
     const user: User = this.usersRepository.create(createUserDto);
     return this.usersRepository.save(user);
+  }
+
+  async createResults(createResultDto: CreateResultDto): Promise<Results> {
+    const check = await this.resultsRepository.findOneBy({
+      winner: createResultDto.winner
+    })
+    if (check)
+      return (check);
+    const result: Results = this.resultsRepository.create(createResultDto);
+    return this.resultsRepository.save(result);
   }
 
   async save(updateUserDto: UpdateUserDto) {
@@ -55,7 +68,7 @@ export class UserService {
       const user = await this.usersRepository.findOneBy({ login: decoded_access_token.username });
       if (user)
         return user;
-      return {message: "Token user not found"};
+      return ("Token user not found");
   }
 
   async getByUsername(username: string) {
