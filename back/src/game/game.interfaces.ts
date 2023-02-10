@@ -40,4 +40,5 @@ export interface GameState {
 	player2: Player;
 	ball: Ball;
 	gameFinished: boolean;
+	extra: boolean;
 }
