@@ -18,6 +18,8 @@ import { AppGateway } from "src/app.gateway";
 import { CreateChannelSocketDto } from "./dto/create-channel.dto";
 import { ChanPasswordDto } from "./dto/chan-password.dto";
 import { BanUserDto } from "./dto/ban-user.dto";
+import { MuteUserDto } from "./dto/mute-user.dto";
+import { Channel } from "./channel/entities/channel.entity";
 
 /*ToDo
   - check if password et password ok pour join chan
@@ -85,13 +87,28 @@ async handleSendMessageChannel(@ConnectedSocket() client: Socket, @MessageBody()
   const channel = await this.channelService.getById(messageChannelDto.chanid);
   if (channel == null)
     throw new BadRequestException(); // no such channel
+  const user = client.handshake.auth.user;
   // channel.users.forEach(user => {
   //     this.server.to("user-" + user.id).emit("sendMessageChannel", messageChannelDto);
   // });
-
+  if (!this.checkUserCanTalk(user, channel))
+    throw new BadRequestException(); // user is ban or mute from this channel
   const messageChannelok = { message: messageChannelDto.message, user: client.handshake.auth.user}
   this.server.to("chan" + messageChannelDto.chanid).emit("sendMessageChannelOK", messageChannelok);
 
+}
+
+checkUserCanTalk(user: User, channel: Channel)
+{
+  channel.banned.forEach(banned => {
+    if (user === banned)
+      return false;
+  });
+  channel.muted.forEach(muted => {
+    if (user === muted)
+      return false;
+  });
+  return true;
 }
 
 @SubscribeMessage('joinChannel')
@@ -200,7 +217,7 @@ async handleBanUser(@ConnectedSocket() client: Socket, @MessageBody() banUserDto
   if (channel.owner != user)
     throw new BadRequestException();
   this.channelService.banUser(banUserDto);
-  client.emit("banUserOK", user.id);
+  client.emit("banUserOK", user.id, channel.id);
 }
 
 @SubscribeMessage('MuteUser')
@@ -212,7 +229,7 @@ async handleMuteUser(@ConnectedSocket() client: Socket, @MessageBody() muteUserD
   if (channel.owner != user)
     throw new BadRequestException();
   this.channelService.muteUser(muteUserDto);
-  client.emit("muteUserOK", user.id);
+  client.emit("muteUserOK", user.id, channel.id);
 }
 
 
