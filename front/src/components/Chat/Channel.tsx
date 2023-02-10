@@ -35,7 +35,7 @@ function CreateChannelPopup(props: any) {
 	) : <></>;
 }
 
-function ChannelList() { /** Displays all channels */
+function ChannelList(props: any) { /** Displays all channels */
 	const [chanList, setChanList] = useState<IChannel[]>([]);
 	const [chanId, setChanId] = useState("");
 	const navigate = useNavigate();
@@ -68,7 +68,7 @@ function ChannelList() { /** Displays all channels */
 		<header>All Channels <hr /></header>
 			{chanList.map(chan => (
 				<ul key={chan.name} >
-					<div onClick={_ => navigate(`/Chat/channel${chan.id}`)}>{chan.name}</div>
+					<div onClick={_ => navigate(`/Chat/channel/${chan.id}`)}>{chan.name}</div>
 				</ul>
 			))}
 		</div>
