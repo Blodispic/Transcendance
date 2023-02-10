@@ -4,6 +4,7 @@ import { useAppSelector } from '../../redux/Hook';
 import { Player } from './Game';
 import { useNavigate } from "react-router-dom";
 import { socket } from '../../App';
+import { debug } from 'console';
 
 export default function Queue() {
 
@@ -15,6 +16,11 @@ export default function Queue() {
         return;
     }
 
+    function createCustomRoom() {
+        socket.emit("addToWaitingRoom", myUser.user);
+        return;
+    }
+
     socket.on("RoomStart", (roomId: number, player: Player) => {
         navigate("/game/" + roomId, { state: { Id: roomId } });
     });
@@ -22,7 +28,6 @@ export default function Queue() {
     useEffect(() => {
         const fetchuser = async () => {
             if (myUser.user) {
-
                 await fetch(`${process.env.REACT_APP_BACK}game/${myUser.user.id}}`, {
                     method: 'POST',
                 })
@@ -32,12 +37,18 @@ export default function Queue() {
     }, [])
 
     return (
-        <button className="center pulse pointer" onClick={(e) => addToWaitingRoom()} >
+        <div>
+            <button className="center pulse pointer" onClick={(e) => addToWaitingRoom()} >
+                <Link to="/Game/">
+                        Add to Waiting Room
+                </Link>
+            </button>
+
+            <button className="center pulse pointer" onClick={(e) => createCustomRoom()} >
             <Link to="/Game/">
-
-                    Add to Waiting Room
-
+                    Create Custom Room
             </Link>
-        </button>
+            </button>
+        </div>
     )
 }

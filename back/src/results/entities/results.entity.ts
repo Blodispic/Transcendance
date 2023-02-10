@@ -21,10 +21,10 @@ export class Results {
   @Column()
   looser_score: string;
 
-  @Column()
-  winner_avatar: string;
+  // @Column()
+  // winner_avatar: string;
 
-  @Column()
-  looser_avatar: string;
+  // @Column()
+  // looser_avatar: string;
 
 }
