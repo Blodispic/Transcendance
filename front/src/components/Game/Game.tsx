@@ -61,6 +61,8 @@ let move2: Move = { ...inputdefault };
 let paddleDimensions: Vec2 = { x: 100, y: 10 };
 let ballRadius: number = 10;
 
+let selfID: number = 0;
+
 const vector_zero = (): Vec2 => ({ x: 0, y: 0 });
 
 let balldefault: Ball = {
@@ -118,16 +120,28 @@ export default function GameApp() {
 			}, 1000 / 60)
 		);
 
-		socket.on("UpdateState", (newGameState: GameState) => {	
+		socket.on("UpdateState", (newGameState: GameState, player: number) => {	
 			const convertedState: GameState = convertState(newGameState);
+			selfID = player;
 			setGameState(convertedState);
 		});
 
 		socket.on("GameEnd", (result: any) => {
-			if (result.winner === gameState.player1.name)
-				setResult(true);
-			else if (result.winner === gameState.player2.name)
-				setResult(false);
+			console.log(selfID);
+			if (selfID === 1)
+			{
+				if (result.winner === gameState.player1.name)
+					setResult(true);
+				else if (result.winner === gameState.player2.name)
+					setResult(false);
+			}
+			else
+			{
+				if (result.winner === gameState.player1.name)
+					setResult(false);
+				else if (result.winner === gameState.player2.name)
+					setResult(true);
+			}
 			socket.emit("GameEnd", null);
 		});
 

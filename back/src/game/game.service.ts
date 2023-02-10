@@ -520,8 +520,8 @@ class Game {
 	updateState(gameState: GameState)
 	{
 		gameState = this.updateGameState({ ...gameState });
-		this.server.to(this.gameState.player1.socket).emit("UpdateState", gameState);
-		this.server.to(this.gameState.player2.socket).emit("UpdateState", gameState);
+		this.server.to(this.gameState.player1.socket).emit("UpdateState", gameState, 1);
+		this.server.to(this.gameState.player2.socket).emit("UpdateState", gameState, 2);
 		return gameState;
 	}
 }
