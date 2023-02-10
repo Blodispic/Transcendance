@@ -9,6 +9,7 @@ import { Friends } from './friend_request';
 import { page } from '../../interface/enum';
 import { History } from './History';
 import TwoFa from './setTwoFa';
+import { socket } from '../../App';
 
 
 function Onglets(props: { current: page, setOnglets: Function }) {
@@ -53,11 +54,14 @@ export default function Profile() {
                 })
                 setCurrentUser(await response.json());
         }
+        socket.on('somoene change status', (message) => {
+                fetchid();
+        })
+
         useEffect(() => {
                 if (id) 
                         fetchid();
         }, [id])
-
         useEffect(() => {
 
         }, [Onglets])

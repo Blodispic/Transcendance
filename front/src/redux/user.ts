@@ -35,12 +35,17 @@ export const userSlice = createSlice({
             state.isOauth = true;
         },
         set_status: (state, { payload }: PayloadAction<UserStatus>) => {
+
             state.user!.status = payload;
-            socket.emit("status", payload);
             if (payload === UserStatus.OFFLINE) 
-                state.isLog = false;
+            state.isLog = false;
             else 
-                state.isLog = true;
+            state.isLog = true;
+            console.log(payload)
+            const response = fetch(`${process.env.REACT_APP_BACK}user/${state.user?.id}`, {
+                method: 'PATCH',
+                body: JSON.stringify({ user : state.user }),
+            })
         },
         delete_user: (state) => {
             state.user = undefined;

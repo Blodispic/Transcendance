@@ -30,6 +30,6 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
 	{
 		// Const user = await this.userRepository.findOneBy({where: id: id})
 		this.userService.SetStatus(client.handshake.auth.user, status);
-		//emit a tout le monde 
+		client.emit("somoene change status")
 	}
 }

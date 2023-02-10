@@ -63,10 +63,6 @@ export default function Sign() {
                         <input type="file" name="avatar" onChange={e => onChangeFile(e)} accept="image/png, image/jpeg" />
                     </label>
                     {
-                        file && avatar !== '' &&
-                        <img src={avatar} />
-                    }
-                    {
                         newname &&
                         <button onClick={(e) => fetch_name_avatar(e)}>
                             <a>ok</a>
