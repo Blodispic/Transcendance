@@ -49,8 +49,6 @@ export interface GameState {
 	extra: boolean;
 }
 
-const sound = new Audio("../../assets/ponghitside.ogg");
-
 const GAME_RATIO = 1.5;
 const GAME_INTERNAL_WIDTH = 700;
 
@@ -370,7 +368,8 @@ function paddleCollision(ball: Ball, player: Player) {
 				else ball.position.y -= 5;
 			}
 			ball.cooldown = 1;
-			sound.play();
+			const sound = require("../../assets/ponghitside.ogg");
+			new Audio(sound).play();
 			return 1;
 		}
 	}
