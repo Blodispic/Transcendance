@@ -7,10 +7,16 @@
 
 .form-qrcode {
     margin-top: 15%;
-
+    height: auto;
+    width: 150px;
+    display: flex;
+    margin-left: 50%;
+    background-color: #3352cb;
+    text-align: center;
+    width: min-content;
+    padding: 15px;
     .qrcode {
         text-align: center;
-        width: 100%;
     }
 }
 
@@ -25,17 +31,17 @@
     cursor: pointer;
 }
 
+.color_sign {
+    background-color: #34495E;
+    border-color: #34495e;
+}
+.color_log {
+    background-color: #3352cb;
+    border-color: #3255df
+}
 .button {
     font-family: 'Fredoka One', cursive;
     border-radius: 5px;
-    .color_sign {
-        background-color: #34495E;
-        border-color: #34495e;
-    }
-    .color_log {
-        background-color: #3352cb;
-        border-color: #3255df
-    }
     >.button {
         padding: 2px;
         width: 200px;

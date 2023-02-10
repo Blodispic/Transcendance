@@ -3,9 +3,9 @@ import { useAppDispatch, useAppSelector } from './redux/Hook';
 import { io, Socket } from 'socket.io-client';
 import router from './router';
 import { Cookies } from 'react-cookie';
-import { log_unlog, setUser } from './redux/user';
+import { setUser, set_status } from './redux/user';
 import { useEffect } from "react";
-import { IUser } from "./interface/User";
+import { IUser, UserStatus } from "./interface/User";
 
 export let socket: Socket;
 
@@ -39,7 +39,7 @@ function App() {
     console.log("data=", data);
 
     dispatch(setUser(data));
-    dispatch(log_unlog());
+    dispatch(set_status(UserStatus.ONLINE));
   }
   if (myStore.user === undefined) {
     if (token !== undefined)

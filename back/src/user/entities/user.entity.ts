@@ -12,6 +12,11 @@ export class User {
   @Column({ default: false })
   isTwoFactorAuthenticationEnabled: boolean;
 
+    
+  @Column({ default: "offline"})
+  status: string;
+
+
   @Column()
   access_token: string;
 

@@ -47,16 +47,15 @@ export default function Profile() {
         let { id } = useParams();
         const [pages, setPages] = useState<page>(page.PAGE_1);
 
+        const fetchid = async () => {
+                const response = await fetch(`${process.env.REACT_APP_BACK}user/id/${id}`, {
+                        method: 'GET',
+                })
+                setCurrentUser(await response.json());
+        }
         useEffect(() => {
-                if (id) {
-                        const fetchid = async () => {
-                                const response = await fetch(`${process.env.REACT_APP_BACK}user/id/${id}`, {
-                                        method: 'GET',
-                                })
-                                setCurrentUser(await response.json());
-                        }
-                        fetchid()
-                }
+                if (id) 
+                        fetchid();
         }, [id])
 
         useEffect(() => {

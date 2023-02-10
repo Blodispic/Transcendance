@@ -1,8 +1,7 @@
-import { useEffect, useState } from "react";
-import { Navigate, useSearchParams } from "react-router-dom";
+import { useState } from "react";
+import { UserStatus } from "../../interface/User";
 import { useAppDispatch, useAppSelector } from "../../redux/Hook";
-import { log_unlog } from "../../redux/user";
-import { Fetchcode } from "./Connection";
+import { set_status } from "../../redux/user";
 
 
 
@@ -35,14 +34,14 @@ export function Log() {
                 const data = await response.json();
                 setIsValid(data.result);
                 if (data.result === true)
-                    dispatch(log_unlog());
+                    dispatch(set_status(UserStatus.ONLINE));
             })
             .catch()
     }
     return (
         <div>
             <div className='center form  white'>
-                <div className='color-log'></div>
+                <div className='color_log'></div>
                 <form>
                     <label >
                         Code:

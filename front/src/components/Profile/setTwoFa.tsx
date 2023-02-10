@@ -50,14 +50,14 @@ export default function TwoFa() {
     }, [])
 
     return (
-        <div>
+        <div className="container">
             {
                 isValid !== true &&
-                <div className='form-qrcode center form  white'>
-                    <div className='color-log'>
+                <div className='form-qrcode'>
+                    <div className=''>
                         <div>
                             <div className=''>
-                                <img className='qrcode' src={qrcode} />
+                                <img className='' src={qrcode} />
                             </div>
                             <label >
                                 Code:

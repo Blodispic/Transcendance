@@ -48,6 +48,8 @@ export function Header(props: { currentUser: IUser, setCurrentUser: Function }) 
     const { currentUser, setCurrentUser } = props;
     const myUser = useAppSelector(state => state.user);
 
+
+    console.log("la", currentUser.status)
     return (
             <div className='profile-header'>
 
@@ -86,7 +88,7 @@ export function Header(props: { currentUser: IUser, setCurrentUser: Function }) 
                                             </div>
 
                                             <div className=' block'>
-                                                    <span >{currentUser.status}</span>
+                                                    <span >{myUser.user!.status}</span>
                                             </div>
                                     </div>
                             </div>

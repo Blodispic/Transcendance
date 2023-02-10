@@ -2,9 +2,9 @@ import { useState, useEffect } from 'react';
 import { Navigate, useNavigate, useSearchParams } from "react-router-dom";
 import NameForm from "./Sign"
 import { useAppDispatch, useAppSelector } from "../../redux/Hook";
-import { log_unlog, oauth, setUser } from "../../redux/user";
+import { oauth, setUser, set_status } from "../../redux/user";
 import { useCookies } from "react-cookie";
-import { IUser } from '../../interface/User';
+import { IUser, UserStatus } from '../../interface/User';
 
 
 
@@ -91,7 +91,7 @@ export default function Connection() {
                             else if (data.twoFaEnable == true)
                                 navigate("./log")
                             else {
-                                dispatch(log_unlog());
+                                dispatch(set_status(UserStatus.ONLINE));
                                 navigate("/Home");
                         }
                     }

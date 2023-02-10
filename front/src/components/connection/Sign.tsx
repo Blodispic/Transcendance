@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { UserStatus } from '../../interface/User';
 import { useAppDispatch, useAppSelector } from '../../redux/Hook';
-import { change_name, log_unlog } from "../../redux/user";
+import { change_name, set_status } from "../../redux/user";
 
 export default function Sign() {
 
@@ -37,7 +38,7 @@ export default function Sign() {
             }
             console.log("comment ca ca rentre");
             dispatch(change_name(newname));
-            dispatch(log_unlog());
+            dispatch(set_status(UserStatus.ONLINE));
             navigate("/Home");
         }
     }

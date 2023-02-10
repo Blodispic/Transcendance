@@ -1,5 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { IUser, UserStatus } from '../interface/User';
+import { socket } from "../App";
 
 interface StateTest {
     user: IUser | undefined,
@@ -27,28 +28,30 @@ export const userSlice = createSlice({
         change_status: (state, { payload }: PayloadAction<UserStatus>) => {
             state.user!.status = payload;
         },
-        change_avatar(state, { payload }: PayloadAction<string>) {
+        change_avatar: (state, { payload }: PayloadAction<string>) => {
             state.user!.avatar = payload;
         },
-        oauth(state) {
+        oauth: (state) => {
             state.isOauth = true;
         },
-        log_unlog(state) {
-            if (state.isLog == false)
-                state.isLog = true;
-            else
+        set_status: (state, { payload }: PayloadAction<UserStatus>) => {
+            state.user!.status = payload;
+            socket.emit("status", payload);
+            if (payload === UserStatus.OFFLINE) 
                 state.isLog = false;
+            else 
+                state.isLog = true;
         },
-        delete_user(state) {
+        delete_user: (state) => {
             state.user = undefined;
             state.isLog = false;
             state.isOauth = false;
         },
-        enableTwoFa(state) {
+        enableTwoFa: (state) => {
             state.user!.twoFaEnable = true;
         }
     },
 })
 
-export const { setUser, change_status, enableTwoFa, change_name, change_avatar, log_unlog, delete_user, oauth} = userSlice.actions
+export const { setUser, change_status, enableTwoFa, change_name, change_avatar, set_status, delete_user, oauth} = userSlice.actions
 export default userSlice.reducer
