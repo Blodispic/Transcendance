@@ -46,6 +46,7 @@ export interface GameState {
 	player2: Player;
 	ball: Ball;
 	gameFinished: boolean;
+	extra: boolean;
 }
 
 const GAME_RATIO = 1.5;
@@ -57,6 +58,8 @@ let move1: Move = { ...inputdefault };
 let move2: Move = { ...inputdefault };
 let paddleDimensions: Vec2 = { x: 100, y: 10 };
 let ballRadius: number = 10;
+
+let selfID: number = 0;
 
 const vector_zero = (): Vec2 => ({ x: 0, y: 0 });
 
@@ -97,6 +100,7 @@ let gameStateDefault: GameState = {
 	},
 	ball: balldefault,
 	gameFinished: false,
+	extra: true,
 };
 
 resetState(gameStateDefault);
@@ -114,16 +118,28 @@ export default function GameApp() {
 			}, 1000 / 60)
 		);
 
-		socket.on("UpdateState", (newGameState: GameState) => {	
+		socket.on("UpdateState", (newGameState: GameState, player: number) => {	
 			const convertedState: GameState = convertState(newGameState);
+			selfID = player;
 			setGameState(convertedState);
 		});
 
 		socket.on("GameEnd", (result: any) => {
-			if (result.winner === gameState.player1.name)
-				setResult(true);
-			else if (result.winner === gameState.player2.name)
-				setResult(false);
+			console.log(selfID);
+			if (selfID === 1)
+			{
+				if (result.winner === gameState.player1.name)
+					setResult(true);
+				else if (result.winner === gameState.player2.name)
+					setResult(false);
+			}
+			else
+			{
+				if (result.winner === gameState.player1.name)
+					setResult(false);
+				else if (result.winner === gameState.player2.name)
+					setResult(true);
+			}
 			socket.emit("GameEnd", null);
 		});
 
@@ -144,9 +160,11 @@ export default function GameApp() {
 	//  Here to modify game page
 	return (
 		<div id="game-container">
+
 			{ gameState.gameFinished ? (result ? <ResultPopup win={true} /> : <ResultPopup win={false} />) : <></> }
 			{/* { gameState.gameFinished ? (result ? <Victory /> : <Defeat />) : <></> } */}
-			<h3>
+			<h3 className="display-player">
+				<img src="https://www.handiclubnimois.fr/wp-content/uploads/2020/10/blank-profile-picture-973460_1280.png" />
 				{gameState.player2.name} : {gameState.player2.score}
 			</h3>
 			<Stage
@@ -196,7 +214,8 @@ export default function GameApp() {
 					/>
 				</Layer>
 			</Stage>
-			<h3>
+			<h3 className="display-player">
+			<img src="https://www.handiclubnimois.fr/wp-content/uploads/2020/10/blank-profile-picture-973460_1280.png" />
 				{gameState.player1.name} : {gameState.player1.score}
 			</h3>
 		</div>
@@ -204,19 +223,29 @@ export default function GameApp() {
 }
 
 function convertState(state: GameState) {
-	state.client_area.x = Math.min((window.innerWidth * 70) / 100, GAME_INTERNAL_WIDTH);
-	state.client_area.y = state.client_area.x * GAME_RATIO;
+	// state.client_area.x = Math.min((window.innerWidth * 70) / 100, GAME_INTERNAL_WIDTH);
+	// state.client_area.y = state.client_area.x * GAME_RATIO;
+	if (window.innerHeight > GAME_RATIO * window.innerWidth)
+	{
+		state.client_area.x = Math.min((window.innerWidth * 70) / 100, GAME_INTERNAL_WIDTH);
+		state.client_area.y = state.client_area.x * GAME_RATIO;
+	}
+	else
+	{
+		state.client_area.y = Math.min((window.innerHeight * 75) / 100, GAME_INTERNAL_WIDTH * GAME_RATIO);
+		state.client_area.x = state.client_area.y / GAME_RATIO;
+	}
 
 	let newState: GameState = gameStateDefault;
 	newState.scale = state.client_area.x / state.area.x;
 
-	newState.ball.position.x = state.ball.position.x;//* (state.client_area.x / GAME_INTERNAL_WIDTH);
-	newState.ball.position.y = state.ball.position.y;//* (state.client_area.y / (GAME_INTERNAL_WIDTH * GAME_RATIO));
+	newState.ball.position.x = state.ball.position.x;
+	newState.ball.position.y = state.ball.position.y;
 
-	newState.ball.speed.x = state.ball.speed.x;//* (state.client_area.x / GAME_INTERNAL_WIDTH);
-	newState.ball.speed.y = state.ball.speed.y;//* (state.client_area.y / (GAME_INTERNAL_WIDTH * GAME_RATIO));
-	newState.ball.previous.x = state.ball.previous.x;//* (state.client_area.x / GAME_INTERNAL_WIDTH);
-	newState.ball.previous.y = state.ball.previous.y;//* (state.client_area.y / (GAME_INTERNAL_WIDTH * GAME_RATIO));
+	newState.ball.speed.x = state.ball.speed.x;
+	newState.ball.speed.y = state.ball.speed.y;
+	newState.ball.previous.x = state.ball.previous.x;
+	newState.ball.previous.y = state.ball.previous.y;
 
 	newState.ball.cooldown = state.ball.cooldown;
 
@@ -226,10 +255,10 @@ function convertState(state: GameState) {
 	newState.player1.score = state.player1.score;
 	newState.player1.side = state.player1.side;
 
-	newState.player1.paddle.position.x = state.player1.paddle.position.x;//* (state.client_area.x / GAME_INTERNAL_WIDTH);
-	newState.player1.paddle.position.y = state.player1.paddle.position.y;//* (state.client_area.y / (GAME_INTERNAL_WIDTH * GAME_RATIO));
-	newState.player1.paddle.speed.x = state.player1.paddle.speed.x;//* (state.client_area.x / GAME_INTERNAL_WIDTH);
-	newState.player1.paddle.speed.y = state.player1.paddle.speed.y;//* (state.client_area.y / (GAME_INTERNAL_WIDTH * GAME_RATIO));
+	newState.player1.paddle.position.x = state.player1.paddle.position.x;
+	newState.player1.paddle.position.y = state.player1.paddle.position.y;
+	newState.player1.paddle.speed.x = state.player1.paddle.speed.x;
+	newState.player1.paddle.speed.y = state.player1.paddle.speed.y;
 
 	// newState.player2 = state.player2;
 	newState.player2.input = state.player2.input;
@@ -237,18 +266,14 @@ function convertState(state: GameState) {
 	newState.player2.score = state.player2.score;
 	newState.player2.side = state.player2.side;
 
-	newState.player2.paddle.position.x = state.player2.paddle.position.x;//* (state.client_area.x / GAME_INTERNAL_WIDTH);
-	newState.player2.paddle.position.y = state.player2.paddle.position.y;//* (state.client_area.y / (GAME_INTERNAL_WIDTH * GAME_RATIO));
-	newState.player2.paddle.speed.x = state.player2.paddle.speed.x;//* (state.client_area.x / GAME_INTERNAL_WIDTH);
-	newState.player2.paddle.speed.y = state.player2.paddle.speed.y;//* (state.client_area.y / (GAME_INTERNAL_WIDTH * GAME_RATIO));
+	newState.player2.paddle.position.x = state.player2.paddle.position.x;
+	newState.player2.paddle.position.y = state.player2.paddle.position.y;
+	newState.player2.paddle.speed.x = state.player2.paddle.speed.x;
+	newState.player2.paddle.speed.y = state.player2.paddle.speed.y;
 
 	newState.resetCooldown = state.resetCooldown;
 
-	// console.log("padlePosition = x: " + Math.round(newState.player1.paddle.position.x));
-	// console.log("padlePosition = y: " + Math.round(newState.player1.paddle.position.y) + "\n");
-	// console.log("resetCooldown = " + newState.resetCooldown);
-	// console.log("ballPosition = x: " + Math.round(newState.ball.position.x));
-	// console.log("ballPosition = y: " + Math.round(newState.ball.position.y));
+	newState.extra = state.extra;
 
 	return newState;
 }
@@ -256,8 +281,16 @@ function convertState(state: GameState) {
 function updateGameState(prev: GameState) {
 	let newState = { ...prev }
 
-	newState.client_area.x = Math.min((window.innerWidth * 70) / 100, newState.area.x);
-	newState.client_area.y = newState.client_area.x * GAME_RATIO;
+	if (window.innerHeight > GAME_RATIO * window.innerWidth)
+	{
+		newState.client_area.x = Math.min((window.innerWidth * 70) / 100, newState.area.x);
+		newState.client_area.y = newState.client_area.x * GAME_RATIO;
+	}
+	else
+	{
+		newState.client_area.y = Math.min((window.innerHeight * 75) / 100, newState.area.y);
+		newState.client_area.x = newState.client_area.y / GAME_RATIO;
+	}
 	newState.scale = newState.client_area.x / newState.area.x;
 
 	newState.player1.input = { ...move1 };
@@ -337,6 +370,8 @@ function paddleCollision(ball: Ball, player: Player) {
 				else ball.position.y -= 5;
 			}
 			ball.cooldown = 1;
+			const sound = require("../../assets/ponghitside.ogg");
+			new Audio(sound).play();
 			return 1;
 		}
 	}
@@ -426,7 +461,9 @@ function moveBall(ball: Ball) {
 function movePlayer(player: Player, state: GameState) {
 	player.paddle.speed = { x: 0, y: 0 };
 	if (player.side === 0) {
-		if (player.input.left && player.input.right)
+		if (state.extra === false && player.input.left && player.input.right)
+			player.paddle.speed.y = 0;
+		else if (state.extra && player.input.left && player.input.right)
 			player.paddle.speed.y = -4;
 		else if (player.input.left && player.paddle.position.x > 0)
 			player.paddle.speed.x = -8;
@@ -436,7 +473,9 @@ function movePlayer(player: Player, state: GameState) {
 			player.paddle.speed.y = 2;
 	}
 	else {
-		if (player.input.left && player.input.right)
+		if (state.extra === false && player.input.left && player.input.right)
+			player.paddle.speed.y = 0;
+		else if (state.extra && player.input.left && player.input.right)
 			player.paddle.speed.y = 4;
 		else if (player.input.left && player.paddle.position.x > 0)
 			player.paddle.speed.x = -8;
