@@ -165,7 +165,6 @@ export function Channels() {
 	return (
 		<div id="chat-container">
 			<div className="left-sidebar">
-				{/* <JoinedChannelList /> */}
 				<ChannelList />
 				<AddChannel />
 			</div>
