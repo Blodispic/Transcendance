@@ -34,13 +34,29 @@ $tab-color: rgb(121, 121, 121);
 			font-size: 20px;
 		}
 		.add-icon {
-			cursor: pointer;
+			width: 90%;
+			display: flex;
+			align-items: center;
+			justify-content: center;
 			position: absolute;
 			margin: auto;
+			background: rgba($color: rgb(135, 135, 135), $alpha: 0.5);
+			border-radius: 5px;			
+			.add-button {
+				cursor: pointer;
+			}
 		}
 		ul {
 			padding-left: 0px;
+			font-size: smaller;
 			cursor: pointer;
+		}
+
+		ul:hover{
+		box-shadow: none;
+		color: var(--primary-color);
+		background: var(--secondary-color);
+		cursor: pointer;
 		}
 	}
 
@@ -91,13 +107,14 @@ $tab-color: rgb(121, 121, 121);
 			font-family: 'Fredoka One', cursive;
 			font-size: 20px;
 			color: white;
-			padding: 0px 0px 0px 15px;
-			width: 56%;
+			// padding: 0px 0px 0px 15px;
+			// width: 56%;
 			background: rgba($color: rgb(135, 135, 135), $alpha: 0.5);
 			border-radius: 10px;
-			border: none;
+			box-sizing: border-box;
 			bottom: 0;
-			width: 98%;
+			width: 100%;
+			display: block;
 			height: 50px;
 		}
 	}

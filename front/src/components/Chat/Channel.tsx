@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
-import { HiOutlineXMark, HiPlusCircle } from "react-icons/hi2";
+import { HiOutlineXMark, HiPlus, HiPlusCircle } from "react-icons/hi2";
 import { useNavigate } from "react-router-dom";
 import { socket } from "../../App";
 import { IChannel } from "../../interface/Channel";
 import { useAppSelector } from "../../redux/Hook";
-import '../../styles/chat.scss'
+// import '../../styles/chat.scss'
 
 function CreateChannelPopup(props: any) {
 	const [chanName, setChanName] = useState("");
@@ -89,8 +89,10 @@ function AddChannel() {
 	const [buttonPopup, setButtonPopup] = useState(false);
 
 	return (
-		<div className="add-icon">
-		<HiPlusCircle onClick={() => setButtonPopup(true)} />
+		<div className="add-icon" >
+			{/* <HiPlusCircle onClick={() => setButtonPopup(true)} />
+			<CreateChannelPopup trigger={buttonPopup} setTrigger={setButtonPopup} /> */}
+			<HiPlus className="add-button" onClick={() => setButtonPopup(true)} />
 			<CreateChannelPopup trigger={buttonPopup} setTrigger={setButtonPopup} />
 		</div>
 	);
