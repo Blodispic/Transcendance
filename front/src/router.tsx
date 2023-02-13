@@ -23,7 +23,6 @@ const Layout = () => (
 
 const ProtectedRoute = (props: { children: any }) => {
   const user = useAppSelector(state => state.user);
-  console.log(user);
 
   if (user.isLog === false && user.isOauth == false) {
     // user is not authenticated

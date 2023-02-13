@@ -25,7 +25,6 @@ export default function Header() {
   }
 
   const myUser = useAppSelector(state => state.user);
-  console.log(myUser);
 
   return (
     <div className='mynavbar'>

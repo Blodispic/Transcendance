@@ -54,8 +54,6 @@ export function Friends(props: { user: IUser }) {
                             headers: { 'Content-Type': 'application/json' }
                     });
                     const data = await response.json()
-
-                    console.log("checkdata", data);
             };
             checkFriendRequest();
     })

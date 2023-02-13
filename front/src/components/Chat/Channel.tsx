@@ -14,7 +14,6 @@ function CreateChannelPopup(props: any) {
 		if (chanName != "")
 			socket.emit('createPublicChannel', { channame: chanName });
 		setChanName("");
-		console.log(password);
 		setPassword("");
 		props.setTrigger(false);
 	}
@@ -46,7 +45,6 @@ function ChannelList() { /** Displays all channels */
 	const getChanId = (data: any) => {
 		setChanId(data);
 	}
-	console.log('chanId: ' + chanId);
 
 	useEffect(() => {
 		const fetchAllList = async () => {
@@ -54,13 +52,11 @@ function ChannelList() { /** Displays all channels */
 				method: 'GET',
 			})
 			const data = await response.json();
-			console.log(data);
+
 			setChanList(data);
 		}
 		fetchAllList();
 	}, [chanId]);
-
-	 console.log(chanList);
 
 	return (
 		<div> 
@@ -128,14 +124,14 @@ function ChannelMessages(/*channelId: number*/) {
 		setNewInput("");
 	}
 	socket.on('sendMessageChannelOk', (newMessage) => {
-		console.log(newMessage);
+
 		buildNewMessage(newMessage);
 	})
 
 	const buildNewMessage = (data: any) => {
-		console.log(data);
+
 		setNewMessage(data);
-		console.log(newMessage);
+
 	}
 
 	return (

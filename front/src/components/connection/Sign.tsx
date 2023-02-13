@@ -36,7 +36,6 @@ export default function Sign() {
                 })
                 formData.delete('file');
             }
-            console.log("comment ca ca rentre");
             dispatch(change_name(newname));
             dispatch(set_status(UserStatus.ONLINE));
             navigate("/Home");
@@ -45,7 +44,6 @@ export default function Sign() {
 
     const onChangeFile = (e: any) => {
         const myFile: File = e.target.files[0];
-        console.log(e.target.files)
         setFile(myFile)
         setavatar(URL.createObjectURL(myFile));
     }

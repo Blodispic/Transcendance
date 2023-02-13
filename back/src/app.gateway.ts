@@ -28,8 +28,10 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
 	@SubscribeMessage("status")
 	HandleStatus(@MessageBody() status: string, @ConnectedSocket() client: Socket)
 	{
-		// Const user = await this.userRepository.findOneBy({where: id: id})
-		this.userService.SetStatus(client.handshake.auth.user, status);
-		client.emit("somoene change status")
+	  console.log("emit");
+	  this.userService.SetStatus(client.handshake.auth.user, status);
+	  console.log("emit");
+	  this.server.emit("ChangeStatus", {status, idChange: client.handshake.auth.user.id })
 	}
+	
 }

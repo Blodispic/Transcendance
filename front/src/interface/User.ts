@@ -3,7 +3,7 @@ import { Result } from "./Result";
 
 export enum UserStatus {
     ONLINE = "online",
-    OFFLINE = "offlin",
+    OFFLINE = "offline",
     INGAME = "ingame",   
 }
 
@@ -16,9 +16,8 @@ export interface IUser {
     username: string;
     avatar: string;
     status: UserStatus;
-    isTwoFactorAuthenticationEnabled: boolean;
-    elo: number;
     twoFaEnable: boolean;
+    elo: number;
     friends?: IUser[];
     history?: Result[];
 }

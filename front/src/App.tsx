@@ -35,11 +35,16 @@ function App() {
       },
       body: JSON.stringify({ token: token }),
     })
-    const data: IUser = await response.json();
-    console.log("data=", data);
+    .then( response => (response.json()))
+    .then( data => (
+      dispatch(setUser(data)),
+      dispatch(set_status(UserStatus.ONLINE))
+    ))
+    .catch( function() {
+      console.log("token inexistant")
+    }
 
-    dispatch(setUser(data));
-    dispatch(set_status(UserStatus.ONLINE));
+    )
   }
   if (myStore.user === undefined) {
     if (token !== undefined)

@@ -36,16 +36,22 @@ export const userSlice = createSlice({
         },
         set_status: (state, { payload }: PayloadAction<UserStatus>) => {
 
+            console.log("change le status normalement",state.user,  payload)
             state.user!.status = payload;
             if (payload === UserStatus.OFFLINE) 
             state.isLog = false;
             else 
             state.isLog = true;
-            console.log(payload)
+            // socket.emit("status", payload)
             const response = fetch(`${process.env.REACT_APP_BACK}user/${state.user?.id}`, {
                 method: 'PATCH',
-                body: JSON.stringify({ user : state.user }),
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify( {status: payload }),
             })
+            .then(response => { return response.json()} )
+            .then(data => ( console.log(data) ))
         },
         delete_user: (state) => {
             state.user = undefined;

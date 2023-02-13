@@ -47,9 +47,6 @@ export function Header(props: { currentUser: IUser, setCurrentUser: Function }) 
 
     const { currentUser, setCurrentUser } = props;
     const myUser = useAppSelector(state => state.user);
-
-
-    console.log("la", currentUser.status)
     return (
             <div className='profile-header'>
 
@@ -64,9 +61,7 @@ export function Header(props: { currentUser: IUser, setCurrentUser: Function }) 
                                             <InviteButton user={myUser.user} />
                                     }
                             </div>
-
-
-
+                            
                             <div className='info-header'>
                                     <Search currentUser={currentUser} setcurrentUser={setCurrentUser} />
                                     <div className='stat-header'>
@@ -88,7 +83,7 @@ export function Header(props: { currentUser: IUser, setCurrentUser: Function }) 
                                             </div>
 
                                             <div className=' block'>
-                                                    <span >{myUser.user!.status}</span>
+                                                    <span >{currentUser.status}</span>
                                             </div>
                                     </div>
                             </div>

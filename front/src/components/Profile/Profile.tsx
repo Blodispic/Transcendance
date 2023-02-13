@@ -10,34 +10,41 @@ import { page } from '../../interface/enum';
 import { History } from './History';
 import TwoFa from './setTwoFa';
 import { socket } from '../../App';
+import { UserStatus } from '../../interface/User';
 
 
-function Onglets(props: { current: page, setOnglets: Function }) {
+
+
+function Onglets(props: { currentUser: IUser, current: page, setOnglets: Function }) {
 
         const myUser = useAppSelector(state => state.user);
-        const {current, setOnglets } = props;
+        const { currentUser, } = props;
+        const { current, setOnglets } = props;
         return (
                 <div className='onglets'>
                         <button className={`pointer ${current === page.PAGE_1 ? "" : "not-selected"}`}
-                         onClick={e => setOnglets(page.PAGE_1)}>
+                                onClick={e => setOnglets(page.PAGE_1)}>
                                 <a >
                                         history
                                 </a>
                         </button>
-                        <button className={`pointer ${current === page.PAGE_2 ? "" : "not-selected"}`}
-                        onClick={e => setOnglets(page.PAGE_2)} >
-                                <a >
-                                        friend_request
-                                </a>
-                        </button> 
                         {
-                                myUser.user?.twoFaEnable === false &&
-                        <button className={`pointer ${current === page.PAGE_3 ? "" : "not-selected"}`}
-                         onClick={e => setOnglets(page.PAGE_3)}>
-                                <a >
-                                        2fa
-                                </a>
-                        </button>
+                                currentUser.login === myUser.user?.login &&
+                                <button className={`pointer ${current === page.PAGE_2 ? "" : "not-selected"}`}
+                                        onClick={e => setOnglets(page.PAGE_2)} >
+                                        <a >
+                                                friend_request
+                                        </a>
+                                </button>
+                        }
+                        {
+                                 currentUser.login === myUser.user?.login && myUser.user?.twoFaEnable === false &&
+                                <button className={`pointer ${current === page.PAGE_3 ? "" : "not-selected"}`}
+                                        onClick={e => setOnglets(page.PAGE_3)}>
+                                        <a >
+                                                2fa
+                                        </a>
+                                </button>
                         }
                 </div>
         )
@@ -47,6 +54,7 @@ export default function Profile() {
         let avatar: string = "";
         let { id } = useParams();
         const [pages, setPages] = useState<page>(page.PAGE_1);
+        const myUser = useAppSelector(state => state.user);
 
         const fetchid = async () => {
                 const response = await fetch(`${process.env.REACT_APP_BACK}user/id/${id}`, {
@@ -54,17 +62,17 @@ export default function Profile() {
                 })
                 setCurrentUser(await response.json());
         }
-        socket.on('somoene change status', (message) => {
-                fetchid();
-        })
-
         useEffect(() => {
-                if (id) 
+                if (id)
                         fetchid();
         }, [id])
-        useEffect(() => {
 
-        }, [Onglets])
+        useEffect(() => {
+                socket.on('ChangeStatus', (state, idChange) => {
+                        console.log("ca dis quoi")
+                        fetchid();
+                })
+        }, [currentUser, Onglets])
 
 
         if (currentUser === undefined || avatar === undefined) {
@@ -81,7 +89,7 @@ export default function Profile() {
                                 <Header currentUser={currentUser} setCurrentUser={setCurrentUser} />
                         }
                         <div className='container'>
-                                <Onglets current={pages} setOnglets={setPages} />
+                                <Onglets currentUser={currentUser} current={pages} setOnglets={setPages} />
                                 {
                                         pages == page.PAGE_1 &&
                                         <History />

@@ -10,7 +10,7 @@ export class User {
   id: number;
   
   @Column({ default: false })
-  isTwoFactorAuthenticationEnabled: boolean;
+  twoFaEnable: boolean;
 
     
   @Column({ default: "offline"})

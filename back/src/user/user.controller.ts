@@ -108,6 +108,8 @@ export class UserController {
 
   @Patch(':id')
   update(@Param('id') id: string, @Body() user: any) {
+    console.log("user = ", user);
+    
     return this.userService.update(+id, user);
   }
 
@@ -121,7 +123,6 @@ export class UserController {
     @Param('id') id: number, @Body() user: User) {
     if (user)
     {
-      console.log("Try send friend Request")
       return this.userService.sendFriendRequest(id, user)
     }
   }

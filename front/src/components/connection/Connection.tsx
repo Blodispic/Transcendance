@@ -5,6 +5,7 @@ import { useAppDispatch, useAppSelector } from "../../redux/Hook";
 import { oauth, setUser, set_status } from "../../redux/user";
 import { useCookies } from "react-cookie";
 import { IUser, UserStatus } from '../../interface/User';
+import { socket } from '../../App';
 
 
 
@@ -84,8 +85,6 @@ export default function Connection() {
                             dispatch(setUser(data));
                             dispatch(oauth());
                             setCookie('Token', data.access_token, { path: '/' });
-
-                            console.log("ici => ", myUser)
                             if (data.username === "")
                                 navigate("./sign")
                             else if (data.twoFaEnable == true)
@@ -114,7 +113,7 @@ export default function Connection() {
                             </a>
                         </button>
                         <button className="button pulse pointer color_log" >
-                            <a  href={getAuthorizeHref()} >
+                            <a href={getAuthorizeHref()} >
                                 log
                             </a>
                         </button>
