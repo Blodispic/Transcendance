@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { HiOutlineXMark, HiPlus, HiPlusCircle } from "react-icons/hi2";
+import { HiOutlineXMark, HiPlus } from "react-icons/hi2";
 import { useNavigate, useParams } from "react-router-dom";
 import { socket } from "../../App";
 import { IChannel } from "../../interface/Channel";
@@ -35,7 +35,7 @@ function CreateChannelPopup(props: any) {
 	) : <></>;
 }
 
-function ChannelList(props: any) { /** Displays all channels */
+function ChannelList(props: any) {
 	const [chanList, setChanList] = useState<IChannel[]>([]);
 	const [chanId, setChanId] = useState("");
 	const navigate = useNavigate();
@@ -89,10 +89,10 @@ function AddChannel() {
 	const [buttonPopup, setButtonPopup] = useState(false);
 
 	return (
-		<div className="add-icon" >
+		<div className="add-icon" onClick={() => setButtonPopup(true)}>
 			{/* <HiPlusCircle onClick={() => setButtonPopup(true)} />
 			<CreateChannelPopup trigger={buttonPopup} setTrigger={setButtonPopup} /> */}
-			<HiPlus className="add-button" onClick={() => setButtonPopup(true)} />
+			<HiPlus className="add-button" />
 			<CreateChannelPopup trigger={buttonPopup} setTrigger={setButtonPopup} />
 		</div>
 	);
@@ -110,7 +110,6 @@ function PublicChannelList() {
 
 function ChannelMemberList(props: any) {
 	const [currentChan, setCurrentChan] = useState<IChannel | undefined>(undefined)
-	const [users, setUsers] = useState<IUser[]>([]);
 
 	useEffect(() => {
 		const getChannel = async () => {
@@ -118,25 +117,29 @@ function ChannelMemberList(props: any) {
 				method: 'GET',
 			})
 			const data = await response.json();
-			console.log(data);
 			setCurrentChan(data);
+			console.log(currentChan?.users[0].username);
 		}
 		getChannel();
-	}, []);
+	}, [props]);
 
-	if (currentChan != undefined) {
-		setUsers(currentChan?.users);
-		console.log(users);
+	if (currentChan?.users === undefined)
+	{
+		return(
+			<div className="title"> Members <hr />
+			</div>
+		)
 	}
 
 	return (
 		<div className="title"> Members <hr />
-			<ul>
-				{users.map(user => (
-					<ul key={user.username} >
-					</ul>
-				))}
-			</ul>
+			{currentChan?.users.map(user => (
+				<ul key={user.username}>
+					{user.username}
+				</ul>
+			))
+
+		}
 		</div>
 	);
 }
@@ -176,9 +179,9 @@ function ChannelMessages(props: any) {
 		socket.emit('sendMessageChannel', { chanid: props.chanId, userid: 1, message: newInput }); //to be modified later
 		setNewInput("");
 	}
-	socket.on('sendMessageChannelOk', (data) => {
-		// console.log(data);
-		setMessageList(data);
+	socket.on('sendMessageChannelOk', (messageChannel) => {
+		console.log("here");
+		setMessageList(messageChannel);
 		// buildNewMessage(data);
 	})
 	
@@ -190,7 +193,7 @@ function ChannelMessages(props: any) {
 
 	return (
 		<div className="chat-body">
-			<div className="title">
+			<div className="title" style={{marginLeft:"10px", marginRight:"10px"}}>
 				{currentChan?.name} <hr />
 			</div>
 			<div className="chat-messages">
@@ -229,7 +232,7 @@ export function Channels(props: any) {
 			</div>
 				<ChannelMessages chanId={props.chatId} />
 			<div className="right-sidebar">
-				{/* <ChannelMemberList chanId={props.chatId} /> */}
+				<ChannelMemberList chanId={props.chatId} />
 			</div>
 		</div>
 	);
