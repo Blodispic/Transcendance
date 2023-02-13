@@ -61,7 +61,7 @@ export class GameService {
 			console.log("Socket2: " ,socket2.handshake.auth.user);
 			player1.name = socket1.handshake.auth.user.username;
 			player2.name = socket2.handshake.auth.user.username;
-			this.gameRoom.push(new Game(this, server, player1, player2, true));
+			this.gameRoom.push(new Game(this, server, player1, player2, true, 3));
 			server.to(player1.socket).emit("RoomStart", this.gameRoom.length, player1);
 			server.to(player2.socket).emit("RoomStart", this.gameRoom.length, player2);
 			console.log("RoomStart ID: " + this.gameRoom.length);
@@ -72,7 +72,7 @@ export class GameService {
 			return ('Waiting for more Players...');
 	}
 
-	startCustomGame(server: Server, userSocket1: any, userSocket2: any, extra: boolean)
+	startCustomGame(server: Server, userSocket1: any, userSocket2: any, extra: boolean, scoreMax: number)
 	{
 		const socket1 = userSocket1;
 		const socket2 = userSocket2;
@@ -111,7 +111,7 @@ export class GameService {
 		console.log("Socket2: " ,socket2.handshake.auth.user);
 		player1.name = socket1.handshake.auth.user.username;
 		player2.name = socket2.handshake.auth.user.username;
-		this.gameRoom.push(new Game(this, server, player1, player2, extra));
+		this.gameRoom.push(new Game(this, server, player1, player2, extra, scoreMax));
 		server.to(player1.socket).emit("RoomStart", this.gameRoom.length, player1);
 		server.to(player2.socket).emit("RoomStart", this.gameRoom.length, player2);
 		console.log("RoomStart ID: " + this.gameRoom.length);
@@ -238,7 +238,7 @@ class Game {
 	public gameState: GameState;
 	gameService: GameService;
 
-	constructor(gameService: GameService, server: Server, user1: Player, user2: Player, extra:boolean) {
+	constructor(gameService: GameService, server: Server, user1: Player, user2: Player, extra:boolean, scoreMax: number) {
 		console.log("NEW GAME CREATED");
 		this.gameService = gameService;
 		this.server = server;
@@ -250,6 +250,7 @@ class Game {
 		this.gameState.player2.score = 0;
 		this.resetState(this.gameState); 
 		this.gameState.extra = extra;
+		this.gameState.scoreMax = scoreMax;
 
 		this.gameRoomRun();
 	}
