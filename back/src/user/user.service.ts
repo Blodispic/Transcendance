@@ -86,8 +86,6 @@ export class UserService {
       id: id,
     })
     if (user) {
-
-
       //Si vous voulez plus de chose a update, mettez le dans le body et faites un if
       if (userUpdate.username)
         user.username = userUpdate.username;
@@ -220,7 +218,7 @@ export class UserService {
       return {};
     });
 
-  }
+  } 
 
   async updateFriendRequestStatus(friendId: number, receiver: User, status: FriendRequestStatus) {
     const friendRequest = await this.friendRequestRepository.findOne({
@@ -304,8 +302,16 @@ export class UserService {
   }
 
   async removeFriend(id: number, friend: User) {
-    const user = await this.usersRepository.findOneBy({ id: id });
-    return user;
+    const user = await this.usersRepository.findOne({
+      relations: ['friends'],
+      where: { id },
+    });
+
+    if (!user) {
+      return;
+    }
+    user.friends = user.friends.filter((f) => f.id !== friend.id);
+    return await this.usersRepository.save(user);
   }
 
   async removeFriendById(id: number, friendId: number) {

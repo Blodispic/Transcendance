@@ -60,9 +60,6 @@ export class UserController {
 
   @Post("friends/accept")
   async acceptFriendRequest(@Body() body: { friendId: any, user: User}) {
-    console.log("body = ", body);
-    
-    console.log("friendid = ", body.friendId);
     this.userService.addFriend(body.friendId, body.user);
     return await this.userService.updateFriendRequestStatus(body.friendId, body.user, {
     status: "Accepted",

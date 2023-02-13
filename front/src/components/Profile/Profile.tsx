@@ -155,7 +155,7 @@ function Friends(props: { user: IUser }) {
                       };
                       
                 checkFriendRequest();
-        }, [<></>]);
+        }, []);
 
         interface FriendsListProps {
                 friends: { name: string, avatar: string, id: number }[];
@@ -164,23 +164,23 @@ function Friends(props: { user: IUser }) {
         const acceptFriendRequest = async (friendId: number) => {
                 console.log("friend = ", friendId);
                 const response = await fetch(`${process.env.REACT_APP_BACK}user/friends/accept`, {
-                        method: 'POST',
-                        body: JSON.stringify({ friendId, user }),
-                        headers: { 'Content-Type': 'application/json' }
+                  method: 'POST',
+                  body: JSON.stringify({ friendId, user }),
+                  headers: { 'Content-Type': 'application/json' }
                 });
                 const data = await response.json();
-                setFriendReq(prevState => prevState.filter(accepted => accepted.id !== friendId));
-        };
-
-        const declineFriendRequest = async (friend: number) => {
+                setFriendReq((prevFriendReq) => prevFriendReq.filter((req) => req.id !== friendId));
+              };
+            
+              const declineFriendRequest = async (friendId: number) => {
                 const response = await fetch(`${process.env.REACT_APP_BACK}user/friends/decline`, {
-                        method: 'POST',
-                        body: JSON.stringify({ friend, user }),
-                        headers: { 'Content-Type': 'application/json' }
+                  method: 'POST',
+                  body: JSON.stringify({ friend: friendId, user }),
+                  headers: { 'Content-Type': 'application/json' }
                 });
                 const data = await response.json();
-                setFriendReq(prevState => prevState.filter(declined => declined.id !== friend));
-        };
+                setFriendReq(prevState => prevState.filter(declined => declined.id !== friendId));
+              };
 
 
 
