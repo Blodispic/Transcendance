@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { HiOutlineXMark, HiPlus, HiPlusCircle } from "react-icons/hi2";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { socket } from "../../App";
 import { IChannel } from "../../interface/Channel";
 import { useAppSelector } from "../../redux/Hook";
@@ -47,7 +47,7 @@ function ChannelList(props: any) { /** Displays all channels */
 	const getChanId = (data: any) => {
 		setChanId(data);
 	}
-	console.log('chanId: ' + chanId);
+	// console.log('chanId: ' + chanId);
 
 	useEffect(() => {
 		const fetchAllList = async () => {
@@ -68,7 +68,7 @@ function ChannelList(props: any) { /** Displays all channels */
 		<header>All Channels <hr /></header>
 			{chanList.map(chan => (
 				<ul key={chan.name} >
-					<div onClick={_ => navigate(`/Chat/channel/${chan.id}`)}>{chan.name}</div>
+					<div onClick={_ => navigate(`/Chat/${chan.id}`)}>{chan.name}</div>
 				</ul>
 			))}
 		</div>
@@ -117,17 +117,18 @@ function ChannelMemberList() {
 }
 
 
-function ChannelMessages(/*channelId: number*/) {
+function ChannelMessages(props: any) {
 	const [newInput, setNewInput] = useState("");
 	const [messageList, setMessageList] = useState<any[]>([]);
 	const [newMessage, setNewMessage] = useState("");
 
 	const myUser = useAppSelector(state => state.user);
+	console.log("channelMessage prop: " + props.chanId);
 
 	const handleSubmitNewMessage = (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
 		if (newInput != "")
-			socket.emit('sendMessageChannel', { chanid: 1, userid: 1, message: newInput }); //to be modified later
+			socket.emit('sendMessageChannel', { chanid: props.chanId, userid: 1, message: newInput }); //to be modified later
 		setNewInput("");
 	}
 	socket.on('sendMessageChannelOk', (newMessage) => {
@@ -163,14 +164,16 @@ function ChannelMessages(/*channelId: number*/) {
 	);
 }
 
-export function Channels() {
+export function Channels(props: any) {
+
+	console.log("props: " + props.chatId);
 	return (
 		<div id="chat-container">
 			<div className="left-sidebar">
 				<ChannelList />
 				<AddChannel />
 			</div>
-				<ChannelMessages />
+				<ChannelMessages chanId={props.chatId}/>
 			<div className="right-sidebar">
 				<ChannelMemberList />
 			</div>

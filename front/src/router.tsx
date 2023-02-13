@@ -77,13 +77,6 @@ const router = createBrowserRouter([
           </ProtectedRoute>
       },
       {
-        path: "/Chat/channel/:id",
-        element:
-          <ProtectedRoute>
-            <Chat />
-          </ProtectedRoute>
-      },
-      {
         path: "/Profile/:id",
         element:
           <ProtectedRoute>
