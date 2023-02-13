@@ -43,14 +43,31 @@ export class PongGateway implements OnGatewayDisconnect, OnGatewayInit {
 		this.gameService.startGame(this.server);
 	}
 
+	@SubscribeMessage("spectateGame")
+	HandleSpectator(@MessageBody() player: User, @ConnectedSocket() client: Socket)
+	{
+		let i : number = 0;
+		while (i < this.gameService.gameRoom.length)
+		{
+			if (this.gameService.gameRoom[i].gameState.player1.name === player.username
+				|| this.gameService.gameRoom[i].gameState.player2.name === player.username)
+			{
+				this.gameService.gameRoom[i].addSpectator(client.id);
+				this.server.to(client.id).emit("Spectate", i);
+				return;
+			}
+			i++;
+		}
+	}
+
 	@SubscribeMessage("createCustomGame")
 	HandleCustomGame(@MessageBody() user1: User, user2: User, extra: boolean, scoreMax: number, @ConnectedSocket() client: Socket)
 	{
 		console.log("Add " + user1.username + " to custom game.");
 		console.log("Add " + user2.username + " to custom game.");
-		let i : number = 0;
 		let userSocket1 : any = userList[0]; //By default both user are the first user of the list
 		let userSocket2 : any = userList[0]; //By default both user are the first user of the list
+		let i : number = 0;
 		while (i < userList.length)
 		{
 			if (userList[i].handshake.auth.user.username === user1.username)

@@ -237,6 +237,7 @@ class Game {
 	server: Server;
 	public gameState: GameState;
 	gameService: GameService;
+	watchList: string[];
 
 	constructor(gameService: GameService, server: Server, user1: Player, user2: Player, extra:boolean, scoreMax: number) {
 		console.log("NEW GAME CREATED");
@@ -251,8 +252,14 @@ class Game {
 		this.resetState(this.gameState); 
 		this.gameState.extra = extra;
 		this.gameState.scoreMax = scoreMax;
+		this.watchList = [];
 
 		this.gameRoomRun();
+	}
+
+	addSpectator(client: string)
+	{
+		this.watchList.push(client);
 	}
 
 	gameRoomRun()
@@ -523,6 +530,12 @@ class Game {
 		gameState = this.updateGameState({ ...gameState });
 		this.server.to(this.gameState.player1.socket).emit("UpdateState", gameState, 1);
 		this.server.to(this.gameState.player2.socket).emit("UpdateState", gameState, 2);
+		let i: number = 0;
+		while (this.watchList[i])
+		{
+			this.server.to(this.watchList[i]).emit("UpdateState", gameState, 0);
+			i++;
+		}
 		return gameState;
 	}
 }
