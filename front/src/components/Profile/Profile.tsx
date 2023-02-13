@@ -151,13 +151,11 @@ function Friends(props: { user: IUser }) {
                         });
                         const data = await response.json();
                         const pendingFriendRequests = data.filter((friendRequest: { status: string; }) => friendRequest.status === "Pending");
-                        console.log('data', data);
-                        console.log('pendingFriendRequests', pendingFriendRequests);
                         setFriendReq(pendingFriendRequests);
                       };
                       
                 checkFriendRequest();
-        }, []);
+        }, [<></>]);
 
         interface FriendsListProps {
                 friends: { name: string, avatar: string, id: number }[];
