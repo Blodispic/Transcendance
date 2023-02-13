@@ -118,7 +118,6 @@ function ChannelMemberList(props: any) {
 			})
 			const data = await response.json();
 			setCurrentChan(data);
-			console.log(currentChan?.users[0].username);
 		}
 		getChannel();
 	}, [props]);
@@ -138,7 +137,6 @@ function ChannelMemberList(props: any) {
 					{user.username}
 				</ul>
 			))
-
 		}
 		</div>
 	);
@@ -148,18 +146,16 @@ interface IMessage {
 	chanid: number;
 	userid: number;
 	message: string;
-
 }
 
 
 function ChannelMessages(props: any) {
 	const [newInput, setNewInput] = useState("");
-	const [messageList, setMessageList] = useState<IMessage[]>([]);
+	const [messageList, setMessageList] = useState<any[]>([]);
 	const [newMessage, setNewMessage] = useState("");
 	const [currentChan, setCurrentChan] = useState<IChannel | undefined>(undefined)
 
 	const myUser = useAppSelector(state => state.user);
-	// console.log("channelMessage prop: " + props.chanId);
 	
 	useEffect(() => {
 		const getChannel = async() => {
@@ -179,17 +175,15 @@ function ChannelMessages(props: any) {
 		socket.emit('sendMessageChannel', { chanid: props.chanId, userid: 1, message: newInput }); //to be modified later
 		setNewInput("");
 	}
-	socket.on('sendMessageChannelOk', (messageChannel) => {
-		console.log("here");
-		setMessageList(messageChannel);
-		// buildNewMessage(data);
+
+	socket.on('sendMessageChannelOk', (data: any) => {
+		buildNewMessage(data);
 	})
 	
-	// const buildNewMessage = (data: any) => {
-	// 	// setNewMessage(data);
-	// 	console.log("here");
-	// 	setMessageList([...messageList, data]);
-	// }
+	const buildNewMessage = (data: any) => {
+		console.log("here");
+		setMessageList([...messageList, data]);
+	}
 
 	return (
 		<div className="chat-body">
@@ -205,9 +199,9 @@ function ChannelMessages(props: any) {
 						<span className="timestamp"> 0000/00/00 00:00</span> */}
 					{/* </div> */}
 					{messageList.map(chat => (
-						<div key={chat.message} className="__wrap">
-							<div className="message-info"> {chat.userid} </div>
-							{chat.message}
+						<div key={chat.newInput} className="__wrap">
+							{/* <div className="message-info"> {chat.userid} </div> */}
+							{chat.newInput}
 						</div>
 					))}
 				{/* </div> */}

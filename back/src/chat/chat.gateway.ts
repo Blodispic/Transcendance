@@ -68,9 +68,8 @@ async handleSendMessageChannel(@ConnectedSocket() client: Socket, @MessageBody()
   // channel.users.forEach(user => {
   //     this.server.to("user-" + user.id).emit("sendMessageChannel", messageChannelDto);
   // });
-  console.log('chanid: ' + messageChannelDto.chanid + ' | channel message: ' + messageChannelDto.message);
+  console.log('chanid: ' + messageChannelDto.chanid + ' | userId: ' + messageChannelDto.userid + ' | channel message: ' + messageChannelDto.message);
   this.server.to("chan" + messageChannelDto.chanid).emit("sendMessageChannelOK", messageChannelDto.message);
-
 }
 
 @SubscribeMessage('joinChannel')
