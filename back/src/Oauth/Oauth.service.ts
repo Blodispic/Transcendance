@@ -67,7 +67,7 @@ export class OauthService {
     const payload = { username: data.login, }
     const token = await this.jwtService.signAsync(payload, {
       secret: jwtConstants.secret,
-      expiresIn: '3600s',
+      expiresIn: '20s',
     });
 
     const userDto: CreateUserDto = {
