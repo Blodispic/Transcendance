@@ -108,8 +108,6 @@ export class UserController {
 
   @Patch(':id')
   update(@Param('id') id: string, @Body() user: any) {
-    console.log("user = ", user);
-    
     return this.userService.update(+id, user);
   }
 
