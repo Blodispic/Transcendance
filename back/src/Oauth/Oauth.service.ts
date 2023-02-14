@@ -76,6 +76,7 @@ export class OauthService {
       email: data.email,
       intra_avatar: data.image.link,
       access_token: token
+      
     }
     return await this.usersService.create(userDto);
   }
