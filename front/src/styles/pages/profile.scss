@@ -21,7 +21,9 @@
         .left-part {
             width: 300px;
             align-self: center;
-
+            display: flex;
+            flex-direction: column;
+            align-items: center;
             .avatar {
                 height: 130px;
                 width: 130px;
@@ -229,6 +231,7 @@
     background-color: #34495E;
     border-color: #34495e;
     padding: 10px;
+    text-align: center;
 
     label,
     a {

@@ -150,22 +150,32 @@ export class GameService {
 		this.userService.createResults(results);
 	}
 
-	EndGame(client: string)
+	EndGame(client: string, server: Server)
 	{
 		let roomId : number = 0;
 		
+		console.log("1");
 		while (roomId < this.gameRoom.length && this.gameRoom.length > 0)
 		{
+		console.log("2");
+
 			if (this.gameRoom[roomId].gameState.player1.socket == client)
 			{
-				this.userService.SetStatus(this.gameRoom[roomId].socket1.handshake.auth.user , "inGame");  // ACHANGER PAR USERLIST BYY ADAM 
+		console.log("3");
+
+				this.userService.SetStatus(this.gameRoom[roomId].socket1.handshake.auth.user , "Online");  // ACHANGER PAR USERLIST BYY ADAM 
+				server.emit("ChangeStatus", {state: "Online", idChange: this.gameRoom[roomId].socket1.handshake.auth.user.id });
 				this.gameRoom.splice(roomId, 1);
+
+				
 				return;
 			}
 			else if (this.gameRoom[roomId].gameState.player2.socket == client)
 			{
-
-				this.userService.SetStatus(this.gameRoom[roomId].socket1.handshake.auth.user , "inGame"); // ACHANGER PAR USERLIST BYY ADAM 
+		console.log("4");
+				
+				this.userService.SetStatus(this.gameRoom[roomId].socket1.handshake.auth.user , "Online"); // ACHANGER PAR USERLIST BYY ADAM 
+				server.emit("ChangeStatus", {state: "Online", idChange: this.gameRoom[roomId].socket2.handshake.auth.user.id });
 				this.gameRoom.splice(roomId, 1);
 				return;
 			}

@@ -41,7 +41,7 @@ export const userSlice = createSlice({
             state.isLog = false;
             else 
             state.isLog = true;
-            // socket.emit("status", payload)
+            // socket.emit("ChangeStatus", {state: payload, id: state.user?.id})
             const response = fetch(`${process.env.REACT_APP_BACK}user/${state.user?.id}`, {
                 method: 'PATCH',
                 headers: {

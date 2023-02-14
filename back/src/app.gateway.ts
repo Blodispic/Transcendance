@@ -23,6 +23,8 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
 	handleDisconnect(client: any) {
 		userList.splice(userList.indexOf(client), 1);
+		this.userService.SetStatus(client.handshake.auth.user, "Offline");
+		this.server.emit("ChangeStatus", {status: "Offline", idChange: client.handshake.auth.user.id })
 	}
 
 	@SubscribeMessage("status")
