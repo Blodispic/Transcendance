@@ -1,3 +1,4 @@
+import { IUser } from "../../interface/User";
 
 export default function PeopleList() {
 
