@@ -274,6 +274,7 @@ function convertState(state: GameState) {
 	newState.resetCooldown = state.resetCooldown;
 
 	newState.extra = state.extra;
+	newState.scoreMax = state.scoreMax;
 
 	return newState;
 }
