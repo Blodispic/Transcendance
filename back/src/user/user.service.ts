@@ -186,7 +186,6 @@ export class UserService {
     const frienRequestPush: FriendRequest | null = await this.friendRequestRepository.findOne({
       where: [{ creator: creator }, { receiver: friend }]
     });
-    // console.log(friend);
     if (frienRequestPush)
     {
       if (!friend.receiveFriendRequests)
@@ -224,9 +223,7 @@ export class UserService {
 
   async SetStatus(user: User, status: string): Promise<User | null>  {
     const users  = await this.usersRepository.findOneBy({ id: user.id  });
-    console.log("status set ",user.id,  users?.login, status)
     if (users) {
-      console.log("In if statement");
       users.status = status;
       return await this.usersRepository.save(users);
     }
