@@ -55,7 +55,8 @@ export class UserController {
     const realUser = await this.userService.getById(user.id);
     const secret = authenticator.generateSecret();
     this.userService.enable2FA(realUser, secret);
-    const qrCode = await this.userService.generateQRCode(secret);
+    const otpauthURL = authenticator.keyuri('Transcendence', user.email, secret);
+    const qrCode = await this.userService.generateQRCode(otpauthURL);
     return { qrCode };
   }
 
