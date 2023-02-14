@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useAppSelector } from '../../redux/Hook';
 import { Player } from './Game';
@@ -13,16 +13,39 @@ export default function Queue() {
 
     const myUser = useAppSelector(state => state.user);
     const navigate = useNavigate();
-
+    
     function addToWaitingRoom() {
         socket.emit("addToWaitingRoom", myUser.user);
         return;
     }
 
+    
+    // function CustomRoomPopup(props: any) {
+    //     const [extra, setExtra] = useState(false);
+    //     const [maxScore, setMaxScore] = useState(1);
+        
+    //     return (props.trigger) ? (
+    //         <div className='custom-popup'>
+    //             <div className='custom-popup-inner' onClick={e => e.stopPropagation()}>
+    //                 <h3>Create Custom Game</h3>
+    //                 <input type={'checkbox'}>Extra mode</input>
+    //                 <h3>Set Max Score</h3>
+    //                 <input type={'range'} min={1} max={10} value={1}>
+
+    //                 </input>
+    //             </div>
+    //         </div>
+    //     ) : <></>;
+    // }
+    
 	function createCustomRoom() {
-		console.log("Create custom", myUser.user)
+        // const [customPopup, setCustomPopup] = useState(false);
+
+        console.log("Create custom", myUser.user)
 		socket.emit("createCustomGame", {user1: myUser.user, user2: myUser.user, extra: true, scoreMax: 10});
-		return;
+        return ;
+            // <CustomRoomPopup trigger={customPopup} setTrigger={setCustomPopup} />
+        // );
 	}
 
     socket.on("RoomStart", (roomId: number, player: Player) => {
@@ -51,6 +74,7 @@ export default function Queue() {
             </div>
             <div>
                 <button className='button pointer color_log' onClick={(e) => createCustomRoom()} >
+                {/* <button className='button pointer color_log' onClick={() => setCustomPopup(true)} > */}
                 <Link className='cool' to="/Game/">
                        Create Custom Room
                 </Link>
