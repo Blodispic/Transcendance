@@ -3,7 +3,6 @@ import { HiOutlineXMark, HiPlus } from "react-icons/hi2";
 import { useNavigate, useParams } from "react-router-dom";
 import { socket } from "../../App";
 import { IChannel } from "../../interface/Channel";
-import { IUser } from "../../interface/User";
 import { useAppSelector } from "../../redux/Hook";
 
 function CreateChannelPopup(props: any) {
@@ -46,7 +45,6 @@ function ChannelList(props: any) {
 	const getChanId = (data: any) => {
 		setChanId(data);
 	}
-	// console.log('chanId: ' + chanId);
 
 	useEffect(() => {
 		const fetchAllList = async () => {
@@ -54,7 +52,6 @@ function ChannelList(props: any) {
 				method: 'GET',
 			})
 			const data = await response.json();
-			// console.log(data);
 			setChanList(data);
 		}
 		fetchAllList();
@@ -87,8 +84,6 @@ function AddChannel() {
 
 	return (
 		<div className="add-icon" onClick={() => setButtonPopup(true)}>
-			{/* <HiPlusCircle onClick={() => setButtonPopup(true)} />
-			<CreateChannelPopup trigger={buttonPopup} setTrigger={setButtonPopup} /> */}
 			<HiPlus className="add-button" />
 			<CreateChannelPopup trigger={buttonPopup} setTrigger={setButtonPopup} />
 		</div>
@@ -141,22 +136,16 @@ function ChannelMemberList(props: any) {
 	);
 }
 
-interface IMessage {
-	chanid: number;
-	userid: number;
-	message: string;
-}
-
 function ChannelMessages(props: any) {
 	const [newInput, setNewInput] = useState("");
-	const [messageList, setMessageList] = useState<any[]>([]);
-	const [newMessage, setNewMessage] = useState("");
+	const [messageList, setMessageList] = useState<string[]>([]);
 	const [currentChan, setCurrentChan] = useState<IChannel | undefined>(undefined)
+	const currentUser = useAppSelector(state => state.user);
 
 	const myUser = useAppSelector(state => state.user);
-	
+
 	useEffect(() => {
-		const getChannel = async() => {
+		const getChannel = async () => {
 			const response = await fetch(`${process.env.REACT_APP_BACK}channel/${props.chanId}`, {
 				method: 'GET',
 			})
@@ -169,42 +158,30 @@ function ChannelMessages(props: any) {
 	const handleSubmitNewMessage = (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
 		if (newInput != "")
-		socket.emit('sendMessageChannel', { chanid: props.chanId, userid: 1, message: newInput }); //to be modified later
+			socket.emit('sendMessageChannel', { chanid: props.chanId, userid: currentUser.user?.id, message: newInput });
 		setNewInput("");
 	}
 
-	socket.on('sendMessageChannelOk', (chanid: number, userid: number, message: string) => {
-
+	socket.on('sendMessageChannelOK', (message: string) => {
 		setMessageList([...messageList, message]);
-		console.log(messageList);
-		// buildNewMessage(message);
 	})
-	
-	// const buildNewMessage = (data: any) => {
-	// 	console.log("here");
-	// 	setMessageList([...messageList, data]);
-	// }
 
 	return (
 		<div className="chat-body">
-			<div className="title" style={{marginLeft:"10px", marginRight:"10px"}}>
+			<div className="title" style={{ marginLeft: "10px", marginRight: "10px" }}>
 				{currentChan?.name} <hr />
 			</div>
 			<div className="chat-messages">
-				{/* <div className="__wrap"> */}
-					{/* <div className="message_info"> */}
-						{/* <span className="user-avatar">
-							<img src="https://www.handiclubnimois.fr/wp-content/uploads/2020/10/blank-profile-picture-973460_1280.png"></img></span>
-						Username
-						<span className="timestamp"> 0000/00/00 00:00</span> */}
-					{/* </div> */}
-					{messageList.map(chat => (
-						<div key={chat.newInput} className="__wrap">
-							{/* <div className="message-info"> {chat.userid} </div> */}
-							{chat.newInput}
+				{messageList.map(chat => (
+					<div key={chat} className="__wrap">
+							{/* <span className="user-avatar"> */}
+						<div className="message-info"> {currentUser.user?.username}
+								{/* <img className="user-avatar" src={`${process.env.REACT_APP_BACK}user/${currentUser.user?.id}/avatar`}></img> */}
+							{/* <span className="timestamp"> 0000/00/00 00:00</span> */}
 						</div>
-					))}
-				{/* </div> */}
+						{chat}
+					</div>
+				))}
 			</div>
 			<form id="input_form" onSubmit={(e) => { handleSubmitNewMessage(e); }}>
 				<input type="text" onChange={(e) => { setNewInput(e.target.value) }}
@@ -217,7 +194,6 @@ function ChannelMessages(props: any) {
 
 export function Channels(props: any) {
 
-	// console.log("props: " + props.chatId);
 	return (
 		<div id="chat-container">
 			<div className="left-sidebar">
