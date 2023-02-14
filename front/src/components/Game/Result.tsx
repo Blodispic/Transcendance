@@ -1,5 +1,6 @@
-import { useNavigate } from 'react-router-dom';
-import "../../styles/game.scss";
+import React from 'react';
+import { useEffect, useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 
 export function ResultPopup(props: any) {
 	const navigate = useNavigate();

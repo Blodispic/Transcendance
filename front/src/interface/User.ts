@@ -2,9 +2,9 @@
 import { Result } from "./Result";
 
 export enum UserStatus {
-    ONLINE,
-    OFFLINE,
-    INGAME,   
+    ONLINE = "online",
+    OFFLINE = "offline",
+    INGAME = "ingame",   
 }
 
 
@@ -16,6 +16,7 @@ export interface IUser {
     username: string;
     avatar: string;
     status: UserStatus;
+    twoFaEnable: boolean;
     elo: number;
     friends?: IUser[];
     history?: Result[];

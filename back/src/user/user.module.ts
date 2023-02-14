@@ -15,7 +15,8 @@ import { jwtConstants } from 'src/Oauth/constants';
   imports: [TypeOrmModule.forFeature([User, Results, FriendRequest]),
   JwtModule.register({
     secret: jwtConstants.secret,
-    signOptions: { expiresIn: '3600s' },
-  }),],
+    signOptions: { expiresIn: '60s' },
+  }),
+  ],
 })
 export class UserModule { }

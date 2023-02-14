@@ -68,7 +68,6 @@ async handleSendMessageChannel(@ConnectedSocket() client: Socket, @MessageBody()
   // channel.users.forEach(user => {
   //     this.server.to("user-" + user.id).emit("sendMessageChannel", messageChannelDto);
   // });
-  console.log('chanid: ' + messageChannelDto.chanid + ' | channel message: ' + messageChannelDto.message);
   this.server.to("chan" + messageChannelDto.chanid).emit("sendMessageChannelOK", messageChannelDto.message);
 
 }
@@ -91,8 +90,6 @@ async handleCreatePublicChannel(@ConnectedSocket() client: Socket, @MessageBody(
   const channel = await this.channelService.getByName(createPublicChannelDto.channame);
   if (channel != null)
     throw new BadRequestException();
-    console.log(client.handshake.auth.user.username);
-    console.log(createPublicChannelDto.channame);
     
   let user: User = client.handshake.auth.user;
   const new_channel = await this.channelService.create({

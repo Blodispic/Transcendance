@@ -21,7 +21,6 @@ export class PongGateway implements OnGatewayDisconnect, OnGatewayInit {
 	constructor(private gameService: GameService) {}
 
 	afterInit(server: Server) {
-		// this.gameService.startGame(this.server);
 	}
 
 	// handleConnection(client: any, ...args: any[]) {
@@ -38,7 +37,6 @@ export class PongGateway implements OnGatewayDisconnect, OnGatewayInit {
 	@SubscribeMessage("addToWaitingRoom")
 	HandleAddToWaitingRoom(@MessageBody() user: User, @ConnectedSocket() client: Socket)
 	{
-		console.log("Add " + user.username + " to waiting room.");
 		this.gameService.addToWaitingRoom(userList[userList.indexOf(client)] );
 		this.gameService.startGame(this.server);
 	}
@@ -100,7 +98,6 @@ export class PongGateway implements OnGatewayDisconnect, OnGatewayInit {
 	@SubscribeMessage("PlayerLeft")
 	HandlePlayerLeft(@MessageBody() input:Move, @ConnectedSocket() client: any)
 	{
-		console.log("playerLeft");
 		this.gameService.playerDisconnect(client.id);
 	}
 

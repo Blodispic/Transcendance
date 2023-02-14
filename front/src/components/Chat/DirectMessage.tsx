@@ -1,5 +1,4 @@
 import { ChatBody } from "./Chat";
-import '../../styles/chat.scss'
 
 
 // make a list of friends that had conversation with
