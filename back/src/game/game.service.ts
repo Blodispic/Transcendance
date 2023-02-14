@@ -41,6 +41,7 @@ export class GameService {
 				score: 0,
 				side: 0,
 				socket: socket1.id,
+				avatar: 0,
 			};
 			let player2: Player = {
 				paddle: {
@@ -56,6 +57,7 @@ export class GameService {
 				score: 0,
 				side: 1,
 				socket: socket2.id,
+				avatar : 0,
 			};
 			player1.name = socket1.handshake.auth.user.username;
 			player2.name = socket2.handshake.auth.user.username;
@@ -92,6 +94,7 @@ export class GameService {
 			score: 0,
 			side: 0,
 			socket: socket1.id,
+			avatar : 0,
 		};
 		let player2: Player = {
 			paddle: {
@@ -107,6 +110,7 @@ export class GameService {
 			score: 0,
 			side: 1,
 			socket: socket2.id,
+			avatar : 0,
 		};
 		player1.name = socket1.handshake.auth.user.username;
 		player2.name = socket2.handshake.auth.user.username;
@@ -211,6 +215,7 @@ let gameStateDefault: GameState = {
 		score: 0,
 		side: 0,
 		socket: "",
+		avatar: 0,
 	},
 	player2: {
 		paddle: {
@@ -223,6 +228,7 @@ let gameStateDefault: GameState = {
 		score: 0,
 		side: 1,
 		socket: "",
+		avatar: 0,
 	},
 	ball: balldefault,
 	gameFinished: false,
@@ -244,6 +250,9 @@ class Game {
 		this.gameState.gameFinished = false;
 		this.gameState.player1 = user1
 		this.gameState.player2 = user2;
+		console.log("Avatar wesh: ", this.gameState.player1.avatar);
+		this.gameState.player1.avatar = user1.avatar;
+		this.gameState.player2.avatar = user2.avatar;
 		this.gameState.player1.score = 0;
 		this.gameState.player2.score = 0;
 		this.resetState(this.gameState); 
