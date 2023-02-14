@@ -90,8 +90,6 @@ async handleCreatePublicChannel(@ConnectedSocket() client: Socket, @MessageBody(
   const channel = await this.channelService.getByName(createPublicChannelDto.channame);
   if (channel != null)
     throw new BadRequestException();
-    console.log(client.handshake.auth.user.username);
-    console.log(createPublicChannelDto.channame);
     
   let user: User = client.handshake.auth.user;
   const new_channel = await this.channelService.create({

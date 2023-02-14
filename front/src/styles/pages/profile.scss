@@ -11,14 +11,17 @@
     background-image: url(https://cdn.intra.42.fr/coalition/cover/305/téléchargement__2_.png);
     background-size: cover;
     background-position: center;
+
     .info-container {
         display: flex;
         width: 100%;
         height: 100%;
         padding-bottom: 50px;
+
         .left-part {
             width: 300px;
             align-self: center;
+
             .avatar {
                 height: 130px;
                 width: 130px;
@@ -26,14 +29,17 @@
                 margin: auto;
                 align-self: center;
                 overflow: hidden;
+
                 .logo {
                     width: 140px;
                     height: auto;
                 }
             }
         }
+
         .info-header {
             width: 100%;
+
             .stat-header {
                 height: 20%;
                 padding: 10px;
@@ -44,10 +50,12 @@
                 background-color: rgba(32, 32, 38, 0.85);
                 border-radius: 4px;
             }
+
             .block {
                 display: flex;
                 margin-top: 10px;
                 height: 60%;
+
                 .block {
                     height: 80%;
                     background-color: rgba(32, 32, 38, 0.85);
@@ -62,22 +70,27 @@
                     border-radius: 4px;
                 }
             }
+
             span {
                 font-family: 'Fredoka One', cursive;
                 color: white;
                 align-self: center;
             }
+
             .rank {
                 display: flex;
+
                 .rank {
                     color: #FFD700;
                 }
             }
         }
     }
+
     .plus {
         font-size: 15px;
     }
+
     .search {
         width: 50%;
         height: 60px;
@@ -85,6 +98,7 @@
         background-color: rgba(32, 32, 38, 0.82);
         border-radius: 60px;
         margin: 30px auto 0 auto;
+
         .icon-search {
             width: 60px;
             height: 60px;
@@ -95,6 +109,7 @@
             justify-content: center;
             font-size: xxx-large;
         }
+
         .input {
             left: 60px;
             width: 300px;
@@ -103,6 +118,7 @@
             position: relative;
             align-items: center;
             margin-right: auto;
+
             input {
                 color: cornsilk;
                 background: border-box;
@@ -127,10 +143,6 @@
     color: white;
 }
 
-.cacher {
-    height: 100%;
-    background-color: rgba(32, 32, 38);
-}
 
 .friends-list {
     list-style: none;
@@ -140,6 +152,8 @@
 }
 
 .friend-block {
+    border-radius: 4.5px;
+    overflow: hidden;
     text-decoration: none;
     background-color: #ccced9;
     border: 1px solid rgb(151, 139, 139);
@@ -151,7 +165,7 @@
 }
 
 .friend-img {
-    border: 0.5px solid rgb(0, 0, 0);
+    border-right: 0.2px solid rgb(0, 0, 0);
     height: 75px;
     width: 75px;
     margin-right: 5px;
@@ -215,6 +229,7 @@
     background-color: #34495E;
     border-color: #34495e;
     padding: 10px;
+
     label,
     a {
         text-decoration: auto;
@@ -225,5 +240,29 @@
         line-height: 190px;
         font-size: x-large;
     }
+
     --hover: #5e768fb4;
 }
+
+.onglets {
+    height: auto;
+    display: flex;
+    border-radius: 5px;
+    button {
+        border: 1px solid #555;
+        border-bottom-right-radius: 5px;
+        border-bottom-left-radius: 5px;
+        width: auto;
+        padding: 0 10px 1px;
+        a {
+            font-size:x-large;
+            width: 100%;
+            height: 100%;
+        }
+        
+    }
+}
+
+  .not-selected {
+    background-color: #fff;
+  }

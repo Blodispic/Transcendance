@@ -10,7 +10,6 @@ export class GameController {
     
     @Post(':id')
     GetRoomId(@Param('id') id: number) {
-        console.log("controller of game");
         return (id);
     }
 

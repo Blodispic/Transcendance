@@ -5,7 +5,6 @@ import { socket } from "../../App";
 import { IChannel } from "../../interface/Channel";
 import { IUser } from "../../interface/User";
 import { useAppSelector } from "../../redux/Hook";
-// import '../../styles/chat.scss'
 
 function CreateChannelPopup(props: any) {
 	const [chanName, setChanName] = useState("");
@@ -60,7 +59,6 @@ function ChannelList(props: any) {
 		}
 		fetchAllList();
 	}, [chanId]);
-
 
 	return (
 		<div> 

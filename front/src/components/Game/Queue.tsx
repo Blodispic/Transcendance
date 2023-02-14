@@ -6,8 +6,6 @@ import { useNavigate } from "react-router-dom";
 import { socket } from '../../App';
 import { debug } from 'console';
 import { logDOM } from '@testing-library/react';
-import "../../styles/queue.scss"
-import "../../styles/connection.scss"
 
 export default function Queue() {
 

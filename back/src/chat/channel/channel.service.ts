@@ -24,7 +24,6 @@ export class ChannelService {
 	create(createChannelDto: CreateChannelDto) {
 		const channel: Channel = this.channelRepository.create(createChannelDto);
 		// this.channelRepository.update(channel);
-		console.log(channel);
 		
 		return this.channelRepository.save(channel);
 	}
@@ -61,7 +60,6 @@ export class ChannelService {
 	}
 
 	async update(id: number, channelUpdate: any) {
-		console.log("UPDATE");
 		
 		const channel = await this.channelRepository.findOne({
 			relations: { users: true, /* owner: true */ },
