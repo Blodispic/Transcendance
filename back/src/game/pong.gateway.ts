@@ -61,32 +61,33 @@ export class PongGateway implements OnGatewayDisconnect, OnGatewayInit {
 	}
 
 	@SubscribeMessage("createCustomGame")
-	HandleCustomGame(@MessageBody() user1: User, user2: User, extra: boolean, scoreMax: number, @ConnectedSocket() client: Socket)
+	HandleCustomGame(@MessageBody() payload: any, @ConnectedSocket() client: Socket)
 	{
-		console.log("Add " + user1.username + " to custom game.");
-		console.log("Add " + user2.username + " to custom game.");
+		console.log("Add " + payload.user1.username + " to custom game.");
+		console.log("Add " + payload.user2 + " to custom game.");
 		let userSocket1 : any = userList[0]; //By default both user are the first user of the list
 		let userSocket2 : any = userList[0]; //By default both user are the first user of the list
 		let i : number = 0;
 		while (i < userList.length)
 		{
-			if (userList[i].handshake.auth.user.username === user1.username)
+			if (userList[i].handshake.auth.user.username === payload.user1.username)
 			{
 				userSocket1 = userList[i];
+				break;
 			}
 			i++;
 		}
 		i = 0;
 		while (i < userList.length)
 		{
-			if (userList[i].handshake.auth.user.username === user2.username)
+			if (userList[i].handshake.auth.user.username === payload.user2.username)
 			{
 				userSocket2 = userList[i];
+				break;
 			}
 			i++;
 		}
-		this.gameService.startCustomGame(this.server, userSocket1, userSocket2, extra, scoreMax);
-		
+		this.gameService.startCustomGame(this.server, userSocket1, userSocket2, payload.extra, payload.scoreMax);
 	}
 
 	@SubscribeMessage("GameEnd")
