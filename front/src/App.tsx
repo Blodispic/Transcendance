@@ -35,15 +35,17 @@ function App() {
       },
       body: JSON.stringify({ token: token }),
     })
-    .then( response => (response.json()))
-    .then( data => (
-      dispatch(setUser(data)),
-      dispatch(set_status(UserStatus.ONLINE))
-    ))
+    .then(async response => {
+      const data = await response.json();
+      // check for error response
+      if (response.ok) {
+        dispatch(setUser(data))
+        dispatch(set_status(UserStatus.ONLINE))
+      }
+    })
     .catch( function() {
-      console.log("token inexistant")
+      console.log("token inexistant or expired")
     }
-
     )
   }
   if (myStore.user === undefined) {

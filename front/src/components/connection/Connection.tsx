@@ -76,12 +76,7 @@ export default function Connection() {
                     .then(async response => {
                         const data = await response.json();
                         // check for error response
-                        if (!response.ok) {
-                            // get error message from body or default to response statusText
-                            const error = (data && data) || response.statusText;
-                            return Promise.reject(error);
-                        }
-                        else {
+                        if (response.ok) {
                             dispatch(setUser(data));
                             dispatch(oauth());
                             setCookie('Token', data.access_token, { path: '/' });
