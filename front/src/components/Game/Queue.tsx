@@ -39,17 +39,16 @@ export default function Queue() {
     }, [])
 
     return (
-        <div id="queue-container">
-
+        <div className="center">
             <div>
-                <button onClick={(e) => addToWaitingRoom()} >
+                <button className='button' onClick={(e) => addToWaitingRoom()} >
                    <Link to="/Game/">
                            Add to Waiting Room
                   </Link>
                 </button>
             </div>
             <div>
-                <button onClick={(e) => createCustomRoom()} >
+                <button className='button' onClick={(e) => createCustomRoom()} >
                 <Link to="/Game/">
                        Create Custom Room
                 </Link>

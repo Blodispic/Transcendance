@@ -1,7 +1,27 @@
-#queue-container {
-    button {
-        position: fixed; /* or absolute */
-        top: 50%;
-        left: 50%;
-    }
+// #queue-container {
+//     button {
+//         position: fixed; /* or absolute */
+//         top: 50%;
+//         left: 50%;
+//     }
+// }
+
+.center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 200px;
+}
+
+.button {
+  border: none;
+  color: white;
+  padding: 15px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+}
+.button:hover {
+  text-decoration: none;
 }
