@@ -358,13 +358,25 @@ class Game {
 	                        player.input.right === false &&
 	                        ball.previous.y > player.paddle.position.y)
 	                )
-	                    ball.speed.y = ball.speed.y * (Math.random() * (2 - 1.5) + 1.5);
+					{
+						ball.speed.y = ball.speed.y * (Math.random() * (2 - 1.5) + 1.5);
+						if (ball.previous.x + (ball.position.x - ball.previous.x) / 2 < player.paddle.position.x + paddleDimensions.x / 2)
+							ball.speed.x -= (Math.random() * (4 - 2) + 2);
+						else
+							ball.speed.x += (Math.random() * (4 - 2) + 2);
+					}
 	                else if (
 	                    player.input.left === false &&
 	                    player.input.right === false &&
 	                    ball.previous.y < player.paddle.position.y
 	                )
-	                    ball.speed.y = ball.speed.y * (Math.random() * (1 - 0.8) + 0.8);
+					{
+						ball.speed.y = ball.speed.y * (Math.random() * (1 - 0.8) + 0.8);
+						if (ball.previous.x + (ball.position.x - ball.previous.x) / 2 < player.paddle.position.x + paddleDimensions.x / 2)
+							ball.speed.x -= (Math.random() * (4 - 2) + 2);
+						else
+							ball.speed.x += (Math.random() * (4 - 2) + 2);
+					}
 	            } else {
 	                if (
 	                    (player.input.left &&
@@ -374,13 +386,25 @@ class Game {
 	                        player.input.right === false &&
 	                        ball.previous.y < player.paddle.position.y)
 	                )
-	                    ball.speed.y = ball.speed.y * (Math.random() * (2 - 1.5) + 1.5);
+					{
+						ball.speed.y = ball.speed.y * (Math.random() * (2 - 1.5) + 1.5);
+						if (ball.previous.x + (ball.position.x - ball.previous.x) / 2 < player.paddle.position.x + paddleDimensions.x / 2)
+							ball.speed.x -= (Math.random() * (4 - 2) + 2);
+						else
+							ball.speed.x += (Math.random() * (4 - 2) + 2);
+					}
 	                else if (
 	                    player.input.left &&
 	                    player.input.right &&
 	                    ball.previous.y > player.paddle.position.y
 	                )
-	                    ball.speed.y = ball.speed.y * (Math.random() * (1 - 0.8) + 0.8);
+					{
+						ball.speed.y = ball.speed.y * (Math.random() * (1 - 0.8) + 0.8);
+						if (ball.previous.x + (ball.position.x - ball.previous.x) / 2 < player.paddle.position.x + paddleDimensions.x / 2)
+							ball.speed.x -= (Math.random() * (4 - 2) + 2);
+						else
+							ball.speed.x += (Math.random() * (4 - 2) + 2);
+					}
 	            }
 	            if (
 	                (ball.previous.y < player.paddle.position.y && ball.speed.y > 0) ||
@@ -469,15 +493,15 @@ class Game {
 			ball.speed.y = 12;
 		else if (ball.speed.y < -12)
 			ball.speed.y = -12;
-		else if (ball.speed.y < 4 && ball.speed.y > 0)
+		else if (ball.speed.y < 4 && ball.speed.y >= 0)
 			ball.speed.y = 4;
 		else if (ball.speed.y > -4 && ball.speed.y < 0)
 			ball.speed.y = -4;
-		if (ball.speed.x > 15)
-			ball.speed.x = 15;
-		else if (ball.speed.x < -15)
-			ball.speed.x = -15;
-		else if (ball.speed.x < 1 && ball.speed.x > 0)
+		if (ball.speed.x > 20)
+			ball.speed.x = 20;
+		else if (ball.speed.x < -20)
+			ball.speed.x = -20;
+		else if (ball.speed.x < 1 && ball.speed.x >= 0)
 			ball.speed.x = 1;
 		else if (ball.speed.x > -1 && ball.speed.x < 0)
 			ball.speed.x = -1;
