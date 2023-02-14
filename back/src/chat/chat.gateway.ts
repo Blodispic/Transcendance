@@ -37,6 +37,8 @@ import { Channel } from "./channel/entities/channel.entity";
 
   - ajouter decorateurs dans les DTO (@isOptional ...)
 
+  - un seul DTO par utilisation, delete les doublons tel que create-channel.dto
+
 */
 
 @WebSocketGateway({
