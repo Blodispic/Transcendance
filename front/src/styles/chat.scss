@@ -52,14 +52,15 @@ $tab-color: rgb(121, 121, 121);
 			cursor: pointer;
 		}
 
-		ul:hover{
-		box-shadow: none;
-		color: var(--primary-color);
-		background: var(--secondary-color);
-		cursor: pointer;
-		}
 	}
 
+	ul:hover{
+	box-shadow: none;
+	color: var(--primary-color);
+	background: var(--secondary-color);
+	cursor: pointer;
+	}
+	
 	.chat-body {
 		float: none;
 		width: 60%;
@@ -122,6 +123,15 @@ $tab-color: rgb(121, 121, 121);
 		width: 20%;
 		padding: 10px;
 		background-color: rgba(32, 32, 38, 0.7);
+	}
+
+	.user-list {
+		font-size: 18px;
+		ul {
+			padding-left: 0px;
+			font-size: smaller;
+			cursor: pointer;
+		}
 	}
 
 	button {

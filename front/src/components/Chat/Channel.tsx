@@ -61,7 +61,6 @@ function ChannelList(props: any) {
 		fetchAllList();
 	}, [chanId]);
 
-	//  console.log(chanList);
 
 	return (
 		<div> 
@@ -133,9 +132,11 @@ function ChannelMemberList(props: any) {
 	return (
 		<div className="title"> Members <hr />
 			{currentChan?.users.map(user => (
+				<div className="user-list">
 				<ul key={user.username}>
 					{user.username}
 				</ul>
+				</div>
 			))
 		}
 		</div>
@@ -147,7 +148,6 @@ interface IMessage {
 	userid: number;
 	message: string;
 }
-
 
 function ChannelMessages(props: any) {
 	const [newInput, setNewInput] = useState("");
@@ -163,7 +163,6 @@ function ChannelMessages(props: any) {
 				method: 'GET',
 			})
 			const data = await response.json();
-			// console.log(data);
 			setCurrentChan(data);
 		}
 		getChannel();
@@ -176,14 +175,17 @@ function ChannelMessages(props: any) {
 		setNewInput("");
 	}
 
-	socket.on('sendMessageChannelOk', (data: any) => {
-		buildNewMessage(data);
+	socket.on('sendMessageChannelOk', (chanid: number, userid: number, message: string) => {
+
+		setMessageList([...messageList, message]);
+		console.log(messageList);
+		// buildNewMessage(message);
 	})
 	
-	const buildNewMessage = (data: any) => {
-		console.log("here");
-		setMessageList([...messageList, data]);
-	}
+	// const buildNewMessage = (data: any) => {
+	// 	console.log("here");
+	// 	setMessageList([...messageList, data]);
+	// }
 
 	return (
 		<div className="chat-body">

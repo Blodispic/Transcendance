@@ -55,9 +55,6 @@ export default function Chat() {
 	const navigate = useNavigate();
 	const { id } = useParams();
 
-	// console.log('chatId: ' + id);
-
-
 	return (
 			<Tabs className="chat-tab">
 				<TabList>
