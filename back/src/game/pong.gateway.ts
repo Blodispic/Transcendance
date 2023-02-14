@@ -43,33 +43,51 @@ export class PongGateway implements OnGatewayDisconnect, OnGatewayInit {
 		this.gameService.startGame(this.server);
 	}
 
-	@SubscribeMessage("createCustomGame")
-	HandleCustomGame(@MessageBody() user1: User, user2: User, extra: boolean, @ConnectedSocket() client: Socket)
+	@SubscribeMessage("spectateGame")
+	HandleSpectator(@MessageBody() player: User, @ConnectedSocket() client: Socket)
 	{
-		console.log("Add " + user1.username + " to custom game.");
-		console.log("Add " + user2.username + " to custom game.");
 		let i : number = 0;
+		while (i < this.gameService.gameRoom.length)
+		{
+			if (this.gameService.gameRoom[i].gameState.player1.name === player.username
+				|| this.gameService.gameRoom[i].gameState.player2.name === player.username)
+			{
+				this.gameService.gameRoom[i].addSpectator(client.id);
+				this.server.to(client.id).emit("Spectate", i);
+				return;
+			}
+			i++;
+		}
+	}
+
+	@SubscribeMessage("createCustomGame")
+	HandleCustomGame(@MessageBody() payload: any, @ConnectedSocket() client: Socket)
+	{
+		console.log("Add " + payload.user1.username + " to custom game.");
+		console.log("Add " + payload.user2 + " to custom game.");
 		let userSocket1 : any = userList[0]; //By default both user are the first user of the list
 		let userSocket2 : any = userList[0]; //By default both user are the first user of the list
+		let i : number = 0;
 		while (i < userList.length)
 		{
-			if (userList[i].handshake.auth.user.username === user1.username)
+			if (userList[i].handshake.auth.user.username === payload.user1.username)
 			{
 				userSocket1 = userList[i];
+				break;
 			}
 			i++;
 		}
 		i = 0;
 		while (i < userList.length)
 		{
-			if (userList[i].handshake.auth.user.username === user2.username)
+			if (userList[i].handshake.auth.user.username === payload.user2.username)
 			{
 				userSocket2 = userList[i];
+				break;
 			}
 			i++;
 		}
-		this.gameService.startCustomGame(this.server, userSocket1, userSocket2, extra);
-		
+		this.gameService.startCustomGame(this.server, userSocket1, userSocket2, payload.extra, payload.scoreMax);
 	}
 
 	@SubscribeMessage("GameEnd")
