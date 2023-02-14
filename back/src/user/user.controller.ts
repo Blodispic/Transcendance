@@ -7,6 +7,7 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { User } from './entities/user.entity';
 import { UserService } from './user.service';
 import { user } from 'src/game/game.controller';
+import { FriendRequest } from './entities/friend-request.entity';
 import { authenticator } from 'otplib';
 
 @Controller('user')
@@ -71,9 +72,23 @@ export class UserController {
   }
 
   @Post('friends')
-  GetFriends(@Body() user:User)
-  {
+  GetFriends(@Body() user:User) {
     return this.userService.GetFriendsRequest(user);
+  }
+
+  @Post("friends/accept")
+  async acceptFriendRequest(@Body() body: { friendId: any, user: User}) {
+    this.userService.addFriend(body.friendId, body.user);
+    return await this.userService.updateFriendRequestStatus(body.friendId, body.user, {
+    status: "Accepted",
+    });
+  }
+
+  @Post("friends/decline")
+  async declineFriendRequest(@Body() body: { friendId: number, user: User}) {
+    return await this.userService.updateFriendRequestStatus(body.friendId, body.user, {
+    status: "Declined",
+    });
   }
 
   @Get(':id/avatar')
@@ -123,17 +138,6 @@ export class UserController {
       return this.userService.sendFriendRequest(id, user)
     }
   }
-
-
-  @Post('addfriend/:id')
-  async addFriend(@Param('id') id: number, @Body() user: User) {
-    return await this.userService.addFriend(id, user);
-  }
-
-  // @Post(':id/addfriend/:id')
-  // async addFriendbyId(@Param('id') id: number, @Param('id') id: number) {
-  //   return await this.userService.addFriendById(id, id);
-  // }
 
   @Delete('deletefriend/:id')
   async deleteFriend(@Param('id') id: number, @Body() friend: User) {

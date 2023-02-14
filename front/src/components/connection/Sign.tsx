@@ -17,6 +17,7 @@ export default function Sign() {
 
 
     const fetch_name_avatar = async (e: any) => {
+
         e.preventDefault();
         if (newname !== '' && myUser.user) {
 
