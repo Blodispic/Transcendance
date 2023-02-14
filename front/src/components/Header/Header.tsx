@@ -2,23 +2,34 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../redux/Hook';
 import { FaUserAlt } from "react-icons/fa";
+import { BsChevronRight, BsChevronLeft } from "react-icons/bs";
 import { Cookies } from 'react-cookie';
 import { delete_user } from '../../redux/user';
+import PeopleList from './people_list';
 
 export default function Header() {
 
   const [dropdown, setDropdown] = useState<boolean>(false);
-
+  const [peopleBool, setPeopleBool] = useState<boolean>(false);
   const cookies = new Cookies();
+
   const dispatch = useAppDispatch();
   
   const dropdownClick = () => {
     if (dropdown == false)
-      setDropdown(true);
+    setDropdown(true);
     else
-      setDropdown(false);
+    setDropdown(false);
   }
   
+  const peopleclick = () => {
+
+    if (peopleBool == false)
+    setPeopleBool(true);
+    else
+    setPeopleBool(false);
+  }
+
   const logout = () => {
     cookies.remove('Token');
     dispatch(delete_user())
@@ -73,6 +84,22 @@ export default function Header() {
               </div>
             }
           </div>
+        }
+        {
+            peopleBool == true &&
+          <div className="icon-header" onClick={_ => peopleclick()} >
+            <BsChevronRight />
+          </div>
+        }
+        {
+          peopleBool == false &&
+          <div className="icon-header" onClick={_ => peopleclick()} >
+            <BsChevronLeft />
+          </div>
+        }
+        {
+          peopleBool == true &&
+          <PeopleList />
         }
       </div>
 
