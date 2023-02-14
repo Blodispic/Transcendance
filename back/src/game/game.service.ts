@@ -59,7 +59,7 @@ export class GameService {
 			};
 			player1.name = socket1.handshake.auth.user.username;
 			player2.name = socket2.handshake.auth.user.username;
-			this.gameRoom.push(new Game(this, server, player1, player2, true, socket1, socket2));
+			this.gameRoom.push(new Game(this, server, player1, player2, true, 3, socket1, socket2));
 			server.to(player1.socket).emit("RoomStart", this.gameRoom.length, player1);
 			server.to(player2.socket).emit("RoomStart", this.gameRoom.length, player2);
 			this.userService.SetStatus(socket1.handshake.auth.user, "inGame");
@@ -73,7 +73,7 @@ export class GameService {
 			return ('Waiting for more Players...');
 	}
 
-	startCustomGame(server: Server, userSocket1: any, userSocket2: any, extra: boolean)
+	startCustomGame(server: Server, userSocket1: any, userSocket2: any, extra: boolean, scoreMax: number)
 	{
 		const socket1 = userSocket1;
 		const socket2 = userSocket2;
@@ -110,7 +110,7 @@ export class GameService {
 		};
 		player1.name = socket1.handshake.auth.user.username;
 		player2.name = socket2.handshake.auth.user.username;
-		this.gameRoom.push(new Game(this, server, player1, player2, extra, socket1, socket2));
+		this.gameRoom.push(new Game(this, server, player1, player2, extra, scoreMax, socket1, socket2));
 		server.to(player1.socket).emit("RoomStart", this.gameRoom.length, player1);
 		server.to(player2.socket).emit("RoomStart", this.gameRoom.length, player2);
 	}
@@ -235,8 +235,9 @@ class Game {
 	gameService: GameService;
 	socket1 : any;
 	socket2 : any;
+	watchList: string[];
 
-	constructor(gameService: GameService, server: Server, user1: Player, user2: Player, extra:boolean, socket1:any, socket2:any) {
+	constructor(gameService: GameService, server: Server, user1: Player, user2: Player, extra:boolean, scoreMax: number, socket1:any, socket2:any) {
 		this.gameService = gameService;
 		this.server = server;
 		this.gameState = gameStateDefault;
@@ -249,8 +250,15 @@ class Game {
 		this.gameState.extra = extra;
 		this.socket1 = socket1;
 		this.socket2 = socket2;
+		this.gameState.scoreMax = scoreMax;
+		this.watchList = [];
 
 		this.gameRoomRun();
+	}
+
+	addSpectator(client: string)
+	{
+		this.watchList.push(client);
 	}
 
 	gameRoomRun()
@@ -513,6 +521,12 @@ class Game {
 		gameState = this.updateGameState({ ...gameState });
 		this.server.to(this.gameState.player1.socket).emit("UpdateState", gameState, 1);
 		this.server.to(this.gameState.player2.socket).emit("UpdateState", gameState, 2);
+		let i: number = 0;
+		while (this.watchList[i])
+		{
+			this.server.to(this.watchList[i]).emit("UpdateState", gameState, 0);
+			i++;
+		}
 		return gameState;
 	}
 }

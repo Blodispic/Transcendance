@@ -79,7 +79,6 @@ export default function Header() {
                   <li onClick={_ => {logout(); setDropdown(false); } } >
                     logout
                   </li>
-
                 </ul>
               </div>
             }
@@ -102,7 +101,6 @@ export default function Header() {
           <PeopleList />
         }
       </div>
-
     </div>
   );
 }

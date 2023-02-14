@@ -5,6 +5,7 @@ import { Player } from './Game';
 import { useNavigate } from "react-router-dom";
 import { socket } from '../../App';
 import { debug } from 'console';
+import { logDOM } from '@testing-library/react';
 
 export default function Queue() {
 
@@ -16,10 +17,11 @@ export default function Queue() {
         return;
     }
 
-    function createCustomRoom() {
-        socket.emit("addToWaitingRoom", myUser.user);
-        return;
-    }
+	function createCustomRoom() {
+		console.log("Create custom", myUser.user)
+		socket.emit("createCustomGame", {user1: myUser.user, user2: myUser.user, extra: true, scoreMax: 10});
+		return;
+	}
 
     socket.on("RoomStart", (roomId: number, player: Player) => {
         navigate("/game/" + roomId, { state: { Id: roomId } });
@@ -37,18 +39,21 @@ export default function Queue() {
     }, [])
 
     return (
-        <div>
-            <button className="center pulse pointer" onClick={(e) => addToWaitingRoom()} >
-                <Link to="/Game/">
-                        Add to Waiting Room
+        <div className="center button">
+            <div>
+                <button className='button pointer color_log' onClick={(e) => addToWaitingRoom()} >
+                   <Link className='cool' to="/Game/">
+                           Add to Waiting Room
+                  </Link>
+                </button>
+            </div>
+            <div>
+                <button className='button pointer color_log' onClick={(e) => createCustomRoom()} >
+                <Link className='cool' to="/Game/">
+                       Create Custom Room
                 </Link>
-            </button>
-
-            <button className="center pulse pointer" onClick={(e) => createCustomRoom()} >
-            <Link to="/Game/">
-                    Create Custom Room
-            </Link>
-            </button>
+                </button>
+            </div>
         </div>
     )
 }
