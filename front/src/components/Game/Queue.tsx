@@ -6,6 +6,8 @@ import { useNavigate } from "react-router-dom";
 import { socket } from '../../App';
 import { debug } from 'console';
 import { logDOM } from '@testing-library/react';
+import "../../styles/queue.scss"
+import "../../styles/connection.scss"
 
 export default function Queue() {
 
@@ -39,17 +41,17 @@ export default function Queue() {
     }, [])
 
     return (
-        <div className="center">
+        <div className="center button">
             <div>
-                <button className='button' onClick={(e) => addToWaitingRoom()} >
-                   <Link to="/Game/">
+                <button className='button pointer color_log' onClick={(e) => addToWaitingRoom()} >
+                   <Link className='cool' to="/Game/">
                            Add to Waiting Room
                   </Link>
                 </button>
             </div>
             <div>
-                <button className='button' onClick={(e) => createCustomRoom()} >
-                <Link to="/Game/">
+                <button className='button pointer color_log' onClick={(e) => createCustomRoom()} >
+                <Link className='cool' to="/Game/">
                        Create Custom Room
                 </Link>
                 </button>
