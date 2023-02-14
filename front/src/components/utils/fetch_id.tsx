@@ -6,7 +6,6 @@ import { useState, useEffect } from 'react';
 export default function Fetchid(id: number) {
 
     let [user, setUser] = useState<IUser>();
-    console.log('user', user)
 
     useEffect(() => {
         const fetchid = async () => {
@@ -23,7 +22,6 @@ export default function Fetchid(id: number) {
         }
         fetchid()
     }, [])
-    console.log(user);
     return user;
 
 }

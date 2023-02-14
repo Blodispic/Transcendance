@@ -40,7 +40,6 @@ export class OauthService {
   }
 
   async getInfo(intra_token: string) {
-    console.log(intra_token);
     const response = await fetch('https://api.intra.42.fr/v2/me', {
       method: 'GET',
       headers: {
@@ -48,7 +47,6 @@ export class OauthService {
       },
     });
     const data = await response.json();
-    console.log("data", data);
     // const response = await fetch('https://api.intra.42.fr/v2/me', {
     //   method: 'GET',
     //   headers: {

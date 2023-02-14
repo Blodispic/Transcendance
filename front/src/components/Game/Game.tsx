@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { Circle, Layer, Rect, Stage, Text } from "react-konva";
 import { useBeforeUnload } from "react-router-dom";
 import { socket } from "../../App";
-import "../../styles/game.scss";
 import { ResultPopup } from "./Result";
 
 export interface Vec2 {
@@ -125,7 +124,6 @@ export default function GameApp() {
 		});
 
 		socket.on("GameEnd", (result: any) => {
-			console.log(selfID);
 			if (selfID === 1)
 			{
 				if (result.winner === gameState.player1.name)
@@ -152,7 +150,6 @@ export default function GameApp() {
 			document.removeEventListener("keydown", keyEvent);
 			document.removeEventListener("keyup", keyEvent);
 			socket.off("UpdateState");
-			console.log("Component destroyed");
 			socket.emit("PlayerLeft");
 		};
 	}, []);
