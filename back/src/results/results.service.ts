@@ -9,10 +9,8 @@ export class ResultService {
   ) {}
 
   async createResult(resultDto: Results) {
-    console.log("In function");
     const user1 = await this.userService.getByUsername(resultDto.winner);
     const user2 = await this.userService.getByUsername(resultDto.looser);
-    console.log("after get");
     if (user1)
     {
       resultDto.user = user1;
@@ -20,7 +18,6 @@ export class ResultService {
         user1.results = [];
       user1.results.push(resultDto);
       this.userService.save(user1);
-      console.log("after push 1");
     }
     else
       return ("winner doesn't exists");

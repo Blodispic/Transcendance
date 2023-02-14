@@ -96,7 +96,7 @@ async handleSendMessageChannel(@ConnectedSocket() client: Socket, @MessageBody()
   if (!this.checkUserCanTalk(user, channel))
     throw new BadRequestException(); // user is ban or mute from this channel
   const messageChannelok = { message: messageChannelDto.message, user: client.handshake.auth.user}
-  this.server.to("chan" + messageChannelDto.chanid).emit("sendMessageChannelOK", messageChannelok);
+  this.server.to("chan" + messageChannelDto.chanid).emit("sendMessageChannelOK", messageChannelDto.message);
 
 }
 

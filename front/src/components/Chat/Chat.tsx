@@ -4,7 +4,6 @@ import { socket } from "../../App"
 import { Tab, TabList, TabPanel, Tabs } from "react-tabs";
 import { DirectMessage } from "./DirectMessage";
 import 'react-tabs/style/react-tabs.css';
-import '../../styles/chat.scss'
 import { useNavigate } from "react-router-dom";
 
 export function ChatBody() {
