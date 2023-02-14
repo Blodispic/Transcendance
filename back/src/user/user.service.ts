@@ -123,6 +123,8 @@ export class UserService {
         user.avatar = userUpdate.avatar;
       if (userUpdate.status)
         user.status = userUpdate.status;
+      if (userUpdate.twoFaEnable)
+        user.twoFaEnable = userUpdate.twoFaEnable
       return await this.usersRepository.save(user);
     }
     return 'There is no user to update';
