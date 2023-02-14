@@ -42,9 +42,13 @@ function App() {
         dispatch(setUser(data))
         dispatch(set_status(UserStatus.ONLINE))
       }
+      else {
+        cookies.remove('Token');
+      }
     })
     .catch( function() {
       console.log("token inexistant or expired")
+      cookies.remove('Token');
     }
     )
   }
