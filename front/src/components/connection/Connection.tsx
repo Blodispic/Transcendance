@@ -77,6 +77,9 @@ export default function Connection() {
                         const data = await response.json();
                         // check for error response
                         if (response.ok) {
+                            console.log(data);
+
+                            console.log("enable ? ",data.twoFaEnable);
                             dispatch(setUser(data));
                             dispatch(oauth());
                             setCookie('Token', data.access_token, { path: '/' });

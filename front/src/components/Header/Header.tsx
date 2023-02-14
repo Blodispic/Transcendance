@@ -84,7 +84,7 @@ export default function Header() {
             }
           </div>
         }
-        {
+        {/* {
             peopleBool == true &&
           <div className="icon-header" onClick={_ => peopleclick()} >
             <BsChevronRight />
@@ -99,7 +99,7 @@ export default function Header() {
         {
           peopleBool == true &&
           <PeopleList />
-        }
+        } */}
       </div>
     </div>
   );

@@ -48,9 +48,7 @@ export class UserController {
     return this.userService.GetByAccessToken(token);
   }
 
-
-
-  @Post('2fa/enable')
+  @Post('2fa/qrcode')
   async enable2FA(@Body() user: any) {
     const realUser = await this.userService.getById(user.id);
     const secret = authenticator.generateSecret();

@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { UserStatus } from "../../interface/User";
 import { useAppDispatch, useAppSelector } from "../../redux/Hook";
 import { set_status } from "../../redux/user";
@@ -17,7 +18,7 @@ export function Log() {
     const [code, setCode] = useState<string>('');
     const [isValid, setIsValid] = useState<boolean | undefined>(undefined);
     const myStore = useAppSelector(state => state.user);
-
+    const navigate = useNavigate();
     const fetchCodeForQr = async (e: any) => {
         e.preventDefault();
         await fetch(`${process.env.REACT_APP_BACK}user/2fa/check`, {
@@ -34,7 +35,10 @@ export function Log() {
                 const data = await response.json();
                 setIsValid(data.result);
                 if (data.result === true)
+                {
                     dispatch(set_status(UserStatus.ONLINE));
+                    navigate("/Home");
+                }
             })
             .catch()
     }

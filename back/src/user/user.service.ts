@@ -65,8 +65,13 @@ export class UserService {
 
   async check2FA(id: number, userCode: string): Promise<boolean>{
     const user = await this.usersRepository.findOneBy({id: id});
-    if (user)
+
+    
+    if (user){
+      console.log("User code = ", userCode, "twofactorsecret = ", user?.two_factor_secret);
+      console.log("check = ", authenticator.check(userCode, user.two_factor_secret));
       return authenticator.check(userCode, user.two_factor_secret);
+    }
     return(false);  
   }
 
@@ -123,6 +128,8 @@ export class UserService {
         user.avatar = userUpdate.avatar;
       if (userUpdate.status)
         user.status = userUpdate.status;
+      if (userUpdate.twoFaEnable)
+        user.twoFaEnable = userUpdate.twoFaEnable
       return await this.usersRepository.save(user);
     }
     return 'There is no user to update';
