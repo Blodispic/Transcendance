@@ -131,7 +131,8 @@ export class ChannelService {
 		channel.muted.push(user);
 		return this.channelRepository.save(channel);
 	}
-	  getAll() {
+	  
+	getAll() {
 		return this.channelRepository.find();
 	  }
 }
