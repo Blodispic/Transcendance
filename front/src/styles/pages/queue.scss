@@ -45,15 +45,20 @@
 
 .custom-popup-inner {
     font-family: 'Fredoka One', cursive;
-    font-size: 40px;
+    font-size: 35px;
     background-color: white;
     width: 60%;
-    height: 300px;
+    height: 400px;
     justify-content: center;
     align-items: center;
     text-align: center;
     position: relative;
     z-index: 100;
+
+    .sub-element {
+        padding: 20px 0px 20px 0px;
+        font-size: 25px;
+    }
 }
 
 .close-icon {
@@ -61,4 +66,9 @@
 	padding: 10px;
 	cursor: pointer;
     width: 20px;
+}
+
+label {
+    font-size: 20px;
+    font-family: 'Fredoka One', cursive;
 }

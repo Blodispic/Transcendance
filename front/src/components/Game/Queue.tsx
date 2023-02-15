@@ -18,10 +18,15 @@ function CustomGamePopup(props: any) {
             <div className='custom-popup-inner'>
                 <HiOutlineXMark className="close-icon" onClick={_ => props.setTrigger(false)} /> <br />
                 Create Custom Game
-                <label> <input type="checkbox" /> Extra mode </label>
-                Set Max Score<br />
-                <input type="range" min="1" max="10"></input> <br />
-                <button> Create </button>
+                <div className='sub-element'>Set Extra Mode <br />
+                    <label> <input type="checkbox" /> Extra mode </label>
+                </div>
+
+                <div className='sub-element'> Set Max Score <br />
+                    <input type="range" name='rangeInput' min="1" max="10"></input> <br />
+                </div>
+                <button className='button pointer color_log'>
+                    <div className='cool'>Create</div></button>
             </div>
         </div>
     ) : <></>;
@@ -61,8 +66,7 @@ export default function Queue() {
     }, [])
 
     return (
-        <div>
-
+        <>
             <div className="center button pulse">
                 <div>
                     <button className='button pointer color_log' onClick={(e) => addToWaitingRoom()} >
@@ -78,6 +82,6 @@ export default function Queue() {
                 </div>
             </div>
             <CustomGamePopup trigger={customPopup} setTrigger={setCustomPopup} />
-        </div>
+        </>
     )
 }
