@@ -11,6 +11,7 @@ import { Navigate } from "react-router-dom";
 import { useAppSelector } from './redux/Hook';
 import Sign from './components/connection/Sign';
 import { Log } from './components/connection/Log';
+import { Channels } from './components/Chat/Channel';
 
 const Layout = () => (
   <>
@@ -93,10 +94,17 @@ const router = createBrowserRouter([
           </OauthRoute>
       },
       {
-        path: "/Chat/:id",
+        path: "/Chat/channel",
         element:
           <ProtectedRoute>
-            <Chat />
+            <Channels />
+          </ProtectedRoute>
+      },
+      {
+        path: "/Chat/channel/:id",
+        element:
+          <ProtectedRoute>
+            <Channels />
           </ProtectedRoute>
       },
       {

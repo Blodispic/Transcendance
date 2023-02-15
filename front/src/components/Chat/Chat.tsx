@@ -55,17 +55,21 @@ export default function Chat() {
 	const { id } = useParams();
 
 	return (
+		<>
+		
 			<Tabs className="chat-tab">
 				<TabList>
-					<Tab onClick={_ => navigate(`/Chat/channel`)} >Channels</Tab>
-					<Tab onClick={_ => navigate(`/Chat/dm`)}>DM</Tab>
+					<Tab onClick={_ => navigate(`/Chat/channel/`)} >Channels</Tab>
+					<Tab onClick={_ => navigate(`/Chat/dm/`)}>DM</Tab>
 				</TabList>
-			<TabPanel>
+				<h2>Welcome to chat</h2>
+			{/* <TabPanel>
 				<Channels chatId={id}/>
 			</TabPanel>
 			<TabPanel>
 				<DirectMessage />
-			</TabPanel>
+			</TabPanel> */}
 			</Tabs>
+		</>
 	);
 }

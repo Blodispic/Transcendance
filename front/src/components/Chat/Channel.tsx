@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { HiOutlineXMark, HiPlus } from "react-icons/hi2";
 import { useNavigate, useParams } from "react-router-dom";
+import { Tab, TabList, Tabs } from "react-tabs";
 import { socket } from "../../App";
 import { IChannel } from "../../interface/Channel";
 import { useAppSelector } from "../../redux/Hook";
@@ -62,7 +63,7 @@ function ChannelList(props: any) {
 			<header>All Channels <hr /></header>
 			{chanList.map(chan => (
 				<ul key={chan.name} >
-					<div onClick={_ => navigate(`/Chat/${chan.id}`)}>{chan.name}</div>
+					<div onClick={_ => navigate(`/Chat/channel/${chan.id}`)}>{chan.name}</div>
 				</ul>
 			))}
 		</div>
@@ -100,12 +101,12 @@ function PublicChannelList() {
 	);
 }
 
-function ChannelMemberList(props: any) {
+function ChannelMemberList(props: {id: any}) {
 	const [currentChan, setCurrentChan] = useState<IChannel | undefined>(undefined)
 
 	useEffect(() => {
 		const getChannel = async () => {
-			const response = await fetch(`${process.env.REACT_APP_BACK}channel/${props.chanId}`, {
+			const response = await fetch(`${process.env.REACT_APP_BACK}channel/${props}`, {
 				method: 'GET',
 			})
 			const data = await response.json();
@@ -135,7 +136,7 @@ function ChannelMemberList(props: any) {
 	);
 }
 
-function ChannelMessages(props: any) {
+function ChannelMessages(props: {id: any}) {
 	const [newInput, setNewInput] = useState("");
 	const [messageList, setMessageList] = useState<string[]>([]);
 	const [currentChan, setCurrentChan] = useState<IChannel | undefined>(undefined)
@@ -145,7 +146,7 @@ function ChannelMessages(props: any) {
 
 	useEffect(() => {
 		const getChannel = async () => {
-			const response = await fetch(`${process.env.REACT_APP_BACK}channel/${props.chanId}`, {
+			const response = await fetch(`${process.env.REACT_APP_BACK}channel/channel/${props}`, {
 				method: 'GET',
 			})
 			const data = await response.json();
@@ -158,7 +159,7 @@ function ChannelMessages(props: any) {
 	const handleSubmitNewMessage = (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
 		if (newInput != "")
-			socket.emit('sendMessageChannel', { chanid: props.chanId, userid: currentUser.user?.id, message: newInput });
+			socket.emit('sendMessageChannel', { chanid: props, userid: currentUser.user?.id, message: newInput });
 		setNewInput("");
 	}
 
@@ -191,18 +192,30 @@ function ChannelMessages(props: any) {
 	);
 }
 
-export function Channels(props: any) {
+export function Channels() {
+	const navigate = useNavigate();
+	const { id } = useParams();
+
 
 	return (
 		<div id="chat-container">
+			<Tabs className="chat-tab">
+				<TabList>
+					<Tab onClick={_ => navigate(`/Chat/channel`)} >Channels</Tab>
+					<Tab onClick={_ => navigate(`/Chat/dm`)}>DM</Tab>
+				</TabList>
+			</Tabs>
 			<div className="left-sidebar">
 				<ChannelList />
 				<AddChannel />
 			</div>
-			<ChannelMessages chanId={props.chatId} />
-			<div className="right-sidebar">
-				<ChannelMemberList chanId={props.chatId} />
-			</div>
+			{	
+				id && 
+					<ChannelMessages id={id} />
+				// <div className="right-sidebar">
+					// <ChannelMemberList id={id} />
+				// </div>
+			}
 		</div>
 	);
 }
