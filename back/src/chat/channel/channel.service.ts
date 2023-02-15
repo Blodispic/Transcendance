@@ -111,6 +111,10 @@ export class ChannelService {
 			throw new BadRequestException();
 		channel.muted.push(user);
 		return this.channelRepository.save(channel);
+	}
+	  
+	getAll() {
+		return this.channelRepository.find();
 	  }
 
 	  async banUser(muteUserDto: MuteUserDto) {
