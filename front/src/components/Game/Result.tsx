@@ -12,8 +12,8 @@ export function ResultPopup(props: any) {
 		message = "You lost!";
 
 	return (
-		<div className='result-popup' style={{zIndex: 100}}>
-			<div className='result-popup-inner' onClick={_ => navigate("/Game")}>
+		<div className='result-popup' style={{zIndex: 100}} onClick={_ => navigate("/Game")}>
+			<div className='result-popup-inner'>
 				Congratulations! <br />{message}
 			</div>
 		</div>
