@@ -24,6 +24,11 @@ export class ChannelController {
 		return await this.channelService.getAll();
 	}
 
+	@Get('public')
+	async getPublic() {
+		return await this.channelService.getPublic();
+	}
+
 	@Post()
 	async create(@Body() createChannelDto: CreateChannelDto, user: User): Promise<Channel> {
 		try {

@@ -136,4 +136,10 @@ export class ChannelService {
 		return this.channelRepository.find();
 	  }
 
+	  getPublic() {
+		return this.channelRepository.find({
+			where: {chanType: 0,}, 
+		})
+	  }
+
 }
