@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { socket } from "../../App";
 import { UserStatus } from "../../interface/User";
 import { useAppDispatch, useAppSelector } from "../../redux/Hook";
 import { set_status } from "../../redux/user";
@@ -37,6 +38,8 @@ export function Log() {
                 if (data.result === true)
                 {
                     dispatch(set_status(UserStatus.ONLINE));
+                    socket.emit("ChangeStatus", { state: "online", id: myStore.user?.id })
+
                     navigate("/Home");
                 }
             })

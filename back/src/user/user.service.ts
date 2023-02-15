@@ -126,8 +126,9 @@ export class UserService {
         user.username = userUpdate.username;
       if (userUpdate.avatar)
         user.avatar = userUpdate.avatar;
-      if (userUpdate.status)
+      if (userUpdate.status) {
         user.status = userUpdate.status;
+      }
       if (userUpdate.twoFaEnable)
         user.twoFaEnable = userUpdate.twoFaEnable
       return await this.usersRepository.save(user);

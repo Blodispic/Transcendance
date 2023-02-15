@@ -16,42 +16,6 @@ export const getAuthorizeHref = (): string => {
     return `https://api.intra.42.fr/oauth/authorize?client_id=${api_key}&redirect_uri=${redirect_uri}&response_type=code`;
 }
 
-export function Fetchcode(props: { code: string | null }) {
-
-    const code = props;
-    const dispatch = useAppDispatch();
-    const [, setCookie] = useCookies(['Token']);
-   
-    const fetchcode = async () => {
-        await fetch(`${process.env.REACT_APP_BACK}oauth/token`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ code: code }),
-        })
-            .then(async response => {
-                const data = await response.json();
-                // check for error response
-                if (!response.ok) {
-                    // get error message from body or default to response statusText
-                    const error = (data && data) || response.statusText;
-                    return Promise.reject(error);
-                }
-                else {
-                    dispatch(setUser(data));
-                    // else if (myUser.user.double_auth)
-                    setCookie('Token', data.access_token, { path: '/' });
-                }
-            })
-            .catch(error => {
-                console.error('There was an error!', error);
-            });
-
-    }
-    fetchcode();
-    return (<div></div>)
-}
 
 export default function Connection() {
 
@@ -89,6 +53,7 @@ export default function Connection() {
                                 navigate("./log")
                             else {
                                 dispatch(set_status(UserStatus.ONLINE));
+                                socket.emit("ChangeStatus", { state: "online", id: myUser.user!.id })
                                 navigate("/Home");
                         }
                     }
