@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateUserDto } from 'src/user/dto/create-user.dto';
 import { User } from 'src/user/entities/user.entity';
@@ -9,7 +9,6 @@ import { Channel } from './entities/channel.entity';
 import { UserService } from 'src/user/user.service';
 import { UserController } from 'src/user/user.controller';
 import { RmUserDto } from './dto/rm-user.dto';
-import { BanUserDto } from '../dto/ban-user.dto';
 import { MuteUserDto } from '../dto/mute-user.dto';
 
 @Injectable()
@@ -26,6 +25,7 @@ export class ChannelService {
 	create(createChannelDto: CreateChannelDto) {
 		const channel: Channel = this.channelRepository.create(createChannelDto);
 		// this.channelRepository.update(channel);
+		console.log(channel);
 		
 		return this.channelRepository.save(channel);
 	}
@@ -61,8 +61,7 @@ export class ChannelService {
 		return this.channelRepository.save(channel);
 	}
 
-	async update(id: number, channelUpdate: any) {
-		
+	async update(id: number, channelUpdate: any) {		
 		const channel = await this.channelRepository.findOne({
 			relations: { users: true, /* owner: true */ },
 			where: {
@@ -77,9 +76,7 @@ export class ChannelService {
 			if (channelUpdate.users)
 				channel.users = channelUpdate.users;
 			if (channelUpdate.password)
-				channel.password = channelUpdate.password;
-			if (channelUpdate.chanType)
-				channel.chanType = channelUpdate.chanType;
+				channel.users = channelUpdate.password;
 		
 		  return await this.channelRepository.save(channel);
 		}
@@ -104,30 +101,14 @@ export class ChannelService {
 		});
 	  }
 
-	  async banUser(banUserDto: BanUserDto) {
+	  async muteUser(muteUserDto: MuteUserDto) {
 		const channel: Channel | null = await this.channelRepository.findOne({
 			relations: { users: true },
-			where: {
-				id: banUserDto.chanid
-			}
-			});
-		const user = await this.userService.getById(banUserDto.userid);
-		if (user === null || channel === null)
-			throw new NotFoundException();
-		channel.banned.push(user);
-		return this.channelRepository.save(channel);
-	}
-
-	async muteUser(muteUserDto: MuteUserDto) {
-		const channel: Channel | null = await this.channelRepository.findOne({
-			relations: { users: true },
-			where: {
-				id: muteUserDto.chanid
-			}
-			});
+			where: { id: muteUserDto.chanid }
+		});
 		const user = await this.userService.getById(muteUserDto.userid);
-		if (user === null || channel === null)
-			throw new NotFoundException();
+		if (channel === null || user === null)
+			throw new BadRequestException();
 		channel.muted.push(user);
 		return this.channelRepository.save(channel);
 	}
@@ -135,4 +116,17 @@ export class ChannelService {
 	getAll() {
 		return this.channelRepository.find();
 	  }
+
+	  async banUser(muteUserDto: MuteUserDto) {
+		const channel: Channel | null = await this.channelRepository.findOne({
+			relations: { users: true },
+			where: { id: muteUserDto.chanid }
+		});
+		const user = await this.userService.getById(muteUserDto.userid);
+		if (channel === null || user === null)
+			throw new BadRequestException();
+		channel.banned.push(user);
+		return this.channelRepository.save(channel);
+	  }
+
 }

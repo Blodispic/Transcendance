@@ -21,26 +21,6 @@ import { BanUserDto } from "./dto/ban-user.dto";
 import { MuteUserDto } from "./dto/mute-user.dto";
 import { Channel } from "./channel/entities/channel.entity";
 
-/*ToDo
-  - check if password et password ok pour join chan
-    + password has to be chiffré
-
-  - check if blocked user in case of messageSend
-
-  - owner can add, modify, delete password ( =? change channel's status ?)
-
-  - owner can give owner role to others users
-
-  - owner can mute and ban for a fixed term
-
-  - check les messages d'erreur -> throw ? send message: error ?
-
-  - ajouter decorateurs dans les DTO (@isOptional ...)
-
-  - un seul DTO par utilisation, delete les doublons tel que create-channel.dto
-
-*/
-
 @WebSocketGateway({
 	cors: {
 	  origin: '*',
