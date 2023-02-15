@@ -67,43 +67,6 @@ $tab-color: rgb(121, 121, 121);
 		padding: 20px 0px;
 		background-color: rgba(62, 62, 74, 0.76);
 
-		.chat-messages {
-			height: calc(100vh - 230px);
-			vertical-align: top;
-			overflow-y: scroll;
-			flex: 1;
-			.__wrap {
-				font-size: 20px;
-				line-height: normal;
-				color: rgb(111, 106, 106);
-				background-color: rgba($color: rgb(80, 165, 174), $alpha: 0.3);
-				max-width: 700px;
-				border-radius: 15px;
-				padding: 20px;
-				margin: 20px;
-				word-wrap: break-word;
-
-				.message_info {
-					align-content: space-between;
-					.timestamp {
-						color: rgb(166, 166, 166);
-						font-size: small;
-						margin-left: 10px;
-					}
-
-					.user-avatar {
-						display: inline-block;
-						width: 3%;
-						margin-right: 30px;
-						img {
-							width: 40px;
-							height: 40px;
-						}
-					}
-				}
-			}
-		}
-
 		form input {
 			font-family: 'Fredoka One', cursive;
 			font-size: 20px;
@@ -157,6 +120,46 @@ $tab-color: rgb(121, 121, 121);
 		cursor: pointer;
 	}
 }
+
+.chat-messages {
+	height: calc(100vh - 230px);
+	vertical-align: top;
+	overflow-y: scroll;
+	flex: 1;
+
+}
+.__wrap {
+	font-size: 20px;
+	line-height: normal;
+	// color: rgb(111, 106, 106);
+	color: white;
+	background-color: rgba($color: rgb(80, 165, 174), $alpha: 0.3);
+	max-width: 700px;
+	border-radius: 15px;
+	padding: 20px;
+	margin: 20px;
+	word-wrap: break-word;
+
+}
+
+.message_info {
+	color: rgb(166, 166, 166);
+	font-size: 20px;
+
+	.timestamp {
+		font-size:5px;
+		margin-left: 10px;
+	}
+}
+
+.user-avatar {
+	display: inline-block;
+	margin-right: 30px;
+	
+	height: 30px;
+	width: auto;
+}
+
 
 .chat-form-popup {
 	position: fixed;

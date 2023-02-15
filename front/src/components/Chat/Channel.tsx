@@ -58,8 +58,8 @@ function ChannelList(props: any) {
 	}, [chanId]);
 
 	return (
-		<div> 
-		<header>All Channels <hr /></header>
+		<div>
+			<header>All Channels <hr /></header>
 			{chanList.map(chan => (
 				<ul key={chan.name} >
 					<div onClick={_ => navigate(`/Chat/${chan.id}`)}>{chan.name}</div>
@@ -114,9 +114,8 @@ function ChannelMemberList(props: any) {
 		getChannel();
 	}, [props]);
 
-	if (currentChan?.users === undefined)
-	{
-		return(
+	if (currentChan?.users === undefined) {
+		return (
 			<div className="title"> Members <hr />
 			</div>
 		)
@@ -126,12 +125,12 @@ function ChannelMemberList(props: any) {
 		<div className="title"> Members <hr />
 			{currentChan?.users.map(user => (
 				<div className="user-list">
-				<ul key={user.username}>
-					{user.username}
-				</ul>
+					<ul key={user.username}>
+						{user.username}
+					</ul>
 				</div>
 			))
-		}
+			}
 		</div>
 	);
 }
@@ -151,6 +150,7 @@ function ChannelMessages(props: any) {
 			})
 			const data = await response.json();
 			setCurrentChan(data);
+			setMessageList(messageList => []);
 		}
 		getChannel();
 	}, [props]);
@@ -172,14 +172,13 @@ function ChannelMessages(props: any) {
 				{currentChan?.name} <hr />
 			</div>
 			<div className="chat-messages">
-				{messageList.map(chat => (
-					<div key={chat} className="__wrap">
-							{/* <span className="user-avatar"> */}
-						<div className="message-info"> {currentUser.user?.username}
-								{/* <img className="user-avatar" src={`${process.env.REACT_APP_BACK}user/${currentUser.user?.id}/avatar`}></img> */}
-							{/* <span className="timestamp"> 0000/00/00 00:00</span> */}
+				{messageList.map(message => (
+					<div key={message} className="__wrap">
+						<div className="message-info">
+							<img className="user-avatar" src={`${process.env.REACT_APP_BACK}user/${currentUser.user?.id}/avatar`} />
+							{currentUser.user?.username}
 						</div>
-						{chat}
+						{message}
 					</div>
 				))}
 			</div>
@@ -200,7 +199,7 @@ export function Channels(props: any) {
 				<ChannelList />
 				<AddChannel />
 			</div>
-				<ChannelMessages chanId={props.chatId} />
+			<ChannelMessages chanId={props.chatId} />
 			<div className="right-sidebar">
 				<ChannelMemberList chanId={props.chatId} />
 			</div>
