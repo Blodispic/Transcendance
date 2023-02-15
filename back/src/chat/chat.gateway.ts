@@ -153,7 +153,7 @@ async handleAddPassword(@ConnectedSocket() client: Socket, @MessageBody() chanPa
   if (channel.owner != user) // for now only the real owner/admin, soon any owner/admin
     throw new BadRequestException(); // user willing to change password isn't admin/owner
   this.channelService.update(channel.id, {
-    password: chanPasswordDto.passProp,
+    password: chanPasswordDto.password,
     chanType: 2,
   });
   client.emit("addPasswordOK", channel.id);
@@ -185,7 +185,7 @@ async handleChangePassword(@ConnectedSocket() client: Socket, @MessageBody() cha
   if (channel.password === null)
     throw new BadRequestException(); // chan doesn't already have password
   this.channelService.update(channel.id, {
-    password: chanPasswordDto.passProp,
+    password: chanPasswordDto.password,
   });
   client.emit("changePasswordOK", channel.id);
   }

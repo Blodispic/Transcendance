@@ -125,4 +125,8 @@ export class ChannelService {
 		return this.channelRepository.save(channel);
 	  }
 
+	  getAll() {
+		return this.channelRepository.find();
+	  }
+
 }
