@@ -7,7 +7,7 @@ import { ChannelService } from "src/chat/channel/channel.service";
 import { user } from "src/game/game.controller";
 import { User } from "src/user/entities/user.entity";
 import { UserService } from "src/user/user.service";
-import { CreateChannelDto } from "./channel/dto/create-channel.dto";
+// import { CreateChannelDto } from "./channel/dto/create-channel.dto";
 import { Chat } from "./chat.entity";
 import { JoinChannelDto } from "./dto/join-channel.dto";
 import { LeaveChannelDto } from "./dto/leave-channel.dto";
@@ -15,7 +15,7 @@ import { MessageChannelDto } from "./dto/message-channel.dto";
 import { MessageUserDto } from "./dto/message-user.dto";
 import { userList } from "src/app.gateway";
 import { AppGateway } from "src/app.gateway";
-import { CreateChannelSocketDto } from "./dto/create-channel.dto";
+import { CreateChannelDto } from "./dto/create-channel.dto";
 import { ChanPasswordDto } from "./dto/chan-password.dto";
 import { BanUserDto } from "./dto/ban-user.dto";
 import { MuteUserDto } from "./dto/mute-user.dto";
@@ -110,20 +110,14 @@ async handleJoinChannel(@ConnectedSocket() client: Socket, @MessageBody() joinCh
 }
 
 @SubscribeMessage('createChannel')
-async handleCreateChannel(@ConnectedSocket() client: Socket, @MessageBody() createChannelDto: CreateChannelSocketDto) {    
+async handleCreateChannel(@ConnectedSocket() client: Socket, @MessageBody() createChannelDto: CreateChannelDto) {    
   const channel = await this.channelService.getByName(createChannelDto.chanName);
   
   if (channel != null)
     throw new BadRequestException(); //channame already exist, possible ? if private/protected possible ?
 
   let user: User = client.handshake.auth.user;
-  const new_channel = await this.channelService.create({
-      name: createChannelDto.chanName,
-      owner: user,
-      users:[ user ],
-      chanType: createChannelDto.chanType,
-      password: createChannelDto.password,
-     });
+  const new_channel = await this.channelService.create(createChannelDto, user);
   this.channelService.add({
     user: user,
     chanId: new_channel.id,

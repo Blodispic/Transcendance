@@ -1,6 +1,14 @@
+import { IsNotEmpty, IsNumber, IsString } from "class-validator";
+
 export class MessageChannelDto {
-	readonly chanid: number;
-	readonly userid: number;
-	readonly message: string; 
+	@IsNumber()
+	chanid: number;
+
+	@IsNumber()
+	userid: number;
+
+	@IsString()
+	@IsNotEmpty()
+	message: string; 
 	// à améliorer
 }

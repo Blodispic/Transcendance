@@ -1,4 +1,9 @@
+import { IsNumber } from "class-validator";
+
 export class BanUserDto {
-    readonly chanid: number;
-    readonly userid: number;
+    @IsNumber()
+    chanid: number;
+    
+    @IsNumber()
+    userid: number;
 }

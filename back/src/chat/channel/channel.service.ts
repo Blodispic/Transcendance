@@ -4,12 +4,13 @@ import { CreateUserDto } from 'src/user/dto/create-user.dto';
 import { User } from 'src/user/entities/user.entity';
 import { Repository } from 'typeorm';
 import { AddUserDto } from './dto/add-user.dto';
-import { CreateChannelDto } from './dto/create-channel.dto';
+// import { CreateChannelDto } from './dto/create-channel.dto';
 import { Channel } from './entities/channel.entity';
 import { UserService } from 'src/user/user.service';
 import { UserController } from 'src/user/user.controller';
 import { RmUserDto } from './dto/rm-user.dto';
 import { MuteUserDto } from '../dto/mute-user.dto';
+import { CreateChannelDto } from '../dto/create-channel.dto';
 
 @Injectable()
 export class ChannelService {
@@ -22,8 +23,14 @@ export class ChannelService {
 
 	) {}
 
-	create(createChannelDto: CreateChannelDto) {
-		const channel: Channel = this.channelRepository.create(createChannelDto);
+	create(createChannelDto: CreateChannelDto, user: User) {
+		const channel: Channel = this.channelRepository.create({
+			name: createChannelDto.chanName,
+				password: createChannelDto.password,
+				owner: user,
+				users: [user],
+				chanType: createChannelDto.chanType,
+		});
 		// this.channelRepository.update(channel);
 		console.log(channel);
 		
