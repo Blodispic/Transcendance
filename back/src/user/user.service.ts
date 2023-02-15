@@ -82,15 +82,6 @@ export class UserService {
     })
   }
 
-  // getById(id: number): Promise<User | null> {
-  //     return this.usersRepository.findOne({
-  //       relations: { channels: true, banned: true },
-  //       where: {
-  //         id: id
-  //       }
-  //     });
-  //   }
-
   getByLogin(login: string): Promise<User | null> {
     return this.usersRepository.findOneBy({
       login: login
