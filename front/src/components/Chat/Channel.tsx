@@ -12,7 +12,7 @@ function CreateChannelPopup(props: any) {
 
 	const handleCreateNewChan = () => {
 		if (chanName != "")
-			socket.emit('createPublicChannel', { channame: chanName });
+			socket.emit('createChannel', {chanName: chanName, chanType: 0, password: "test"});
 		setChanName("");
 		setPassword("");
 		props.setTrigger(false);
@@ -38,7 +38,7 @@ function ChannelList(props: any) {
 	const [chanId, setChanId] = useState("");
 	const navigate = useNavigate();
 
-	socket.on('createPublicChannelOk', (newChanId) => {
+	socket.on('createChannelOk', (newChanId) => {
 		getChanId(newChanId);
 	});
 
