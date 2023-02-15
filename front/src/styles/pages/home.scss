@@ -1,0 +1,30 @@
+.home-title {
+    font-size:xx-large;
+    text-align: center;
+    position: relative;
+    width: 100%;
+    padding-top: 2%;
+    display: inline-block;
+}
+
+.game-desc {
+    padding-top: 10px;
+    padding-left: 2%;
+    display: flex;
+    flex-direction: row;
+    // .img-style {
+    //     width:"30%";
+    //     // min-width: "300px";
+    // }
+    .game-text {
+        text-align: left;
+        position: relative;
+        width: 100%;
+        padding-top: 2%;
+        padding-left: 1%;
+        display: inline-block;
+        span {
+            font-size:x-large;
+        }
+    }
+}
