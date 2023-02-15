@@ -12,10 +12,6 @@
     padding-left: 2%;
     display: flex;
     flex-direction: row;
-    // .img-style {
-    //     width:"30%";
-    //     // min-width: "300px";
-    // }
     .game-text {
         text-align: left;
         position: relative;
@@ -28,3 +24,78 @@
         }
     }
 }
+
+.contributors {
+    padding-top: 10px;
+    padding-left: 2%;
+    padding-right: 2%;
+    display: flex;
+    flex-direction: row;
+    width:96%;
+    .contributor {
+        display:flex;
+        flex-direction: column;
+        background-color: rgb(134, 168, 202);
+        background-size: cover;
+        border-radius: 5%;
+        width:100%;
+        margin: .5%;
+        padding: 5px;
+        .avatar {
+            width: 50%;
+            align-self: center;
+            border-radius: 50%;
+        }
+        .text{
+            text-align: left;
+            padding: 20px 10px 10px;
+        }
+    }
+}
+
+.scroll{
+    overflow-x: hidden;
+    overflow-y: scroll;
+}
+
+h2 {
+    text-transform: uppercase;
+    letter-spacing: .1em;
+    padding-top: 3%;
+    padding-bottom: 1%;
+    font-size: 0;
+    
+    &>em, &>strong {
+      font-size: 0;
+      text-align: center;
+      padding: 0 1em;
+      position: relative;
+      display: block;
+  
+      &:before, &:after {
+        font-size: 1rem;
+        content: '';
+        display: inline-block;
+        vertical-align: center;
+        width: 15%;
+        max-width: 7em;
+        height: 3px;
+        background: #000;
+        border-radius: 50%;
+        position: relative;
+        top: -.3em;
+      }
+      
+      &>strong, &>em {
+        font: normal 3.5rem/1 "Pinyon Script", serif;
+        font-style: normal;
+        text-transform: none;
+        letter-spacing: 0;
+        max-width: 70%;
+        display: inline-block;
+        vertical-align: middle;
+        padding: 0 .2em 0;
+      }
+    }
+    
+  }
