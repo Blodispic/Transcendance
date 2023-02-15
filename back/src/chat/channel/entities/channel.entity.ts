@@ -5,7 +5,6 @@ import { Column, Entity, JoinTable, ManyToMany, ManyToOne, OneToMany, OneToOne, 
 enum ChanType {
 	Public,
 	Private,
-	Protected
   }
 
 @Entity()
