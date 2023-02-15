@@ -45,6 +45,9 @@ export class User {
   @ManyToMany(() => Channel)
   channels: Channel[]
 
+  // @ManyToMany(() => Channel)
+  // banned: Channel[]
+
   //      STATISTIQUES        //
 
   @Column({ default: 1000 })

@@ -6,45 +6,49 @@ import { useNavigate } from "react-router-dom";
 import { socket } from '../../App';
 import { debug } from 'console';
 import { logDOM } from '@testing-library/react';
+import { HiOutlineXMark } from 'react-icons/hi2';
+
+
+function CustomGamePopup(props: any) {
+    const [extra, setExtra] = useState(false);
+    const [maxScore, setMaxScore] = useState(1);
+
+    return (props.trigger) ? (
+        <div className='custom-popup'>
+            <div className='custom-popup-inner'>
+                <HiOutlineXMark className="close-icon" onClick={_ => props.setTrigger(false)} /> <br />
+                Create Custom Game
+                <div className='sub-element'>Set Extra Mode <br />
+                    <label> <input type="checkbox" /> Extra mode </label>
+                </div>
+
+                <div className='sub-element'> Set Max Score <br />
+                    <input type="range" name='rangeInput' min="1" max="10"></input> <br />
+                </div>
+                <button className='button pointer color_log'>
+                    <div className='cool'>Create</div></button>
+            </div>
+        </div>
+    ) : <></>;
+}
 
 export default function Queue() {
 
     const myUser = useAppSelector(state => state.user);
     const navigate = useNavigate();
-    
+    const [customPopup, setCustomPopup] = useState(false);
+
     function addToWaitingRoom() {
         socket.emit("addToWaitingRoom", myUser.user);
         return;
     }
 
-    
-    // function CustomRoomPopup(props: any) {
-    //     const [extra, setExtra] = useState(false);
-    //     const [maxScore, setMaxScore] = useState(1);
-        
-    //     return (props.trigger) ? (
-    //         <div className='custom-popup'>
-    //             <div className='custom-popup-inner' onClick={e => e.stopPropagation()}>
-    //                 <h3>Create Custom Game</h3>
-    //                 <input type={'checkbox'}>Extra mode</input>
-    //                 <h3>Set Max Score</h3>
-    //                 <input type={'range'} min={1} max={10} value={1}>
-
-    //                 </input>
-    //             </div>
-    //         </div>
-    //     ) : <></>;
-    // }
-    
-	function createCustomRoom() {
-        // const [customPopup, setCustomPopup] = useState(false);
-
+    function CreateCustomRoom() {
         console.log("Create custom", myUser.user)
-		socket.emit("createCustomGame", {user1: myUser.user, user2: myUser.user, extra: true, scoreMax: 10});
-        return ;
-            // <CustomRoomPopup trigger={customPopup} setTrigger={setCustomPopup} />
-        // );
-	}
+        // socket.emit("createCustomGame", {user1: myUser.user, user2: myUser.user, extra: true, scoreMax: 10});
+
+        return;
+    }
 
     socket.on("RoomStart", (roomId: number, player: Player) => {
         navigate("/game/" + roomId, { state: { Id: roomId } });
@@ -62,7 +66,7 @@ export default function Queue() {
     }, [])
 
     return (
-        <div className=''>
+        <>
                 <div className='center'>
                     <div className='button'>
                 <button className='button pointer color_log' onClick={(e) => addToWaitingRoom()} >
@@ -71,14 +75,14 @@ export default function Queue() {
                   </Link>
                 </button>
 
-                <button className='button pointer color_sign' onClick={(e) => createCustomRoom()} >
-                {/* <button className='button pointer color_log' onClick={() => setCustomPopup(true)} > */}
+                <button className='button pointer color_log' onClick={() => setCustomPopup(true)} >
                 <Link className='cool' to="/Game/">
                     Create Game
                 </Link>
                 </button>
             </div>
         </div>
-        </div>
+        <CustomGamePopup trigger={customPopup} setTrigger={setCustomPopup} />
+        </>
     )
 }

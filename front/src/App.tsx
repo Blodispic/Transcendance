@@ -20,6 +20,7 @@ function App() {
     if (myStore.isLog == true && token != undefined && myStore.user && myStore.user.username) {
         socket = io(`${process.env.REACT_APP_BACK}`, {
         auth: {
+          token: token,
           user: myStore.user,
         }
       });

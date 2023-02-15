@@ -5,6 +5,8 @@ import { Channel } from './entities/channel.entity';
 import { CreateChannelDto } from './dto/create-channel.dto';
 import { AddUserDto } from './dto/add-user.dto';
 import { RmUserDto } from './dto/rm-user.dto';
+import { BanUserDto } from '../dto/ban-user.dto';
+import { MuteUserDto } from '../dto/mute-user.dto';
 
 @Controller('channel')
 export class ChannelController {
@@ -37,6 +39,16 @@ export class ChannelController {
 	@Post('rmUser')
 	async rm(@Body() rmUserDto: RmUserDto) {
 		return await this.channelService.rm(rmUserDto);
+	}
+
+	@Post('banUser')
+	async banUser(@Body() banUserDto: BanUserDto) {
+		return await this.channelService.banUser(banUserDto);
+	}
+
+	@Post('muteUser')
+	async muteUser(@Body() muteUserDto: MuteUserDto) {
+		return await this.channelService.muteUser(muteUserDto);
 	}
 
 	@Patch(':id')
