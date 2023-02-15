@@ -2,6 +2,12 @@ import { channel } from "diagnostics_channel";
 import { User } from "src/user/entities/user.entity";
 import { Column, Entity, JoinTable, ManyToMany, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 
+enum ChanType {
+	Public,
+	Private,
+	Protected
+  }
+
 @Entity()
 export class Channel {
 	@PrimaryGeneratedColumn()
@@ -10,8 +16,11 @@ export class Channel {
 	@Column({ unique:true })
 	name: string;
 
-	// @Column({ default : undefined})
-	// password: string | undefined;
+	@Column('int')
+	chanType: ChanType
+
+	@Column({ nullable: true })
+	password: string;
 
 	@ManyToOne(() => User)
 	owner: User
@@ -19,4 +28,12 @@ export class Channel {
 	@ManyToMany(() => User, user => user.channels, { cascade: true })
 	@JoinTable()
 	users: User[]
+
+	@ManyToMany(() => User, user => user.channels, { cascade: true })
+	@JoinTable()
+	banned: User[]
+
+	@ManyToMany(() => User, user => user.channels, { cascade: true })
+	@JoinTable()
+	muted: User[]
 }
