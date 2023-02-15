@@ -63,10 +63,10 @@ export class GameService {
 			server.to(player1.socket).emit("RoomStart", this.gameRoom.length, player1);
 			server.to(player2.socket).emit("RoomStart", this.gameRoom.length, player2);
 			this.userService.SetStatus(socket1.handshake.auth.user, "inGame");
-			server.emit("ChangeStatus", {state: "inGame", idChange: socket1.handshake.auth.user.id });
+			server.emit("UpdateSomoene", {idChange: socket1.handshake.auth.user.id });
 
 			this.userService.SetStatus(socket2.handshake.auth.user, "inGame");
-			server.emit("ChangeStatus", {state: "inGame", idChange: socket2.handshake.auth.user.id });
+			server.emit("UpdateSomoene", {idChange: socket2.handshake.auth.user.id });
 
 		}
 		else
@@ -164,7 +164,7 @@ export class GameService {
 		console.log("3");
 
 				this.userService.SetStatus(this.gameRoom[roomId].socket1.handshake.auth.user , "Online");  // ACHANGER PAR USERLIST BYY ADAM 
-				server.emit("ChangeStatus", {state: "Online", idChange: this.gameRoom[roomId].socket1.handshake.auth.user.id });
+				server.emit("UpdateSomoene", {idChange: this.gameRoom[roomId].socket1.handshake.auth.user.id });
 				this.gameRoom.splice(roomId, 1);
 
 				
@@ -175,7 +175,7 @@ export class GameService {
 		console.log("4");
 				
 				this.userService.SetStatus(this.gameRoom[roomId].socket1.handshake.auth.user , "Online"); // ACHANGER PAR USERLIST BYY ADAM 
-				server.emit("ChangeStatus", {state: "Online", idChange: this.gameRoom[roomId].socket2.handshake.auth.user.id });
+				server.emit("UpdateSomoene", {idChange: this.gameRoom[roomId].socket2.handshake.auth.user.id });
 				this.gameRoom.splice(roomId, 1);
 				return;
 			}

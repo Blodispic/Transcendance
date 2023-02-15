@@ -40,7 +40,7 @@ export default function Sign() {
             }
             dispatch(change_name(newname));
             dispatch(set_status(UserStatus.ONLINE));
-            socket.emit("ChangeStatus", { state: "online", id: myUser.user?.id })
+            socket.emit("UpdateSomoene", {id: myUser.user?.id })
 
             navigate("/Home");
         }
