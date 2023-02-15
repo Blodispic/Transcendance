@@ -112,11 +112,7 @@ export class ChannelService {
 		channel.muted.push(user);
 		return this.channelRepository.save(channel);
 	}
-	  
-	getAll() {
-		return this.channelRepository.find();
-	  }
-
+	
 	  async banUser(muteUserDto: MuteUserDto) {
 		const channel: Channel | null = await this.channelRepository.findOne({
 			relations: { users: true },
