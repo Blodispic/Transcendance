@@ -9,28 +9,7 @@ import { logDOM } from '@testing-library/react';
 import { HiOutlineXMark } from 'react-icons/hi2';
 
 
-function CustomGamePopup(props: any) {
-    const [extra, setExtra] = useState(false);
-    const [maxScore, setMaxScore] = useState(1);
 
-    return (props.trigger) ? (
-        <div className='custom-popup'>
-            <div className='custom-popup-inner'>
-                <HiOutlineXMark className="close-icon" onClick={_ => props.setTrigger(false)} /> <br />
-                Create Custom Game
-                <div className='sub-element'>Set Extra Mode <br />
-                    <label> <input type="checkbox" /> Extra mode </label>
-                </div>
-
-                <div className='sub-element'> Set Max Score <br />
-                    <input type="range" name='rangeInput' min="1" max="10"></input> <br />
-                </div>
-                <button className='button pointer color_log'>
-                    <div className='cool'>Create</div></button>
-            </div>
-        </div>
-    ) : <></>;
-}
 
 export default function Queue() {
 
@@ -38,14 +17,52 @@ export default function Queue() {
     const navigate = useNavigate();
     const [customPopup, setCustomPopup] = useState(false);
 
+    function CustomGamePopup(props: any) {
+        const [extra, setExtra] = useState(1);
+        const [maxScore, setMaxScore] = useState(1);
+        
+        const changeScore = (event: any) => {
+            setMaxScore(event.target.value);
+          };
+    
+        const changeExtra = (event: any) => {
+            setMaxScore(event.target.value);
+          };
+        
+        return (props.trigger) ? (
+            <div className='custom-popup'>
+                <div className='custom-popup-inner'>
+                    <HiOutlineXMark className="close-icon" onClick={_ => props.setTrigger(false)} /> <br />
+                    Create Custom Game
+                    <div className='sub-element'>Set Extra Mode <br />
+                        <label> <input type="checkbox" value={extra} onChange={changeExtra} /> Extra mode </label>
+                    </div>
+    
+                    <div className='sub-element'> Set Max Score <br />
+                        <input type="range" name='rangeInput' min="1" max="10" value={maxScore} onChange={changeScore}></input>
+                        <output>{maxScore}</output> <br />
+                    </div>
+                    <button className='button pointer color_log' onClick={() => CreateCustomRoom(extra, maxScore)}>
+                        <div className='cool'>Create</div></button>
+                </div>
+            </div>
+        ) : <></>;
+    }
+
     function addToWaitingRoom() {
         socket.emit("addToWaitingRoom", myUser.user);
         return;
     }
 
-    function CreateCustomRoom() {
-        console.log("Create custom", myUser.user)
-        // socket.emit("createCustomGame", {user1: myUser.user, user2: myUser.user, extra: true, scoreMax: 10});
+    function CreateCustomRoom(extraNum: number, Max: number) {
+        // console.log("Create custom", myUser.user)
+        let extraBool :boolean;
+        if (extraNum === 2)
+            extraBool = true;
+        else
+            extraBool = false;
+        console.log(extraBool + ", " + Max);
+        socket.emit("createCustomGame", {user1: myUser.user, user2: myUser.user, extra: extraBool, scoreMax: Max});
 
         return;
     }
