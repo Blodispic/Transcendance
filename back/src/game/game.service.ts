@@ -66,7 +66,7 @@ export class GameService {
 			server.to(player2.socket).emit("RoomStart", this.gameRoom.length, player2);
 			this.userService.SetStatus(socket1.handshake.auth.user, "InGame");
 			server.emit("UpdateSomeone", {idChange: socket1.handshake.auth.user.id });
-
+	
 			this.userService.SetStatus(socket2.handshake.auth.user, "InGame");
 			server.emit("UpdateSomeone", {idChange: socket2.handshake.auth.user.id });
 
@@ -158,26 +158,17 @@ export class GameService {
 	{
 		let roomId : number = 0;
 		
-		console.log("1");
 		while (roomId < this.gameRoom.length && this.gameRoom.length > 0)
 		{
-		console.log("2");
-
-			if (this.gameRoom[roomId].gameState.player1.socket == client)
+			if (this.gameRoom[roomId].gameState.player1.socket === client)
 			{
-		console.log("3");
-
 				this.userService.SetStatus(this.gameRoom[roomId].socket1.handshake.auth.user , "Online");  // ACHANGER PAR USERLIST BYY ADAM 
 				server.emit("UpdateSomeone", {idChange: this.gameRoom[roomId].socket1.handshake.auth.user.id });
 				this.gameRoom.splice(roomId, 1);
-
-				
 				return;
 			}
-			else if (this.gameRoom[roomId].gameState.player2.socket == client)
+			else if (this.gameRoom[roomId].gameState.player2.socket === client)
 			{
-		console.log("4");
-				
 				this.userService.SetStatus(this.gameRoom[roomId].socket1.handshake.auth.user , "Online"); // ACHANGER PAR USERLIST BYY ADAM 
 				server.emit("UpdateSomeone", {idChange: this.gameRoom[roomId].socket2.handshake.auth.user.id });
 				this.gameRoom.splice(roomId, 1);
@@ -270,6 +261,8 @@ class Game {
 		this.socket1 = socket1;
 		this.socket2 = socket2;
 		this.gameState.scoreMax = scoreMax;
+		console.log("score max = ", scoreMax);
+		
 		this.watchList = [];
 
 		this.gameRoomRun();
@@ -316,8 +309,10 @@ class Game {
 	finishGame()
 	{
 		this.gameState.gameFinished = true;
-		if (this.gameState.player1.score === this.gameState.scoreMax)
+		
+		if (this.gameState.player1.score >= this.gameState.scoreMax)
 		{
+			console.log("Player1 Wins");
 			let result: any = {winner: this.gameState.player1.name, looser: this.gameState.player2.name, winner_score: this.gameState.player1.score.toString(), looser_score: this.gameState.player2.score.toString()};
 			this.gameService.save(result);
 			this.server.to(this.gameState.player1.socket).emit("GameEnd", result);
@@ -325,6 +320,8 @@ class Game {
 		}
 		else
 		{
+			console.log("Player2 Wins");
+
 			let result: any = {winner: this.gameState.player2.name, looser: this.gameState.player1.name, winner_score: this.gameState.player2.score.toString(), looser_score: this.gameState.player1.score.toString()};
 			this.gameService.save(result);
 			this.server.to(this.gameState.player1.socket).emit("GameEnd", result);
@@ -456,15 +453,19 @@ class Game {
 			if (ball.position.y > state.area.y - ballRadius) {
 				state.player2.score++;
 				this.resetState(state);
-				if (state.player2.score === state.scoreMax) {
+				console.log("if player2 score >= scoreMax " + (state.player2.score >= state.scoreMax))
+				if (state.player2.score >= state.scoreMax) {
 					//END THE GAME
+					console.log("p2: " + state.player2.score);
 					this.finishGame();
 				}
 			} else if (ball.position.y < 0 + ballRadius) {
 				state.player1.score++;
 				this.resetState(state);
-				if (state.player1.score === state.scoreMax) {
+				console.log("if player1 score >= scoreMax " + (state.player1.score >= state.scoreMax))
+				if (state.player1.score >= state.scoreMax) {
 					//END THE GAME
+					console.log("p1: " + state.player1.score);
 					this.finishGame()
 				}
 			}
