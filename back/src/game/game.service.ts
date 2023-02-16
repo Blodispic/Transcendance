@@ -62,11 +62,11 @@ export class GameService {
 			this.gameRoom.push(new Game(this, server, player1, player2, true, 3, socket1, socket2));
 			server.to(player1.socket).emit("RoomStart", this.gameRoom.length, player1);
 			server.to(player2.socket).emit("RoomStart", this.gameRoom.length, player2);
-			this.userService.SetStatus(socket1.handshake.auth.user, "inGame");
-			server.emit("ChangeStatus", {state: "inGame", idChange: socket1.handshake.auth.user.id });
+			this.userService.SetStatus(socket1.handshake.auth.user, "InGame");
+			server.emit("UpdateSomeone", {idChange: socket1.handshake.auth.user.id });
 
-			this.userService.SetStatus(socket2.handshake.auth.user, "inGame");
-			server.emit("ChangeStatus", {state: "inGame", idChange: socket2.handshake.auth.user.id });
+			this.userService.SetStatus(socket2.handshake.auth.user, "InGame");
+			server.emit("UpdateSomeone", {idChange: socket2.handshake.auth.user.id });
 
 		}
 		else
@@ -150,22 +150,32 @@ export class GameService {
 		this.userService.createResults(results);
 	}
 
-	EndGame(client: string)
+	EndGame(client: string, server: Server)
 	{
 		let roomId : number = 0;
 		
+		console.log("1");
 		while (roomId < this.gameRoom.length && this.gameRoom.length > 0)
 		{
+		console.log("2");
+
 			if (this.gameRoom[roomId].gameState.player1.socket == client)
 			{
-				this.userService.SetStatus(this.gameRoom[roomId].socket1.handshake.auth.user , "inGame");  // ACHANGER PAR USERLIST BYY ADAM 
+		console.log("3");
+
+				this.userService.SetStatus(this.gameRoom[roomId].socket1.handshake.auth.user , "Online");  // ACHANGER PAR USERLIST BYY ADAM 
+				server.emit("UpdateSomeone", {idChange: this.gameRoom[roomId].socket1.handshake.auth.user.id });
 				this.gameRoom.splice(roomId, 1);
+
+				
 				return;
 			}
 			else if (this.gameRoom[roomId].gameState.player2.socket == client)
 			{
-
-				this.userService.SetStatus(this.gameRoom[roomId].socket1.handshake.auth.user , "inGame"); // ACHANGER PAR USERLIST BYY ADAM 
+		console.log("4");
+				
+				this.userService.SetStatus(this.gameRoom[roomId].socket1.handshake.auth.user , "Online"); // ACHANGER PAR USERLIST BYY ADAM 
+				server.emit("UpdateSomeone", {idChange: this.gameRoom[roomId].socket2.handshake.auth.user.id });
 				this.gameRoom.splice(roomId, 1);
 				return;
 			}
