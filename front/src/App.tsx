@@ -42,7 +42,7 @@ function App() {
       if (response.ok) {
         dispatch(setUser(data))
         dispatch(set_status(UserStatus.ONLINE))
-        socket.emit("UpdateSomoene", {id: myStore.user?.id})
+        socket.emit("UpdateSomeone", {id: myStore.user?.id})
       }
       else {
         cookies.remove('Token');

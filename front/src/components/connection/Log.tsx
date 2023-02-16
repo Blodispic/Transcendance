@@ -38,7 +38,7 @@ export function Log() {
                 if (data.result === true)
                 {
                     dispatch(set_status(UserStatus.ONLINE));
-                    socket.emit("UpdateSomoene", {id: myStore.user?.id })
+                    socket.emit("UpdateSomeone", {id: myStore.user?.id })
 
                     navigate("/Home");
                 }
