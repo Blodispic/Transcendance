@@ -92,7 +92,7 @@ export class PongGateway implements OnGatewayDisconnect, OnGatewayInit {
 	HandleEnd(@MessageBody() input:Move, @ConnectedSocket() client: Socket)
 	{
 		if (this.gameService.gameRoom.length > 0)
-			this.gameService.EndGame(client.id);
+			this.gameService.EndGame(client.id, this.server);
 	}
 
 	@SubscribeMessage("PlayerLeft")

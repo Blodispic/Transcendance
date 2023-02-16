@@ -13,7 +13,7 @@ export class User {
   twoFaEnable: boolean;
 
     
-  @Column({ default: "offline"})
+  @Column({ default: "Offline"})
   status: string;
 
 

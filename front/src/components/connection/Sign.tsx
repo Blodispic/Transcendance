@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { socket } from '../../App';
 import { UserStatus } from '../../interface/User';
 import { useAppDispatch, useAppSelector } from '../../redux/Hook';
 import { change_name, set_status } from "../../redux/user";
@@ -39,6 +40,8 @@ export default function Sign() {
             }
             dispatch(change_name(newname));
             dispatch(set_status(UserStatus.ONLINE));
+            socket.emit("UpdateSomeone", {id: myUser.user?.id })
+
             navigate("/Home");
         }
     }

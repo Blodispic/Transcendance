@@ -49,14 +49,13 @@ export class UserController {
     return this.userService.GetByAccessToken(token);
   }
 
-
-
-  @Post('2fa/enable')
+  @Post('2fa/qrcode')
   async enable2FA(@Body() user: any) {
     const realUser = await this.userService.getById(user.id);
     const secret = authenticator.generateSecret();
     this.userService.enable2FA(realUser, secret);
-    const qrCode = await this.userService.generateQRCode(secret);
+    const otpauthURL = authenticator.keyuri('Transcendence', user.email, secret);
+    const qrCode = await this.userService.generateQRCode(otpauthURL);
     return { qrCode };
   }
 
