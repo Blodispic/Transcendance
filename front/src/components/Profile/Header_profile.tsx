@@ -65,13 +65,13 @@ export function Header(props: { currentUser: IUser, setCurrentUser: Function }) 
                             <div className='info-header'>
                                     <Search currentUser={currentUser} setcurrentUser={setCurrentUser} />
                                     <div className='stat-header'>
-                                            <span>test</span>
-                                            <span>test</span>
+                                            <span>Win: {currentUser.win}</span>
+                                            <span>Lose: {currentUser.lose}</span>``
                                             <span>test</span>
 
                                             <div className='rank'>
                                                     <span>RANK</span>
-                                                    <span className='rank'>GOLD II </span>
+                                                    <span className='rank'>&nbsp;GOLD II </span>
                                             </div>
                                     </div>
 
@@ -83,7 +83,7 @@ export function Header(props: { currentUser: IUser, setCurrentUser: Function }) 
                                             </div>
 
                                             <div className=' block'>
-                                                    <span >{currentUser.status}</span>
+                                                    <span className={"color-status " + currentUser.status}>{currentUser.status}</span>
                                             </div>
                                     </div>
                             </div>

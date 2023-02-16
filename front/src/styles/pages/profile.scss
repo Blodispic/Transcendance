@@ -70,6 +70,18 @@
                     text-align: center;
                     background-color: rgba(32, 32, 38, 0.85);
                     border-radius: 4px;
+
+                    .color-status.Offline {
+                        color: #747f8d;
+                    }
+                    
+                    .color-status.Online {
+                        color: #43b581;
+                    }
+                    
+                    .color-status.InGame {
+                        color: #f04747;
+                    }
                 }
             }
 
@@ -193,8 +205,16 @@
     margin-bottom: 2px;
 }
 
-.friend-status {
+.color-status.Offline {
+    color: #747f8d;
+}
+
+.color-status.Online {
     color: #43b581;
+}
+
+.color-status.InGame {
+    color: #e34141;
 }
 
 .friend-actions {
