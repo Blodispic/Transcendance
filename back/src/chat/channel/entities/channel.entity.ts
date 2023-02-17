@@ -22,7 +22,7 @@ export class Channel {
 	password: string;
 
 	@ManyToOne(() => User)
-	owner: User
+	owner: User[]
 
 	@ManyToMany(() => User, user => user.channels, { cascade: true })
 	@JoinTable()

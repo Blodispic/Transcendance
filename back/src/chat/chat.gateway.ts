@@ -20,6 +20,7 @@ import { ChanPasswordDto } from "./dto/chan-password.dto";
 import { BanUserDto } from "./dto/ban-user.dto";
 import { MuteUserDto } from "./dto/mute-user.dto";
 import { Channel } from "./channel/entities/channel.entity";
+import { GiveAdminDto } from "./dto/give-admin.dto";
 
 @WebSocketGateway({
 	cors: {
@@ -200,6 +201,17 @@ async handleMuteUser(@ConnectedSocket() client: Socket, @MessageBody() muteUserD
   client.emit("muteUserOK", user.id, channel.id);
 }
 
+@SubscribeMessage('GiveAdmin')
+async handleGiveAdmin(@ConnectedSocket() client: Socket, @MessageBody() giveAdminDto: GiveAdminDto) {
+  const channel = await this.channelService.getById(giveAdminDto.chanid);
+  const user = client.handshake.auth.user;
+  if (channel === null || user === null)
+    throw new BadRequestException(); // no such channel or user
+  if (channel.owner != user)
+    throw new BadRequestException();
+  this.channelService.addAdmin(giveAdminDto);
+  client.emit("giveAdminOK", user.id, channel.id);
+}
 
 
  afterInit(server: Server) {

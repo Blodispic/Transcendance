@@ -11,6 +11,7 @@ import { UserController } from 'src/user/user.controller';
 import { RmUserDto } from './dto/rm-user.dto';
 import { MuteUserDto } from '../dto/mute-user.dto';
 import { CreateChannelDto } from '../dto/create-channel.dto';
+import { GiveAdminDto } from '../dto/give-admin.dto';
 
 @Injectable()
 export class ChannelService {
@@ -27,7 +28,7 @@ export class ChannelService {
 		const channel: Channel = this.channelRepository.create({
 			name: createChannelDto.chanName,
 				password: createChannelDto.password,
-				owner: user,
+				owner: [user],
 				users: [user],
 				chanType: createChannelDto.chanType,
 		});
@@ -186,5 +187,20 @@ export class ChannelService {
 				return true;
 		});
 		return false;			
+	}
+
+	async addAdmin(giveAdminDto: GiveAdminDto)
+	{
+		const channel: Channel | null = await this.channelRepository.findOne({
+			relations: { users: true },
+			where: {
+				id: giveAdminDto.chanid
+			}
+			});
+		const user = await this.userService.getById(giveAdminDto.userid);
+		if (channel == null || user == null)
+			throw new NotFoundException();
+		channel.owner.push(user);
+		return this.channelRepository.save(channel);
 	}
 }
