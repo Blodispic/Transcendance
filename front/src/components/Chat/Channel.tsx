@@ -45,6 +45,22 @@ function PopupCreateChannel(props: any) {
 		</div>
 	) : <></>;
 }
+function JoinChannel(props: {currentUser: any, chanid: any}) {
+
+	
+	socket.emit('joinChannel', {chanid: props.chanid});
+
+	if (props.chanid === undefined)
+	{	
+		return (<></>);
+	}
+
+	return (
+		<div>
+			<button>Join</button>
+		</div>
+	);
+}
 
 function ChannelList(props: any) {
 	const [chanList, setChanList] = useState<IChannel[]>([]);
@@ -78,7 +94,8 @@ function ChannelList(props: any) {
 					<div onClick={_ => navigate(`/Chat/channel/${chan.id}`)}>{chan.name}
 						{
 							chan.chanType == 1 &&
-							<HiLockClosed style={{ float: 'right' }} />}
+							<HiLockClosed style={{ float: 'right' }} />
+						}
 					</div>
 				</ul>
 			))}
@@ -199,6 +216,7 @@ function ChannelMessages(props: { id: any }) {
 				{
 					currentChan?.chanType == 1 &&
 					<HiLockClosed />}
+				<span><JoinChannel currentUser={currentUser} chanid={props.id} /></span>
 				<hr />
 			</div>
 			<div className="chat-messages">
