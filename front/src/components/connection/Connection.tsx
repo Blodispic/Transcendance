@@ -54,7 +54,7 @@ export default function Connection() {
                                 navigate("./log")
                             else {
                                 dispatch(set_status(UserStatus.ONLINE));
-                                socket.emit("UpdateSomoene", {id: myUser.user!.id })
+                                socket.emit("UpdateSomeone", {id: myUser.user!.id })
                                 navigate("/Home");
                         }
                     }
