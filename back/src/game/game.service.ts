@@ -41,6 +41,7 @@ export class GameService {
 				score: 0,
 				side: 0,
 				socket: socket1.id,
+				avatar: "",
 			};
 			let player2: Player = {
 				paddle: {
@@ -56,9 +57,12 @@ export class GameService {
 				score: 0,
 				side: 1,
 				socket: socket2.id,
+				avatar: "",
 			};
 			player1.name = socket1.handshake.auth.user.username;
+			player1.avatar = socket1.handshake.auth.user.avatar;
 			player2.name = socket2.handshake.auth.user.username;
+			player2.avatar = socket2.handshake.auth.user.avatar;
 			this.gameRoom.push(new Game(this, server, player1, player2, true, 3, socket1, socket2));
 			server.to(player1.socket).emit("RoomStart", this.gameRoom.length, player1);
 			server.to(player2.socket).emit("RoomStart", this.gameRoom.length, player2);
@@ -92,6 +96,7 @@ export class GameService {
 			score: 0,
 			side: 0,
 			socket: socket1.id,
+			avatar: "",
 		};
 		let player2: Player = {
 			paddle: {
@@ -107,9 +112,12 @@ export class GameService {
 			score: 0,
 			side: 1,
 			socket: socket2.id,
+			avatar: "",
 		};
 		player1.name = socket1.handshake.auth.user.username;
+		player1.avatar = socket1.handshake.auth.user.avatar;
 		player2.name = socket2.handshake.auth.user.username;
+		player2.avatar = socket2.handshake.auth.user.avatar;
 		this.gameRoom.push(new Game(this, server, player1, player2, extra, scoreMax, socket1, socket2));
 		server.to(player1.socket).emit("RoomStart", this.gameRoom.length, player1);
 		server.to(player2.socket).emit("RoomStart", this.gameRoom.length, player2);
@@ -146,7 +154,26 @@ export class GameService {
 		}
 	}
 
-	save(results: any) {
+	async save(results: any) {
+		const winner = await this.userService.getByUsername(results.winner);
+		const loser = await this.userService.getByUsername(results.loser);
+		if (winner) {
+			winner.win += 1;
+			winner.elo += 50;
+			this.userService.save(winner);
+		}
+		else {
+			// winer doesn't exist
+		}
+		if (loser) {
+			loser.lose += 1;
+			loser.elo -= 50;
+			this.userService.save(loser);
+		}
+		else {
+			// loser doesn't exist
+		}
+
 		this.userService.createResults(results);
 	}
 
@@ -221,6 +248,7 @@ let gameStateDefault: GameState = {
 		score: 0,
 		side: 0,
 		socket: "",
+		avatar: "",
 	},
 	player2: {
 		paddle: {
@@ -233,6 +261,7 @@ let gameStateDefault: GameState = {
 		score: 0,
 		side: 1,
 		socket: "",
+		avatar: "",
 	},
 	ball: balldefault,
 	gameFinished: false,
@@ -252,7 +281,7 @@ class Game {
 		this.server = server;
 		this.gameState = gameStateDefault;
 		this.gameState.gameFinished = false;
-		this.gameState.player1 = user1
+		this.gameState.player1 = user1;
 		this.gameState.player2 = user2;
 		this.gameState.player1.score = 0;
 		this.gameState.player2.score = 0;
@@ -310,9 +339,9 @@ class Game {
 		if (this.gameState.player1.score === this.gameState.scoreMax)
 		{
 			let result: any = {winner: this.gameState.player1.name, loser: this.gameState.player2.name, winner_score: this.gameState.player1.score.toString(), loser_score: this.gameState.player2.score.toString()};
-			this.gameService.save(result);
 			this.server.to(this.gameState.player1.socket).emit("GameEnd", result);
 			this.server.to(this.gameState.player2.socket).emit("GameEnd", result);
+			this.gameService.save(result);
 		}
 		else
 		{
@@ -538,5 +567,5 @@ class Game {
 			i++;
 		}
 		return gameState;
-	}
+	} 
 }
