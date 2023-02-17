@@ -74,7 +74,7 @@ async handleSendMessageChannel(@ConnectedSocket() client: Socket, @MessageBody()
   await this.channelService.isUserBanned({chanid: channel.id, userid: user.id }))
     throw new BadRequestException(); // user is ban or mute from this channel
   const messageChannelok = { message: messageChannelDto.message, user: client.handshake.auth.user}
-  this.server.to("chan" + messageChannelDto.chanid).emit("sendMessageChannelOK", messageChannelDto.message);
+  this.server.to("chan" + messageChannelDto.chanid).emit("sendMessageChannelOK", messageChannelDto);
 }
 
 @SubscribeMessage('joinChannel')
