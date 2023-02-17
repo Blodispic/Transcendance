@@ -91,13 +91,54 @@
                 align-self: center;
             }
 
+            .stat {
+                display: flex;
+                align-self: center;
+                flex-direction: column;
+
+                .win {
+                    color: #41b94b;
+                  }
+                  
+                  .lose {
+                    color: #e05068;
+                  }
+
+                  .winrate {
+                    color: #808080; 
+                  }
+            }
+
             .rank {
                 display: flex;
+                align-self: center;
+                flex-direction: column;
 
                 .rank {
-                    color: #FFD700;
-                }
+                    color: #a5a5a5;
+                  }
+
+                .rank.bronze {
+                    color: #b3782d;
+                  }
+                  
+                  .rank.silver {
+                    color: #c0c0c0;
+                  }
+                  
+                  .rank.gold {
+                    color: #ffd700;
+                  }
+                  
+                  .rank.platinum {
+                    color: #00bfff;
+                  }
+                  
+                  .rank.diamond {
+                    color: #00ced1;
+                  }
             }
+            
         }
     }
 
@@ -289,3 +330,9 @@
   .not-selected {
     background-color: #fff;
   }
+
+  span {
+    display: block;
+    text-align: center;
+  }
+  
