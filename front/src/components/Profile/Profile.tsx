@@ -25,7 +25,7 @@ function Onglets(props: { currentUser: IUser, current: page, setOnglets: Functio
                         <button className={`pointer ${current === page.PAGE_1 ? "" : "not-selected"}`}
                                 onClick={e => setOnglets(page.PAGE_1)}>
                                 <a >
-                                        history
+                                        History
                                 </a>
                         </button>
                         {
@@ -33,7 +33,7 @@ function Onglets(props: { currentUser: IUser, current: page, setOnglets: Functio
                                 <button className={`pointer ${current === page.PAGE_2 ? "" : "not-selected"}`}
                                         onClick={e => setOnglets(page.PAGE_2)} >
                                         <a >
-                                                friend_request
+                                                Friend Request
                                         </a>
                                 </button>
                         }
@@ -42,13 +42,14 @@ function Onglets(props: { currentUser: IUser, current: page, setOnglets: Functio
                                 <button className={`pointer ${current === page.PAGE_3 ? "" : "not-selected"}`}
                                         onClick={e => setOnglets(page.PAGE_3)}>
                                         <a >
-                                                2fa
+                                                2FA
                                         </a>
                                 </button>
                         }
                 </div>
         )
 }
+
 export default function Profile() {
         const [currentUser, setCurrentUser] = useState<IUser | undefined>(undefined);
         let avatar: string = "";

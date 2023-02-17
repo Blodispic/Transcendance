@@ -9,6 +9,8 @@ import { UserService } from './user.service';
 import { user } from 'src/game/game.controller';
 import { FriendRequest } from './entities/friend-request.entity';
 import { authenticator } from 'otplib';
+import { Results } from 'src/results/entities/results.entity';
+import { CreateResultDto } from 'src/results/dto/create-result.dto';
 
 @Controller('user')
 export class UserController {
@@ -33,6 +35,11 @@ export class UserController {
     return this.userService.create(user)
   }
 
+  @Post('results')
+  async createResults(@Body() resultDto: CreateResultDto) {
+    return await this.userService.createResult(resultDto);
+  }
+
   @Get('username/:username')
   GetbyUsername(@Param('username') username: string) {
     return this.userService.getByUsername(username);
@@ -43,6 +50,10 @@ export class UserController {
     return this.userService.getById(id);
   }
 
+  @Get('game/:id')
+  async getResult(@Param('id') id: number) {
+    return await this.userService.getResults(id)
+  }
 
   @Post('access_token')
   GetbyAccessToken(@Body() token: any) {

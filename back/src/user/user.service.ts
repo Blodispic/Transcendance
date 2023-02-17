@@ -19,9 +19,9 @@ import { Server } from "http";
 @Injectable()
 export class UserService {
 
-  server: Server;
+	server: Server;
   constructor(
-    @InjectRepository(User)
+    @InjectRepository(User) 
     private readonly usersRepository: Repository<User>,
     @InjectRepository(FriendRequest)
     private readonly friendRequestRepository: Repository<FriendRequest>,
@@ -40,21 +40,44 @@ export class UserService {
     return this.usersRepository.save(user);
   }
 
-  async createResults(createResultDto: CreateResultDto): Promise<Results> {
-    const check = await this.resultsRepository.findOneBy({
-      winner: createResultDto.winner
-    })
-    if (check)
-      return (check);
-    const result: Results = this.resultsRepository.create(createResultDto);
-    return this.resultsRepository.save(result);
+  async createResult(resultDto: CreateResultDto) {
+    console.log("result = ", resultDto);
+    
+    const user1 = await this.getByUsername(resultDto.winner);
+    const user2 = await this.getByUsername(resultDto.loser);
+    const result = await this.resultsRepository.create(resultDto);
+
+    console.log("---- User1 ---- = ", user1);
+    console.log("---- User2 ---- = ", user2);
+    console.log("---- result ---- = ", result);
+
+    if (user1) {
+      if (!user1.results)
+        user1.results = [];
+      user1.results.push(result);
+      console.log("---- User1 ---- = ", user1);
+      this.usersRepository.save(user1);
+    }
+    else
+      return ("winner doesn't exists");
+    if (user2) {
+      if (!user2.results)
+        user2.results = [];
+      user2.results.push(result);
+      console.log("---- User2 ---- = ", user2);
+      this.usersRepository.save(user2);
+    }
+    else
+      return ("loser doesn't exists");
+    this.resultsRepository.save(result);
+    return (result);
   }
 
   async save(updateUserDto: UpdateUserDto) {
     return (this.usersRepository.save(updateUserDto));
   }
 
-
+  
   async generateQRCode(secret: string): Promise<string> {
     const qrCode = await QRCode.toDataURL(secret);
     return qrCode;
@@ -65,16 +88,16 @@ export class UserService {
     await this.usersRepository.save(user);
   }
 
-  async check2FA(id: number, userCode: string): Promise<boolean> {
-    const user = await this.usersRepository.findOneBy({ id: id });
+  async check2FA(id: number, userCode: string): Promise<boolean>{
+    const user = await this.usersRepository.findOneBy({id: id});
 
-
-    if (user) {
+    
+    if (user){
       console.log("User code = ", userCode, "twofactorsecret = ", user?.two_factor_secret);
       console.log("check = ", authenticator.check(userCode, user.two_factor_secret));
       return authenticator.check(userCode, user.two_factor_secret);
     }
-    return (false);
+    return(false);  
   }
 
   findAll() {
@@ -82,9 +105,13 @@ export class UserService {
   }
 
   getById(id: number): Promise<User | null> {
-    return this.usersRepository.findOneBy({
-      id: id
-    })
+    return this.usersRepository.findOne({
+      relations: {
+        friends: true,
+        results: true,
+      },
+      where: { id: id }
+    });
   }
 
   getByLogin(login: string): Promise<User | null> {
@@ -105,14 +132,18 @@ export class UserService {
       throw new NotFoundException("Token expired");
     }
     else if (user)
-      return user;
+        return user;
     throw new NotFoundException("Token user not found");
-  }
+}
 
   async getByUsername(username: string) {
-    const userfindName = await this.usersRepository.findOneBy({
-      username: username
-    })
+    const userfindName = await this.usersRepository.findOne({
+      relations: {
+        friends: true,
+        results: true,
+      },
+      where: { username: username }
+    });
     return userfindName;
   }
 
@@ -202,7 +233,8 @@ export class UserService {
     const frienRequestPush: FriendRequest | null = await this.friendRequestRepository.findOne({
       where: [{ creator: creator }, { receiver: friend }]
     });
-    if (frienRequestPush) {
+    if (frienRequestPush)
+    {
       if (!friend.receiveFriendRequests)
         friend.receiveFriendRequests = [];
       friend.receiveFriendRequests.push(frienRequestPush);
@@ -257,7 +289,7 @@ export class UserService {
       return {};
     });
 
-  }
+  } 
 
   async updateFriendRequestStatus(friendId: number, receiver: User, status: FriendRequestStatus) {
     const friendRequest = await this.friendRequestRepository.findOne({
@@ -285,7 +317,7 @@ export class UserService {
       relations: {
         friends: true,
       },
-      where: { id: friendId }
+      where: { id: friendId } 
     });
     if (realUser && friend && user.id != friendId) {
       if (!realUser.friends) {
@@ -299,7 +331,7 @@ export class UserService {
       }
       console.log("friend", friend);
       console.log("realUser", realUser);
-
+      
       realUser.friends.push(friend);
       friend.friends.push(realUser);
       await this.usersRepository.save(friend);
@@ -314,8 +346,8 @@ export class UserService {
     return user;
   }
 
-  async SetStatus(user: User, status: string): Promise<User | null> {
-    const users = await this.usersRepository.findOneBy({ id: user.id });
+  async SetStatus(user: User, status: string): Promise<User | null>  {
+    const users  = await this.usersRepository.findOneBy({ id: user.id  });
     if (users) {
       users.status = status;
       return await this.usersRepository.save(users);
@@ -369,10 +401,11 @@ export class UserService {
   async getResults(id: number): Promise<Results[]> {
     const user = await this.usersRepository.findOne({
       relations: {
-        friends: true,
+        results: true,
       },
       where: { id: id }
     });
     return user ? user.results : [];
   }
+
 }

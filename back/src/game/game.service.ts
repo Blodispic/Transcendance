@@ -9,6 +9,7 @@ import { UserService } from "src/user/user.service";
 import { Repository } from "typeorm";
 import { GameInfo } from "./entities/game.entity";
 import { Ball, GameState, Move, Player, Vec2 } from "./game.interfaces";
+import { CreateResultDto } from "src/results/dto/create-result.dto";
 
 @Injectable()
 export class GameService {
@@ -150,7 +151,7 @@ export class GameService {
 		}
 	}
 
-	async save(results: any, server: Server) {
+	async save(results: CreateResultDto, server: Server) {
 		const winner = await this.userService.getByUsername(results.winner);
 		const loser = await this.userService.getByUsername(results.loser);
 		if (winner) {
@@ -170,7 +171,7 @@ export class GameService {
 			// loser doesn't exist
 		}
 
-		this.userService.createResults(results);
+		this.userService.createResult(results);
 	}
 
 	EndGame(client: string, server: Server) {
