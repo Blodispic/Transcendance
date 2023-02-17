@@ -57,7 +57,7 @@ export class User {
   win: number;
 
   @Column({ default: 0 })
-  loose: number;
+  lose: number;
 
   @OneToMany(() => Results, result => result.user)
   results: Results[];
