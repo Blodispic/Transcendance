@@ -70,7 +70,7 @@ export default function Profile() {
         useEffect(() => {
                 socket.on('UpdateSomoene', (idChange) => {
                         console.log("ca dis quoi", idChange)
-                        // if (idChange == myUser.user?.id)
+                        if (idChange == myUser.user?.id)
                                 fetchid();
                 })
         }, [currentUser, Onglets])

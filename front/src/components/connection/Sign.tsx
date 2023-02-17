@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { socket } from '../../App';
 import { UserStatus } from '../../interface/User';
 import { useAppDispatch, useAppSelector } from '../../redux/Hook';
-import { change_name, set_status } from "../../redux/user";
+import { change_avatar, change_name, set_status } from "../../redux/user";
 
 export default function Sign() {
 
@@ -37,6 +37,7 @@ export default function Sign() {
                     body: formData,
                 })
                 formData.delete('file');
+                dispatch(change_avatar(avatar));
             }
             dispatch(change_name(newname));
             dispatch(set_status(UserStatus.ONLINE));
