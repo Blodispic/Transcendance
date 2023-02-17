@@ -1,11 +1,9 @@
 import { useEffect, useState } from "react";
-import { HiOutlineXMark, HiPlus } from "react-icons/hi2";
+import { HiLockClosed, HiOutlineXMark, HiPlus } from "react-icons/hi2";
 import { useNavigate, useParams } from "react-router-dom";
-import { Tab, TabList, TabPanel, Tabs } from "react-tabs";
 import { socket } from "../../App";
 import { IChannel } from "../../interface/Channel";
 import { useAppSelector } from "../../redux/Hook";
-import { DirectMessage } from "./DirectMessage";
 
 function PopupCreateChannel(props: any) {
 	const [chanName, setChanName] = useState("");
@@ -21,7 +19,7 @@ function PopupCreateChannel(props: any) {
 	}
 	const handleCreateNewChan = () => {
 		if (chanName != "")
-			socket.emit('createChannel', {chanName: chanName, chanType: privateChan, password: password});
+			socket.emit('createChannel', { chanName: chanName, chanType: privateChan, password: password });
 		setChanName("");
 		setPassword("");
 		setPrivateChan(0);
@@ -36,11 +34,11 @@ function PopupCreateChannel(props: any) {
 				<h3>Channel Name</h3>
 				<input type="text" id="channel-input" placeholder="Insert channel name" onChange={e => { setChanName(e.target.value) }} />
 				<h3>Channel Mode</h3>
-				<input type="radio" name="chanMode" value={0} onChange={handlePublic} defaultChecked/>Public <span></span>
-				<input type="radio" name="chanMode" value={1} onChange={handlePrivate}/>Private <br />
+				<input type="radio" name="chanMode" value={0} onChange={handlePublic} defaultChecked />Public <span></span>
+				<input type="radio" name="chanMode" value={1} onChange={handlePrivate} />Private <br />
 				{
-					privateChan == 1 && 
-					<><input type="password" id="channel-input" placeholder="Insert password" onChange={e => { setPassword(e.target.value); } } /><br /></>
+					privateChan == 1 &&
+					<><input type="password" id="channel-input" placeholder="Insert password" onChange={e => { setPassword(e.target.value); }} /><br /></>
 				}
 				<button onClick={() => handleCreateNewChan()}>Create Channel</button><span></span>
 			</div>
@@ -78,6 +76,9 @@ function ChannelList(props: any) {
 			{chanList.map(chan => (
 				<ul key={chan.name} >
 					<div onClick={_ => navigate(`/Chat/channel/${chan.id}`)}>{chan.name}
+						{
+							chan.chanType == 1 &&
+							<HiLockClosed style={{ float: 'right' }} />}
 					</div>
 				</ul>
 			))}
@@ -116,7 +117,7 @@ function PublicChannelList() {
 	);
 }
 
-function ChannelMemberList(props: {id: any}) {
+function ChannelMemberList(props: { id: any }) {
 	const [currentChan, setCurrentChan] = useState<IChannel | undefined>(undefined)
 
 	useEffect(() => {
@@ -151,7 +152,7 @@ function ChannelMemberList(props: {id: any}) {
 	);
 }
 
-function ChannelMessages(props: {id: any}) {
+function ChannelMessages(props: { id: any }) {
 	const [newInput, setNewInput] = useState("");
 	const [messageList, setMessageList] = useState<string[]>([]);
 	const [currentChan, setCurrentChan] = useState<IChannel | undefined>(undefined)
@@ -185,7 +186,11 @@ function ChannelMessages(props: {id: any}) {
 	return (
 		<div className="chat-body">
 			<div className="title" style={{ marginLeft: "10px", marginRight: "10px" }}>
-				{currentChan?.name} <hr />
+				{currentChan?.name}
+				{
+					currentChan?.chanType == 1 &&
+					<HiLockClosed />}
+				<hr />
 			</div>
 			<div className="chat-messages">
 				{messageList.map(message => (
@@ -207,7 +212,7 @@ function ChannelMessages(props: {id: any}) {
 	);
 }
 
-function ChannelPage(props: {chanid: any}) {
+function ChannelPage(props: { chanid: any }) {
 	return (
 		<div id="chat-container">
 			<div className="left-sidebar">
@@ -222,25 +227,18 @@ function ChannelPage(props: {chanid: any}) {
 	);
 }
 
-
-export function Channels() {
-	const navigate = useNavigate();
-	const { id } = useParams();
+export function Channels(props: any) {
 
 	return (
 		<div id="chat-container">
-			<Tabs className="chat-tab">
-				<TabList>
-					<Tab onClick={_ => navigate(`/Chat/channel`)} >Channels</Tab>
-					<Tab onClick={_ => navigate(`/Chat/dm`)}>DM</Tab>
-				</TabList>
-			<TabPanel>
-				<ChannelPage chanid={id} />
-			</TabPanel>
-			<TabPanel>
-				<DirectMessage />
-			</TabPanel>
-			</Tabs>
+			<div className="left-sidebar">
+				<ChannelList />
+				<AddChannel />
+			</div>
+			<ChannelMessages id={props.chatId} />
+			<div className="right-sidebar">
+				<ChannelMemberList id={props.chatId} />
+			</div>
 		</div>
 	);
 }

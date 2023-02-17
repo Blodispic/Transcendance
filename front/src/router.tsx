@@ -97,14 +97,14 @@ const router = createBrowserRouter([
         path: "/Chat/channel",
         element:
           <ProtectedRoute>
-            <Channels />
+            <Chat />
           </ProtectedRoute>
       },
       {
         path: "/Chat/channel/:id",
         element:
           <ProtectedRoute>
-            <Channels />
+            <Chat />
           </ProtectedRoute>
       },
       {

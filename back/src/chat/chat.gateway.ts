@@ -73,19 +73,18 @@ async handleSendMessageChannel(@ConnectedSocket() client: Socket, @MessageBody()
   // channel.users.forEach(user => {
   //     this.server.to("user-" + user.id).emit("sendMessageChannel", messageChannelDto);
   // });
-  if (!this.checkUserCanTalk(user, channel))
-    throw new BadRequestException(); // user is ban or mute from this channel
-  const messageChannelok = { message: messageChannelDto.message, user: client.handshake.auth.user}
+  // if (!this.checkUserCanTalk(user, channel))
+    // throw new BadRequestException(); // user is ban or mute from this channel
   this.server.to("chan" + messageChannelDto.chanid).emit("sendMessageChannelOK", messageChannelDto.message);
 }
 
 checkUserCanTalk(user: User, channel: Channel)
 {
-  channel.banned.forEach(banned => {
+  channel.banned.forEach(async banned => {
     if (user === banned)
       return false;
   });
-  channel.muted.forEach(muted => {
+  channel.muted.forEach(async muted => {
     if (user === muted)
       return false;
   });
