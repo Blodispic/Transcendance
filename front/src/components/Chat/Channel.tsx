@@ -7,18 +7,28 @@ import { IChannel } from "../../interface/Channel";
 import { useAppSelector } from "../../redux/Hook";
 import { DirectMessage } from "./DirectMessage";
 
-function CreateChannelPopup(props: any) {
+function PopupCreateChannel(props: any) {
 	const [chanName, setChanName] = useState("");
 	const [password, setPassword] = useState("");
-	const [privateChan, setPrivateChan] = useState(false);
+	const [privateChan, setPrivateChan] = useState(0);
 
+	const handlePrivate = () => {
+		setPrivateChan(1);
+	}
+
+	const handlePublic = () => {
+		setPrivateChan(0);
+	}
 	const handleCreateNewChan = () => {
 		if (chanName != "")
-			socket.emit('createChannel', {chanName: chanName, chanType: 0, password: "test"});
+			socket.emit('createChannel', {chanName: chanName, chanType: privateChan, password: password});
 		setChanName("");
 		setPassword("");
+		setPrivateChan(0);
 		props.setTrigger(false);
+
 	}
+
 	return (props.trigger) ? (
 		<div className="chat-form-popup" onClick={_ => props.setTrigger(false)}>
 			<div className="chat-form-inner" onClick={e => e.stopPropagation()}>
@@ -26,9 +36,12 @@ function CreateChannelPopup(props: any) {
 				<h3>Channel Name</h3>
 				<input type="text" id="channel-input" placeholder="Insert channel name" onChange={e => { setChanName(e.target.value) }} />
 				<h3>Channel Mode</h3>
-				<input type="radio" name="Mode" value="Public" />Public <span></span>
-				<input type="radio" name="Mode" value="Protected" />Private <br />
-				<input type="password" id="channel-input" placeholder="Insert password" onChange={e => { setPassword(e.target.value) }} /><br />
+				<input type="radio" name="chanMode" value={0} onChange={handlePublic} defaultChecked/>Public <span></span>
+				<input type="radio" name="chanMode" value={1} onChange={handlePrivate}/>Private <br />
+				{
+					privateChan == 1 && 
+					<><input type="password" id="channel-input" placeholder="Insert password" onChange={e => { setPassword(e.target.value); } } /><br /></>
+				}
 				<button onClick={() => handleCreateNewChan()}>Create Channel</button><span></span>
 			</div>
 		</div>
@@ -64,7 +77,8 @@ function ChannelList(props: any) {
 			<header>All Channels <hr /></header>
 			{chanList.map(chan => (
 				<ul key={chan.name} >
-					<div onClick={_ => navigate(`/Chat/channel/${chan.id}`)}>{chan.name}</div>
+					<div onClick={_ => navigate(`/Chat/channel/${chan.id}`)}>{chan.name}
+					</div>
 				</ul>
 			))}
 		</div>
@@ -87,7 +101,7 @@ function AddChannel() {
 	return (
 		<div className="add-icon" onClick={() => setButtonPopup(true)}>
 			<HiPlus className="add-button" />
-			<CreateChannelPopup trigger={buttonPopup} setTrigger={setButtonPopup} />
+			<PopupCreateChannel trigger={buttonPopup} setTrigger={setButtonPopup} />
 		</div>
 	);
 }
