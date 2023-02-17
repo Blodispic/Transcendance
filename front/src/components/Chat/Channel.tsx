@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
 import { HiOutlineXMark, HiPlus } from "react-icons/hi2";
 import { useNavigate, useParams } from "react-router-dom";
-import { Tab, TabList, Tabs } from "react-tabs";
+import { Tab, TabList, TabPanel, Tabs } from "react-tabs";
 import { socket } from "../../App";
 import { IChannel } from "../../interface/Channel";
 import { useAppSelector } from "../../redux/Hook";
+import { DirectMessage } from "./DirectMessage";
 
 function CreateChannelPopup(props: any) {
 	const [chanName, setChanName] = useState("");
@@ -106,7 +107,7 @@ function ChannelMemberList(props: {id: any}) {
 
 	useEffect(() => {
 		const getChannel = async () => {
-			const response = await fetch(`${process.env.REACT_APP_BACK}channel/${props}`, {
+			const response = await fetch(`${process.env.REACT_APP_BACK}channel/${props.id}`, {
 				method: 'GET',
 			})
 			const data = await response.json();
@@ -146,7 +147,7 @@ function ChannelMessages(props: {id: any}) {
 
 	useEffect(() => {
 		const getChannel = async () => {
-			const response = await fetch(`${process.env.REACT_APP_BACK}channel/channel/${props}`, {
+			const response = await fetch(`${process.env.REACT_APP_BACK}channel/${props.id}`, {
 				method: 'GET',
 			})
 			const data = await response.json();
@@ -159,7 +160,7 @@ function ChannelMessages(props: {id: any}) {
 	const handleSubmitNewMessage = (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
 		if (newInput != "")
-			socket.emit('sendMessageChannel', { chanid: props, userid: currentUser.user?.id, message: newInput });
+			socket.emit('sendMessageChannel', { chanid: props.id, userid: currentUser.user?.id, message: newInput });
 		setNewInput("");
 	}
 
@@ -192,10 +193,25 @@ function ChannelMessages(props: {id: any}) {
 	);
 }
 
+function ChannelPage(props: {chanid: any}) {
+	return (
+		<div id="chat-container">
+			<div className="left-sidebar">
+				<ChannelList />
+				<AddChannel />
+			</div>
+			<ChannelMessages id={props.chanid} />
+			<div className="right-sidebar">
+				<ChannelMemberList id={props.chanid} />
+			</div>
+		</div>
+	);
+}
+
+
 export function Channels() {
 	const navigate = useNavigate();
 	const { id } = useParams();
-
 
 	return (
 		<div id="chat-container">
@@ -204,18 +220,13 @@ export function Channels() {
 					<Tab onClick={_ => navigate(`/Chat/channel`)} >Channels</Tab>
 					<Tab onClick={_ => navigate(`/Chat/dm`)}>DM</Tab>
 				</TabList>
+			<TabPanel>
+				<ChannelPage chanid={id} />
+			</TabPanel>
+			<TabPanel>
+				<DirectMessage />
+			</TabPanel>
 			</Tabs>
-			<div className="left-sidebar">
-				<ChannelList />
-				<AddChannel />
-			</div>
-			{	
-				id && 
-					<ChannelMessages id={id} />
-				// <div className="right-sidebar">
-					// <ChannelMemberList id={id} />
-				// </div>
-			}
 		</div>
 	);
 }
