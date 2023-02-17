@@ -3,6 +3,7 @@ import { HiLockClosed, HiOutlineXMark, HiPlus } from "react-icons/hi2";
 import { useNavigate, useParams } from "react-router-dom";
 import { socket } from "../../App";
 import { IChannel } from "../../interface/Channel";
+import { IUser } from "../../interface/User";
 import { useAppSelector } from "../../redux/Hook";
 
 function PopupCreateChannel(props: any) {
@@ -24,7 +25,6 @@ function PopupCreateChannel(props: any) {
 		setPassword("");
 		setPrivateChan(0);
 		props.setTrigger(false);
-
 	}
 
 	return (props.trigger) ? (
@@ -141,8 +141,8 @@ function ChannelMemberList(props: { id: any }) {
 	return (
 		<div className="title"> Members <hr />
 			{currentChan?.users.map(user => (
-				<div className="user-list">
-					<ul key={user.username}>
+				<div className="user-list" key={user.username}>
+					<ul>
 						{user.username}
 					</ul>
 				</div>
@@ -152,13 +152,22 @@ function ChannelMemberList(props: { id: any }) {
 	);
 }
 
+interface IMessage {
+	chanid?: number;
+	userid?: number;
+	sender?: IUser;
+	usertowho?: IUser;
+	message: string;
+}
+
 function ChannelMessages(props: { id: any }) {
 	const [newInput, setNewInput] = useState("");
-	const [messageList, setMessageList] = useState<string[]>([]);
-	const [currentChan, setCurrentChan] = useState<IChannel | undefined>(undefined)
+	const [messageList, setMessageList] = useState<IMessage[]>([]);
+	const [currentChan, setCurrentChan] = useState<IChannel | undefined>(undefined);
 	const currentUser = useAppSelector(state => state.user);
+	const [sender, setSender] = useState<IUser | undefined>(undefined);
 
-	const myUser = useAppSelector(state => state.user);
+	// const myUser = useAppSelector(state => state.user);
 
 	useEffect(() => {
 		const getChannel = async () => {
@@ -175,12 +184,12 @@ function ChannelMessages(props: { id: any }) {
 	const handleSubmitNewMessage = (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
 		if (newInput != "")
-			socket.emit('sendMessageChannel', { chanid: props.id, userid: currentUser.user?.id, message: newInput });
+			socket.emit('sendMessageChannel', { chanid: props.id, sender: currentUser.user, message: newInput });
 		setNewInput("");
 	}
 
-	socket.on('sendMessageChannelOK', (message: string) => {
-		setMessageList([...messageList, message]);
+	socket.on('sendMessageChannelOK', (messageDto) => {
+		setMessageList([...messageList, messageDto]);
 	})
 
 	return (
@@ -194,12 +203,13 @@ function ChannelMessages(props: { id: any }) {
 			</div>
 			<div className="chat-messages">
 				{messageList.map(message => (
-					<div key={message} className="__wrap">
+					<div key={message.message} className="__wrap">
 						<div className="message-info">
-							<img className="user-avatar" src={`${process.env.REACT_APP_BACK}user/${currentUser.user?.id}/avatar`} />
-							{currentUser.user?.username}
+							<img className="user-avatar" src={message.sender?.avatar} />
+							{message.sender?.username}
+							<span className="timestamp">0000/00/00  00:00</span>
 						</div>
-						{message}
+						{message.message}
 					</div>
 				))}
 			</div>
@@ -207,7 +217,6 @@ function ChannelMessages(props: { id: any }) {
 				<input type="text" onChange={(e) => { setNewInput(e.target.value) }}
 					placeholder="type message here" value={newInput} />
 			</form>
-
 		</div>
 	);
 }
