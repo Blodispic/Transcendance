@@ -2,9 +2,9 @@
 import { Result } from "./Result";
 
 export enum UserStatus {
-    ONLINE = "online",
-    OFFLINE = "offline",
-    INGAME = "ingame",   
+    ONLINE = "Online",
+    OFFLINE = "Offline",
+    INGAME = "InGame",   
 }
 
 

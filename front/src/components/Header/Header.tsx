@@ -6,6 +6,7 @@ import { BsChevronRight, BsChevronLeft } from "react-icons/bs";
 import { Cookies } from 'react-cookie';
 import { delete_user } from '../../redux/user';
 import PeopleList from './people_list';
+import { socket } from '../../App';
 
 export default function Header() {
 
@@ -33,6 +34,7 @@ export default function Header() {
   const logout = () => {
     cookies.remove('Token');
     dispatch(delete_user())
+    socket.emit("UpdateSomeone", {id: myUser.user?.id })
   }
 
   const myUser = useAppSelector(state => state.user);
@@ -49,7 +51,6 @@ export default function Header() {
       </div>
 
       <div className='navbar-right' >
-
         <Link to="/Game" onClick={_ => setDropdown(false)}>
           <span className="font-link" >
             Game
@@ -84,7 +85,7 @@ export default function Header() {
             }
           </div>
         }
-        {
+        {/* {
             peopleBool == true &&
           <div className="icon-header" onClick={_ => peopleclick()} >
             <BsChevronRight />
@@ -99,7 +100,7 @@ export default function Header() {
         {
           peopleBool == true &&
           <PeopleList />
-        }
+        } */}
       </div>
     </div>
   );
