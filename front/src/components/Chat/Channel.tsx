@@ -1,22 +1,32 @@
 import { useEffect, useState } from "react";
-import { HiOutlineXMark, HiPlus } from "react-icons/hi2";
+import { HiLockClosed, HiOutlineXMark, HiPlus } from "react-icons/hi2";
 import { useNavigate, useParams } from "react-router-dom";
 import { socket } from "../../App";
 import { IChannel } from "../../interface/Channel";
 import { useAppSelector } from "../../redux/Hook";
 
-function CreateChannelPopup(props: any) {
+function PopupCreateChannel(props: any) {
 	const [chanName, setChanName] = useState("");
 	const [password, setPassword] = useState("");
-	const [privateChan, setPrivateChan] = useState(false);
+	const [privateChan, setPrivateChan] = useState(0);
 
+	const handlePrivate = () => {
+		setPrivateChan(1);
+	}
+
+	const handlePublic = () => {
+		setPrivateChan(0);
+	}
 	const handleCreateNewChan = () => {
 		if (chanName != "")
-			socket.emit('createChannel', {chanName: chanName, chanType: 0, password: "test"});
+			socket.emit('createChannel', { chanName: chanName, chanType: privateChan, password: password });
 		setChanName("");
 		setPassword("");
+		setPrivateChan(0);
 		props.setTrigger(false);
+
 	}
+
 	return (props.trigger) ? (
 		<div className="chat-form-popup" onClick={_ => props.setTrigger(false)}>
 			<div className="chat-form-inner" onClick={e => e.stopPropagation()}>
@@ -24,9 +34,12 @@ function CreateChannelPopup(props: any) {
 				<h3>Channel Name</h3>
 				<input type="text" id="channel-input" placeholder="Insert channel name" onChange={e => { setChanName(e.target.value) }} />
 				<h3>Channel Mode</h3>
-				<input type="radio" name="Mode" value="Public" />Public <span></span>
-				<input type="radio" name="Mode" value="Protected" />Private <br />
-				<input type="password" id="channel-input" placeholder="Insert password" onChange={e => { setPassword(e.target.value) }} /><br />
+				<input type="radio" name="chanMode" value={0} onChange={handlePublic} defaultChecked />Public <span></span>
+				<input type="radio" name="chanMode" value={1} onChange={handlePrivate} />Private <br />
+				{
+					privateChan == 1 &&
+					<><input type="password" id="channel-input" placeholder="Insert password" onChange={e => { setPassword(e.target.value); }} /><br /></>
+				}
 				<button onClick={() => handleCreateNewChan()}>Create Channel</button><span></span>
 			</div>
 		</div>
@@ -62,7 +75,11 @@ function ChannelList(props: any) {
 			<header>All Channels <hr /></header>
 			{chanList.map(chan => (
 				<ul key={chan.name} >
-					<div onClick={_ => navigate(`/Chat/${chan.id}`)}>{chan.name}</div>
+					<div onClick={_ => navigate(`/Chat/channel/${chan.id}`)}>{chan.name}
+						{
+							chan.chanType == 1 &&
+							<HiLockClosed style={{ float: 'right' }} />}
+					</div>
 				</ul>
 			))}
 		</div>
@@ -85,7 +102,7 @@ function AddChannel() {
 	return (
 		<div className="add-icon" onClick={() => setButtonPopup(true)}>
 			<HiPlus className="add-button" />
-			<CreateChannelPopup trigger={buttonPopup} setTrigger={setButtonPopup} />
+			<PopupCreateChannel trigger={buttonPopup} setTrigger={setButtonPopup} />
 		</div>
 	);
 }
@@ -100,12 +117,12 @@ function PublicChannelList() {
 	);
 }
 
-function ChannelMemberList(props: any) {
+function ChannelMemberList(props: { id: any }) {
 	const [currentChan, setCurrentChan] = useState<IChannel | undefined>(undefined)
 
 	useEffect(() => {
 		const getChannel = async () => {
-			const response = await fetch(`${process.env.REACT_APP_BACK}channel/${props.chanId}`, {
+			const response = await fetch(`${process.env.REACT_APP_BACK}channel/${props.id}`, {
 				method: 'GET',
 			})
 			const data = await response.json();
@@ -135,7 +152,7 @@ function ChannelMemberList(props: any) {
 	);
 }
 
-function ChannelMessages(props: any) {
+function ChannelMessages(props: { id: any }) {
 	const [newInput, setNewInput] = useState("");
 	const [messageList, setMessageList] = useState<string[]>([]);
 	const [currentChan, setCurrentChan] = useState<IChannel | undefined>(undefined)
@@ -145,7 +162,7 @@ function ChannelMessages(props: any) {
 
 	useEffect(() => {
 		const getChannel = async () => {
-			const response = await fetch(`${process.env.REACT_APP_BACK}channel/${props.chanId}`, {
+			const response = await fetch(`${process.env.REACT_APP_BACK}channel/${props.id}`, {
 				method: 'GET',
 			})
 			const data = await response.json();
@@ -158,7 +175,7 @@ function ChannelMessages(props: any) {
 	const handleSubmitNewMessage = (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
 		if (newInput != "")
-			socket.emit('sendMessageChannel', { chanid: props.chanId, userid: currentUser.user?.id, message: newInput });
+			socket.emit('sendMessageChannel', { chanid: props.id, userid: currentUser.user?.id, message: newInput });
 		setNewInput("");
 	}
 
@@ -169,7 +186,11 @@ function ChannelMessages(props: any) {
 	return (
 		<div className="chat-body">
 			<div className="title" style={{ marginLeft: "10px", marginRight: "10px" }}>
-				{currentChan?.name} <hr />
+				{currentChan?.name}
+				{
+					currentChan?.chanType == 1 &&
+					<HiLockClosed />}
+				<hr />
 			</div>
 			<div className="chat-messages">
 				{messageList.map(message => (
@@ -191,6 +212,21 @@ function ChannelMessages(props: any) {
 	);
 }
 
+function ChannelPage(props: { chanid: any }) {
+	return (
+		<div id="chat-container">
+			<div className="left-sidebar">
+				<ChannelList />
+				<AddChannel />
+			</div>
+			<ChannelMessages id={props.chanid} />
+			<div className="right-sidebar">
+				<ChannelMemberList id={props.chanid} />
+			</div>
+		</div>
+	);
+}
+
 export function Channels(props: any) {
 
 	return (
@@ -199,9 +235,9 @@ export function Channels(props: any) {
 				<ChannelList />
 				<AddChannel />
 			</div>
-			<ChannelMessages chanId={props.chatId} />
+			<ChannelMessages id={props.chatId} />
 			<div className="right-sidebar">
-				<ChannelMemberList chanId={props.chatId} />
+				<ChannelMemberList id={props.chatId} />
 			</div>
 		</div>
 	);

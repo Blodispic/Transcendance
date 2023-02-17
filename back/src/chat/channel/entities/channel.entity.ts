@@ -21,7 +21,8 @@ export class Channel {
 	@Column({ nullable: true })
 	password: string;
 
-	@ManyToOne(() => User)
+	@ManyToMany(() => User, user => user.channels, { cascade: true })
+	@JoinTable()
 	owner: User[]
 
 	@ManyToMany(() => User, user => user.channels, { cascade: true })

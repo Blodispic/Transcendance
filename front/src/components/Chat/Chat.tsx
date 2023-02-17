@@ -57,8 +57,8 @@ export default function Chat() {
 	return (
 			<Tabs className="chat-tab">
 				<TabList>
-					<Tab onClick={_ => navigate(`/Chat/channel`)} >Channels</Tab>
-					<Tab onClick={_ => navigate(`/Chat/dm`)}>DM</Tab>
+					<Tab onClick={_ => navigate(`/Chat/channel/`)} >Channels</Tab>
+					<Tab onClick={_ => navigate(`/Chat/dm/`)}>DM</Tab>
 				</TabList>
 			<TabPanel>
 				<Channels chatId={id}/>

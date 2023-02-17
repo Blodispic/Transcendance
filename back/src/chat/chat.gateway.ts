@@ -7,7 +7,6 @@ import { ChannelService } from "src/chat/channel/channel.service";
 import { user } from "src/game/game.controller";
 import { User } from "src/user/entities/user.entity";
 import { UserService } from "src/user/user.service";
-// import { CreateChannelDto } from "./channel/dto/create-channel.dto";
 import { Chat } from "./chat.entity";
 import { JoinChannelDto } from "./dto/join-channel.dto";
 import { LeaveChannelDto } from "./dto/leave-channel.dto";
