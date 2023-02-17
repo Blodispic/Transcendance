@@ -70,6 +70,18 @@
                     text-align: center;
                     background-color: rgba(32, 32, 38, 0.85);
                     border-radius: 4px;
+
+                    .color-status.Offline {
+                        color: #747f8d;
+                    }
+                    
+                    .color-status.Online {
+                        color: #43b581;
+                    }
+                    
+                    .color-status.InGame {
+                        color: #f04747;
+                    }
                 }
             }
 
@@ -79,13 +91,54 @@
                 align-self: center;
             }
 
+            .stat {
+                display: flex;
+                align-self: center;
+                flex-direction: column;
+
+                .win {
+                    color: #41b94b;
+                  }
+                  
+                  .lose {
+                    color: #e05068;
+                  }
+
+                  .winrate {
+                    color: #808080; 
+                  }
+            }
+
             .rank {
                 display: flex;
+                align-self: center;
+                flex-direction: column;
 
                 .rank {
-                    color: #FFD700;
-                }
+                    color: #a5a5a5;
+                  }
+
+                .rank.bronze {
+                    color: #b3782d;
+                  }
+                  
+                  .rank.silver {
+                    color: #c0c0c0;
+                  }
+                  
+                  .rank.gold {
+                    color: #ffd700;
+                  }
+                  
+                  .rank.platinum {
+                    color: #00bfff;
+                  }
+                  
+                  .rank.diamond {
+                    color: #00ced1;
+                  }
             }
+            
         }
     }
 
@@ -193,8 +246,16 @@
     margin-bottom: 2px;
 }
 
-.friend-status {
+.color-status.Offline {
+    color: #747f8d;
+}
+
+.color-status.Online {
     color: #43b581;
+}
+
+.color-status.InGame {
+    color: #e34141;
 }
 
 .friend-actions {
@@ -269,3 +330,9 @@
   .not-selected {
     background-color: #fff;
   }
+
+  span {
+    display: block;
+    text-align: center;
+  }
+  

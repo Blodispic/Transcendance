@@ -18,6 +18,8 @@ export interface IUser {
     status: UserStatus;
     twoFaEnable: boolean;
     elo: number;
+    win: number;
+    lose: number;
     friends?: IUser[];
     history?: Result[];
 }
