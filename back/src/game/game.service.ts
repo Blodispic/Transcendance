@@ -154,8 +154,6 @@ export class GameService {
 		const winner = await this.userService.getByUsername(results.winner);
 		const loser = await this.userService.getByUsername(results.loser);
 		if (winner) {
-			// this.userService.SetStatus(winner, "Online");
-			// server.emit("UpdateSomeone", { idChange: winner.id });
 			winner.win += 1;
 			winner.elo += 50;
 			this.userService.save(winner);
@@ -164,8 +162,6 @@ export class GameService {
 			// winer doesn't exist
 		}
 		if (loser) {
-			// this.userService.SetStatus(loser, "Online");
-			// server.emit("UpdateSomeone", { idChange: loser.id });
 			loser.lose += 1;
 			loser.elo -= 50;
 			this.userService.save(loser);
@@ -181,10 +177,14 @@ export class GameService {
 		let roomId: number = 0;
 		while (roomId < this.gameRoom.length && this.gameRoom.length > 0) {
 			if (this.gameRoom[roomId].gameState.player1.socket == client) {
+				this.userService.SetStatus(this.gameRoom[roomId].socket1.handshake.auth.user, "Online");  // ACHANGER PAR USERLIST BYY ADAM 
+				server.emit("UpdateSomeone", { idChange: this.gameRoom[roomId].socket1.handshake.auth.user.id });
 				this.gameRoom.splice(roomId, 1);
 				return;
 			}
 			else if (this.gameRoom[roomId].gameState.player2.socket == client) {
+				this.userService.SetStatus(this.gameRoom[roomId].socket1.handshake.auth.user, "Online");  // ACHANGER PAR USERLIST BYY ADAM 
+				server.emit("UpdateSomeone", { idChange: this.gameRoom[roomId].socket1.handshake.auth.user.id });
 				this.gameRoom.splice(roomId, 1);
 				return;
 			}

@@ -12,14 +12,14 @@ import { authenticator } from 'otplib';
 
 @Controller('user')
 export class UserController {
-  constructor(private readonly userService: UserService) {}
+  constructor(private readonly userService: UserService) { }
 
   @Post()
   async create(@Body() createUserDto: CreateUserDto): Promise<User> {
     // try {
-      return await this.userService.create(createUserDto);
-  // } catch (error) 
-      // throw new BadRequestException(error.detail);
+    return await this.userService.create(createUserDto);
+    // } catch (error) 
+    // throw new BadRequestException(error.detail);
     // }
   }
 
@@ -29,12 +29,12 @@ export class UserController {
   }
 
   @Post()
-  createUser(@Body() user: CreateUserDto){
+  createUser(@Body() user: CreateUserDto) {
     return this.userService.create(user)
   }
 
   @Get('username/:username')
-  GetbyUsername(@Param('username') username: string){
+  GetbyUsername(@Param('username') username: string) {
     return this.userService.getByUsername(username);
   }
 
@@ -61,33 +61,33 @@ export class UserController {
 
   @Post('2fa/check')
   async checkCode(@Body() user: { id: number, code: string }) {
-      const result = await this.userService.check2FA(user.id, user.code);
+    const result = await this.userService.check2FA(user.id, user.code);
     return { result };
   }
-  
+
 
   @Post('friend-request/status/:id')
   async GetFriendRequestStatus(@Param('id') id: number, @Body() user: User) {
-      return this.userService.GetFriendRequestStatus(id, user);
+    return this.userService.GetFriendRequestStatus(id, user);
   }
 
   @Post('friends')
-  GetFriends(@Body() user:User) {
+  GetFriends(@Body() user: User) {
     return this.userService.GetFriendsRequest(user);
   }
 
   @Post("friends/accept")
-  async acceptFriendRequest(@Body() body: { friendId: any, user: User}) {
+  async acceptFriendRequest(@Body() body: { friendId: any, user: User }) {
     this.userService.addFriend(body.friendId, body.user);
     return await this.userService.updateFriendRequestStatus(body.friendId, body.user, {
-    status: "Accepted",
+      status: "Accepted",
     });
   }
 
   @Post("friends/decline")
-  async declineFriendRequest(@Body() body: { friendId: number, user: User}) {
+  async declineFriendRequest(@Body() body: { friendId: number, user: User }) {
     return await this.userService.updateFriendRequestStatus(body.friendId, body.user, {
-    status: "Declined",
+      status: "Declined",
     });
   }
 
@@ -133,8 +133,7 @@ export class UserController {
   @Post('friend-request/send/:id')
   sendFriendRequest(
     @Param('id') id: number, @Body() user: User) {
-    if (user)
-    {
+    if (user) {
       return this.userService.sendFriendRequest(id, user)
     }
   }
