@@ -5,15 +5,15 @@ import { FriendRequest } from "./friend-request.entity";
 
 @Entity('user')
 export class User {
-  
+
   @PrimaryGeneratedColumn()
   id: number;
-  
+
   @Column({ default: false })
   twoFaEnable: boolean;
 
-    
-  @Column({ default: "Offline"})
+
+  @Column({ default: "Offline" })
   status: string;
 
 

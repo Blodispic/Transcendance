@@ -3,43 +3,43 @@ import { ImCheckmark, ImCross } from "react-icons/im";
 import { IUser } from "../../interface/User";
 
 export function InviteButton(props: { user: any }) {
-    const { user } = props;
+        const { user } = props;
 
-    const pathname = window.location.pathname;
-    const pathArray = pathname.split('/');
-    const friendId = pathArray[pathArray.length - 1];
-    const [ReqStatus, setStatus] = useState<string>('+ Add Friend');
+        const pathname = window.location.pathname;
+        const pathArray = pathname.split('/');
+        const friendId = pathArray[pathArray.length - 1];
+        const [ReqStatus, setStatus] = useState<string>('+ Add Friend');
 
-    const sendFriendRequest = async () => {
-            await fetch(`${process.env.REACT_APP_BACK}user/friend-request/send/${friendId}`, {
-                    method: 'POST',
-                    body: JSON.stringify(user),
-                    headers: { 'Content-Type': 'application/json' }
-            });
-            setStatus('Pending');
-    }
+        const sendFriendRequest = async () => {
+                await fetch(`${process.env.REACT_APP_BACK}user/friend-request/send/${friendId}`, {
+                        method: 'POST',
+                        body: JSON.stringify(user),
+                        headers: { 'Content-Type': 'application/json' }
+                });
+                setStatus('Pending');
+        }
 
-    useEffect(() => {
-            const checkFriendRequest = async () => {
-                    const response = await fetch(`${process.env.REACT_APP_BACK}user/friend-request/status/${friendId}`, {
-                            method: 'POST',
-                            body: JSON.stringify(user),
-                            headers: { 'Content-Type': 'application/json' }
-                    });
-                    const data = await response.json()
-                    if (data.ReqStatus)
-                            setStatus(data.ReqStatus);
-                    else
-                            setStatus("+ Add Friend");
-            }
-            checkFriendRequest();
-    }, [friendId, user]);
-    
-    return (
-            <button className="reqButton pointer white width_50" onClick={sendFriendRequest} >
-                    {ReqStatus}
-            </button>
-    )
+        useEffect(() => {
+                const checkFriendRequest = async () => {
+                        const response = await fetch(`${process.env.REACT_APP_BACK}user/friend-request/status/${friendId}`, {
+                                method: 'POST',
+                                body: JSON.stringify(user),
+                                headers: { 'Content-Type': 'application/json' }
+                        });
+                        const data = await response.json()
+                        if (data.ReqStatus)
+                                setStatus(data.ReqStatus);
+                        else
+                                setStatus("+ Add Friend");
+                }
+                checkFriendRequest();
+        }, [friendId, user]);
+
+        return (
+                <button className="reqButton pointer white width_50" onClick={sendFriendRequest} >
+                        {ReqStatus}
+                </button>
+        )
 }
 
 export function Friends(props: { user: IUser }) {
@@ -49,15 +49,15 @@ export function Friends(props: { user: IUser }) {
         useEffect(() => {
                 const checkFriendRequest = async () => {
                         const response = await fetch(`${process.env.REACT_APP_BACK}user/friends`, {
-                          method: 'POST',
-                          body: JSON.stringify(user),
-                          headers: { 'Content-Type': 'application/json' }
+                                method: 'POST',
+                                body: JSON.stringify(user),
+                                headers: { 'Content-Type': 'application/json' }
                         });
                         const data = await response.json();
                         const pendingFriendRequests = data.filter((friendRequest: { ReqStatus: string; }) => friendRequest.ReqStatus === "Pending");
                         setFriendReq(pendingFriendRequests);
-                      };
-                      
+                };
+
                 checkFriendRequest();
         }, []);
 
@@ -68,23 +68,23 @@ export function Friends(props: { user: IUser }) {
         const acceptFriendRequest = async (friendId: number) => {
                 console.log("friend = ", friendId);
                 const response = await fetch(`${process.env.REACT_APP_BACK}user/friends/accept`, {
-                  method: 'POST',
-                  body: JSON.stringify({ friendId, user }),
-                  headers: { 'Content-Type': 'application/json' }
+                        method: 'POST',
+                        body: JSON.stringify({ friendId, user }),
+                        headers: { 'Content-Type': 'application/json' }
                 });
                 const data = await response.json();
                 setFriendReq((prevFriendReq) => prevFriendReq.filter((req) => req.id !== friendId));
-              };
-            
-              const declineFriendRequest = async (friendId: number) => {
+        };
+
+        const declineFriendRequest = async (friendId: number) => {
                 const response = await fetch(`${process.env.REACT_APP_BACK}user/friends/decline`, {
-                  method: 'POST',
-                  body: JSON.stringify({ friend: friendId, user }),
-                  headers: { 'Content-Type': 'application/json' }
+                        method: 'POST',
+                        body: JSON.stringify({ friend: friendId, user }),
+                        headers: { 'Content-Type': 'application/json' }
                 });
                 const data = await response.json();
                 setFriendReq(prevState => prevState.filter(declined => declined.id !== friendId));
-              };
+        };
 
 
 
@@ -131,6 +131,6 @@ export function Friends(props: { user: IUser }) {
                         <div className='FriendListBlock'>
 
                         </div>
-            </div>
-    )
+                </div>
+        )
 }
