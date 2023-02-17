@@ -20,5 +20,5 @@ export class CreateUserDto {
 	@IsString()
 	@IsNotEmpty()
 	access_token: string;
-  
+
 }

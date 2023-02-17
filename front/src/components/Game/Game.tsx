@@ -156,11 +156,10 @@ export default function GameApp() {
 			socket.emit("PlayerLeft");
 		};
 	}, []);
-
+	
 	//  Here to modify game page
 	return (
 		<div id="game-container">
-
 			{ gameState.gameFinished ? (result ? <ResultPopup win={true} /> : <ResultPopup win={false} />) : <></> }
 			{/* { gameState.gameFinished ? (result ? <Victory /> : <Defeat />) : <></> } */}
 			<h3 className="display-player">

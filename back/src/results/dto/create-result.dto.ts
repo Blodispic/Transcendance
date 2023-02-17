@@ -17,5 +17,5 @@ export class CreateResultDto {
 	@IsNotEmpty()
 	loser_score: string;
 
-  
+
 }

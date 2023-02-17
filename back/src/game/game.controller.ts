@@ -7,7 +7,7 @@ export let user = [];
 export class GameController {
     constructor(private readonly gameService: GameService) { }
 
-    
+
     @Post(':id')
     GetRoomId(@Param('id') id: number) {
         return (id);
