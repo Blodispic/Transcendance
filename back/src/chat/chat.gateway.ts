@@ -89,7 +89,7 @@ async handleJoinChannel(@ConnectedSocket() client: Socket, @MessageBody() joinCh
     chanId: channel.id,
   });
   client.join("chan" + joinChannelDto.chanid);
-  client.emit("joinChannelOK", channel.id);
+  client.emit("joinChannelOK", channel);
   this.server.to("chan" + channel.id).emit("joinChannel", client.handshake.auth.user);
 }
 

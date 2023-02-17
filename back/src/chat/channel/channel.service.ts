@@ -23,7 +23,7 @@ export class ChannelService {
 
 	) {}
 
-	create(createChannelDto: CreateChannelDto, user: User) {
+	async create(createChannelDto: CreateChannelDto, user: User) {
 		const channel: Channel = this.channelRepository.create({
 			name: createChannelDto.chanName,
 			password: createChannelDto.password,

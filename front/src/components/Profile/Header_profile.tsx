@@ -59,13 +59,13 @@ export function Header(props: { currentUser: IUser, setCurrentUser: Function }) 
         const rank = () => {
                 if (currentUser.elo >= 2000) {
                         return 'DIAMOND';
-                } 
+                }
                 else if (currentUser.elo >= 1500) {
                         return 'PLATINUM';
                 }
                 else if (currentUser.elo >= 1000) {
                         return 'GOLD';
-                } 
+                }
                 else if (currentUser.elo >= 500) {
                         return 'SILVER';
                 }

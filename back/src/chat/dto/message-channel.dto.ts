@@ -6,7 +6,7 @@ export class MessageChannelDto {
 	chanid: number;
 
 	@IsNotEmpty()
-	user: User;
+	sender: User;
 
 	@IsString()
 	@IsNotEmpty()
