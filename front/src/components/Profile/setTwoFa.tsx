@@ -25,15 +25,23 @@ export default function TwoFa() {
             .then(async response => {
                 const data = await response.json();
                 setIsValid(data.result);
-                if (data.result === true)
+                if (data.result === true) {
                     dispatch(enableTwoFa());
+                    fetch(`${process.env.REACT_APP_BACK}user/${myStore.user?.id}`, {
+                        method: 'PATCH',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ twoFaEnable: true }),
+                    })
+                }
             })
             .catch()
     }
 
     useEffect(() => {
         const fetch_qrcode = async () => {
-            await fetch(`${process.env.REACT_APP_BACK}user/2fa/enable`, {
+            await fetch(`${process.env.REACT_APP_BACK}user/2fa/qrcode`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

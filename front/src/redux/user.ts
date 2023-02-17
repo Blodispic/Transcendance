@@ -19,8 +19,7 @@ export const userSlice = createSlice({
     initialState: initialUser,
     reducers: {
         setUser: (state, { payload }: PayloadAction<IUser>) => {
-            state.user = payload;   
-            state.user.twoFaEnable = false;
+            state.user = payload;
         },
         change_name: (state, { payload }: PayloadAction<string>) => {
             state.user!.username = payload;
@@ -42,7 +41,7 @@ export const userSlice = createSlice({
             state.isLog = false;
             else 
             state.isLog = true;
-            // socket.emit("status", payload)
+            // socket.emit("UpdateSomeone", {id: state.user?.id})
             const response = fetch(`${process.env.REACT_APP_BACK}user/${state.user?.id}`, {
                 method: 'PATCH',
                 headers: {
@@ -54,6 +53,9 @@ export const userSlice = createSlice({
             .then(data => ( console.log(data) ))
         },
         delete_user: (state) => {
+            console.log("ca passe la 1")
+            userSlice.caseReducers.set_status(state, { type: 'set_status', payload: UserStatus.OFFLINE })
+            // set_status(UserStatus.OFFLINE);
             state.user = undefined;
             state.isLog = false;
             state.isOauth = false;

@@ -67,21 +67,22 @@ export default function Queue() {
 
     return (
         <>
-            <div className="center button pulse">
-                <div>
-                    <button className='button pointer color_log' onClick={(e) => addToWaitingRoom()} >
-                        <Link className='cool' to="/Game/">
-                            Add to Waiting Room
-                        </Link>
-                    </button>
-                </div>
-                <div>
-                    <button className='button pointer color_log' onClick={() => setCustomPopup(true)} >
-                        <div className='cool'>Create Custom Room</div>
-                    </button>
-                </div>
+                <div className='center'>
+                    <div className='button'>
+                <button className='button pointer color_log' onClick={(e) => addToWaitingRoom()} >
+                   <Link className='cool' to="/Game/">
+                         Start game
+                  </Link>
+                </button>
+
+                <button className='button pointer color_log' onClick={() => setCustomPopup(true)} >
+                <Link className='cool' to="/Game/">
+                    Create Game
+                </Link>
+                </button>
             </div>
-            <CustomGamePopup trigger={customPopup} setTrigger={setCustomPopup} />
+        </div>
+        <CustomGamePopup trigger={customPopup} setTrigger={setCustomPopup} />
         </>
     )
 }
