@@ -67,13 +67,13 @@ export default function Profile() {
                         fetchid();
         }, [id])
 
+        socket.on('UpdateSomeone', (idChange) => {
+                console.log("ca dis quoi", idChange)
+                if (idChange == myUser.user?.id)
+                        fetchid();
+        })
         useEffect(() => {
-                socket.on('UpdateSomeone', (idChange) => {
-                        console.log("ca dis quoi", idChange)
-                        if (idChange == myUser.user?.id)
-                                fetchid();
-                })
-        }, [currentUser, Onglets])
+        }, [Onglets])
 
 
         if (currentUser === undefined || avatar === undefined) {
