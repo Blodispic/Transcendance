@@ -26,6 +26,7 @@ export interface Player {
 	name: string;
 	score: number;
 	side: number;
+	avatar: string;
 }
 
 export interface Ball {
@@ -85,6 +86,7 @@ let gameStateDefault: GameState = {
 		name: "Player1",
 		score: 0,
 		side: 0,
+		avatar: "",
 	},
 	player2: {
 		paddle: {
@@ -96,6 +98,7 @@ let gameStateDefault: GameState = {
 		name: "Player2",
 		score: 0,
 		side: 1,
+		avatar: "",
 	},
 	ball: balldefault,
 	gameFinished: false,
@@ -161,7 +164,7 @@ export default function GameApp() {
 			{ gameState.gameFinished ? (result ? <ResultPopup win={true} /> : <ResultPopup win={false} />) : <></> }
 			{/* { gameState.gameFinished ? (result ? <Victory /> : <Defeat />) : <></> } */}
 			<h3 className="display-player">
-				<img src="https://www.handiclubnimois.fr/wp-content/uploads/2020/10/blank-profile-picture-973460_1280.png" />
+				<img src={gameState.player2.avatar} alt={gameState.player2.name} />
 				{gameState.player2.name} : {gameState.player2.score}
 			</h3>
 			<Stage
@@ -212,7 +215,7 @@ export default function GameApp() {
 				</Layer>
 			</Stage>
 			<h3 className="display-player">
-			<img src="https://www.handiclubnimois.fr/wp-content/uploads/2020/10/blank-profile-picture-973460_1280.png" />
+			<img src={gameState.player1.avatar} alt={gameState.player1.name}/>
 				{gameState.player1.name} : {gameState.player1.score}
 			</h3>
 		</div>
@@ -272,7 +275,9 @@ function convertState(state: GameState) {
 
 	newState.extra = state.extra;
 	newState.scoreMax = state.scoreMax;
-
+	newState.player1.avatar = state.player1.avatar;
+	newState.player2.avatar = state.player2.avatar;
+	
 	return newState;
 }
 

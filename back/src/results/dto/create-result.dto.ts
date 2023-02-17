@@ -7,7 +7,7 @@ export class CreateResultDto {
 
 	@IsString()
 	@IsNotEmpty()
-	looser: string;
+	loser: string;
 
 	@IsNumber()
 	@IsNotEmpty()
@@ -15,7 +15,7 @@ export class CreateResultDto {
 
 	@IsString()
 	@IsNotEmpty()
-	looser_score: string;
+	loser_score: string;
 
   
 }

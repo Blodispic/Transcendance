@@ -242,7 +242,8 @@ export class UserService {
           name: request.creator.username,
           avatar: request.creator.avatar,
           id: request.creator.id,
-          status: request.status,
+          ReqStatus: request.status,
+          UserStatus: request.creator.status,
         };
       }
       else {
@@ -250,7 +251,8 @@ export class UserService {
           name: request.creator.username,
           avatar: request.creator.intra_avatar,
           id: request.creator.id,
-          status: request.status,
+          ReqStatus: request.status,
+          UserStatus: request.creator.status,
         };
       }
       return {};

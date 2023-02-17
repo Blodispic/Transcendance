@@ -10,7 +10,7 @@ export class ResultService {
 
   async createResult(resultDto: Results) {
     const user1 = await this.userService.getByUsername(resultDto.winner);
-    const user2 = await this.userService.getByUsername(resultDto.looser);
+    const user2 = await this.userService.getByUsername(resultDto.loser);
     if (user1)
     {
       resultDto.user = user1;
@@ -30,7 +30,7 @@ export class ResultService {
       this.userService.save(user2);
     }
     else
-      return ("looser doesn't exists");
+      return ("loser doesn't exists");
     return (resultDto);
   }
 }

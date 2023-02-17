@@ -8,7 +8,7 @@ export function InviteButton(props: { user: any }) {
     const pathname = window.location.pathname;
     const pathArray = pathname.split('/');
     const friendId = pathArray[pathArray.length - 1];
-    const [status, setStatus] = useState<string>('+ Add Friend');
+    const [ReqStatus, setStatus] = useState<string>('+ Add Friend');
 
     const sendFriendRequest = async () => {
             await fetch(`${process.env.REACT_APP_BACK}user/friend-request/send/${friendId}`, {
@@ -27,8 +27,8 @@ export function InviteButton(props: { user: any }) {
                             headers: { 'Content-Type': 'application/json' }
                     });
                     const data = await response.json()
-                    if (data.status)
-                            setStatus(data.status);
+                    if (data.ReqStatus)
+                            setStatus(data.ReqStatus);
                     else
                             setStatus("+ Add Friend");
             }
@@ -37,14 +37,14 @@ export function InviteButton(props: { user: any }) {
     
     return (
             <button className="reqButton pointer white width_50" onClick={sendFriendRequest} >
-                    {status}
+                    {ReqStatus}
             </button>
     )
 }
 
 export function Friends(props: { user: IUser }) {
         const { user } = props;
-        const [friendReq, setFriendReq] = useState<{ name: string, avatar: string, id: number }[]>([]);
+        const [friendReq, setFriendReq] = useState<{ name: string, avatar: string, id: number, ReqStatus: string, UserStatus: string }[]>([]);
 
         useEffect(() => {
                 const checkFriendRequest = async () => {
@@ -54,7 +54,7 @@ export function Friends(props: { user: IUser }) {
                           headers: { 'Content-Type': 'application/json' }
                         });
                         const data = await response.json();
-                        const pendingFriendRequests = data.filter((friendRequest: { status: string; }) => friendRequest.status === "Pending");
+                        const pendingFriendRequests = data.filter((friendRequest: { ReqStatus: string; }) => friendRequest.ReqStatus === "Pending");
                         setFriendReq(pendingFriendRequests);
                       };
                       
@@ -62,7 +62,7 @@ export function Friends(props: { user: IUser }) {
         }, []);
 
         interface FriendsListProps {
-                friends: { name: string, avatar: string, id: number }[];
+                friends: { name: string, avatar: string, id: number, ReqStatus: string, UserStatus: string }[];
         }
 
         const acceptFriendRequest = async (friendId: number) => {
@@ -98,7 +98,8 @@ export function Friends(props: { user: IUser }) {
                                                 </div>
                                                 <div className="friend-info">
                                                         <div className="friend-name">{friend.name}</div>
-                                                        <div className="friend-status">Online</div>
+                                                        <div className={"color-status " + friend.UserStatus}>{friend.UserStatus}</div>
+
                                                 </div>
                                                 <div className="friend-actions">
                                                         <button className="accept-button" onClick={() => acceptFriendRequest(friend.id)} ><ImCheckmark /></button>
