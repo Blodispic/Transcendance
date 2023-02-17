@@ -70,26 +70,11 @@ async handleSendMessageChannel(@ConnectedSocket() client: Socket, @MessageBody()
   if (channel == null)
     throw new BadRequestException(); // no such channel
   const user = client.handshake.auth.user;
-  // channel.users.forEach(user => {
-  //     this.server.to("user-" + user.id).emit("sendMessageChannel", messageChannelDto);
-  // });
-  if (!this.checkUserCanTalk(user, channel))
+  if (await this.channelService.isUserMuted({chanid: channel.id, userid: user.id}) || 
+  await this.channelService.isUserBanned({chanid: channel.id, userid: user.id }))
     throw new BadRequestException(); // user is ban or mute from this channel
   const messageChannelok = { message: messageChannelDto.message, user: client.handshake.auth.user}
   this.server.to("chan" + messageChannelDto.chanid).emit("sendMessageChannelOK", messageChannelDto.message);
-}
-
-checkUserCanTalk(user: User, channel: Channel)
-{
-  channel.banned.forEach(banned => {
-    if (user === banned)
-      return false;
-  });
-  channel.muted.forEach(muted => {
-    if (user === muted)
-      return false;
-  });
-  return true;
 }
 
 @SubscribeMessage('joinChannel')
@@ -192,6 +177,10 @@ async handleBanUser(@ConnectedSocket() client: Socket, @MessageBody() banUserDto
   if (channel.owner != user)
     throw new BadRequestException();
   this.channelService.banUser(banUserDto);
+  const timer = 180;
+  setTimeout(() => {
+    this.channelService.unmuteUser(user)
+  }, timer);
   client.emit("banUserOK", user.id, channel.id);
 }
 
@@ -204,6 +193,10 @@ async handleMuteUser(@ConnectedSocket() client: Socket, @MessageBody() muteUserD
   if (channel.owner != user)
     throw new BadRequestException();
   this.channelService.muteUser(muteUserDto);
+  const timer = 180;
+  setTimeout(() => {
+    this.channelService.unmuteUser(user)
+  }, timer);
   client.emit("muteUserOK", user.id, channel.id);
 }
 

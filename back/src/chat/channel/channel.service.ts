@@ -142,4 +142,49 @@ export class ChannelService {
 		})
 	  }
 
+	  async unmuteUser(muteUserDto: MuteUserDto) {
+		const channel: Channel | null = await this.channelRepository.findOne({
+			relations: { users: true },
+			where: { id: muteUserDto.chanid }
+		});
+		const user = await this.userService.getById(muteUserDto.userid);
+		if (channel === null || user === null)
+			throw new BadRequestException();
+		channel.muted.splice(channel.muted.indexOf(user, 0), 1);
+		return this.channelRepository.save(channel);
+	}
+
+	async isUserMuted(muteUserDto: MuteUserDto) {
+		const channel: Channel | null = await this.channelRepository.findOne({
+			relations: { users: true },
+			where: { id: muteUserDto.chanid }
+		});
+		const user = await this.userService.getById(muteUserDto.userid);
+		if (channel === null || user === null)
+			throw new BadRequestException();
+		if (!channel.muted)
+			return false;
+		channel.muted.forEach(muted => {
+			if (muted === user)
+				return true;
+		});
+		return false;			
+	}
+
+	async isUserBanned(muteUserDto: MuteUserDto) {
+		const channel: Channel | null = await this.channelRepository.findOne({
+			relations: { users: true },
+			where: { id: muteUserDto.chanid }
+		});
+		const user = await this.userService.getById(muteUserDto.userid);
+		if (channel === null || user === null)
+			throw new BadRequestException();
+		if (!channel.banned)
+			return false;
+		channel.banned.forEach(banned => {
+			if (banned === user)
+				return true;
+		});
+		return false;			
+	}
 }

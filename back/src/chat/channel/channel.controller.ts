@@ -63,5 +63,9 @@ export class ChannelController {
 	  return this.channelService.update(+id, channel);
 	}
 
+	async unmuteUser(muteUserDto: MuteUserDto)
+	{
+		return await this.channelService.unmuteUser(muteUserDto);
+	}
 
 }
