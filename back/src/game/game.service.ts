@@ -309,14 +309,14 @@ class Game {
 		this.gameState.gameFinished = true;
 		if (this.gameState.player1.score === this.gameState.scoreMax)
 		{
-			let result: any = {winner: this.gameState.player1.name, looser: this.gameState.player2.name, winner_score: this.gameState.player1.score.toString(), looser_score: this.gameState.player2.score.toString()};
+			let result: any = {winner: this.gameState.player1.name, loser: this.gameState.player2.name, winner_score: this.gameState.player1.score.toString(), loser_score: this.gameState.player2.score.toString()};
 			this.gameService.save(result);
 			this.server.to(this.gameState.player1.socket).emit("GameEnd", result);
 			this.server.to(this.gameState.player2.socket).emit("GameEnd", result);
 		}
 		else
 		{
-			let result: any = {winner: this.gameState.player2.name, looser: this.gameState.player1.name, winner_score: this.gameState.player2.score.toString(), looser_score: this.gameState.player1.score.toString()};
+			let result: any = {winner: this.gameState.player2.name, loser: this.gameState.player1.name, winner_score: this.gameState.player2.score.toString(), loser_score: this.gameState.player1.score.toString()};
 			this.gameService.save(result);
 			this.server.to(this.gameState.player1.socket).emit("GameEnd", result);
 			this.server.to(this.gameState.player2.socket).emit("GameEnd", result);
