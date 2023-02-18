@@ -1,4 +1,7 @@
+import { IsNumber } from "class-validator";
+
 export class LeaveChannelDto {
-	readonly chanid: number;
+	@IsNumber()
+	chanid: number;
 	// à améliorer
 }

@@ -1,9 +1,11 @@
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import { IUser } from "../../interface/User";
 
 export default function CLickableMenu(props: { user: IUser }) {
 
     const user: IUser = props.user;
+
 
     return (
         <div className="dropdown-container">

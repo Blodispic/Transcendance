@@ -136,36 +136,39 @@ $tab-color: rgba(var(--primary-color), 0.5); //rgb(121, 121, 121);
 
 }
 .__wrap {
-	font-size: 20px;
+	font-size: 15px;
 	line-height: normal;
 	// color: rgb(111, 106, 106);
-	color: white;
+	color: black;
 	background-color: rgba($color: rgb(80, 165, 174), $alpha: 0.3);
 	max-width: 700px;
-	border-radius: 15px;
+	border-radius: 5px;
 	padding: 20px;
-	margin: 20px;
+	margin: 10px;
 	word-wrap: break-word;
+	display:flexbox;
 
-}
-
-.message_info {
-	color: rgb(166, 166, 166);
-	font-size: 20px;
-
-	.timestamp {
-		font-size:5px;
-		margin-left: 10px;
+	.message-info {
+		color: rgb(107, 107, 107);
+		font-size: 15px;
+		justify-content: center;
+	
+		.timestamp {
+			font-size:10px;
+			margin-left: 10px;
+		}
 	}
+
 }
+
 
 .user-avatar {
-	display: inline-block;
-	margin-right: 30px;
+	// display: inline-block;
+	margin-right: 10px;
 	align-self: center;
 	object-fit: cover;
-	height: 50px;
-	width: 50px;
+	height: 30px;
+	width: 30px;
 	border-radius: 50%;
 }
 
@@ -225,4 +228,9 @@ $tab-color: rgba(var(--primary-color), 0.5); //rgb(121, 121, 121);
 	margin-top: -47px !important;
 
 
+}
+
+.Chat-onglets {
+	margin: 0 0 10px;
+	border-radius: 0px !important ;
 }

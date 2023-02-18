@@ -7,7 +7,6 @@ import { ChannelService } from "src/chat/channel/channel.service";
 import { user } from "src/game/game.controller";
 import { User } from "src/user/entities/user.entity";
 import { UserService } from "src/user/user.service";
-import { CreateChannelDto } from "./channel/dto/create-channel.dto";
 import { Chat } from "./chat.entity";
 import { JoinChannelDto } from "./dto/join-channel.dto";
 import { LeaveChannelDto } from "./dto/leave-channel.dto";
@@ -15,11 +14,12 @@ import { MessageChannelDto } from "./dto/message-channel.dto";
 import { MessageUserDto } from "./dto/message-user.dto";
 import { userList } from "src/app.gateway";
 import { AppGateway } from "src/app.gateway";
-import { CreateChannelSocketDto } from "./dto/create-channel.dto";
+import { CreateChannelDto } from "./dto/create-channel.dto";
 import { ChanPasswordDto } from "./dto/chan-password.dto";
 import { BanUserDto } from "./dto/ban-user.dto";
 import { MuteUserDto } from "./dto/mute-user.dto";
 import { Channel } from "./channel/entities/channel.entity";
+import { GiveAdminDto } from "./dto/give-admin.dto";
 
 @WebSocketGateway({
 	cors: {
@@ -70,25 +70,11 @@ async handleSendMessageChannel(@ConnectedSocket() client: Socket, @MessageBody()
   if (channel == null)
     throw new BadRequestException(); // no such channel
   const user = client.handshake.auth.user;
-  // channel.users.forEach(user => {
-  //     this.server.to("user-" + user.id).emit("sendMessageChannel", messageChannelDto);
-  // });
-  // if (!this.checkUserCanTalk(user, channel))
-    // throw new BadRequestException(); // user is ban or mute from this channel
-  this.server.to("chan" + messageChannelDto.chanid).emit("sendMessageChannelOK", messageChannelDto.message);
-}
-
-checkUserCanTalk(user: User, channel: Channel)
-{
-  channel.banned.forEach(async banned => {
-    if (user === banned)
-      return false;
-  });
-  channel.muted.forEach(async muted => {
-    if (user === muted)
-      return false;
-  });
-  return true;
+  if (await this.channelService.isUserMuted({chanid: channel.id, userid: user.id}) || 
+  await this.channelService.isUserBanned({chanid: channel.id, userid: user.id }))
+    throw new BadRequestException(); // user is ban or mute from this channel
+  const messageChannelok = { message: messageChannelDto.message, user: client.handshake.auth.user}
+  this.server.to("chan" + messageChannelDto.chanid).emit("sendMessageChannelOK", messageChannelDto);
 }
 
 @SubscribeMessage('joinChannel')
@@ -103,25 +89,19 @@ async handleJoinChannel(@ConnectedSocket() client: Socket, @MessageBody() joinCh
     chanId: channel.id,
   });
   client.join("chan" + joinChannelDto.chanid);
-  client.emit("joinChannelOK", channel.id);
+  client.emit("joinChannelOK", channel);
   this.server.to("chan" + channel.id).emit("joinChannel", client.handshake.auth.user);
 }
 
 @SubscribeMessage('createChannel')
-async handleCreateChannel(@ConnectedSocket() client: Socket, @MessageBody() createChannelDto: CreateChannelSocketDto) {    
+async handleCreateChannel(@ConnectedSocket() client: Socket, @MessageBody() createChannelDto: CreateChannelDto) {    
   const channel = await this.channelService.getByName(createChannelDto.chanName);
   
   if (channel != null)
     throw new BadRequestException(); //channame already exist, possible ? if private/protected possible ?
 
   let user: User = client.handshake.auth.user;
-  const new_channel = await this.channelService.create({
-      name: createChannelDto.chanName,
-      owner: user,
-      users:[ user ],
-      chanType: createChannelDto.chanType,
-      password: createChannelDto.password,
-     });
+  const new_channel = await this.channelService.create(createChannelDto, user);
   this.channelService.add({
     user: user,
     chanId: new_channel.id,
@@ -197,6 +177,10 @@ async handleBanUser(@ConnectedSocket() client: Socket, @MessageBody() banUserDto
   if (channel.owner != user)
     throw new BadRequestException();
   this.channelService.banUser(banUserDto);
+  const timer = 180;
+  setTimeout(() => {
+    this.channelService.unmuteUser(user)
+  }, timer);
   client.emit("banUserOK", user.id, channel.id);
 }
 
@@ -209,9 +193,24 @@ async handleMuteUser(@ConnectedSocket() client: Socket, @MessageBody() muteUserD
   if (channel.owner != user)
     throw new BadRequestException();
   this.channelService.muteUser(muteUserDto);
+  const timer = 180;
+  setTimeout(() => {
+    this.channelService.unmuteUser(user)
+  }, timer);
   client.emit("muteUserOK", user.id, channel.id);
 }
 
+@SubscribeMessage('GiveAdmin')
+async handleGiveAdmin(@ConnectedSocket() client: Socket, @MessageBody() giveAdminDto: GiveAdminDto) {
+  const channel = await this.channelService.getById(giveAdminDto.chanid);
+  const user = client.handshake.auth.user;
+  if (channel === null || user === null)
+    throw new BadRequestException(); // no such channel or user
+  if (channel.owner != user)
+    throw new BadRequestException();
+  this.channelService.addAdmin(giveAdminDto);
+  client.emit("giveAdminOK", user.id, channel.id);
+}
 
 
  afterInit(server: Server) {

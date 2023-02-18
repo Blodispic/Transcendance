@@ -5,7 +5,6 @@ import { Column, Entity, JoinTable, ManyToMany, ManyToOne, OneToMany, OneToOne, 
 enum ChanType {
 	Public,
 	Private,
-	Protected
   }
 
 @Entity()
@@ -22,8 +21,9 @@ export class Channel {
 	@Column({ nullable: true })
 	password: string;
 
-	@ManyToOne(() => User)
-	owner: User
+	@ManyToMany(() => User, user => user.channels, { cascade: true })
+	@JoinTable()
+	owner: User[]
 
 	@ManyToMany(() => User, user => user.channels, { cascade: true })
 	@JoinTable()

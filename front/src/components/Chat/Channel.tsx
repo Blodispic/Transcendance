@@ -3,6 +3,7 @@ import { HiLockClosed, HiOutlineXMark, HiPlus } from "react-icons/hi2";
 import { useNavigate, useParams } from "react-router-dom";
 import { socket } from "../../App";
 import { IChannel } from "../../interface/Channel";
+import { IUser } from "../../interface/User";
 import { useAppSelector } from "../../redux/Hook";
 import CLickableMenu from "./clickableMenu";
 
@@ -25,7 +26,6 @@ function PopupCreateChannel(props: any) {
 		setPassword("");
 		setPrivateChan(0);
 		props.setTrigger(false);
-
 	}
 
 	return (props.trigger) ? (
@@ -45,6 +45,22 @@ function PopupCreateChannel(props: any) {
 			</div>
 		</div>
 	) : <></>;
+}
+function JoinChannel(props: {currentUser: any, chanid: any}) {
+
+	
+	socket.emit('joinChannel', {chanid: props.chanid});
+
+	if (props.chanid === undefined)
+	{	
+		return (<></>);
+	}
+
+	return (
+		<div>
+			<button>Join</button>
+		</div>
+	);
 }
 
 function ChannelList(props: any) {
@@ -80,7 +96,8 @@ function ChannelList(props: any) {
 						<div onClick={_ => navigate(`/Chat/channel/${chan.id}`)}>{chan.name}
 							{
 								chan.chanType == 1 &&
-								<HiLockClosed style={{ float: 'right' }} />}
+								<HiLockClosed style={{ float: 'right' }} />
+							}
 						</div>
 					</li>
 				</ul>
@@ -124,7 +141,14 @@ function PublicChannelList() {
 
 function ChannelMemberList(props: { id: any }) {
 	const [currentChan, setCurrentChan] = useState<IChannel | undefined>(undefined)
-	const [menuOnclick, setMenuOnClick] = useState<boolean>(false);
+	const [currentId, setCurrentId] = useState<number | undefined>(undefined);
+
+	const changeId = (id: number) => {
+		if (id == currentId)
+			setCurrentId(undefined);
+		else
+			setCurrentId(id);
+	}
 
 	useEffect(() => {
 		const getChannel = async () => {
@@ -148,15 +172,16 @@ function ChannelMemberList(props: { id: any }) {
 		<div className="title"> Members <hr />
 			{currentChan?.users.map(user => (
 				<div className="user-list">
-					<ul key={user.username} onClick={e => setMenuOnClick(!menuOnclick)}>
+
+					<ul key={user.username} onClick={e => { changeId(user.id) }}>
 						<li>
 							{user.username}
-							</li>
+						</li>
 					</ul>
-						{
-							menuOnclick && 
-							<CLickableMenu user={user}/>
-						}
+					{
+						 currentId == user.id && 
+									<CLickableMenu user={user}/>
+					}
 				</div>
 			))
 			}
@@ -164,13 +189,22 @@ function ChannelMemberList(props: { id: any }) {
 	);
 }
 
+interface IMessage {
+	chanid?: number;
+	userid?: number;
+	sender?: IUser;
+	usertowho?: IUser;
+	message: string;
+}
+
 function ChannelMessages(props: { id: any }) {
 	const [newInput, setNewInput] = useState("");
-	const [messageList, setMessageList] = useState<string[]>([]);
-	const [currentChan, setCurrentChan] = useState<IChannel | undefined>(undefined)
+	const [messageList, setMessageList] = useState<IMessage[]>([]);
+	const [currentChan, setCurrentChan] = useState<IChannel | undefined>(undefined);
 	const currentUser = useAppSelector(state => state.user);
+	const [sender, setSender] = useState<IUser | undefined>(undefined);
 
-	const myUser = useAppSelector(state => state.user);
+	// const myUser = useAppSelector(state => state.user);
 
 	useEffect(() => {
 		const getChannel = async () => {
@@ -187,12 +221,12 @@ function ChannelMessages(props: { id: any }) {
 	const handleSubmitNewMessage = (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
 		if (newInput != "")
-			socket.emit('sendMessageChannel', { chanid: props.id, userid: currentUser.user?.id, message: newInput });
+			socket.emit('sendMessageChannel', { chanid: props.id, sender: currentUser.user, message: newInput });
 		setNewInput("");
 	}
 
-	socket.on('sendMessageChannelOK', (message: string) => {
-		setMessageList([...messageList, message]);
+	socket.on('sendMessageChannelOK', (messageDto) => {
+		setMessageList([...messageList, messageDto]);
 	})
 
 	return (
@@ -202,24 +236,28 @@ function ChannelMessages(props: { id: any }) {
 				{
 					currentChan?.chanType == 1 &&
 					<HiLockClosed />}
+				<span><JoinChannel currentUser={currentUser} chanid={props.id} /></span>
 				<hr />
 			</div>
 			<div className="chat-messages">
 				{messageList.map(message => (
-					<div key={message} className="__wrap">
+					<div key={message.message} className="__wrap">
 						<div className="message-info">
-							<img className="user-avatar" src={`${process.env.REACT_APP_BACK}user/${currentUser.user?.id}/avatar`} />
-							{currentUser.user?.username}
+							<img className="user-avatar" src={message.sender?.avatar} />
+							{message.sender?.username}
+							<span className="timestamp">0000/00/00  00:00</span>
 						</div>
-						{message}
+						{message.message}
 					</div>
 				))}
 			</div>
-			<form id="input_form" onSubmit={(e) => { handleSubmitNewMessage(e); }}>
-				<input type="text" onChange={(e) => { setNewInput(e.target.value) }}
-					placeholder="type message here" value={newInput} />
-			</form>
-
+			{
+				props.id !== undefined && 
+				<form id="input_form" onSubmit={(e) => { handleSubmitNewMessage(e); }}>
+					<input type="text" onChange={(e) => { setNewInput(e.target.value) }}
+						placeholder="type message here" value={newInput} />
+				</form>
+			}
 		</div>
 	);
 }

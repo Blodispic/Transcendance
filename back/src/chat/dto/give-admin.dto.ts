@@ -1,9 +1,9 @@
 import { IsNumber } from "class-validator";
 
-export class BanUserDto {
+export class GiveAdminDto {
     @IsNumber()
     chanid: number;
-    
+
     @IsNumber()
     userid: number;
 }
