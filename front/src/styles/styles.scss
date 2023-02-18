@@ -41,3 +41,39 @@
 h1 {
     font-size: 150px;
 }
+
+.hover-style {
+  a, li  {
+    
+		background-image: linear-gradient(to left,
+			#000 50%,
+			#84CEEB 50%,
+			#84CEEB);
+		background-size: 200% 100%;
+		background-position: 100%;
+		-webkit-background-clip: text;
+		-webkit-text-fill-color: transparent;
+		transition: all 0.2s ease-in-out;
+		text-decoration: none;
+  
+		&:before {
+		  content: '';
+		  background: #84CEEB;
+		  display: block;
+		  position: absolute;
+		  bottom: -3px;
+		  left: 0;
+		  width: 0;
+		  height: 3px;
+		}
+  
+		&:hover {
+		  background-position: 0;
+		}
+	}
+  li {
+
+		transition: all 0.55s ease-in-out !important;
+  }
+
+}

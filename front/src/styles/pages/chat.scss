@@ -48,18 +48,20 @@ $tab-color: rgba(var(--primary-color), 0.5); //rgb(121, 121, 121);
 				cursor: pointer;
 			}
 		}
-		ul {
-			padding-left: 0px;
-			font-size: smaller;
-			cursor: pointer;
-		}
-
+		
 	}
-
-	ul:hover{
+	
+	ul {
+		list-style: none;
+		padding-left: 0px;
+		font-size: smaller;
+		cursor: pointer;
+	}
+	li:hover{
 	border-radius: 3px;
 	box-shadow: none;
 	color: var(--primary-color);
+	text-decoration: none;
 	// background: var(--secondary-color);
 	cursor: pointer;
 	}
@@ -217,4 +219,10 @@ $tab-color: rgba(var(--primary-color), 0.5); //rgb(121, 121, 121);
 	float: right;
 	padding: 10px;
 	cursor: pointer;
+}
+
+.clickable-menu {
+	margin-top: -47px !important;
+
+
 }

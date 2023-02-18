@@ -4,6 +4,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { socket } from "../../App";
 import { IChannel } from "../../interface/Channel";
 import { useAppSelector } from "../../redux/Hook";
+import CLickableMenu from "./clickableMenu";
 
 function PopupCreateChannel(props: any) {
 	const [chanName, setChanName] = useState("");
@@ -75,11 +76,13 @@ function ChannelList(props: any) {
 			<header>All Channels <hr /></header>
 			{chanList.map(chan => (
 				<ul key={chan.name} >
-					<div onClick={_ => navigate(`/Chat/channel/${chan.id}`)}>{chan.name}
-						{
-							chan.chanType == 1 &&
-							<HiLockClosed style={{ float: 'right' }} />}
-					</div>
+					<li>
+						<div onClick={_ => navigate(`/Chat/channel/${chan.id}`)}>{chan.name}
+							{
+								chan.chanType == 1 &&
+								<HiLockClosed style={{ float: 'right' }} />}
+						</div>
+					</li>
 				</ul>
 			))}
 		</div>
@@ -111,7 +114,9 @@ function PublicChannelList() {
 	return (
 		<div className="title">Public Channels <hr />
 			<ul>
+				<li>
 				<p>test</p>
+				</li>
 			</ul>
 		</div>
 	);
@@ -119,6 +124,7 @@ function PublicChannelList() {
 
 function ChannelMemberList(props: { id: any }) {
 	const [currentChan, setCurrentChan] = useState<IChannel | undefined>(undefined)
+	const [menuOnclick, setMenuOnClick] = useState<boolean>(false);
 
 	useEffect(() => {
 		const getChannel = async () => {
@@ -142,9 +148,15 @@ function ChannelMemberList(props: { id: any }) {
 		<div className="title"> Members <hr />
 			{currentChan?.users.map(user => (
 				<div className="user-list">
-					<ul key={user.username}>
-						{user.username}
+					<ul key={user.username} onClick={e => setMenuOnClick(!menuOnclick)}>
+						<li>
+							{user.username}
+							</li>
 					</ul>
+						{
+							menuOnclick && 
+							<CLickableMenu user={user}/>
+						}
 				</div>
 			))
 			}

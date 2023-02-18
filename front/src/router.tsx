@@ -89,9 +89,9 @@ const router = createBrowserRouter([
       {
         path: "/Chat",
         element:
-          <OauthRoute>
+          <ProtectedRoute>
             <Chat />
-          </OauthRoute>
+          </ProtectedRoute>
       },
       {
         path: "/Chat/channel",
