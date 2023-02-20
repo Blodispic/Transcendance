@@ -48,8 +48,9 @@ function PopupCreateChannel(props: any) {
 }
 function JoinChannel(props: {currentUser: any, chanid: any}) {
 
-	
-	socket.emit('joinChannel', {chanid: props.chanid});
+	const handleJoin = () => {
+		socket.emit('joinChannel', {chanid: props.chanid});
+	}
 
 	if (props.chanid === undefined)
 	{	
@@ -58,7 +59,25 @@ function JoinChannel(props: {currentUser: any, chanid: any}) {
 
 	return (
 		<div>
-			<button>Join</button>
+			<button onClick={handleJoin}>Join</button>
+		</div>
+	);
+}
+
+function LeaveChannel (props: {currentUser: any, chanid: any}) {
+	
+	const handleLeave = () => {
+		socket.emit('leaveChannel', {chanid: props.chanid});
+	}
+
+	if (props.chanid === undefined)
+	{
+		return (<></>);
+	}
+
+	return (
+		<div>
+			<button onClick={handleLeave}>Leave</button>
 		</div>
 	);
 }
@@ -110,7 +129,6 @@ function JoinedChannelList() { /** Displays only joined channels */
 
 	return (
 		<div className="title"> Joined Channels <hr />
-			test chan1
 		</div>
 	);
 
@@ -237,6 +255,7 @@ function ChannelMessages(props: { id: any }) {
 					currentChan?.chanType == 1 &&
 					<HiLockClosed />}
 				<span><JoinChannel currentUser={currentUser} chanid={props.id} /></span>
+				<span><LeaveChannel currentUser={currentUser} chanid={props.id} /></span>
 				<hr />
 			</div>
 			<div className="chat-messages">
@@ -262,21 +281,6 @@ function ChannelMessages(props: { id: any }) {
 	);
 }
 
-function ChannelPage(props: { chanid: any }) {
-	return (
-		<div id="chat-container">
-			<div className="sidebar left-sidebar">
-				<ChannelList />
-				<AddChannel />
-			</div>
-			<ChannelMessages id={props.chanid} />
-			<div className="sidebar  right-sidebar">
-				<ChannelMemberList id={props.chanid} />
-			</div>
-		</div>
-	);
-}
-
 export function Channels(props: any) {
 
 	return (
@@ -284,6 +288,9 @@ export function Channels(props: any) {
 			<div className="sidebar left-sidebar">
 				<ChannelList />
 				<AddChannel />
+				<div>
+				<JoinedChannelList />
+				</div>
 			</div>
 			<ChannelMessages id={props.chatId} />
 			<div className="sidebar right-sidebar">
