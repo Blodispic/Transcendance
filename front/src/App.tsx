@@ -24,6 +24,7 @@ function App() {
           user: myStore.user,
         }
       });
+      socket.emit("UpdateSomeone", { idChange: myStore.user?.id, idChange2: 0 })
     }
   }, [myStore.isLog])
 
@@ -42,7 +43,7 @@ function App() {
       if (response.ok) {
         dispatch(setUser(data))
         dispatch(set_status(UserStatus.ONLINE))
-        socket.emit("UpdateSomeone", {id: myStore.user?.id})
+        // socket.emit("UpdateSomeone", { idChange: myStore.user?.id, idChange2: 0 })
       }
       else {
         cookies.remove('Token');

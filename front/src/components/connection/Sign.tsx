@@ -41,7 +41,7 @@ export default function Sign() {
             }
             dispatch(change_name(newname));
             dispatch(set_status(UserStatus.ONLINE));
-            socket.emit("UpdateSomeone", {id: myUser.user?.id })
+        
 
             navigate("/Home");
         }

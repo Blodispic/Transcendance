@@ -21,7 +21,7 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		userList.push(client);
 		console.log("open windows");
 		this.userService.SetStatus(client.handshake.auth.user, "Online");
-		this.server.emit("UpdateSomeone", { idChange: client.handshake.auth.user.id })
+		this.server.emit("UpdateSomeone", { idChange: client.handshake.auth.user.id, idChange2: 0  })
 
 	}
 
@@ -30,15 +30,8 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		console.log("close windows");
 		this.userService.SetStatus(client.handshake.auth.user, "Offline");
 		console.log("close windows");
-		this.server.emit("UpdateSomeone", { idChange: client.handshake.auth.user.id })
+		this.server.emit("UpdateSomeone", { idChange: client.handshake.auth.user.id, idChange2: 0  })
 	}
 
-	@SubscribeMessage("status")
-	HandleStatus(@MessageBody() status: string, @ConnectedSocket() client: Socket) {
-		console.log("emit");
-		this.userService.SetStatus(client.handshake.auth.user, status);
-		console.log("emit");
-		this.server.emit("UpdateSomeone", { idChange: client.handshake.auth.user.id })
-	}
 
 }

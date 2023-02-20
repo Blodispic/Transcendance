@@ -67,10 +67,8 @@ export class GameService {
 			server.to(player1.socket).emit("RoomStart", this.gameRoom.length, player1);
 			server.to(player2.socket).emit("RoomStart", this.gameRoom.length, player2);
 			this.userService.SetStatus(socket1.handshake.auth.user, "InGame");
-			server.emit("UpdateSomeone", { idChange: socket1.handshake.auth.user.id });
-
 			this.userService.SetStatus(socket2.handshake.auth.user, "InGame");
-			server.emit("UpdateSomeone", { idChange: socket2.handshake.auth.user.id });
+			server.emit("UpdateSomeone", { idChange: socket1.handshake.auth.user.id, idChange2: socket2.handshake.auth.user.id  });
 
 		}
 		else
@@ -174,23 +172,18 @@ export class GameService {
 	}
 
 	EndGame(client: string, server: Server) {
-		let roomId: number = 0;
-		while (roomId < this.gameRoom.length && this.gameRoom.length > 0) {
-			if (this.gameRoom[roomId].gameState.player1.socket == client) {
-				this.userService.SetStatus(this.gameRoom[roomId].socket1.handshake.auth.user, "Online");  // ACHANGER PAR USERLIST BYY ADAM 
-				server.emit("UpdateSomeone", { idChange: this.gameRoom[roomId].socket1.handshake.auth.user.id });
-				this.gameRoom.splice(roomId, 1);
-				return;
-			}
-			else if (this.gameRoom[roomId].gameState.player2.socket == client) {
-				this.userService.SetStatus(this.gameRoom[roomId].socket1.handshake.auth.user, "Online");  // ACHANGER PAR USERLIST BYY ADAM 
-				server.emit("UpdateSomeone", { idChange: this.gameRoom[roomId].socket1.handshake.auth.user.id });
-				this.gameRoom.splice(roomId, 1);
-				return;
-			}
-			roomId++;
-		}
-	}
+        let roomId: number = 0;
+        while (roomId < this.gameRoom.length && this.gameRoom.length > 0) {
+            if (this.gameRoom[roomId].gameState.player1.socket === client || this.gameRoom[roomId].gameState.player2.socket === client) {
+                this.userService.SetStatus(this.gameRoom[roomId].socket1.handshake.auth.user, "Online");  // ACHANGER PAR USERLIST BYY ADAM 
+                this.userService.SetStatus(this.gameRoom[roomId].socket2.handshake.auth.user, "Online");  // ACHANGER PAR USERLIST BYY ADAM 
+                server.emit("UpdateSomeone", { idChange: this.gameRoom[roomId].socket1.handshake.auth.user.id, idChange2: this.gameRoom[roomId].socket2.handshake.auth.user.id });
+                this.gameRoom.splice(roomId, 1);
+                return;
+            }
+            roomId++;
+        }
+    }
 }
 
 const GAME_RATIO = 1.5;
