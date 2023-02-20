@@ -28,7 +28,9 @@ export default function CLickableMenu(props: { user: IUser }) {
                         Invite Game
                     </li>
                     <li>
+                        <Link to={`/Chat/dm/${user.id}`}>
                         DM
+                        </Link>
                     </li>
                 </ul>
             </div>

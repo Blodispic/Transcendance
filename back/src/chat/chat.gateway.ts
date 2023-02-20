@@ -49,7 +49,7 @@ export class ChatGateway
   const socketIdToWho = this.findSocketFromUser(messageUserDto.usertowho);
   if (socketIdToWho === null)
     throw new BadRequestException(); // no such user
-  this.server.to(socketIdToWho).emit("sendMessageUserOk", messageUserDto.message);
+  this.server.to(socketIdToWho).emit("sendMessageUserOk", messageUserDto);
  
 
  }
