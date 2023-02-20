@@ -265,12 +265,12 @@ function ChannelMessages(props: { id: any }) {
 function ChannelPage(props: { chanid: any }) {
 	return (
 		<div id="chat-container">
-			<div className="left-sidebar">
+			<div className="sidebar left-sidebar">
 				<ChannelList />
 				<AddChannel />
 			</div>
 			<ChannelMessages id={props.chanid} />
-			<div className="right-sidebar">
+			<div className="sidebar  right-sidebar">
 				<ChannelMemberList id={props.chanid} />
 			</div>
 		</div>
@@ -281,12 +281,12 @@ export function Channels(props: any) {
 
 	return (
 		<div id="chat-container">
-			<div className="left-sidebar">
+			<div className="sidebar left-sidebar">
 				<ChannelList />
 				<AddChannel />
 			</div>
 			<ChannelMessages id={props.chatId} />
-			<div className="right-sidebar">
+			<div className="sidebar right-sidebar">
 				<ChannelMemberList id={props.chatId} />
 			</div>
 		</div>

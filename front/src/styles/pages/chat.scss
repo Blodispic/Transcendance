@@ -19,19 +19,28 @@ $tab-color: rgba(var(--primary-color), 0.5); //rgb(121, 121, 121);
 #chat-container {
 	font-family: 'Fredoka One', cursive;
 
+	margin-top: 20px;
 	display: flex;
 	width: 100%;
-	height: 100vh;
+	height: 100%;
 
-	.left-sidebar {
-		float: left;
+	.sidebar {
 		width: 20%;
 		padding: 10px;
-		background-color: var(--pastel-background);
 		color: black;
-		position: relative;
 		border-radius: 5px;
+		background-color: var(--pastel-background);
+		box-shadow: 0px 0px 5px 0px rgb(0 0 0)
+	}
 
+	.right-sidebar {
+		float: right;
+		border-top-right-radius: 0 !important ;
+	}
+	.left-sidebar {
+		float: left;
+		position: relative;
+		border-top-left-radius: 0 !important ;
 		.title {
 			font-size: 20px;
 		}
@@ -69,7 +78,8 @@ $tab-color: rgba(var(--primary-color), 0.5); //rgb(121, 121, 121);
 	.chat-body {
 		float: none;
 		width: 60%;
-		padding: 20px 0px;
+		padding-bottom: 2%;
+		height: 100%;
 		// background-color: rgba(62, 62, 74, 0.76);
 		// background-color: var(--secondary-color);
 
@@ -86,15 +96,7 @@ $tab-color: rgba(var(--primary-color), 0.5); //rgb(121, 121, 121);
 		}
 	}
 
-	.right-sidebar {
-		float: right;
-		color: black;
-		width: 20%;
-		padding: 10px;
-		background-color: var(--pastel-background);
-		border-radius: 5px;
-	}
-
+	
 	.user-list {
 		font-size: 18px;
 		ul {
