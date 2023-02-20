@@ -18,15 +18,17 @@ export default function Queue() {
     const [customPopup, setCustomPopup] = useState(false);
 
     function CustomGamePopup(props: any) {
-        const [extra, setExtra] = useState(1);
+        const [extra, setExtra] = useState(false);
         const [maxScore, setMaxScore] = useState(1);
         
         const changeScore = (event: any) => {
+            console.log(event.target.value);
             setMaxScore(event.target.value);
           };
     
         const changeExtra = (event: any) => {
-            setMaxScore(event.target.value);
+            console.log(event.target.checked);
+            setExtra(event.target.checked);
           };
         
         return (props.trigger) ? (
@@ -35,11 +37,11 @@ export default function Queue() {
                     <HiOutlineXMark className="close-icon" onClick={_ => props.setTrigger(false)} /> <br />
                     Create Custom Game
                     <div className='sub-element'>Set Extra Mode <br />
-                        <label> <input type="checkbox" value={extra} onChange={changeExtra} /> Extra mode </label>
+                        <label> <input type="checkbox" onChange={changeExtra} /> Extra mode </label>
                     </div>
     
                     <div className='sub-element'> Set Max Score <br />
-                        <input type="range" name='rangeInput' min="1" max="10" value={maxScore} onChange={changeScore}></input>
+                        <input type="range" name='rangeInput' min="1" max="10" id="inVal" value={maxScore} onChange={changeScore}></input>
                         <output>{maxScore}</output> <br />
                     </div>
                     <button className='button pointer color_log' onClick={() => CreateCustomRoom(extra, maxScore)}>
@@ -54,15 +56,9 @@ export default function Queue() {
         return;
     }
 
-    function CreateCustomRoom(extraNum: number, Max: number) {
-        // console.log("Create custom", myUser.user)
-        let extraBool :boolean;
-        if (extraNum === 2)
-            extraBool = true;
-        else
-            extraBool = false;
-        console.log(extraBool + ", " + Max);
-        socket.emit("createCustomGame", {user1: myUser.user, user2: myUser.user, extra: extraBool, scoreMax: Max});
+    function CreateCustomRoom(extra: any, Max: any) {
+        console.log("extra = " + extra + ", Max = " + Max); 
+        socket.emit("createCustomGame", {user1: myUser.user, user2: myUser.user, extra: extra, scoreMax: Max});
 
         return;
     }

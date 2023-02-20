@@ -76,7 +76,7 @@ export class PongGateway implements OnGatewayDisconnect, OnGatewayInit {
 			}
 			i++;
 		}
-		this.gameService.startCustomGame(this.server, userSocket1, userSocket2, payload.extra, payload.scoreMax);
+		this.gameService.startCustomGame(this.server, userSocket1, userSocket2, payload.extra, parseInt(payload.scoreMax));
 	}
 
 	@SubscribeMessage("GameEnd")
