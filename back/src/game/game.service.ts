@@ -157,7 +157,7 @@ export class GameService {
 			this.userService.save(winner);
 		}
 		else {
-			// winer doesn't exist
+			// winner doesn't exist
 		}
 		if (loser) {
 			loser.lose += 1;
@@ -258,6 +258,9 @@ class Game {
 		this.gameState.gameFinished = false;
 		this.gameState.player1 = user1;
 		this.gameState.player2 = user2;
+		console.log("Avatar wesh: ", this.gameState.player1.avatar);
+		this.gameState.player1.avatar = user1.avatar;
+		this.gameState.player2.avatar = user2.avatar;
 		this.gameState.player1.score = 0;
 		this.gameState.player2.score = 0;
 		this.resetState(this.gameState);
@@ -265,6 +268,8 @@ class Game {
 		this.socket1 = socket1;
 		this.socket2 = socket2;
 		this.gameState.scoreMax = scoreMax;
+		console.log("score max = ", scoreMax);
+		
 		this.watchList = [];
 
 		this.gameRoomRun();
@@ -337,69 +342,89 @@ class Game {
 	}
 
 	paddleCollision(ball: Ball, player: Player) {
-		if (ball.cooldown === 0) {
-			if (
-				((ball.previous.y - ballRadius <
-					player.paddle.position.y - paddleDimensions.y / 2 &&
-					ball.position.y + ballRadius >
-					player.paddle.position.y - paddleDimensions.y / 2) ||
-					(ball.previous.y + ballRadius >
-						player.paddle.position.y + paddleDimensions.y / 2 &&
-						ball.position.y - ballRadius <
-						player.paddle.position.y + paddleDimensions.y / 2)) &&
-				ball.position.x + ballRadius > player.paddle.position.x &&
-				ball.position.x - ballRadius <
-				player.paddle.position.x + paddleDimensions.x
-			) {
-				if (player.side === 0) {
-					if (
-						(player.input.left &&
-							player.input.right &&
-							ball.previous.y < player.paddle.position.y) ||
-						(player.input.left === false &&
-							player.input.right === false &&
-							ball.previous.y > player.paddle.position.y)
-					)
+	    if (ball.cooldown === 0) {
+	        if (
+	            ((ball.previous.y - ballRadius <
+	                player.paddle.position.y - paddleDimensions.y / 2 &&
+	                ball.position.y + ballRadius >
+	                player.paddle.position.y - paddleDimensions.y / 2) ||
+	                (ball.previous.y + ballRadius >
+	                    player.paddle.position.y + paddleDimensions.y / 2 &&
+	                    ball.position.y - ballRadius <
+	                    player.paddle.position.y + paddleDimensions.y / 2)) &&
+	            ball.position.x + ballRadius > player.paddle.position.x &&
+	            ball.position.x - ballRadius <
+	            player.paddle.position.x + paddleDimensions.x
+	        ) {
+	            if (player.side === 0) {
+	                if (
+	                    (player.input.left &&
+	                        player.input.right &&
+	                        ball.previous.y < player.paddle.position.y) ||
+	                    (player.input.left === false &&
+	                        player.input.right === false &&
+	                        ball.previous.y > player.paddle.position.y)
+	                ){
 						ball.speed.y = ball.speed.y * (Math.random() * (2 - 1.5) + 1.5);
-					else if (
-						player.input.left === false &&
-						player.input.right === false &&
-						ball.previous.y < player.paddle.position.y
-					)
+						if (ball.previous.x + (ball.position.x - ball.previous.x) / 2 < player.paddle.position.x + paddleDimensions.x / 2)
+							ball.speed.x -= (Math.random() * (4 - 2) + 2);
+						else
+							ball.speed.x += (Math.random() * (4 - 2) + 2);
+					}
+	                else if (
+	                    player.input.left === false &&
+	                    player.input.right === false &&
+	                    ball.previous.y < player.paddle.position.y
+	                ){
 						ball.speed.y = ball.speed.y * (Math.random() * (1 - 0.8) + 0.8);
-				} else {
-					if (
-						(player.input.left &&
-							player.input.right &&
-							ball.previous.y > player.paddle.position.y) ||
-						(player.input.left === false &&
-							player.input.right === false &&
-							ball.previous.y < player.paddle.position.y)
-					)
+						if (ball.previous.x + (ball.position.x - ball.previous.x) / 2 < player.paddle.position.x + paddleDimensions.x / 2)
+							ball.speed.x -= (Math.random() * (4 - 2) + 2);
+						else
+							ball.speed.x += (Math.random() * (4 - 2) + 2);
+					}
+	            } else {
+	                if (
+	                    (player.input.left &&
+	                        player.input.right &&
+	                        ball.previous.y > player.paddle.position.y) ||
+	                    (player.input.left === false &&
+	                        player.input.right === false &&
+	                        ball.previous.y < player.paddle.position.y)
+	                ){
 						ball.speed.y = ball.speed.y * (Math.random() * (2 - 1.5) + 1.5);
-					else if (
-						player.input.left &&
-						player.input.right &&
-						ball.previous.y > player.paddle.position.y
-					)
+						if (ball.previous.x + (ball.position.x - ball.previous.x) / 2 < player.paddle.position.x + paddleDimensions.x / 2)
+							ball.speed.x -= (Math.random() * (4 - 2) + 2);
+						else
+							ball.speed.x += (Math.random() * (4 - 2) + 2);
+					}
+	                else if (
+	                    player.input.left &&
+	                    player.input.right &&
+	                    ball.previous.y > player.paddle.position.y
+	                ){
 						ball.speed.y = ball.speed.y * (Math.random() * (1 - 0.8) + 0.8);
-				}
-				if (
-					(ball.previous.y < player.paddle.position.y && ball.speed.y > 0) ||
-					(ball.previous.y > player.paddle.position.y && ball.speed.y < 0)
-				) {
-					ball.speed.y = -ball.speed.y;
-					if (ball.speed.y > 0) ball.position.y += 5;
-					else ball.position.y -= 5;
-				} else {
-					if (ball.speed.y > 0) ball.position.y += 5;
-					else ball.position.y -= 5;
-				}
-				ball.cooldown = 1;
-				return 1;
-			}
-		}
-		return 0;
+						if (ball.previous.x + (ball.position.x - ball.previous.x) / 2 < player.paddle.position.x + paddleDimensions.x / 2)
+							ball.speed.x -= (Math.random() * (4 - 2) + 2);
+						else
+							ball.speed.x += (Math.random() * (4 - 2) + 2);
+					}
+	            }
+	            if (
+	                (ball.previous.y < player.paddle.position.y && ball.speed.y > 0) ||
+	                (ball.previous.y > player.paddle.position.y && ball.speed.y < 0)
+	            ) {
+	                ball.speed.y = -ball.speed.y;
+	                if (ball.speed.y > 0) ball.position.y += 5;
+	                else ball.position.y -= 5;
+	            } else {
+	                if (ball.speed.y > 0) ball.position.y += 5;
+	                else ball.position.y -= 5;
+	            }
+	            ball.cooldown = 1;
+	            return 1;
+	        }
+	    }
+	    return 0;
 	}
 
 	wallCollision(ball: Ball, state: GameState) {
@@ -415,15 +440,19 @@ class Game {
 			if (ball.position.y > state.area.y - ballRadius) {
 				state.player2.score++;
 				this.resetState(state);
-				if (state.player2.score === state.scoreMax) {
+				console.log("if player2 score >= scoreMax " + (state.player2.score >= state.scoreMax))
+				if (state.player2.score >= state.scoreMax) {
 					//END THE GAME
+					console.log("p2: " + state.player2.score);
 					this.finishGame();
 				}
 			} else if (ball.position.y < 0 + ballRadius) {
 				state.player1.score++;
 				this.resetState(state);
-				if (state.player1.score === state.scoreMax) {
+				console.log("if player1 score >= scoreMax " + (state.player1.score >= state.scoreMax))
+				if (state.player1.score >= state.scoreMax) {
 					//END THE GAME
+					console.log("p1: " + state.player1.score);
 					this.finishGame()
 				}
 			}
@@ -469,15 +498,15 @@ class Game {
 			ball.speed.y = 12;
 		else if (ball.speed.y < -12)
 			ball.speed.y = -12;
-		else if (ball.speed.y < 4 && ball.speed.y > 0)
+		else if (ball.speed.y < 4 && ball.speed.y >= 0)
 			ball.speed.y = 4;
 		else if (ball.speed.y > -4 && ball.speed.y < 0)
 			ball.speed.y = -4;
-		if (ball.speed.x > 15)
-			ball.speed.x = 15;
-		else if (ball.speed.x < -15)
-			ball.speed.x = -15;
-		else if (ball.speed.x < 1 && ball.speed.x > 0)
+		if (ball.speed.x > 20)
+			ball.speed.x = 20;
+		else if (ball.speed.x < -20)
+			ball.speed.x = -20;
+		else if (ball.speed.x < 1 && ball.speed.x >= 0)
 			ball.speed.x = 1;
 		else if (ball.speed.x > -1 && ball.speed.x < 0)
 			ball.speed.x = -1;
