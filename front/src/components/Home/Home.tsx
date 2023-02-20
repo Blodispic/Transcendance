@@ -53,7 +53,7 @@ export default function Home() {
                     <text className='text'>
                         Romain Zhou:<br/>
                         CEO of Databases.<br/>
-                        Responsible for the back of the OAuth, 2FA and the database.
+                        Responsible for the back of the OAuth, 2FA and the database. Also provider of funds, Head of the Chinese Mafia, and great friend overall.
                     </text>
                 </div>
                 <div className='contributor'>
