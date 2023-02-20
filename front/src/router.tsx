@@ -11,6 +11,8 @@ import { Navigate } from "react-router-dom";
 import { useAppSelector } from './redux/Hook';
 import Sign from './components/connection/Sign';
 import { Log } from './components/connection/Log';
+import { Channels } from './components/Chat/Channel';
+import { DirectMessage } from './components/Chat/DirectMessage';
 
 const Layout = () => (
   <>
@@ -88,16 +90,43 @@ const router = createBrowserRouter([
       {
         path: "/Chat",
         element:
-          <OauthRoute>
-            <Chat />
-          </OauthRoute>
-      },
-      {
-        path: "/Chat/:id",
-        element:
           <ProtectedRoute>
             <Chat />
-          </ProtectedRoute>
+          </ProtectedRoute>,
+        children: [
+          {
+            path: "/Chat/channel",
+            element:
+              <ProtectedRoute>
+                <Chat />
+              </ProtectedRoute>,
+            children: [
+              {
+                path: "/Chat/channel/:id",
+                element:
+                  <ProtectedRoute>
+                    <Chat />
+                  </ProtectedRoute>
+              },
+            ]
+          },
+          {
+            path: "/Chat/dm",
+            element:
+              <ProtectedRoute>
+                <DirectMessage />
+              </ProtectedRoute>,
+            children: [
+              {
+                path: "/Chat/dm/:id",
+                element:
+                  <ProtectedRoute>
+                    <DirectMessage />
+                  </ProtectedRoute>
+              },
+            ]
+          },
+        ]
       },
       {
         path: "/Profile/:id",

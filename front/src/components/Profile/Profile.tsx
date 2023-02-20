@@ -69,8 +69,11 @@ export default function Profile() {
         }, [id])
 
         socket.on('UpdateSomeone', (idChange) => {
-                console.log("ca dis quoi", idChange)
-                if (idChange == myUser.user?.id)
+                console.log("ca dis quoi", idChange, myUser.user?.id)
+
+                if (idChange === myUser.user!.id)
+                        console.log("hein")
+                if (idChange === myUser.user!.id)
                         fetchid();
         })
         useEffect(() => {
@@ -94,7 +97,7 @@ export default function Profile() {
                                 <Onglets currentUser={currentUser} current={pages} setOnglets={setPages} />
                                 {
                                         pages == page.PAGE_1 &&
-                                        <History />
+                                        <History user={currentUser} />
                                 }
                                 {
                                         pages == page.PAGE_2 &&

@@ -20,11 +20,11 @@ function AllFriendList() {
 export function DirectMessage() {
 	return (
 		<div id="chat-container">
-		<div className="left-sidebar">
+		<div className="sidebar left-sidebar">
 			<DMList />
 		</div>
 			<ChatBody />
-		<div className="right-sidebar">
+		<div className="sidebar right-sidebar">
 			<AllFriendList />
 		</div>
 	</div>

@@ -4,12 +4,13 @@ import { CreateUserDto } from 'src/user/dto/create-user.dto';
 import { User } from 'src/user/entities/user.entity';
 import { Repository } from 'typeorm';
 import { AddUserDto } from './dto/add-user.dto';
-import { CreateChannelDto } from './dto/create-channel.dto';
 import { Channel } from './entities/channel.entity';
 import { UserService } from 'src/user/user.service';
 import { UserController } from 'src/user/user.controller';
 import { RmUserDto } from './dto/rm-user.dto';
 import { MuteUserDto } from '../dto/mute-user.dto';
+import { CreateChannelDto } from '../dto/create-channel.dto';
+import { GiveAdminDto } from '../dto/give-admin.dto';
 
 @Injectable()
 export class ChannelService {
@@ -22,11 +23,14 @@ export class ChannelService {
 
 	) {}
 
-	create(createChannelDto: CreateChannelDto) {
-		const channel: Channel = this.channelRepository.create(createChannelDto);
-		// this.channelRepository.update(channel);
-		console.log(channel);
-		
+	async create(createChannelDto: CreateChannelDto, user: User) {
+		const channel: Channel = this.channelRepository.create({
+			name: createChannelDto.chanName,
+			password: createChannelDto.password,
+			owner: [user],
+			users: [user],
+			chanType: createChannelDto.chanType,
+		});
 		return this.channelRepository.save(channel);
 	}
 
@@ -129,4 +133,70 @@ export class ChannelService {
 		return this.channelRepository.find();
 	  }
 
+	  getPublic() {
+		return this.channelRepository.find({
+			where: {chanType: 0,}, 
+		})
+	  }
+
+	  async unmuteUser(muteUserDto: MuteUserDto) {
+		const channel: Channel | null = await this.channelRepository.findOne({
+			relations: { users: true },
+			where: { id: muteUserDto.chanid }
+		});
+		const user = await this.userService.getById(muteUserDto.userid);
+		if (channel === null || user === null)
+			throw new BadRequestException();
+		channel.muted.splice(channel.muted.indexOf(user, 0), 1);
+		return this.channelRepository.save(channel);
+	}
+
+	async isUserMuted(muteUserDto: MuteUserDto) {
+		const channel: Channel | null = await this.channelRepository.findOne({
+			relations: { users: true },
+			where: { id: muteUserDto.chanid }
+		});
+		const user = await this.userService.getById(muteUserDto.userid);
+		if (channel === null || user === null)
+			throw new BadRequestException();
+		if (!channel.muted)
+			return false;
+		channel.muted.forEach(muted => {
+			if (muted === user)
+				return true;
+		});
+		return false;			
+	}
+
+	async isUserBanned(muteUserDto: MuteUserDto) {
+		const channel: Channel | null = await this.channelRepository.findOne({
+			relations: { users: true },
+			where: { id: muteUserDto.chanid }
+		});
+		const user = await this.userService.getById(muteUserDto.userid);
+		if (channel === null || user === null)
+			throw new BadRequestException();
+		if (!channel.banned)
+			return false;
+		channel.banned.forEach(banned => {
+			if (banned === user)
+				return true;
+		});
+		return false;			
+	}
+
+	async addAdmin(giveAdminDto: GiveAdminDto)
+	{
+		const channel: Channel | null = await this.channelRepository.findOne({
+			relations: { users: true },
+			where: {
+				id: giveAdminDto.chanid
+			}
+			});
+		const user = await this.userService.getById(giveAdminDto.userid);
+		if (channel == null || user == null)
+			throw new NotFoundException();
+		channel.owner.push(user);
+		return this.channelRepository.save(channel);
+	}
 }

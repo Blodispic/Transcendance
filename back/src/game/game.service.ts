@@ -154,17 +154,23 @@ export class GameService {
 	async save(results: CreateResultDto, server: Server) {
 		const winner = await this.userService.getByUsername(results.winner);
 		const loser = await this.userService.getByUsername(results.loser);
+		console.log("YOOOO");		
 		if (winner) {
+			console.log("winner1 = ", winner);
 			winner.win += 1;
 			winner.elo += 50;
+			console.log("winner2 = ", winner);
 			this.userService.save(winner);
 		}
 		else {
 			// winer doesn't exist
 		}
 		if (loser) {
+			console.log("loser1 = ", loser);
+			
 			loser.lose += 1;
 			loser.elo -= 50;
+			console.log("loser2 = ", loser);
 			this.userService.save(loser);
 		}
 		else {

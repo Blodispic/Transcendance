@@ -87,6 +87,11 @@ export class UserController {
     return this.userService.GetFriendsRequest(user);
   }
 
+  @Post('matches')
+  GetMatches(@Body() user: User) {
+    return this.userService.GetMatchRequest(user);
+  }
+
   @Post("friends/accept")
   async acceptFriendRequest(@Body() body: { friendId: any, user: User }) {
     this.userService.addFriend(body.friendId, body.user);
