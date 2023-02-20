@@ -2,11 +2,13 @@ import { BadRequestException, Body, Controller, Get, Param, Patch, Post } from '
 import { CreateUserDto } from 'src/user/dto/create-user.dto';
 import { ChannelService } from './channel.service';
 import { Channel } from './entities/channel.entity';
-import { CreateChannelDto } from './dto/create-channel.dto';
+// import { CreateChannelDto } from './dto/create-channel.dto';
 import { AddUserDto } from './dto/add-user.dto';
 import { RmUserDto } from './dto/rm-user.dto';
 import { BanUserDto } from '../dto/ban-user.dto';
 import { MuteUserDto } from '../dto/mute-user.dto';
+import { User } from 'src/user/entities/user.entity';
+import { CreateChannelDto } from '../dto/create-channel.dto';
 
 @Controller('channel')
 export class ChannelController {
@@ -22,10 +24,15 @@ export class ChannelController {
 		return await this.channelService.getAll();
 	}
 
+	@Get('public')
+	async getPublic() {
+		return await this.channelService.getPublic();
+	}
+
 	@Post()
-	async create(@Body() createChannelDto: CreateChannelDto): Promise<Channel> {
+	async create(@Body() createChannelDto: CreateChannelDto, user: User): Promise<Channel> {
 		try {
-			return await this.channelService.create(createChannelDto);
+			return await this.channelService.create(createChannelDto, user);
 		} catch (error) {
 			throw new BadRequestException(error.detail);
 		}
@@ -56,5 +63,9 @@ export class ChannelController {
 	  return this.channelService.update(+id, channel);
 	}
 
+	async unmuteUser(muteUserDto: MuteUserDto)
+	{
+		return await this.channelService.unmuteUser(muteUserDto);
+	}
 
 }
