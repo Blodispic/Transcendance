@@ -124,8 +124,6 @@ export class UserService {
       //Si vous voulez plus de chose a update, mettez le dans le body et faites un if
       if (userUpdate.username)
         user.username = userUpdate.username;
-      if (userUpdate.avatar)
-        user.avatar = userUpdate.avatar;
       if (userUpdate.status) {
         user.status = userUpdate.status;
       }

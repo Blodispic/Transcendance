@@ -5,11 +5,13 @@ import { Tab, TabList, TabPanel, Tabs } from "react-tabs";
 import { DirectMessage } from "./DirectMessage";
 import 'react-tabs/style/react-tabs.css';
 import { useNavigate, useParams } from "react-router-dom";
+import { page } from "../../interface/enum";
 
 export function ChatBody() {
-	
+
 	const [newInput, setNewInput] = useState("");
 	const [messageList, setMessageList] = useState<any[]>([]);
+	let { id } = useParams();
 
 	const handleSubmitNewMessage = (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
@@ -41,10 +43,13 @@ export function ChatBody() {
 					</div>
 				))}
 			</div>
-			<form id="input_form" onSubmit={(e) => { handleSubmitNewMessage(e); }}>
-				<input type="text" onChange={(e) => { setNewInput(e.target.value) }}
-					placeholder="type message here" value={newInput}/>
-			</form>
+			{
+				id !== undefined && 
+				<form id="input_form" onSubmit={(e) => { handleSubmitNewMessage(e); }}>
+					<input type="text" onChange={(e) => { setNewInput(e.target.value) }}
+						placeholder="type message here" value={newInput} />
+				</form>
+			}
 
 		</div>
 	);
@@ -52,20 +57,46 @@ export function ChatBody() {
 
 export default function Chat() {
 	const navigate = useNavigate();
+	const [current, setOnglet] = useState<page>(page.PAGE_1);
 	const { id } = useParams();
 
 	return (
-			<Tabs className="chat-tab">
-				<TabList>
-					<Tab onClick={_ => navigate(`/Chat/channel`)} >Channels</Tab>
-					<Tab onClick={_ => navigate(`/Chat/dm`)}>DM</Tab>
-				</TabList>
-			<TabPanel>
-				<Channels chatId={id}/>
-			</TabPanel>
-			<TabPanel>
+		<div className="chat-tab">
+			<div className='onglets Chat-onglets'>
+				<button className={`pointer ${current === page.PAGE_1 ? "" : "not-selected"}`}
+					onClick={e => { setOnglet(page.PAGE_1); navigate(`/Chat/channel/`) }}>
+					<a >
+						Chanels
+					</a>
+				</button>
+				<button className={`pointer ${current === page.PAGE_2 ? "" : "not-selected"}`}
+					onClick={e => { setOnglet(page.PAGE_2); navigate(`/Chat/dm/`) }}>
+					<a >
+						DM
+					</a>
+				</button>
+			</div>
+			{
+				current == page.PAGE_1 &&
+				<Channels chatId={id} />
+			}
+			{
+				current == page.PAGE_2 &&
 				<DirectMessage />
-			</TabPanel>
-			</Tabs>
+			}
+
+		</div>
+		// <Tabs className="chat-tab">
+		// 	<TabList>
+		// 		<Tab onClick={_ => navigate(`/Chat/channel/`)} >Channels</Tab>
+		// 		<Tab onClick={_ => navigate(`/Chat/dm/`)}>DM</Tab>
+		// 	</TabList>
+		// <TabPanel>
+		// 	<Channels chatId={id}/>
+		// </TabPanel>
+		// <TabPanel>
+		// 	<DirectMessage />
+		// </TabPanel>
+		// </Tabs>
 	);
 }

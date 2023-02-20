@@ -68,8 +68,11 @@ export default function Profile() {
         }, [id])
 
         socket.on('UpdateSomeone', (idChange) => {
-                console.log("ca dis quoi", idChange)
-                if (idChange == myUser.user?.id)
+                console.log("ca dis quoi", idChange, myUser.user?.id)
+
+                if (idChange === myUser.user!.id)
+                        console.log("hein")
+                if (idChange === myUser.user!.id)
                         fetchid();
         })
         useEffect(() => {

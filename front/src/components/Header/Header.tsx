@@ -15,26 +15,26 @@ export default function Header() {
   const cookies = new Cookies();
 
   const dispatch = useAppDispatch();
-  
+
   const dropdownClick = () => {
     if (dropdown == false)
-    setDropdown(true);
+      setDropdown(true);
     else
-    setDropdown(false);
+      setDropdown(false);
   }
-  
+
   const peopleclick = () => {
 
     if (peopleBool == false)
-    setPeopleBool(true);
+      setPeopleBool(true);
     else
-    setPeopleBool(false);
+      setPeopleBool(false);
   }
 
   const logout = () => {
     cookies.remove('Token');
     dispatch(delete_user())
-    socket.emit("UpdateSomeone", {id: myUser.user?.id })
+    socket.emit("UpdateSomeone", { id: myUser.user?.id })
   }
 
   const myUser = useAppSelector(state => state.user);
@@ -50,7 +50,7 @@ export default function Header() {
 
       </div>
 
-      <div className='navbar-right' >
+      <div className='navbar-right  hover-style' >
         <Link to="/Game" onClick={_ => setDropdown(false)}>
           <span className="font-link" >
             Game
@@ -77,8 +77,10 @@ export default function Header() {
                       profile
                     </Link>
                   </li>
-                  <li onClick={_ => {logout(); setDropdown(false); } } >
-                    logout
+                  <li onClick={_ => { logout(); setDropdown(false); }} >
+                    <a>
+                      logout
+                    </a>
                   </li>
                 </ul>
               </div>
