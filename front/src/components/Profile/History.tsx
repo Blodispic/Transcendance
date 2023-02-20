@@ -20,30 +20,37 @@ export function History(props: { user: IUser }) {
     }, []);
 
     interface MatchesListProps {
-        friends: { winner: string, loser: string, winner_score: number, loser_score: number, winner_avatar: string, loser_avatar: string, winner_elo: number, loser_elo: number, }[];
+        matches: { winner: string, loser: string, winner_score: number, loser_score: number, winner_avatar: string, loser_avatar: string, winner_elo: number, loser_elo: number, }[];
     }
 
     const MatchList = (props: MatchesListProps) => {
         return (
-            <ul className="friends-list">
-                {props.friends.map(match => (
-                    <li className="friend-block" key={match.winner}>
-                        <div className="friend-img">
-                            <img src={match.winner_avatar} alt={match.winner} />
-                        </div>
-                        <div className="friend-info">
-                            <div className="friend-name">{match.winner}</div>
-                        </div>
-
-                    </li>
-                ))}
-            </ul>
-        )
-    }
+          <ul className="match-list">
+            {props.matches.map((match) => (
+              <li className="match-block" key={match.winner}>
+                <div className="winner-info">
+                  <div className="winner-img">
+                    <img src={match.winner_avatar} alt={match.winner} />
+                  </div>
+                  <div className="winner-name">{match.winner}</div>
+                  <div className="winner-name">{match.winner_elo}</div>
+                </div>
+                <div className="loser-info">
+                  <div className="loser-name">{match.loser_elo}</div>
+                  <div className="loser-name">{match.loser}</div>
+                  <div className="loser-img">
+                    <img src={match.loser_avatar} alt={match.loser} />
+                  </div>
+                </div>
+              </li>
+            ))}
+          </ul>
+        );
+      };
 
     const MatchesReq = () => {
         console.log(matchReq)
-        return <MatchList friends={matchReq} />;
+        return <MatchList matches={matchReq} />;
     }
 
     return (

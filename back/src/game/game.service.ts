@@ -153,31 +153,39 @@ export class GameService {
 
 	async save(results: CreateResultDto, server: Server) {
 		const winner = await this.userService.getByUsername(results.winner);
-		const loser = await this.userService.getByUsername(results.loser);
-		console.log("YOOOO");		
+		const loser = await this.userService.getByUsername(results.loser);	
+		const resultReturn = {
+			winner: results.winner,
+			loser: results.loser,
+			winner_score: results.winner_score,
+			loser_score: results.loser_score,
+			winner_elo: loser?.elo,
+			loser_elo: winner?.elo,
+		}
+
+		const resultPush = await this.userService.createResult(resultReturn);
+
 		if (winner) {
-			console.log("winner1 = ", winner);
 			winner.win += 1;
 			winner.elo += 50;
-			console.log("winner2 = ", winner);
+			if (resultPush)
+				winner.results.push(resultPush);
 			this.userService.save(winner);
 		}
 		else {
 			// winner doesn't exist
 		}
 		if (loser) {
-			console.log("loser1 = ", loser);
-			
 			loser.lose += 1;
 			loser.elo -= 50;
-			console.log("loser2 = ", loser);
+			if (resultPush)
+				loser.results.push(resultPush);
 			this.userService.save(loser);
 		}
 		else {
 			// loser doesn't exist
 		}
 
-		this.userService.createResult(results);
 	}
 
 	EndGame(client: string, server: Server) {

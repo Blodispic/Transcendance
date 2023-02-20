@@ -83,7 +83,7 @@ export default function Profile() {
         if (currentUser === undefined || avatar === undefined) {
                 return (
                         <div className='center'>
-                                <h1>USER DONT EXIST </h1>
+                                <h1>USER DOESN'T EXIST </h1>
                         </div>
                 );
         }

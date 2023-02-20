@@ -57,16 +57,16 @@ export function Header(props: { currentUser: IUser, setCurrentUser: Function }) 
         const formattedPercentage = winPercentage.toFixed(2) + '%';
 
         const rank = () => {
-                if (currentUser.elo >= 2000) {
+                if (currentUser.elo >= 1900) {
                         return 'DIAMOND';
                 }
                 else if (currentUser.elo >= 1500) {
                         return 'PLATINUM';
                 }
-                else if (currentUser.elo >= 1000) {
+                else if (currentUser.elo >= 1100) {
                         return 'GOLD';
                 }
-                else if (currentUser.elo >= 500) {
+                else if (currentUser.elo >= 700) {
                         return 'SILVER';
                 }
                 else

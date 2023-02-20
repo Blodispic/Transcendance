@@ -59,7 +59,7 @@ export class UserService {
       this.usersRepository.save(user1);
     }
     else
-      return ("winner doesn't exists");
+      return ;
     if (user2) {
       if (!user2.results)
         user2.results = [];
@@ -68,7 +68,7 @@ export class UserService {
       this.usersRepository.save(user2);
     }
     else
-      return ("loser doesn't exists");
+      return ;
     return (result);
   }
 
@@ -309,8 +309,8 @@ export class UserService {
         loser_score: request.loser_score || 0,
         winner_avatar: winnerAvatar,
         loser_avatar: loserAvatar,
-        winner_elo: winner ? winner.elo : 0,
-        loser_elo: loser ? loser.elo : 0
+        winner_elo: winner ? request.winner_elo : 0,
+        loser_elo: loser ? request.loser_elo : 0
       };
     }));
     

@@ -24,6 +24,7 @@
             display: flex;
             flex-direction: column;
             align-items: center;
+
             .avatar {
                 height: 130px;
                 width: 130px;
@@ -74,11 +75,11 @@
                     .color-status.Offline {
                         color: #747f8d;
                     }
-                    
+
                     .color-status.Online {
                         color: #43b581;
                     }
-                    
+
                     .color-status.InGame {
                         color: #f04747;
                     }
@@ -98,15 +99,15 @@
 
                 .win {
                     color: #41b94b;
-                  }
-                  
-                  .lose {
-                    color: #e05068;
-                  }
+                }
 
-                  .winrate {
-                    color: #808080; 
-                  }
+                .lose {
+                    color: #e05068;
+                }
+
+                .winrate {
+                    color: #808080;
+                }
             }
 
             .rank {
@@ -116,28 +117,29 @@
 
                 .rank {
                     color: #a5a5a5;
-                  }
+                }
+
                 .rank.bronze {
                     color: #b3782d;
-                  }
-                  
-                  .rank.silver {
+                }
+
+                .rank.silver {
                     color: #c0c0c0;
-                  }
-                  
-                  .rank.gold {
+                }
+
+                .rank.gold {
                     color: #ffd700;
-                  }
-                  
-                  .rank.platinum {
+                }
+
+                .rank.platinum {
                     color: #00bfff;
-                  }
-                  
-                  .rank.diamond {
+                }
+
+                .rank.diamond {
                     color: #00ced1;
-                  }
+                }
             }
-            
+
         }
     }
 
@@ -263,10 +265,12 @@
     flex-wrap: wrap;
     flex-direction: column;
     height: 100%;
-}  li {
+}
+
+li {
     float: left;
     display: block;
-  }
+}
 
 .accept-button,
 .refuse-button {
@@ -314,46 +318,112 @@
     height: auto;
     display: flex;
     border-radius: 5px;
-    
-    button {
-    width: 100%;
-      border: 1px solid #534f4f;
-      border-bottom-right-radius: 5px;
-      border-bottom-left-radius: 5px;
-      padding: 10px 20px 5px;
 
-      a {
-        font-size: 24px;
+    button {
         width: 100%;
-        height: 100%;
-      }
+        border: 1px solid #534f4f;
+        border-bottom-right-radius: 5px;
+        border-bottom-left-radius: 5px;
+        padding: 10px 20px 5px;
+
+        a {
+            font-size: 24px;
+            width: 100%;
+            height: 100%;
+        }
     }
-  
+
     .not-selected {
-      opacity: 0.7;
+        opacity: 0.7;
     }
-  
+
     .pointer {
-      font-family: 'Fredoka One', cursive;
-      cursor: pointer;
+        font-family: 'Fredoka One', cursive;
+        cursor: pointer;
     }
-  
+
     button:not(.not-selected) {
-      background-color: #8860D0;
-      color: #FFFFFF;
+        background-color: #8860D0;
+        color: #FFFFFF;
     }
-  
+
     button:not(.not-selected):hover {
-      background-color: #8860D0;
+        background-color: #8860D0;
     }
-  }
-  
-  .not-selected {
+}
+
+.not-selected {
     background-color: #FFFFFF;
-  }
-  
-  span {
+}
+
+span {
     display: block;
     text-align: center;
+}
+
+.match-list {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    padding: 0;
   }
   
+
+.match-block {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #ccced9;
+    border-radius: 0.5px;
+    border: 1px solid rgb(151, 139, 139);
+    margin-bottom: 10px;
+    width: 90%;
+  }
+  
+  .winner-info {
+    display: flex;
+    align-items: center;
+  }
+  
+  .winner-img {
+    border-right: 0.2px solid rgb(0, 0, 0);
+    width: 100px;
+    height: 100px;
+    margin-right: 10px;
+  }
+  
+  .winner-img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  
+  .winner-name {
+    font-size: 24px;
+    font-family: "Fredoka One", cursive;
+  }
+  
+  .loser-info {
+    display: flex;
+    align-items: center;
+  }
+  
+  .loser-img {
+    border-left: 0.2px solid rgb(0, 0, 0);
+    width: 100px;
+    height: 100px;
+    margin-left: 10px;
+  }
+  
+  .loser-img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  
+  .loser-name {
+    font-size: 24px;
+    font-family: "Fredoka One", cursive;
+  }
