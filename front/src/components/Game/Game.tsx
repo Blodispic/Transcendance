@@ -127,6 +127,7 @@ export default function GameApp() {
 		});
 
 		socket.on("GameEnd", (result: any) => {
+			console.log("Ending game")
 			if (selfID === 1)
 			{
 				if (result.winner === gameState.player1.name)
@@ -276,7 +277,6 @@ function convertState(state: GameState) {
 	newState.scoreMax = state.scoreMax;
 	newState.player1.avatar = state.player1.avatar;
 	newState.player2.avatar = state.player2.avatar;
-	
 	return newState;
 }
 
@@ -297,7 +297,7 @@ function updateGameState(prev: GameState) {
 
 	newState.player1.input = { ...move1 };
 	newState.player2.input = { ...move2 };
-	if (newState.gameFinished === false && (newState.player1.score === newState.scoreMax || newState.player2.score === newState.scoreMax)) {
+	if (newState.gameFinished === false && (newState.player1.score >= newState.scoreMax || newState.player2.score >= newState.scoreMax)) {
 		newState.gameFinished = true;
 	}
 	if (newState.resetCooldown === 0 && newState.gameFinished === false) {

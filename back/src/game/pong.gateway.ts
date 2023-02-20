@@ -57,7 +57,7 @@ export class PongGateway implements OnGatewayDisconnect, OnGatewayInit {
 	@SubscribeMessage("createCustomGame")
 	HandleCustomGame(@MessageBody() payload: any, @ConnectedSocket() client: Socket) {
 		console.log("Add " + payload.user1.username + " to custom game.");
-		console.log("Add " + payload.user2 + " to custom game.");
+		console.log("Add " + payload.user2.username + " to custom game.");
 		let userSocket1: any = userList[0]; //By default both user are the first user of the list
 		let userSocket2: any = userList[0]; //By default both user are the first user of the list
 		let i: number = 0;
@@ -76,7 +76,7 @@ export class PongGateway implements OnGatewayDisconnect, OnGatewayInit {
 			}
 			i++;
 		}
-		this.gameService.startCustomGame(this.server, userSocket1, userSocket2, payload.extra, payload.scoreMax);
+		this.gameService.startCustomGame(this.server, userSocket1, userSocket2, payload.extra, parseInt(payload.scoreMax));
 	}
 
 	@SubscribeMessage("GameEnd")
