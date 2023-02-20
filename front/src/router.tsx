@@ -11,6 +11,7 @@ import { Navigate } from "react-router-dom";
 import { useAppSelector } from './redux/Hook';
 import Sign from './components/connection/Sign';
 import { Log } from './components/connection/Log';
+import Home from './components/Home/Home';
 import { Channels } from './components/Chat/Channel';
 import { DirectMessage } from './components/Chat/DirectMessage';
 
@@ -84,7 +85,7 @@ const router = createBrowserRouter([
         path: "/Home",
         element:
           <ProtectedRoute>
-
+            <Home />
           </ProtectedRoute>
       },
       {
