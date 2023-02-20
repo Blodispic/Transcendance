@@ -30,6 +30,12 @@ export const userSlice = createSlice({
         change_avatar: (state, { payload }: PayloadAction<string>) => {
             state.user!.avatar = payload;
         },
+        change_lose: (state, { payload }: PayloadAction<number>) => {
+            state.user!.lose = payload;
+        },
+        change_win: (state, { payload }: PayloadAction<number>) => {
+            state.user!.win = payload;
+        },
         oauth: (state) => {
             state.isOauth = true;
         },

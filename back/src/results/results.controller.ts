@@ -8,7 +8,7 @@ export class ResultController {
 
   @Post()
   async createResults(@Body() resultDto: Results) {
-      return await this.resultService.createResult(resultDto);
+    return await this.resultService.createResult(resultDto);
   }
-  
+
 }

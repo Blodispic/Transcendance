@@ -10,7 +10,7 @@ export class OauthService {
   constructor(
     private usersService: UserService,
     private jwtService: JwtService,
-    ) { }
+  ) { }
 
   async getToken(oauthCode: string): Promise<any> {
     const api_key = process.env.API42_UID;
@@ -76,7 +76,7 @@ export class OauthService {
       email: data.email,
       intra_avatar: data.image.link,
       access_token: token
-      
+
     }
     return await this.usersService.create(userDto);
   }
