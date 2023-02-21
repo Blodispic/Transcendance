@@ -42,4 +42,5 @@ export interface GameState {
 	ball: Ball;
 	gameFinished: boolean;
 	extra: boolean;
+	roomId: number;
 }
