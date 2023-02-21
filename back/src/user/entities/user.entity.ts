@@ -60,6 +60,7 @@ export class User {
   lose: number;
 
   @OneToMany(() => Results, result => result.user)
+  @JoinTable()
   results: Results[];
 
   @OneToMany(() => FriendRequest, friendRequest => friendRequest.creator)

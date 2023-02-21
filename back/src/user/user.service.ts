@@ -40,14 +40,36 @@ export class UserService {
     return this.usersRepository.save(user);
   }
 
-  async createResults(createResultDto: CreateResultDto): Promise<Results> {
-    const check = await this.resultsRepository.findOneBy({
-      winner: createResultDto.winner
-    })
-    if (check)
-      return (check);
-    const result: Results = this.resultsRepository.create(createResultDto);
-    return this.resultsRepository.save(result);
+  async createResult(resultDto: CreateResultDto) {
+    console.log("result = ", resultDto);
+
+    const user1 = await this.getByUsername(resultDto.winner);
+    const user2 = await this.getByUsername(resultDto.loser);
+    const result = await this.resultsRepository.save(resultDto);
+
+    console.log("---- User1 ---- = ", user1);
+    console.log("---- User2 ---- = ", user2);
+    console.log("---- result ---- = ", result);
+
+    if (user1) {
+      if (!user1.results)
+        user1.results = [];
+      user1.results.push(result);
+      console.log("---- User1 ---- = ", user1);
+      this.usersRepository.save(user1);
+    }
+    else
+      return ("winner doesn't exists");
+    if (user2) {
+      if (!user2.results)
+        user2.results = [];
+      user2.results.push(result);
+      console.log("---- User2 ---- = ", user2);
+      this.usersRepository.save(user2);
+    }
+    else
+      return ("loser doesn't exists");
+    return (result);
   }
 
   async save(updateUserDto: UpdateUserDto) {
@@ -82,9 +104,13 @@ export class UserService {
   }
 
   getById(id: number): Promise<User | null> {
-    return this.usersRepository.findOneBy({
-      id: id
-    })
+    return this.usersRepository.findOne({
+      relations: {
+        friends: true,
+        results: true,
+      },
+      where: { id: id }
+    });
   }
 
   getByLogin(login: string): Promise<User | null> {
@@ -110,9 +136,13 @@ export class UserService {
   }
 
   async getByUsername(username: string) {
-    const userfindName = await this.usersRepository.findOneBy({
-      username: username
-    })
+    const userfindName = await this.usersRepository.findOne({
+      relations: {
+        friends: true,
+        results: true,
+      },
+      where: { username: username }
+    });
     return userfindName;
   }
 
@@ -124,9 +154,8 @@ export class UserService {
       //Si vous voulez plus de chose a update, mettez le dans le body et faites un if
       if (userUpdate.username)
         user.username = userUpdate.username;
-      if (userUpdate.status) {
+      if (userUpdate.status)
         user.status = userUpdate.status;
-      }
       if (userUpdate.twoFaEnable)
         user.twoFaEnable = userUpdate.twoFaEnable
       return await this.usersRepository.save(user);
@@ -254,7 +283,37 @@ export class UserService {
       }
       return {};
     });
+  }
 
+  async GetMatchRequest(user: User) {
+    const my_user = await this.usersRepository.findOne({
+      relations: ['results'],
+      where: { id: user.id }
+    });
+    if (!my_user) {
+      return [];
+    }
+    return Promise.all(my_user.results.map(async request => {
+      const [winner, loser] = await Promise.all([
+        this.usersRepository.findOne({ where: { username: request.winner } }),
+        this.usersRepository.findOne({ where: { username: request.loser } })
+      ]);
+    
+      const winnerAvatar = winner ? winner.avatar || winner.intra_avatar : null;
+      const loserAvatar = loser ? loser.avatar || loser.intra_avatar : null;
+    
+      return {
+        winner: winner ? request.winner : "Unknown",
+        winner_score: request.winner_score || 0,
+        loser: loser ? request.loser : "Unknown",
+        loser_score: request.loser_score || 0,
+        winner_avatar: winnerAvatar,
+        loser_avatar: loserAvatar,
+        winner_elo: winner ? winner.elo : 0,
+        loser_elo: loser ? loser.elo : 0
+      };
+    }));
+    
   }
 
   async updateFriendRequestStatus(friendId: number, receiver: User, status: FriendRequestStatus) {
@@ -367,10 +426,11 @@ export class UserService {
   async getResults(id: number): Promise<Results[]> {
     const user = await this.usersRepository.findOne({
       relations: {
-        friends: true,
+        results: true,
       },
       where: { id: id }
     });
     return user ? user.results : [];
   }
+
 }
