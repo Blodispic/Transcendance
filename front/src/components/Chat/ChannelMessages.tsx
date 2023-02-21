@@ -5,7 +5,34 @@ import { socket } from "../../App";
 import { IChannel } from "../../interface/Channel";
 import { IMessage } from "../../interface/Message";
 import { useAppSelector } from "../../redux/Hook";
-import { JoinChannel } from "./ChannelUtils";
+import { JoinChannel, LeaveChannel } from "./ChannelUtils";
+
+function ChannelHeader(props: { chan: any, user: any }) {
+	const [isOnChan, setIsOnChan] = useState(false);
+
+	return (
+		<div className="body-header" >
+			{props.chan.name}
+			{
+				props.chan !== undefined &&
+				<ImCog style={{ float: 'right' }} />
+			}
+			{
+				props.chan.chanType == 1 &&
+				<HiLockClosed />}
+			{
+				isOnChan === false &&
+				<JoinChannel currentUser={props.user.user} chanid={props.chan.id} />
+			}
+			{/* {
+			isOnChan === true &&
+			<span><LeaveChannel currentUser={currentUser.user} chanid={currentChan?.id} /></span>
+		} */}
+		</div>
+	);
+}
+
+
 
 export function ChannelMessages(props: { id: any }) {
 	const [newInput, setNewInput] = useState("");
@@ -45,14 +72,14 @@ export function ChannelMessages(props: { id: any }) {
 		<div className="chat-body">
 			{/* {
 				currentChan !== undefined && currentUser.user !== undefined &&
-			<ChannelTitle user={currentUser.user} channel={currentChan} />
-			} */}
+			<ChannelTitle user={currentUser.user} channel={currentChan} /> */}
+
 			<div className="body-header" >
-                {currentChan?.name}
+				{currentChan?.name}
 				{
-                    currentChan !== undefined &&   
-                    <ImCog style={{float:'right'}}/>
-                }
+					currentChan !== undefined &&
+					<ImCog style={{ float: 'right' }} />
+				}
 				{
 					currentChan?.chanType == 1 &&
 					<HiLockClosed />}
@@ -60,30 +87,31 @@ export function ChannelMessages(props: { id: any }) {
 					isOnChan === false &&
 					<JoinChannel currentUser={currentUser.user} chanid={currentChan?.id} />
 				}
-				{/* {
+				{
 					isOnChan === true &&
 					<span><LeaveChannel currentUser={currentUser.user} chanid={currentChan?.id} /></span>
-				} */}
-			</div>
-			<div className="chat-messages">
-				{messageList.map(message => (
-					<div key={message.message} className="__wrap">
-						<div className="message-info">
-							<img className="user-avatar" src={message.sender?.avatar} />
-							{message.sender?.username}
-							<span className="timestamp">0000/00/00  00:00</span>
+				}
+				{/* <ChannelHeader chan={currentChan} user={currentUser?.user} /> */}
+				<div className="chat-messages">
+					{messageList.map(message => (
+						<div key={message.message} className="__wrap">
+							<div className="message-info">
+								<img className="user-avatar" src={message.sender?.avatar} />
+								{message.sender?.username}
+								<span className="timestamp">0000/00/00  00:00</span>
+							</div>
+							{message.message}
 						</div>
-						{message.message}
-					</div>
-				))}
+					))}
+				</div>
+				{
+					props.id !== undefined &&
+					<form id="input_form" onSubmit={(e) => { handleSubmitNewMessage(e); }}>
+						<input type="text" onChange={(e) => { setNewInput(e.target.value) }}
+							placeholder="type message here" value={newInput} />
+					</form>
+				}
 			</div>
-			{
-				props.id !== undefined &&
-				<form id="input_form" onSubmit={(e) => { handleSubmitNewMessage(e); }}>
-					<input type="text" onChange={(e) => { setNewInput(e.target.value) }}
-						placeholder="type message here" value={newInput} />
-				</form>
-			}
-		</div>
-	);
+			</div>
+			);
 }

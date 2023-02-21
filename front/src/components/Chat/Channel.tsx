@@ -156,8 +156,8 @@ export function Channels(props: any) {
 		<div id="chat-container">
 			<div className="sidebar left-sidebar">
 				<JoinedChannelList />
-				<AddChannel />
 				<ChannelList />
+				<AddChannel />
 			</div>
 			<ChannelMessages id={props.chatId} />
 			<div className="sidebar right-sidebar">
