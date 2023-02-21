@@ -40,7 +40,8 @@ function App() {
     .then(async response => {
       const data = await response.json();
       // check for error response
-      if (response.ok) {
+      console.log(data);
+      if (response.ok && data.username !== "") {
         dispatch(setUser(data))
         dispatch(set_status(UserStatus.ONLINE))
         // socket.emit("UpdateSomeone", { idChange: myStore.user?.id, idChange2: 0 })

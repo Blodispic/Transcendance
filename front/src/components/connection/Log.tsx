@@ -35,11 +35,11 @@ export function Log() {
             .then(async response => {
                 const data = await response.json();
                 setIsValid(data.result);
-                if (data.result === true)
-                {
+                if (data.result === true) {
                     dispatch(set_status(UserStatus.ONLINE));
                     // socket.emit("UpdateSomeone", { idChange: myStore.user?.id, idChange2: 0 })
                     navigate("/Home");
+
                 }
             })
             .catch()

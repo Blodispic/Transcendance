@@ -21,7 +21,6 @@ export default function Sign() {
 
         e.preventDefault();
         if (newname !== '' && myUser.user) {
-
             await fetch(`${process.env.REACT_APP_BACK}user/${myUser.user.id}`, {
                 method: 'PATCH',
                 headers: {
@@ -41,6 +40,7 @@ export default function Sign() {
             }
             dispatch(change_name(newname));
             dispatch(set_status(UserStatus.ONLINE));
+            
         
 
             navigate("/Home");
@@ -58,7 +58,7 @@ export default function Sign() {
                 <form>
                     <label >
                         Name:
-                        <input type="text" name="user" value={newname} onChange={e => setNewname(e.target.value)} />
+                        <input type="text" name="user" value={newname} maxLength={15} onChange={e => setNewname(e.target.value)} />
                     </label>
 
                     <label >
