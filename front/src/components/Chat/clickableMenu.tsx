@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { IChannel } from "../../interface/Channel";
 import { IUser } from "../../interface/User";
 import { useAppSelector } from "../../redux/Hook";
 import CustomGamePopup from "../Game/CustomGamePopup";
 
-export default function CLickableMenu(props: { user: IUser }) {
+export default function CLickableMenu(props: { user: IUser, chan: IChannel }) {
 
     const user: IUser = props.user;
     const [myVar, setMyvar] = useState<boolean>(false);

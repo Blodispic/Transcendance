@@ -2,10 +2,10 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useParams } from "react-router-dom";
 import { socket } from "../../App";
+import { IMessage } from "../../interface/Message";
 import { IUser } from "../../interface/User";
 import { useAppSelector } from "../../redux/Hook";
 import CustomGamePopup from "../Game/CustomGamePopup";
-import { IMessage } from "./Channel";
 import { ChatBody } from "./Chat";
 
 

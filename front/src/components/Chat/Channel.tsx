@@ -1,8 +1,12 @@
 import { useEffect, useState } from "react";
+import { BsFillKeyFill } from "react-icons/bs";
+import { FaCreativeCommons, FaCrown } from "react-icons/fa";
 import { HiLockClosed, HiOutlineXMark, HiPlus } from "react-icons/hi2";
+import { ImCog } from "react-icons/im";
 import { useNavigate, useParams } from "react-router-dom";
 import { socket } from "../../App";
 import { IChannel } from "../../interface/Channel";
+import { IMessage } from "../../interface/Message";
 import { IUser } from "../../interface/User";
 import { useAppSelector } from "../../redux/Hook";
 import CLickableMenu from "./clickableMenu";
@@ -88,6 +92,10 @@ function LeaveChannel (props: {currentUser: any, chanid: any}) {
 	);
 }
 
+function BanUser(props: {chanid: any, userid: any}) {
+	socket.emit('BanUser', {chanid: props.chanid, userid: props.userid});
+}
+
 function ChannelList(props: any) {
 	const [chanList, setChanList] = useState<IChannel[]>([]);
 	const [chanId, setChanId] = useState("");
@@ -122,6 +130,10 @@ function ChannelList(props: any) {
 							{
 								chan.chanType == 1 &&
 								<HiLockClosed style={{ float: 'right' }} />
+							}
+							{
+								chan.chanType == 2 && 
+								<BsFillKeyFill style={{ float: 'right'}} />
 							}
 						</div>
 					</li>
@@ -198,13 +210,15 @@ function ChannelMemberList(props: { id: any }) {
 		}
 		getChannel();
 	}, [props]);
-
+	
 	if (currentChan?.users === undefined) {
 		return (
 			<div className="title"> Members <hr />
 			</div>
 		)
 	}
+	if (currentChan !== undefined)
+		console.log(currentChan);
 
 	return (
 		<div className="title"> Members <hr />
@@ -214,25 +228,21 @@ function ChannelMemberList(props: { id: any }) {
 					<ul key={user.username} onClick={e => { changeId(user.id) }}>
 						<li>
 							{user.username}
+							{
+								currentChan.owner?.find(value=> user) &&
+								<FaCrown />
+							}
 						</li>
 					</ul>
 					{
 						 currentId == user.id && 
-									<CLickableMenu user={user}/>
+									<CLickableMenu user={user} chan={currentChan}/>
 					}
 				</div>
 			))
 			}
 		</div>
 	);
-}
-
-export interface IMessage {
-	chanid?: number;
-	userid?: number;
-	sender?: IUser;
-	usertowho?: IUser;
-	message: string;
 }
 
 function ChannelTitle(props: {user: IUser, channel: IChannel}) {
@@ -303,21 +313,21 @@ function ChannelMessages(props: { id: any }) {
 				currentChan !== undefined && currentUser.user !== undefined &&
 			<ChannelTitle user={currentUser.user} channel={currentChan} />
 			} */}
-						<div className="title" style={{ marginLeft: "10px", marginRight: "10px" }}>
-			{currentChan?.name}
-			{
-				currentChan?.chanType == 1 &&
-				<HiLockClosed />}
-			{
-				isOnChan === false && 
-				<span><JoinChannel currentUser={currentUser.user} chanid={currentChan?.id} /></span>
-			}
-			{
-				isOnChan === true && 
-				<span><LeaveChannel currentUser={currentUser.user} chanid={currentChan?.id} /></span>
-			}
-			<hr />
-		</div>
+			<div className="body-header" >
+				{currentChan?.name}
+				{
+					currentChan?.chanType == 1 &&
+					<HiLockClosed />}
+				{
+					isOnChan === false &&
+					<JoinChannel currentUser={currentUser.user} chanid={currentChan?.id} />
+				}
+				{/* {
+					isOnChan === true &&
+					<span><LeaveChannel currentUser={currentUser.user} chanid={currentChan?.id} /></span>
+				} */}
+				<ImCog style={{float:'right'}}/>
+			</div>
 			<div className="chat-messages">
 				{messageList.map(message => (
 					<div key={message.message} className="__wrap">
@@ -331,7 +341,7 @@ function ChannelMessages(props: { id: any }) {
 				))}
 			</div>
 			{
-				props.id !== undefined && 
+				props.id !== undefined &&
 				<form id="input_form" onSubmit={(e) => { handleSubmitNewMessage(e); }}>
 					<input type="text" onChange={(e) => { setNewInput(e.target.value) }}
 						placeholder="type message here" value={newInput} />

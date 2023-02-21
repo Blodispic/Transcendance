@@ -34,6 +34,19 @@ $tab-color: rgba(var(--primary-color), 0.5); //rgb(121, 121, 121);
 		background-color: var(--pastel-background);
 		box-shadow: 0px 0px 5px 0px rgb(0 0 0)
 	}
+	.title {
+		font-size: 20px;
+	}
+
+	.body-header {
+		background-color:rgba(0, 0, 0, 0.195);
+		font-size: 20px;
+		padding: 20px;
+		height: 30px;
+		line-height: 30px;
+		color: black;
+		display: flex;
+	}
 
 	.right-sidebar {
 		float: right;
@@ -76,7 +89,6 @@ $tab-color: rgba(var(--primary-color), 0.5); //rgb(121, 121, 121);
 		font-size: smaller;
 		cursor: pointer;
 		height: auto;
-		overflow-y: scroll;
 	}
 
 	li:hover {
@@ -145,7 +157,7 @@ $tab-color: rgba(var(--primary-color), 0.5); //rgb(121, 121, 121);
 }
 
 .chat-messages {
-	height: calc(100vh - 280px);
+	height: calc(100vh - 250px);
 	vertical-align: top;
 	overflow-y: scroll;
 	flex: 1;
