@@ -23,6 +23,8 @@ export class OauthService {
       code: oauthCode,
       redirect_uri: redirect_uri,
     };
+    console.log("Body = ", body);
+    
 
     const response = await fetch('https://api.intra.42.fr/oauth/token', {
       method: 'POST',
@@ -36,6 +38,7 @@ export class OauthService {
     //   throw new Error(`AuthService getToken failed, HTTP status ${response.status}`);
     // }
     const data = await response.json();
+    console.log("data = ", data);
     return this.getInfo(data.access_token);
   }
 
@@ -47,17 +50,8 @@ export class OauthService {
       },
     });
     const data = await response.json();
-    // const response = await fetch('https://api.intra.42.fr/v2/me', {
-    //   method: 'GET',
-    //   headers: {
-    //     'Authorization': `Bearer ${intra_token}`,
-    //   },
-    // })
-    // .then((ret) => {return ret.json()})
-    // .then((data) => {
-    //   console.log(data);
-    // })
-    // .catch((err) => {console.log(err)})
+    console.log("data2 = ", data);
+    
     const user = await this.usersService.getByLogin(data.login);
     if (user)
       return (user);

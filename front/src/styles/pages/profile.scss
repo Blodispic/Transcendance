@@ -357,3 +357,102 @@
     text-align: center;
   }
   
+  .match-list {
+    display: flex;
+    flex-direction: column-reverse;
+    overflow: hidden;
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-content: center;
+    padding-top: 1%;
+  }
+  
+  .match-block {
+    border-radius: 4.5px;
+    overflow: hidden;
+    text-decoration: none;
+    background-color: #ccced9;
+    background: linear-gradient(to right, #41B94B, #E05068);
+    border: 1px solid rgb(151, 139, 139);
+    margin-bottom: 10px;
+    margin-left: 10px;
+    width: 90%;
+    display: flex;
+    align-items: flex-start;
+  }
+  
+  .winner-img {
+    border-right: 0.2px solid rgb(0, 0, 0);
+    height: 75px;
+    width: 75px;
+  }
+  
+  .winner-img img {
+    height: 100%;
+    width: 100%;
+    object-fit: cover;
+  }
+
+  .loser-img {
+    border-left: 0.2px solid rgb(0, 0, 0);
+    height: 75px;
+    width: 75px;
+  }
+  
+  .loser-img img {
+    height: 100%;
+    width: 100%;
+    object-fit: cover;
+  }
+  
+  .match-info {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    flex-grow: 1;
+    margin: 0 10px;
+    flex-direction: column;
+  }
+  
+  .match-name {
+    font-family: "Fredoka One", cursive;
+  }
+  
+  .match-elo {
+    font-size: 14px;
+  }
+  
+  .match-score {
+    font-family: "Fredoka One", cursive;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    align-items: center;
+    width: 124px;
+    height: 70px;
+    border-radius: 50%;
+    font-size: 36px;
+  }
+  
+  .match-score-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-grow: 1;
+  }
+  
+  .winner {
+    flex-grow: 1;
+    display: flex;
+    align-items: center;
+  }
+  
+  .loser {
+    flex-grow: 1;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+  }
+  
