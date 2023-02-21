@@ -11,5 +11,5 @@ export class FriendRequestDto {
 
 	@IsNotEmpty()
 	status: FriendRequest_Status;
-  
+
 }

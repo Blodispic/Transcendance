@@ -10,7 +10,7 @@ export class OauthService {
   constructor(
     private usersService: UserService,
     private jwtService: JwtService,
-    ) { }
+  ) { }
 
   async getToken(oauthCode: string): Promise<any> {
     const api_key = process.env.API42_UID;
@@ -47,6 +47,17 @@ export class OauthService {
       },
     });
     const data = await response.json();
+    // const response = await fetch('https://api.intra.42.fr/v2/me', {
+    //   method: 'GET',
+    //   headers: {
+    //     'Authorization': `Bearer ${intra_token}`,
+    //   },
+    // })
+    // .then((ret) => {return ret.json()})
+    // .then((data) => {
+    //   console.log(data);
+    // })
+    // .catch((err) => {console.log(err)})
     const user = await this.usersService.getByLogin(data.login);
     if (user)
       return (user);
@@ -56,7 +67,7 @@ export class OauthService {
     const payload = { username: data.login, }
     const token = await this.jwtService.signAsync(payload, {
       secret: jwtConstants.secret,
-      expiresIn: '3600s',
+      expiresIn: '900s',
     });
 
     const userDto: CreateUserDto = {
@@ -65,6 +76,7 @@ export class OauthService {
       email: data.email,
       intra_avatar: data.image.link,
       access_token: token
+
     }
     return await this.usersService.create(userDto);
   }

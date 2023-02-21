@@ -3,9 +3,9 @@ import { useAppDispatch, useAppSelector } from './redux/Hook';
 import { io, Socket } from 'socket.io-client';
 import router from './router';
 import { Cookies } from 'react-cookie';
-import { log_unlog, setUser } from './redux/user';
+import { setUser, set_status } from './redux/user';
 import { useEffect } from "react";
-import { IUser } from "./interface/User";
+import { IUser, UserStatus } from "./interface/User";
 
 export let socket: Socket;
 
@@ -20,6 +20,7 @@ function App() {
     if (myStore.isLog == true && token != undefined && myStore.user && myStore.user.username) {
         socket = io(`${process.env.REACT_APP_BACK}`, {
         auth: {
+          token: token,
           user: myStore.user,
         }
       });
@@ -35,12 +36,23 @@ function App() {
       },
       body: JSON.stringify({ token: token }),
     })
-    const data: IUser = await response.json();
-    console.log("data=", data);
-    
-    dispatch(setUser(data));
-    dispatch(log_unlog());
-    
+    .then(async response => {
+      const data = await response.json();
+      // check for error response
+      if (response.ok) {
+        dispatch(setUser(data))
+        dispatch(set_status(UserStatus.ONLINE))
+        socket.emit("UpdateSomeone", {id: myStore.user?.id})
+      }
+      else {
+        cookies.remove('Token');
+      }
+    })
+    .catch( function() {
+      console.log("token inexistant or expired")
+      cookies.remove('Token');
+    }
+    )
   }
   if (myStore.user === undefined) {
     if (token !== undefined)

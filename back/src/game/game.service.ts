@@ -14,7 +14,7 @@ import { Ball, GameState, Move, Player, Vec2 } from "./game.interfaces";
 export class GameService {
 	constructor(
 		private readonly userService: UserService,
-	) {}
+	) { }
 	public waitingRoom: any[] = [];
 	public gameRoom: Game[] = [];
 
@@ -41,6 +41,7 @@ export class GameService {
 				score: 0,
 				side: 0,
 				socket: socket1.id,
+				avatar: "",
 			};
 			let player2: Player = {
 				paddle: {
@@ -56,26 +57,74 @@ export class GameService {
 				score: 0,
 				side: 1,
 				socket: socket2.id,
+				avatar: "",
 			};
-			console.log("Socket1: " ,socket1.handshake.auth.user);
-			console.log("Socket2: " ,socket2.handshake.auth.user);
 			player1.name = socket1.handshake.auth.user.username;
+			player1.avatar = socket1.handshake.auth.user.avatar;
 			player2.name = socket2.handshake.auth.user.username;
-			this.gameRoom.push(new Game(server, player1, player2));
+			player2.avatar = socket2.handshake.auth.user.avatar;
+			this.gameRoom.push(new Game(this, server, player1, player2, true, 3, socket1, socket2));
 			server.to(player1.socket).emit("RoomStart", this.gameRoom.length, player1);
 			server.to(player2.socket).emit("RoomStart", this.gameRoom.length, player2);
-			console.log("RoomStart ID: " + this.gameRoom.length);
-			console.log("Player1: " + player1.socket);
-			console.log("Player2: " + player2.socket);
+			this.userService.SetStatus(socket1.handshake.auth.user, "InGame");
+			server.emit("UpdateSomeone", { idChange: socket1.handshake.auth.user.id });
+
+			this.userService.SetStatus(socket2.handshake.auth.user, "InGame");
+			server.emit("UpdateSomeone", { idChange: socket2.handshake.auth.user.id });
+
 		}
 		else
 			return ('Waiting for more Players...');
 	}
 
+	startCustomGame(server: Server, userSocket1: any, userSocket2: any, extra: boolean, scoreMax: number) {
+		const socket1 = userSocket1;
+		const socket2 = userSocket2;
+
+		let player1: Player = {
+			paddle: {
+				position: {
+					x: GAME_INTERNAL_WIDTH / 2 - paddleDimensions.x / 2,
+					y: GAME_INTERNAL_WIDTH * GAME_RATIO - paddleDimensions.y,
+				},
+				speed: vector_zero(),
+				angle: 0,
+			},
+			input: inputdefault,
+			name: "Player1",
+			score: 0,
+			side: 0,
+			socket: socket1.id,
+			avatar: "",
+		};
+		let player2: Player = {
+			paddle: {
+				position: {
+					x: GAME_INTERNAL_WIDTH / 2 - paddleDimensions.x / 2,
+					y: 0,
+				},
+				speed: vector_zero(),
+				angle: 0,
+			},
+			input: inputdefault,
+			name: "Player2",
+			score: 0,
+			side: 1,
+			socket: socket2.id,
+			avatar: "",
+		};
+		player1.name = socket1.handshake.auth.user.username;
+		player1.avatar = socket1.handshake.auth.user.avatar;
+		player2.name = socket2.handshake.auth.user.username;
+		player2.avatar = socket2.handshake.auth.user.avatar;
+		this.gameRoom.push(new Game(this, server, player1, player2, extra, scoreMax, socket1, socket2));
+		server.to(player1.socket).emit("RoomStart", this.gameRoom.length, player1);
+		server.to(player2.socket).emit("RoomStart", this.gameRoom.length, player2);
+	}
+
 	updateMove1(move1: Move, client: string) {
-		let roomId : number = 0;
-		while (roomId < this.gameRoom.length && this.gameRoom.length > 0)
-		{
+		let roomId: number = 0;
+		while (roomId < this.gameRoom.length && this.gameRoom.length > 0) {
 			if (this.gameRoom[roomId].gameState.player1.socket == client)
 				this.gameRoom[roomId].updateMove1(move1);
 			roomId++;
@@ -83,9 +132,8 @@ export class GameService {
 	}
 
 	updateMove2(move2: Move, client: string) {
-		let roomId : number = 0;
-		while (roomId < this.gameRoom.length && this.gameRoom.length > 0)
-		{
+		let roomId: number = 0;
+		while (roomId < this.gameRoom.length && this.gameRoom.length > 0) {
 			if (this.gameRoom[roomId].gameState.player2.socket == client)
 				this.gameRoom[roomId].updateMove2(move2);
 			roomId++;
@@ -93,9 +141,8 @@ export class GameService {
 	}
 
 	playerDisconnect(client: string) {
-		let roomId : number = 0;
-		while (roomId < this.gameRoom.length && this.gameRoom.length > 0)
-		{
+		let roomId: number = 0;
+		while (roomId < this.gameRoom.length && this.gameRoom.length > 0) {
 			if (this.gameRoom[roomId].gameState.player1.socket === client
 				|| this.gameRoom[roomId].gameState.player2.socket === client)
 				this.gameRoom[roomId].disconnect(client);
@@ -103,23 +150,37 @@ export class GameService {
 		}
 	}
 
-	EndGame(client: string)
-	{
-		let roomId : number = 0;
-		while (roomId < this.gameRoom.length && this.gameRoom.length > 0)
-		{
-			if (this.gameRoom[roomId].gameState.player1.socket == client)
-			{
-				console.log(roomId);
+	async save(results: any, server: Server) {
+		const winner = await this.userService.getByUsername(results.winner);
+		const loser = await this.userService.getByUsername(results.loser);
+		if (winner) {
+			winner.win += 1;
+			winner.elo += 50;
+			this.userService.save(winner);
+		}
+		else {
+			// winner doesn't exist
+		}
+		if (loser) {
+			loser.lose += 1;
+			loser.elo -= 50;
+			this.userService.save(loser);
+		}
+		else {
+			// loser doesn't exist
+		}
+
+		this.userService.createResults(results);
+	}
+
+	EndGame(client: string, server: Server) {
+		let roomId: number = 0;
+		while (roomId < this.gameRoom.length && this.gameRoom.length > 0) {
+			if (this.gameRoom[roomId].gameState.player1.socket === client || this.gameRoom[roomId].gameState.player2.socket === client) {
+				this.userService.SetStatus(this.gameRoom[roomId].socket1.handshake.auth.user, "Online");  // ACHANGER PAR USERLIST BYY ADAM 
+				this.userService.SetStatus(this.gameRoom[roomId].socket2.handshake.auth.user, "Online");  // ACHANGER PAR USERLIST BYY ADAM 
+				server.emit("UpdateSomeone", { idChange: this.gameRoom[roomId].socket1.handshake.auth.user.id });
 				this.gameRoom.splice(roomId, 1);
-				console.log("Room removed");
-				return;
-			}
-			else if (this.gameRoom[roomId].gameState.player2.socket == client)
-			{
-				console.log(roomId);
-				this.gameRoom.splice(roomId, 1);
-				console.log("Room removed");
 				return;
 			}
 			roomId++;
@@ -164,6 +225,7 @@ let gameStateDefault: GameState = {
 		score: 0,
 		side: 0,
 		socket: "",
+		avatar: "",
 	},
 	player2: {
 		paddle: {
@@ -176,31 +238,50 @@ let gameStateDefault: GameState = {
 		score: 0,
 		side: 1,
 		socket: "",
+		avatar: "",
 	},
 	ball: balldefault,
 	gameFinished: false,
+	extra: true,
 };
 
 class Game {
 	server: Server;
 	public gameState: GameState;
+	gameService: GameService;
+	socket1: any;
+	socket2: any;
+	watchList: string[];
 
-	constructor(server: Server, user1: Player, user2: Player) {
-		console.log("NEW GAME CREATED");
+	constructor(gameService: GameService, server: Server, user1: Player, user2: Player, extra: boolean, scoreMax: number, socket1: any, socket2: any) {
+		this.gameService = gameService;
 		this.server = server;
 		this.gameState = gameStateDefault;
 		this.gameState.gameFinished = false;
-		this.gameState.player1 = user1
+		this.gameState.player1 = user1;
 		this.gameState.player2 = user2;
+		console.log("Avatar wesh: ", this.gameState.player1.avatar);
+		this.gameState.player1.avatar = user1.avatar;
+		this.gameState.player2.avatar = user2.avatar;
 		this.gameState.player1.score = 0;
 		this.gameState.player2.score = 0;
-		this.resetState(this.gameState); 
+		this.resetState(this.gameState);
+		this.gameState.extra = extra;
+		this.socket1 = socket1;
+		this.socket2 = socket2;
+		this.gameState.scoreMax = scoreMax;
+		console.log("score max = ", scoreMax);
+		
+		this.watchList = [];
 
 		this.gameRoomRun();
 	}
 
-	gameRoomRun()
-	{
+	addSpectator(client: string) {
+		this.watchList.push(client);
+	}
+
+	gameRoomRun() {
 		var intervalId = setInterval(() => {
 			this.gameState = this.updateState(this.gameState);
 			if (this.gameState.gameFinished == true)
@@ -208,46 +289,36 @@ class Game {
 		}, 1000 / 60);
 	}
 
-	updateMove1(newMove1:Move)
-	{
-		console.log("Move1 received: left:" + newMove1.left + " right: " + newMove1.right);
+	updateMove1(newMove1: Move) {
 		move1 = newMove1;
 	}
 
-	updateMove2(newMove2:Move)
-	{
-	console.log("Move2 received: left:" + newMove2.left + " right: " + newMove2.right);
+	updateMove2(newMove2: Move) {
 		move2 = newMove2;
 	}
 
-	disconnect(client: string)
-	{
-		if (this.gameState.player1.socket === client)
-		{
-			console.log(this.gameState.player1.name + " disconnected.");
+	disconnect(client: string) {
+		if (this.gameState.player1.socket === client) {
 			this.gameState.player2.score = this.gameState.scoreMax;
 			this.finishGame();
 		}
-		else if (this.gameState.player2.socket === client)
-		{
-			console.log(this.gameState.player2.name + " disconnected.");
+		else if (this.gameState.player2.socket === client) {
 			this.gameState.player1.score = this.gameState.scoreMax;
 			this.finishGame();
 		}
 	}
 
-	finishGame()
-	{
+	finishGame() {
 		this.gameState.gameFinished = true;
-		if (this.gameState.player1.score === this.gameState.scoreMax)
-		{
-			let result: any = {winner: this.gameState.player1.name, looser: this.gameState.player2.name, winner_score: this.gameState.player1.score.toString(), looser_score: this.gameState.player2.score.toString()};
+		if (this.gameState.player1.score === this.gameState.scoreMax) {
+			let result: any = { winner: this.gameState.player1.name, loser: this.gameState.player2.name, winner_score: this.gameState.player1.score.toString(), loser_score: this.gameState.player2.score.toString() };
+			this.gameService.save(result, this.server);
 			this.server.to(this.gameState.player1.socket).emit("GameEnd", result);
 			this.server.to(this.gameState.player2.socket).emit("GameEnd", result);
 		}
-		else
-		{
-			let result: any = {winner: this.gameState.player2.name, looser: this.gameState.player1.name, winner_score: this.gameState.player2.score.toString(), looser_score: this.gameState.player1.score.toString()};
+		else {
+			let result: any = { winner: this.gameState.player2.name, loser: this.gameState.player1.name, winner_score: this.gameState.player2.score.toString(), loser_score: this.gameState.player1.score.toString() };
+			this.gameService.save(result, this.server);
 			this.server.to(this.gameState.player1.socket).emit("GameEnd", result);
 			this.server.to(this.gameState.player2.socket).emit("GameEnd", result);
 		}
@@ -258,12 +329,10 @@ class Game {
 
 		state.player1.input = { ...move1 };
 		state.player2.input = { ...move2 };
-		if (state.player1.score === state.scoreMax || state.player2.score === state.scoreMax)
-		{
+		if (state.player1.score === state.scoreMax || state.player2.score === state.scoreMax) {
 			state.gameFinished = true;
 		}
-		if (state.resetCooldown <= 0 && state.gameFinished === false)
-		{
+		if (state.resetCooldown <= 0 && state.gameFinished === false) {
 			this.movePlayer(state.player1, state);
 			this.movePlayer(state.player2, state);
 			this.wallCollision(state.ball, state);
@@ -297,14 +366,24 @@ class Game {
 	                    (player.input.left === false &&
 	                        player.input.right === false &&
 	                        ball.previous.y > player.paddle.position.y)
-	                )
-	                    ball.speed.y = ball.speed.y * (Math.random() * (2 - 1.5) + 1.5);
+	                ){
+						ball.speed.y = ball.speed.y * (Math.random() * (2 - 1.5) + 1.5);
+						if (ball.previous.x + (ball.position.x - ball.previous.x) / 2 < player.paddle.position.x + paddleDimensions.x / 2)
+							ball.speed.x -= (Math.random() * (4 - 2) + 2);
+						else
+							ball.speed.x += (Math.random() * (4 - 2) + 2);
+					}
 	                else if (
 	                    player.input.left === false &&
 	                    player.input.right === false &&
 	                    ball.previous.y < player.paddle.position.y
-	                )
-	                    ball.speed.y = ball.speed.y * (Math.random() * (1 - 0.8) + 0.8);
+	                ){
+						ball.speed.y = ball.speed.y * (Math.random() * (1 - 0.8) + 0.8);
+						if (ball.previous.x + (ball.position.x - ball.previous.x) / 2 < player.paddle.position.x + paddleDimensions.x / 2)
+							ball.speed.x -= (Math.random() * (4 - 2) + 2);
+						else
+							ball.speed.x += (Math.random() * (4 - 2) + 2);
+					}
 	            } else {
 	                if (
 	                    (player.input.left &&
@@ -313,14 +392,24 @@ class Game {
 	                    (player.input.left === false &&
 	                        player.input.right === false &&
 	                        ball.previous.y < player.paddle.position.y)
-	                )
-	                    ball.speed.y = ball.speed.y * (Math.random() * (2 - 1.5) + 1.5);
+	                ){
+						ball.speed.y = ball.speed.y * (Math.random() * (2 - 1.5) + 1.5);
+						if (ball.previous.x + (ball.position.x - ball.previous.x) / 2 < player.paddle.position.x + paddleDimensions.x / 2)
+							ball.speed.x -= (Math.random() * (4 - 2) + 2);
+						else
+							ball.speed.x += (Math.random() * (4 - 2) + 2);
+					}
 	                else if (
 	                    player.input.left &&
 	                    player.input.right &&
 	                    ball.previous.y > player.paddle.position.y
-	                )
-	                    ball.speed.y = ball.speed.y * (Math.random() * (1 - 0.8) + 0.8);
+	                ){
+						ball.speed.y = ball.speed.y * (Math.random() * (1 - 0.8) + 0.8);
+						if (ball.previous.x + (ball.position.x - ball.previous.x) / 2 < player.paddle.position.x + paddleDimensions.x / 2)
+							ball.speed.x -= (Math.random() * (4 - 2) + 2);
+						else
+							ball.speed.x += (Math.random() * (4 - 2) + 2);
+					}
 	            }
 	            if (
 	                (ball.previous.y < player.paddle.position.y && ball.speed.y > 0) ||
@@ -353,17 +442,19 @@ class Game {
 			if (ball.position.y > state.area.y - ballRadius) {
 				state.player2.score++;
 				this.resetState(state);
-				if (state.player2.score === state.scoreMax) {
+				console.log("if player2 score >= scoreMax " + (state.player2.score >= state.scoreMax))
+				if (state.player2.score >= state.scoreMax) {
 					//END THE GAME
-					console.log("Player2 Wins");
+					console.log("p2: " + state.player2.score);
 					this.finishGame();
 				}
 			} else if (ball.position.y < 0 + ballRadius) {
 				state.player1.score++;
 				this.resetState(state);
-				if (state.player1.score === state.scoreMax) {
+				console.log("if player1 score >= scoreMax " + (state.player1.score >= state.scoreMax))
+				if (state.player1.score >= state.scoreMax) {
 					//END THE GAME
-					console.log("Player1 Wins");
+					console.log("p1: " + state.player1.score);
 					this.finishGame()
 				}
 			}
@@ -376,17 +467,15 @@ class Game {
 			x: state.area.x / 2 - paddleDimensions.x / 2,
 			y: state.area.y - paddleDimensions.y,
 		};
-		if (state.player1.score === state.scoreMax || state.player2.score === state.scoreMax)
-		{
+		if (state.player1.score === state.scoreMax || state.player2.score === state.scoreMax) {
 			state.gameFinished = true;
 		}
-		else
-		{
+		else {
 			state.gameFinished = false;
 		}
 		state.player1.paddle.speed = { x: 0, y: 0 };
 		state.player1.paddle.angle = 0;
-		
+
 		state.player2.paddle.position = {
 			x: state.area.x / 2 - paddleDimensions.x / 2,
 			y: 0,
@@ -400,10 +489,10 @@ class Game {
 
 		state.ball.speed.x = (Math.random() * (20) - 10);
 		if (state.player1.score > state.player2.score)
-		    state.ball.speed.y = Math.random() * (5 - 1.5) + 1.5;
+			state.ball.speed.y = Math.random() * (5 - 1.5) + 1.5;
 		else state.ball.speed.y = -(Math.random() * (5 - 1.5) + 1.5);
 	}
-		
+
 	moveBall(ball: Ball) {
 		ball.previous.x = ball.position.x;
 		ball.previous.y = ball.position.y;
@@ -411,15 +500,15 @@ class Game {
 			ball.speed.y = 12;
 		else if (ball.speed.y < -12)
 			ball.speed.y = -12;
-		else if (ball.speed.y < 4 && ball.speed.y > 0)
+		else if (ball.speed.y < 4 && ball.speed.y >= 0)
 			ball.speed.y = 4;
 		else if (ball.speed.y > -4 && ball.speed.y < 0)
 			ball.speed.y = -4;
-		if (ball.speed.x > 15)
-			ball.speed.x = 15;
-		else if (ball.speed.x < -15)
-			ball.speed.x = -15;
-		else if (ball.speed.x < 1 && ball.speed.x > 0)
+		if (ball.speed.x > 20)
+			ball.speed.x = 20;
+		else if (ball.speed.x < -20)
+			ball.speed.x = -20;
+		else if (ball.speed.x < 1 && ball.speed.x >= 0)
 			ball.speed.x = 1;
 		else if (ball.speed.x > -1 && ball.speed.x < 0)
 			ball.speed.x = -1;
@@ -427,11 +516,13 @@ class Game {
 		ball.position.y += ball.speed.y;
 		if (ball.cooldown > 0) ball.cooldown--;
 	}
-		
+
 	movePlayer(player: Player, state: GameState) {
 		player.paddle.speed = { x: 0, y: 0 };
 		if (player.side === 0) {
-			if (player.input.left && player.input.right)
+			if (state.extra === false && player.input.left && player.input.right)
+				player.paddle.speed.y = 0;
+			else if (state.extra && player.input.left && player.input.right)
 				player.paddle.speed.y = -4;
 			else if (player.input.left && player.paddle.position.x > 0)
 				player.paddle.speed.x = -8;
@@ -441,7 +532,9 @@ class Game {
 				player.paddle.speed.y = 2;
 		}
 		else {
-			if (player.input.left && player.input.right)
+			if (state.extra === false && player.input.left && player.input.right)
+				player.paddle.speed.y = 0;
+			else if (state.extra && player.input.left && player.input.right)
 				player.paddle.speed.y = 4;
 			else if (player.input.left && player.paddle.position.x > 0)
 				player.paddle.speed.x = -8;
@@ -454,11 +547,15 @@ class Game {
 		player.paddle.position.y += player.paddle.speed.y;
 	}
 
-	updateState(gameState: GameState)
-	{
+	updateState(gameState: GameState) {
 		gameState = this.updateGameState({ ...gameState });
-		this.server.to(this.gameState.player1.socket).emit("UpdateState", gameState);
-		this.server.to(this.gameState.player2.socket).emit("UpdateState", gameState);
+		this.server.to(this.gameState.player1.socket).emit("UpdateState", gameState, 1);
+		this.server.to(this.gameState.player2.socket).emit("UpdateState", gameState, 2);
+		let i: number = 0;
+		while (this.watchList[i]) {
+			this.server.to(this.watchList[i]).emit("UpdateState", gameState, 0);
+			i++;
+		}
 		return gameState;
 	}
 }

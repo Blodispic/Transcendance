@@ -1,0 +1,76 @@
+// #queue-container {
+//     button {
+//         position: fixed; /* or absolute */
+//         top: 50%;
+//         left: 50%;
+//     }
+// }
+
+// .center {
+//     display: flex;
+//     justify-content: center;
+//     align-items: center;
+//     height: 200px;
+// }
+
+.test {
+  border: none;
+  color: black;
+  text-align: center;
+  display: inline-block;
+  font-size: 16px;
+  text-decoration: none;
+
+  a{
+        text-decoration: none;
+    }
+}
+
+.cool {
+    text-decoration: none;
+    color: white;
+}
+
+.custom-popup{
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.5);
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.custom-popup-inner {
+    font-family: 'Fredoka One', cursive;
+    border-radius: 5px;
+    font-size: 35px;
+    background-color: white;
+    width: 60%;
+    height: 400px;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    position: relative;
+    z-index: 100;
+
+    .sub-element {
+        padding: 20px 0px 20px 0px;
+        font-size: 25px;
+    }
+}
+
+.close-icon {
+	float: right;
+	padding: 10px;
+	cursor: pointer;
+    width: 20px;
+}
+
+label {
+    font-size: 20px;
+    font-family: 'Fredoka One', cursive;
+}

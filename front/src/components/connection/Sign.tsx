@@ -1,9 +1,11 @@
 import { useState } from 'react';
-import '../../styles/connection.scss'
+import { useNavigate } from 'react-router-dom';
+import { socket } from '../../App';
+import { UserStatus } from '../../interface/User';
 import { useAppDispatch, useAppSelector } from '../../redux/Hook';
-import { change_name, log_unlog } from "../../redux/user";
+import { change_avatar, change_name, set_status } from "../../redux/user";
 
-export default function NameForm() {
+export default function Sign() {
 
 
     const [newname, setNewname] = useState('');
@@ -12,10 +14,13 @@ export default function NameForm() {
     const formData = new FormData();
     const myUser = useAppSelector(state => state.user);
     const dispatch = useAppDispatch();
+    const navigate = useNavigate();
+
 
     const fetch_name_avatar = async (e: any) => {
+
         e.preventDefault();
-        if (myUser.user !== undefined) {
+        if (newname !== '' && myUser.user) {
 
             await fetch(`${process.env.REACT_APP_BACK}user/${myUser.user.id}`, {
                 method: 'PATCH',
@@ -32,15 +37,18 @@ export default function NameForm() {
                     body: formData,
                 })
                 formData.delete('file');
+                dispatch(change_avatar(avatar));
             }
             dispatch(change_name(newname));
-            dispatch(log_unlog());
+            dispatch(set_status(UserStatus.ONLINE));
+            socket.emit("UpdateSomeone", {id: myUser.user?.id })
+
+            navigate("/Home");
         }
     }
 
     const onChangeFile = (e: any) => {
         const myFile: File = e.target.files[0];
-        console.log(e.target.files)
         setFile(myFile)
         setavatar(URL.createObjectURL(myFile));
     }
@@ -57,10 +65,6 @@ export default function NameForm() {
                         profile picture:
                         <input type="file" name="avatar" onChange={e => onChangeFile(e)} accept="image/png, image/jpeg" />
                     </label>
-                    {
-                        file && avatar !== '' &&
-                        <img src={avatar} />
-                    }
                     {
                         newname &&
                         <button onClick={(e) => fetch_name_avatar(e)}>

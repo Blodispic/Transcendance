@@ -1,12 +1,12 @@
 import { useState, useEffect } from 'react';
 import { Navigate, useNavigate, useSearchParams } from "react-router-dom";
-import '../../styles/connection.scss'
-import NameForm from "./form_name_avatar"
+import NameForm from "./Sign"
 import { useAppDispatch, useAppSelector } from "../../redux/Hook";
-import { setUser } from "../../redux/user";
+import { oauth, setUser, set_status, change_avatar } from "../../redux/user";
 import { useCookies } from "react-cookie";
-import { IUser } from '../../interface/User';
-import { page } from '../../interface/enum';
+import { IUser, UserStatus } from '../../interface/User';
+import { socket } from '../../App';
+
 
 
 
@@ -19,12 +19,11 @@ export const getAuthorizeHref = (): string => {
 
 export default function Connection() {
 
-    const [pages, setpages] = useState<page>(page.PAGE_1)
     const [searchParams] = useSearchParams()
     const [, setCookie] = useCookies(['Token']);
     const dispatch = useAppDispatch();
+    const navigate = useNavigate();
     const myUser = useAppSelector(state => state.user);
-	const navigate = useNavigate();
 
     useEffect(() => {
         const oauthCode = searchParams.get('code'); // Tu lui dit de recuperer le parametre "code" dans l'url
@@ -41,19 +40,24 @@ export default function Connection() {
                     .then(async response => {
                         const data = await response.json();
                         // check for error response
-                        if (!response.ok) {
-                            // get error message from body or default to response statusText
-                            const error = (data && data) || response.statusText;
-                            return Promise.reject(error);
-                        }
-                        else {
+                        if (response.ok) {
+                            console.log(data);
+
+                            console.log("enable ? ",data.twoFaEnable);
                             dispatch(setUser(data));
-                            if (data.username === "")
-                                setpages(page.PAGE_2);
-                            // else if (myUser.user.double_auth)
-                            //     setpages(page.page_3);
+                            dispatch(change_avatar(data.intra_avatar))
+                            dispatch(oauth());
                             setCookie('Token', data.access_token, { path: '/' });
+                            if (data.username === "")
+                                navigate("./sign")
+                            else if (data.twoFaEnable == true)
+                                navigate("./log")
+                            else {
+                                dispatch(set_status(UserStatus.ONLINE));
+                                socket.emit("UpdateSomeone", {id: myUser.user!.id })
+                                navigate("/Home");
                         }
+                    }
                     })
                     .catch(error => {
                         console.error('There was an error!', error);
@@ -65,32 +69,21 @@ export default function Connection() {
 
     return (
         <div className='container'>
-            {
-                pages == page.PAGE_1 &&
                 <div className='connection'>
                     <div className='button'>
-                    <button className="button pulse pointer color_sign" >
-                        <a href={getAuthorizeHref()}>
-                            sign
-                        </a>
-                    </button>
-                    <button className="button pulse pointer color_log" >
-                        <a href={getAuthorizeHref()}>
-                            log
-                        </a>
-                    </button>
+                        <button className="button pulse pointer color_sign" >
+                            <a href={getAuthorizeHref()}>
+                                sign
+                            </a>
+                        </button>
+                        <button className="button pulse pointer color_log" >
+                            <a href={getAuthorizeHref()} >
+                                log
+                            </a>
+                        </button>
                     </div>
                 </div>
-            }
-            {
-                pages == page.PAGE_2 &&
-                <NameForm />
-            }
-            {
-                pages == page.PAGE_3 &&
-                <NameForm />
-                // <double_auth />
-            }
+
         </div>
     );
 }

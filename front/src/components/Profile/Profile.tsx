@@ -1,267 +1,82 @@
 import { useEffect, useState } from 'react';
 import { Navigate, useNavigate, useParams } from "react-router-dom";
 import { IUser } from '../../interface/User';
-import '../../styles/profile.scss';
 import { HiOutlineMagnifyingGlassCircle } from "react-icons/hi2";
 import { useAppSelector } from '../../redux/Hook';
 import { ImCheckmark, ImCross } from "react-icons/im";
-
-function InviteButton(props: { user: any }) {
-        const { user } = props;
-
-        const pathname = window.location.pathname;
-        const pathArray = pathname.split('/');
-        const friendId = pathArray[pathArray.length - 1];
-        const [status, setStatus] = useState<string>('+ Add Friend');
-
-        const sendFriendRequest = async () => {
-                await fetch(`${process.env.REACT_APP_BACK}user/friend-request/send/${friendId}`, {
-                        method: 'POST',
-                        body: JSON.stringify(user),
-                        headers: { 'Content-Type': 'application/json' }
-                });
-                setStatus('Pending');
-        }
-
-        useEffect(() => {
-                const checkFriendRequest = async () => {
-                        const response = await fetch(`${process.env.REACT_APP_BACK}user/friend-request/status/${friendId}`, {
-                                method: 'POST',
-                                body: JSON.stringify(user),
-                                headers: { 'Content-Type': 'application/json' }
-                        });
-                        const data = await response.json()
-                        if (data.status)
-                                setStatus(data.status);
-                        else
-                                setStatus("+ Add Friend");
-                }
-                checkFriendRequest();
-        }, [friendId, user]);
+import { Header } from './Header_profile';
+import { Friends } from './friend_request';
+import { page } from '../../interface/enum';
+import { History } from './History';
+import TwoFa from './setTwoFa';
+import { socket } from '../../App';
+import { UserStatus } from '../../interface/User';
 
 
-        return (
-                <button className="reqButton pointer white width_50" onClick={sendFriendRequest} >
-                        {status}
-                </button>
-        )
-}
 
-function Search(props: { currentUser: IUser, setcurrentUser: Function }) {
 
-        const { currentUser, setcurrentUser } = props;
-        const navigate = useNavigate();
-        const [username, setMan] = useState<string | undefined>(undefined)
+function Onglets(props: { currentUser: IUser, current: page, setOnglets: Function }) {
 
-        const search_man = async (e: any) => {
-                e.preventDefault();
-                const response = await fetch(`${process.env.REACT_APP_BACK}user/username/${username}`, {
-                        method: 'GET',
-                })
-                const data = await response.json()
-
-                setcurrentUser(data);
-
-                navigate(`../Profile/${data.id}`);
-
-        }
-
-        const handleKeyDown = (event: any) => {
-                if (event.key === "Enter") {
-                        search_man(event);
-                }
-        };
-
-        return (
-                <div className="search">
-                        <div className="icon-search" onClick={(e) => search_man(e)} >
-                                <HiOutlineMagnifyingGlassCircle />
-                        </div>
-                        <div className="input">
-                                <input type="text" onKeyDown={handleKeyDown} onChange={e => setMan(e.target.value)} placeholder="Search..." />
-                        </div>
-                </div>
-        )
-}
-
-function Header(props: { currentUser: IUser, setCurrentUser: Function }) {
-
-        const { currentUser, setCurrentUser } = props;
         const myUser = useAppSelector(state => state.user);
-
+        const { currentUser, } = props;
+        const { current, setOnglets } = props;
         return (
-                <div className='profile-header'>
-
-
-                        <div className='info-container'>
-                                <div className="left-part">
-                                        <div className='avatar'>
-                                                <img className='logo' src={`${process.env.REACT_APP_BACK}user/${currentUser.id}/avatar`} />
-                                        </div>
-                                        {
-                                                currentUser.username !== myUser.user!.username &&
-                                                <InviteButton user={myUser.user} />
-                                        }
-                                </div>
-
-
-
-                                <div className='info-header'>
-                                        <Search currentUser={currentUser} setcurrentUser={setCurrentUser} />
-                                        <div className='stat-header'>
-                                                <span>test</span>
-                                                <span>test</span>
-                                                <span>test</span>
-
-                                                <div className='rank'>
-                                                        <span>RANK</span>
-                                                        <span className='rank'>GOLD II </span>
-                                                </div>
-                                        </div>
-
-                                        <div className='block'>
-
-                                                <div className='block'>
-                                                        <span>{currentUser.username}</span>
-
-                                                </div>
-
-                                                <div className=' block'>
-                                                        <span >{currentUser.status}</span>
-                                                </div>
-                                        </div>
-                                </div>
-
-                        </div>
-
-                </div>
-        )
-};
-
-function Friends(props: { user: IUser }) {
-        const { user } = props;
-        const [friendReq, setFriendReq] = useState<{ name: string, avatar: string, id: number }[]>([]);
-
-        useEffect(() => {
-          const checkFriendRequest = async () => {
-            const response = await fetch(`${process.env.REACT_APP_BACK}user/friends`, {
-              method: 'POST',
-              body: JSON.stringify(user),
-              headers: { 'Content-Type': 'application/json' }
-            });
-            const data = await response.json();
-            const pendingFriendRequests = data.filter((friendRequest: { status: string; }) => friendRequest.status === "Pending");
-                setFriendReq(data);
-          };
-          checkFriendRequest();
-        }, []);
-
-        interface FriendsListProps {
-                friends: { name: string, avatar: string, id: number }[];
-        }
-
-        const acceptFriendRequest = async (friend: number) => {
-                const response = await fetch(`${process.env.REACT_APP_BACK}user/friends/accept`, {
-                  method: 'POST',
-                  body: JSON.stringify({friend, user}),
-                  headers: { 'Content-Type': 'application/json' }
-                });
-                const data = await response.json();
-                setFriendReq(prevState => prevState.filter(accepted => accepted.id !== friend));
-              };
-            
-              const declineFriendRequest = async (friend: number) => {
-                const response = await fetch(`${process.env.REACT_APP_BACK}user/friends/decline`, {
-                  method: 'POST',
-                  body: JSON.stringify({friend, user}),
-                  headers: { 'Content-Type': 'application/json' }
-                });
-                const data = await response.json();
-                setFriendReq(prevState => prevState.filter(declined => declined.id !== friend));
-              };
-    
-
-
-        const FriendsList = (props: FriendsListProps) => {
-                return (
-                        <ul className="friends-list">
-                                {props.friends.map(friend => (
-                                        <li className="friend-block" key={friend.name}>
-                                                <div className="friend-img">
-                                                        <img src={friend.avatar} alt={friend.name} />
-                                                </div>
-                                                <div className="friend-info">
-                                                        <div className="friend-name">{friend.name}</div>
-                                                        <div className="friend-status">Online</div>
-                                                </div>
-                                                <div className="friend-actions">
-                                                        <button className="accept-button" onClick={() => acceptFriendRequest(friend.id)} ><ImCheckmark /></button>
-                                                        <button className="refuse-button" onClick={() => declineFriendRequest(friend.id)} ><ImCross /></button>
-                                                </div>
-
-                                        </li>
-                                ))}
-                        </ul>
-                )
-        }
-
-
-
-        const FriendsReq = () => {
-                const friendReq = [
-                { name: 'Ross', avatar: 'https://img.freepik.com/vecteurs-premium/panda-mignon-tenant-bambou-pouce-vers-haut-icone-vecteur-dessin-anime-illustration-nature-animale-isolee_138676-4817.jpg?w=360', id: 1 },
-                { name: 'Rachel', avatar: 'http://10.1.8.1:4000/user/3/avatar', id: 1 },
-                { name: 'Joey', avatar: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRpamtYxWbURGcTSVFTmsrY16rf3d_I39DhAQ&usqp=CAU', id: 1 },
-                { name: 'Phoebe', avatar: 'https://i.pinimg.com/originals/d0/a2/e2/d0a2e243610bde1be54defdca162e47a.jpg', id: 1 },
-                { name: 'Chandler', avatar: 'https://ih1.redbubble.net/image.1343394098.5639/flat,750x,075,f-pad,750x1000,f8f8f8.jpg', id: 1 },
-                { name: 'Monica', avatar: 'https://www.gamosaurus.com/wp-content/uploads/Users/pikavatarsurf.png', id: 1 },
-                ];
-                return <FriendsList friends={friendReq} />;
-
-
-        }
-
-        return (
-                <div className='FriendHeader'>
-
-                        <FriendsReq />
-                        <div className='FriendRequestBlock'>
-                        </div>
-
-                        <div className='FriendListBlock'>
-
-                        </div>
+                <div className='onglets'>
+                        <button className={`pointer ${current === page.PAGE_1 ? "" : "not-selected"}`}
+                                onClick={e => setOnglets(page.PAGE_1)}>
+                                <a >
+                                        history
+                                </a>
+                        </button>
+                        {
+                                currentUser.login === myUser.user?.login &&
+                                <button className={`pointer ${current === page.PAGE_2 ? "" : "not-selected"}`}
+                                        onClick={e => setOnglets(page.PAGE_2)} >
+                                        <a >
+                                                friend_request
+                                        </a>
+                                </button>
+                        }
+                        {
+                                currentUser.login === myUser.user?.login && myUser.user?.twoFaEnable === false &&
+                                <button className={`pointer ${current === page.PAGE_3 ? "" : "not-selected"}`}
+                                        onClick={e => setOnglets(page.PAGE_3)}>
+                                        <a >
+                                                2fa
+                                        </a>
+                                </button>
+                        }
                 </div>
         )
 }
-
-const icon = document.querySelector(".icon");
-const search = document.querySelector(".search");
-
-
-
 export default function Profile() {
         const [currentUser, setCurrentUser] = useState<IUser | undefined>(undefined);
         let avatar: string = "";
         let { id } = useParams();
+        const [pages, setPages] = useState<page>(page.PAGE_1);
+        const myUser = useAppSelector(state => state.user);
 
+        const fetchid = async () => {
+                const response = await fetch(`${process.env.REACT_APP_BACK}user/id/${id}`, {
+                        method: 'GET',
+                })
+                setCurrentUser(await response.json());
+        }
         useEffect(() => {
-
-
-
-                if (id) {
-                        const fetchid = async () => {
-                                const response = await fetch(`${process.env.REACT_APP_BACK}user/id/${id}`, {
-                                        method: 'GET',
-                                })
-
-                                setCurrentUser(await response.json());
-                        }
-                        fetchid()
-
-
-                }
+                if (id)
+                        fetchid();
         }, [id])
+
+        socket.on('UpdateSomeone', (idChange) => {
+                console.log("ca dis quoi", idChange, myUser.user?.id)
+
+                if (idChange === myUser.user!.id)
+                        console.log("hein")
+                if (idChange === myUser.user!.id)
+                        fetchid();
+        })
+        useEffect(() => {
+        }, [Onglets])
 
 
         if (currentUser === undefined || avatar === undefined) {
@@ -271,19 +86,26 @@ export default function Profile() {
                         </div>
                 );
         }
+
         return (
                 <div className='all'>
-                        <section>
-
-                        </section>
                         {currentUser &&
                                 <Header currentUser={currentUser} setCurrentUser={setCurrentUser} />
                         }
-
-                        {
-                                <Friends user={currentUser} />
-                        }
-                        <div className='cacher'>
+                        <div className='container'>
+                                <Onglets currentUser={currentUser} current={pages} setOnglets={setPages} />
+                                {
+                                        pages == page.PAGE_1 &&
+                                        <History />
+                                }
+                                {
+                                        pages == page.PAGE_2 &&
+                                        <Friends user={currentUser} />
+                                }
+                                {
+                                        pages == page.PAGE_3 &&
+                                        <TwoFa />
+                                }
 
                         </div>
                 </div>

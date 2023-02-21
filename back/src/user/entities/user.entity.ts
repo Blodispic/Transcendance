@@ -5,10 +5,18 @@ import { FriendRequest } from "./friend-request.entity";
 
 @Entity('user')
 export class User {
-  
+
   @PrimaryGeneratedColumn()
   id: number;
-  
+
+  @Column({ default: false })
+  twoFaEnable: boolean;
+
+
+  @Column({ default: "Offline" })
+  status: string;
+
+
   @Column()
   access_token: string;
 
@@ -21,9 +29,10 @@ export class User {
   @Column({ unique: true })
   email: string;
 
-  @Column({
-    nullable: true,
-  })
+  @Column({ nullable: true })
+  two_factor_secret: string;
+
+  @Column({ nullable: true })
   avatar: string;
 
   @Column()
@@ -36,6 +45,9 @@ export class User {
   @ManyToMany(() => Channel)
   channels: Channel[]
 
+  // @ManyToMany(() => Channel)
+  // banned: Channel[]
+
   //      STATISTIQUES        //
 
   @Column({ default: 1000 })
@@ -45,7 +57,7 @@ export class User {
   win: number;
 
   @Column({ default: 0 })
-  loose: number;
+  lose: number;
 
   @OneToMany(() => Results, result => result.user)
   results: Results[];

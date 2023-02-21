@@ -1,32 +1,43 @@
 import React, { useState } from 'react';
-import '../../styles/nav.scss'
-import '../../styles/profile.scss'
 import { Link } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../redux/Hook';
 import { FaUserAlt } from "react-icons/fa";
+import { BsChevronRight, BsChevronLeft } from "react-icons/bs";
 import { Cookies } from 'react-cookie';
 import { delete_user } from '../../redux/user';
+import PeopleList from './people_list';
+import { socket } from '../../App';
+
 export default function Header() {
 
   const [dropdown, setDropdown] = useState<boolean>(false);
-
+  const [peopleBool, setPeopleBool] = useState<boolean>(false);
   const cookies = new Cookies();
+
   const dispatch = useAppDispatch();
-  
+
   const dropdownClick = () => {
     if (dropdown == false)
       setDropdown(true);
     else
       setDropdown(false);
   }
-  
+
+  const peopleclick = () => {
+
+    if (peopleBool == false)
+      setPeopleBool(true);
+    else
+      setPeopleBool(false);
+  }
+
   const logout = () => {
     cookies.remove('Token');
     dispatch(delete_user())
+    socket.emit("UpdateSomeone", { id: myUser.user?.id })
   }
 
   const myUser = useAppSelector(state => state.user);
-  console.log(myUser);
 
   return (
     <div className='mynavbar'>
@@ -39,8 +50,7 @@ export default function Header() {
 
       </div>
 
-      <div className='navbar-right' >
-
+      <div className='navbar-right  hover-style' >
         <Link to="/Game" onClick={_ => setDropdown(false)}>
           <span className="font-link" >
             Game
@@ -67,17 +77,33 @@ export default function Header() {
                       profile
                     </Link>
                   </li>
-                  <li onClick={_ => {logout(); setDropdown(false); } } >
-                    logout
+                  <li onClick={_ => { logout(); setDropdown(false); }} >
+                    <a>
+                      logout
+                    </a>
                   </li>
-
                 </ul>
               </div>
             }
           </div>
         }
+        {/* {
+            peopleBool == true &&
+          <div className="icon-header" onClick={_ => peopleclick()} >
+            <BsChevronRight />
+          </div>
+        }
+        {
+          peopleBool == false &&
+          <div className="icon-header" onClick={_ => peopleclick()} >
+            <BsChevronLeft />
+          </div>
+        }
+        {
+          peopleBool == true &&
+          <PeopleList />
+        } */}
       </div>
-
     </div>
   );
 }

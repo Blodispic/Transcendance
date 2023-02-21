@@ -1,10 +1,16 @@
-export class CreatePublicChannelDto {
-    readonly channame: string;
-	// readonly password: string;
-	// à améliorer
-}
+import { IsNotEmpty, IsNumber, IsOptional, isString, IsString } from "class-validator";
 
-// export class CreatePrivateChannelDto {
-// 	readonly channame: string;
-// 	readonly password: string;
-// }
+
+export class CreateChannelDto {
+    @IsString()
+	@IsNotEmpty()
+	chanName: string;
+
+	@IsOptional()
+	@IsString()
+	@IsNotEmpty()
+	password?: string;
+
+	@IsNumber()
+	chanType: number;
+}

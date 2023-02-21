@@ -21,6 +21,7 @@ export interface Player {
 	socket: string;
 	score: number;
 	side: number;
+	avatar: string;
 }
 
 export interface Ball {
@@ -40,4 +41,5 @@ export interface GameState {
 	player2: Player;
 	ball: Ball;
 	gameFinished: boolean;
+	extra: boolean;
 }

@@ -13,18 +13,18 @@ export class Results {
   winner: string;
 
   @Column()
-  looser: string;
+  loser: string;
 
   @Column()
   winner_score: string;
 
   @Column()
-  looser_score: string;
+  loser_score: string;
 
-  @Column()
-  winner_avatar: string;
+  // @Column()
+  // winner_avatar: string;
 
-  @Column()
-  looser_avatar: string;
+  // @Column()
+  // loser_avatar: string;
 
 }

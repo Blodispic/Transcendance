@@ -1,17 +1,65 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useAppSelector } from '../../redux/Hook';
 import { Player } from './Game';
 import { useNavigate } from "react-router-dom";
 import { socket } from '../../App';
+import { debug } from 'console';
+import { logDOM } from '@testing-library/react';
+import { HiOutlineXMark } from 'react-icons/hi2';
+
+
+
 
 export default function Queue() {
 
     const myUser = useAppSelector(state => state.user);
     const navigate = useNavigate();
+    const [customPopup, setCustomPopup] = useState(false);
+
+    function CustomGamePopup(props: any) {
+        const [extra, setExtra] = useState(false);
+        const [maxScore, setMaxScore] = useState(1);
+        
+        const changeScore = (event: any) => {
+            console.log(event.target.value);
+            setMaxScore(event.target.value);
+          };
+    
+        const changeExtra = (event: any) => {
+            console.log(event.target.checked);
+            setExtra(event.target.checked);
+          };
+        
+        return (props.trigger) ? (
+            <div className='custom-popup'>
+                <div className='custom-popup-inner'>
+                    <HiOutlineXMark className="close-icon" onClick={_ => props.setTrigger(false)} /> <br />
+                    Create Custom Game
+                    <div className='sub-element'>Set Extra Mode <br />
+                        <label> <input type="checkbox" onChange={changeExtra} /> Extra mode </label>
+                    </div>
+    
+                    <div className='sub-element'> Set Max Score <br />
+                        <input type="range" name='rangeInput' min="1" max="10" id="inVal" value={maxScore} onChange={changeScore}></input>
+                        <output>{maxScore}</output> <br />
+                    </div>
+                    <button className='button pointer color_log' onClick={() => CreateCustomRoom(extra, maxScore)}>
+                        <div className='cool'>Create</div></button>
+                </div>
+            </div>
+        ) : <></>;
+    }
 
     function addToWaitingRoom() {
         socket.emit("addToWaitingRoom", myUser.user);
+        return;
+    }
+
+    function CreateCustomRoom(extra: any, Max: any) {
+        console.log("extra = " + extra + ", Max = " + Max); 
+        socket.emit("createCustomGame", {user1: myUser.user, user2: myUser.user, extra: extra, scoreMax: Max});
+
         return;
     }
 
@@ -22,7 +70,6 @@ export default function Queue() {
     useEffect(() => {
         const fetchuser = async () => {
             if (myUser.user) {
-
                 await fetch(`${process.env.REACT_APP_BACK}game/${myUser.user.id}}`, {
                     method: 'POST',
                 })
@@ -32,12 +79,23 @@ export default function Queue() {
     }, [])
 
     return (
-        <button className="center pulse pointer" onClick={(e) => addToWaitingRoom()} >
-            <Link to="/Game/">
+        <>
+                <div className='center'>
+                    <div className='button'>
+                <button className='button pointer color_log' onClick={(e) => addToWaitingRoom()} >
+                   <Link className='cool' to="/Game/">
+                         Start game
+                  </Link>
+                </button>
 
-                    Add to Waiting Room
-
-            </Link>
-        </button>
+                <button className='button pointer color_log' onClick={() => setCustomPopup(true)} >
+                <Link className='cool' to="/Game/">
+                    Create Game
+                </Link>
+                </button>
+            </div>
+        </div>
+        <CustomGamePopup trigger={customPopup} setTrigger={setCustomPopup} />
+        </>
     )
 }

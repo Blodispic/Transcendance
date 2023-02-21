@@ -8,17 +8,18 @@ import { User } from './entities/user.entity';
 import { UserService } from './user.service';
 import { user } from 'src/game/game.controller';
 import { FriendRequest } from './entities/friend-request.entity';
+import { authenticator } from 'otplib';
 
 @Controller('user')
 export class UserController {
-  constructor(private readonly userService: UserService) {}
+  constructor(private readonly userService: UserService) { }
 
   @Post()
   async create(@Body() createUserDto: CreateUserDto): Promise<User> {
     // try {
-      return await this.userService.create(createUserDto);
-    // } catch (error) {
-      // throw new BadRequestException(error.detail);
+    return await this.userService.create(createUserDto);
+    // } catch (error) 
+    // throw new BadRequestException(error.detail);
     // }
   }
 
@@ -28,12 +29,12 @@ export class UserController {
   }
 
   @Post()
-  createUser(@Body() user: CreateUserDto){
+  createUser(@Body() user: CreateUserDto) {
     return this.userService.create(user)
   }
 
   @Get('username/:username')
-  GetbyUsername(@Param('username') username: string){
+  GetbyUsername(@Param('username') username: string) {
     return this.userService.getByUsername(username);
   }
 
@@ -48,27 +49,45 @@ export class UserController {
     return this.userService.GetByAccessToken(token);
   }
 
+  @Post('2fa/qrcode')
+  async enable2FA(@Body() user: any) {
+    const realUser = await this.userService.getById(user.id);
+    const secret = authenticator.generateSecret();
+    this.userService.enable2FA(realUser, secret);
+    const otpauthURL = authenticator.keyuri('Transcendence', user.email, secret);
+    const qrCode = await this.userService.generateQRCode(otpauthURL);
+    return { qrCode };
+  }
+
+  @Post('2fa/check')
+  async checkCode(@Body() user: { id: number, code: string }) {
+    const result = await this.userService.check2FA(user.id, user.code);
+    return { result };
+  }
+
+
   @Post('friend-request/status/:id')
   async GetFriendRequestStatus(@Param('id') id: number, @Body() user: User) {
-      return this.userService.GetFriendRequestStatus(id, user);
+    return this.userService.GetFriendRequestStatus(id, user);
   }
 
   @Post('friends')
-  GetFriends(@Body() user:User) {
+  GetFriends(@Body() user: User) {
     return this.userService.GetFriendsRequest(user);
   }
 
   @Post("friends/accept")
-  async acceptFriendRequest(@Body() body: { friendId: number, user: User}) {
+  async acceptFriendRequest(@Body() body: { friendId: any, user: User }) {
+    this.userService.addFriend(body.friendId, body.user);
     return await this.userService.updateFriendRequestStatus(body.friendId, body.user, {
-    status: "Accepted",
+      status: "Accepted",
     });
   }
 
   @Post("friends/decline")
-  async declineFriendRequest(@Body() body: { friendId: number, user: User}) {
+  async declineFriendRequest(@Body() body: { friendId: number, user: User }) {
     return await this.userService.updateFriendRequestStatus(body.friendId, body.user, {
-    status: "Declined",
+      status: "Declined",
     });
   }
 
@@ -114,23 +133,10 @@ export class UserController {
   @Post('friend-request/send/:id')
   sendFriendRequest(
     @Param('id') id: number, @Body() user: User) {
-    if (user)
-    {
-      console.log("Try send friend Request")
+    if (user) {
       return this.userService.sendFriendRequest(id, user)
     }
   }
-
-
-  @Post('addfriend/:id')
-  async addFriend(@Param('id') id: number, @Body() user: User) {
-    return await this.userService.addFriend(id, user);
-  }
-
-  // @Post(':id/addfriend/:id')
-  // async addFriendbyId(@Param('id') id: number, @Param('id') id: number) {
-  //   return await this.userService.addFriendById(id, id);
-  // }
 
   @Delete('deletefriend/:id')
   async deleteFriend(@Param('id') id: number, @Body() friend: User) {
