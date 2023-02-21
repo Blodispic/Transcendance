@@ -5,6 +5,7 @@ import { AiFillPlusCircle } from "react-icons/ai";
 import { socket } from "../../App";
 import { useAppSelector } from "../../redux/Hook";
 import { IUser } from "../../interface/User";
+import { useSearchParams } from "react-router-dom";
 
 export default function CustomGamePopup(props: {trigger: boolean; setTrigger: Function; friend: IUser | undefined} ) {
     const [extra, setExtra] = useState(false);
@@ -12,12 +13,22 @@ export default function CustomGamePopup(props: {trigger: boolean; setTrigger: Fu
     const [myVar, setMyvar] = useState<boolean>(false);
     const [alluser, setAlluser] = useState<IUser[] | undefined>(undefined);
     const myUser = useAppSelector(state => state.user);
-    const [friend, setFriend] = useState<IUser| undefined>(undefined);
+    const [friend, setFriend] = useState<IUser| undefined>(props.friend);
+    const [inpage, setInpage] = useState<boolean>(false);
 
 
+    const canErase = () => {
+        if (inpage === false)
+            setFriend(undefined);
+    }
 
     useEffect(() => {
-        const get_all = async () => {
+
+        if ( window.location.href.search('Game') == -1 ) {
+            setInpage(true);
+        }
+
+          const get_all = async () => {
             const response = await fetch(`${process.env.REACT_APP_BACK}user`, {
                     method: 'GET',
                     headers: {
@@ -35,7 +46,7 @@ export default function CustomGamePopup(props: {trigger: boolean; setTrigger: Fu
             setFriend(props.friend);
 
         console.log("les gens log ", alluser);
-    }, [])
+    }, [props])
 
     const changeScore = (event: any) => {
         console.log(event.target.value);
@@ -56,7 +67,8 @@ export default function CustomGamePopup(props: {trigger: boolean; setTrigger: Fu
     return (props.trigger) ? (
         <div className='custom-popup'>
             <div className='custom-popup-inner'>
-                <HiOutlineXMark className="close-icon" onClick={_ => {props.setTrigger(false); setMyvar(false); setFriend(undefined)}} /> <br />
+            {/* ; setFriend(undefined) */}
+                <HiOutlineXMark className="close-icon" onClick={_ => {props.setTrigger(false); setMyvar(false); canErase() }} /> <br /> 
                 Create Custom Game
                 <div className='avatar-inpopup'>
                     <img className='avatar' src={myUser.user?.avatar} />

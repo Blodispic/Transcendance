@@ -10,21 +10,26 @@ import CLickableMenu from "./clickableMenu";
 function PopupCreateChannel(props: any) {
 	const [chanName, setChanName] = useState("");
 	const [password, setPassword] = useState("");
-	const [privateChan, setPrivateChan] = useState(0);
-
-	const handlePrivate = () => {
-		setPrivateChan(1);
-	}
+	const [chanMode, setChanMode] = useState(0);
 
 	const handlePublic = () => {
-		setPrivateChan(0);
+		setChanMode(0);
 	}
+	
+	const handlePrivate = () => {
+		setChanMode(1);
+	}
+
+	const handleProtected = () => {
+		setChanMode(2);
+	}
+
 	const handleCreateNewChan = () => {
 		if (chanName != "")
-			socket.emit('createChannel', { chanName: chanName, chanType: privateChan, password: password });
+			socket.emit('createChannel', { chanName: chanName, chanType: chanMode, password: password });
 		setChanName("");
 		setPassword("");
-		setPrivateChan(0);
+		setChanMode(0);
 		props.setTrigger(false);
 	}
 
@@ -33,12 +38,13 @@ function PopupCreateChannel(props: any) {
 			<div className="chat-form-inner" onClick={e => e.stopPropagation()}>
 				<HiOutlineXMark className="close-icon" onClick={_ => props.setTrigger(false)} /> <br />
 				<h3>Channel Name</h3>
-				<input type="text" id="channel-input" placeholder="Insert channel name" onChange={e => { setChanName(e.target.value) }} />
+				<input type="text" id="channel-input" placeholder="Insert channel name" onChange={e => { setChanName(e.target.value) }} onSubmit={() => { handleCreateNewChan(); }} />
 				<h3>Channel Mode</h3>
-				<input type="radio" name="chanMode" value={0} onChange={handlePublic} defaultChecked />Public <span></span>
-				<input type="radio" name="chanMode" value={1} onChange={handlePrivate} />Private <br />
+				<input type="radio" name="chanMode" value={0} onChange={handlePublic} defaultChecked />Public
+				<input type="radio" name="chanMode" value={1} onChange={handlePrivate} />Private
+				<input type="radio" name="chanMode" value={2} onChange={handleProtected} />Protected <br />
 				{
-					privateChan == 1 &&
+					chanMode === 2 &&
 					<><input type="password" id="channel-input" placeholder="Insert password" onChange={e => { setPassword(e.target.value); }} /><br /></>
 				}
 				<button onClick={() => handleCreateNewChan()}>Create Channel</button><span></span>
@@ -48,8 +54,9 @@ function PopupCreateChannel(props: any) {
 }
 function JoinChannel(props: {currentUser: any, chanid: any}) {
 
-	
-	socket.emit('joinChannel', {chanid: props.chanid});
+	const handleJoin = () => {
+		socket.emit('joinChannel', {chanid: props.chanid});
+	}
 
 	if (props.chanid === undefined)
 	{	
@@ -58,7 +65,25 @@ function JoinChannel(props: {currentUser: any, chanid: any}) {
 
 	return (
 		<div>
-			<button>Join</button>
+			<button onClick={handleJoin}>Join</button>
+		</div>
+	);
+}
+
+function LeaveChannel (props: {currentUser: any, chanid: any}) {
+	
+	const handleLeave = () => {
+		socket.emit('leaveChannel', {chanid: props.chanid});
+	}
+
+	if (props.chanid === undefined)
+	{
+		return (<></>);
+	}
+
+	return (
+		<div>
+			<button onClick={handleLeave}>Leave</button>
 		</div>
 	);
 }
@@ -88,10 +113,10 @@ function ChannelList(props: any) {
 	}, [chanId]);
 
 	return (
-		<div>
-			<header>All Channels <hr /></header>
+		<div className="bottom">
+			<header>All Public Channels <hr /></header>
 			{chanList.map(chan => (
-				<ul key={chan.name} >
+				<ul key={chan.name}>
 					<li>
 						<div onClick={_ => navigate(`/Chat/channel/${chan.id}`)}>{chan.name}
 							{
@@ -106,11 +131,11 @@ function ChannelList(props: any) {
 	);
 }
 
-function JoinedChannelList() { /** Displays only joined channels */
+function JoinedChannelList() {
 
 	return (
 		<div className="title"> Joined Channels <hr />
-			test chan1
+
 		</div>
 	);
 
@@ -128,6 +153,19 @@ function AddChannel() {
 }
 
 function PublicChannelList() {
+	
+
+	// useEffect(() => {
+	// 	const fetchAllList = async () => {
+	// 		const response = await fetch(`${process.env.REACT_APP_BACK}channel/public`, {
+	// 			method: 'GET',
+	// 		})
+	// 		const data = await response.json();
+	// 		setChanList(data);
+	// 	}
+	// 	fetchAllList();
+	// }, [chanId]);
+
 	return (
 		<div className="title">Public Channels <hr />
 			<ul>
@@ -189,7 +227,7 @@ function ChannelMemberList(props: { id: any }) {
 	);
 }
 
-interface IMessage {
+export interface IMessage {
 	chanid?: number;
 	userid?: number;
 	sender?: IUser;
@@ -197,14 +235,40 @@ interface IMessage {
 	message: string;
 }
 
+function ChannelTitle(props: {user: IUser, channel: IChannel}) {
+	
+	const [isOnChannel, setIsOnChannel] = useState(false);
+
+	if (props.channel.users.find(element => props.user)) {
+		setIsOnChannel(true);
+	}
+		
+	return (
+			<div className="title" style={{ marginLeft: "10px", marginRight: "10px" }}>
+			{props.channel?.name}
+			{
+				props.channel.chanType == 1 &&
+				<HiLockClosed />}
+			{
+				isOnChannel === false && 
+				<span><JoinChannel currentUser={props.user} chanid={props.channel.id} /></span>
+			}
+			{
+				isOnChannel === true && 
+				<span><LeaveChannel currentUser={props.user} chanid={props.channel.id} /></span>
+			}
+			<hr />
+		</div>
+	);
+}
+
+
 function ChannelMessages(props: { id: any }) {
 	const [newInput, setNewInput] = useState("");
 	const [messageList, setMessageList] = useState<IMessage[]>([]);
 	const [currentChan, setCurrentChan] = useState<IChannel | undefined>(undefined);
 	const currentUser = useAppSelector(state => state.user);
-	const [sender, setSender] = useState<IUser | undefined>(undefined);
-
-	// const myUser = useAppSelector(state => state.user);
+	const [isOnChan, setIsOnChan] = useState(false);
 
 	useEffect(() => {
 		const getChannel = async () => {
@@ -229,16 +293,31 @@ function ChannelMessages(props: { id: any }) {
 		setMessageList([...messageList, messageDto]);
 	})
 
+	// if (currentChan?.users !== undefined && currentChan?.users.find(currentUser.user)) {
+	// 	setIsOnChan(true);
+	// }
+
 	return (
 		<div className="chat-body">
-			<div className="title" style={{ marginLeft: "10px", marginRight: "10px" }}>
-				{currentChan?.name}
-				{
-					currentChan?.chanType == 1 &&
-					<HiLockClosed />}
-				<span><JoinChannel currentUser={currentUser} chanid={props.id} /></span>
-				<hr />
-			</div>
+			{/* {
+				currentChan !== undefined && currentUser.user !== undefined &&
+			<ChannelTitle user={currentUser.user} channel={currentChan} />
+			} */}
+						<div className="title" style={{ marginLeft: "10px", marginRight: "10px" }}>
+			{currentChan?.name}
+			{
+				currentChan?.chanType == 1 &&
+				<HiLockClosed />}
+			{
+				isOnChan === false && 
+				<span><JoinChannel currentUser={currentUser.user} chanid={currentChan?.id} /></span>
+			}
+			{
+				isOnChan === true && 
+				<span><LeaveChannel currentUser={currentUser.user} chanid={currentChan?.id} /></span>
+			}
+			<hr />
+		</div>
 			<div className="chat-messages">
 				{messageList.map(message => (
 					<div key={message.message} className="__wrap">
@@ -262,33 +341,22 @@ function ChannelMessages(props: { id: any }) {
 	);
 }
 
-function ChannelPage(props: { chanid: any }) {
-	return (
-		<div id="chat-container">
-			<div className="sidebar left-sidebar">
-				<ChannelList />
-				<AddChannel />
-			</div>
-			<ChannelMessages id={props.chanid} />
-			<div className="sidebar  right-sidebar">
-				<ChannelMemberList id={props.chanid} />
-			</div>
-		</div>
-	);
-}
-
 export function Channels(props: any) {
 
+	const currentUser = useAppSelector(state => state.user);
+
 	return (
 		<div id="chat-container">
 			<div className="sidebar left-sidebar">
-				<ChannelList />
+				<JoinedChannelList />
 				<AddChannel />
+				<ChannelList />
 			</div>
 			<ChannelMessages id={props.chatId} />
 			<div className="sidebar right-sidebar">
 				<ChannelMemberList id={props.chatId} />
 			</div>
+
 		</div>
 	);
 }

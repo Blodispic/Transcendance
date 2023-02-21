@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { IUser } from "../../interface/User";
 import { useAppSelector } from "../../redux/Hook";
@@ -9,7 +9,6 @@ export default function CLickableMenu(props: { user: IUser }) {
     const user: IUser = props.user;
     const [myVar, setMyvar] = useState<boolean>(false);
     const myUser = useAppSelector(state => state.user.user)
-
 
     return (
         <div className="dropdown-container">
@@ -35,8 +34,10 @@ export default function CLickableMenu(props: { user: IUser }) {
                                 Invite Game
                             </li>
                             <li>
-                                DM
-                            </li>
+                        <Link to={`/Chat/dm/${user.id}`}>
+                        DM
+                        </Link>
+                    </li>
                         </>
                     }
                 </ul>
