@@ -1,11 +1,12 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import { IChannel } from "../../interface/Channel";
 import { IUser } from "../../interface/User";
 
-export default function CLickableMenu(props: { user: IUser }) {
+export default function CLickableMenu(props: { user: IUser, chan: IChannel }) {
 
     const user: IUser = props.user;
-
+    console.log('chanid: ', props.chan.id);
 
     return (
         <div className="dropdown-container">
@@ -17,7 +18,7 @@ export default function CLickableMenu(props: { user: IUser }) {
                         </Link>
                     </li>
                     <li>
-                        <a>
+                        <a >
                             Mute
                         </a>
                     </li>

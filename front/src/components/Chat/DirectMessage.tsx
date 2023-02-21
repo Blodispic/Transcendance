@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { socket } from "../../App";
+import { IMessage } from "../../interface/Message";
 import { IUser } from "../../interface/User";
 import { useAppSelector } from "../../redux/Hook";
-import { IMessage } from "./Channel";
 import { ChatBody } from "./Chat";
 
 

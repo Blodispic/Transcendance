@@ -107,6 +107,7 @@ async handleCreateChannel(@ConnectedSocket() client: Socket, @MessageBody() crea
     chanId: new_channel.id,
   });
   client.join("chan" + new_channel.id);
+  console.log(new_channel);
   client.emit("createChannelOk", new_channel.id);
 }
 
