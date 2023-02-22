@@ -22,7 +22,7 @@ function ChannelHeader(props: { chan: any, user: any }) {
 				<HiLockClosed />}
 			{
 				isOnChan === false &&
-				<JoinChannel currentUser={props.user.user} chanid={props.chan.id} />
+				<JoinChannel currentUser={props.user.user} chan={props.chan.id} />
 			}
 			{/* {
 			isOnChan === true &&
@@ -84,7 +84,7 @@ export function ChannelMessages(props: { id: any }) {
 			<div className="body-header" >
 				{currentChan?.name}
 				{
-					currentChan !== undefined &&
+					currentChan?.id &&
 					<ImCog style={{ float: 'right' }} />
 				}
 				{
@@ -92,7 +92,8 @@ export function ChannelMessages(props: { id: any }) {
 					<HiLockClosed />}
 				{
 					// isOnChan === false &&
-					<JoinChannel currentUser={currentUser.user} chanid={currentChan?.id} />
+					currentChan !== undefined &&
+					<JoinChannel currentUser={currentUser.user} chan={currentChan} />
 				}
 				{
 					// isOnChan === true &&
