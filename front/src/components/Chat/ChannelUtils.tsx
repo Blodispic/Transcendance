@@ -4,29 +4,57 @@ import { socket } from "../../App";
 import { IChannel } from "../../interface/Channel";
 import { IUser } from "../../interface/User";
 
-export function JoinChannel(props: {currentUser: any, chan: IChannel}) {
-	const [passPopup, setPassPopup] = useState(false);
+export function CheckPassword(trigger: boolean, setTrigger: Function, channel: IChannel) {
+	const [password, setPassword] = useState("");
 	
-	if (props.chan === undefined)
+	return (trigger) ? (
+		<div className="chat-form-popup" onClick={_ => setTrigger(false)}>
+			<div className="chat-form-inner" onClick={e => e.stopPropagation()}>
+
+			<HiOutlineXMark className="close-icon" onClick={_ => setTrigger(false)} /> <br />
+			<h3>Input password for " {channel.name} "</h3>
+			<input type="password" id="channel-input" placeholder="Insert password" onChange={e => { setPassword(e.target.value); }} /><br />
+		
+			<button>Enter Channel</button>
+			</div>
+		</div>
+	) : <></>;
+}
+
+export function JoinChannel(props: {trigger: boolean; setTrigger: Function; currentUser: any, channel: IChannel }) {
+
+	if (props.channel === undefined)
 	{	
 		return (<></>);
 	}
 	
-	if (props.chan.chanType === 2) {
-		return (
-			<>
-			<CheckPassword trigger={passPopup} setTrigger={setPassPopup} channel={props.chan} />
-			</>
-		)
-	}
+	// if (props.channel.chanType === 2) {
+
+	// 	return (
+	// 		<>
+	// 		<CheckPassword trigger={props.trigger} setTrigger={props.setTrigger} channel={props.channel} />
+	// 		</>
+	// 	)
+	// }
 
 	const handleJoin = () => {
-		socket.emit('joinChannel', {chanid: props.chan.id});
+		socket.emit('joinChannel', {chanid: props.channel.id});
 	}
 
 	return (
 		<div>
-			<button onClick={handleJoin}>Join</button>
+			{
+				props.channel.chanType === 0 &&
+				<button onClick={handleJoin}>Join</button>
+			}
+			{
+				props.channel.chanType === 1 &&
+				<button onClick={handleJoin}>Join</button>
+			}
+			{
+				props.channel.chanType === 2 &&
+				<button onClick={() => CheckPassword(props.trigger, props.setTrigger, props.channel)}>Join</button>
+			}
 		</div>
 	);
 }
@@ -60,6 +88,11 @@ export function MuteUser(chanid: any, userid: any) {
 	// socket.on('muteUserOK', (userId, chanId) => {});
 }
 
+export function AddAdmin(chanid: any, userid: any) {
+	console.log('add admin');
+	socket.emit('GiveAdmin', {chanid: chanid, userid: userid});
+}
+
 export function ConfigurePassword(props: {trigger: boolean; setTrigger: Function; channel: IChannel; user: IUser}) {
 	const [newPassword, setNewPassword] = useState("");
 
@@ -73,23 +106,6 @@ export function ConfigurePassword(props: {trigger: boolean; setTrigger: Function
 					props.channel.chanType === 0 &&
 					<><input type="password" id="channel-input" placeholder="Insert password" onChange={e => { setNewPassword(e.target.value); }} /><br /></>
 				}
-			</div>
-		</div>
-	);
-}
-
-export function CheckPassword(props: {trigger: boolean; setTrigger: Function; channel: IChannel}) {
-	const [password, setPassword] = useState("");
-	
-	return (
-		<div className="chat-form-popup" onClick={_ => props.setTrigger(false)}>
-			<div className="chat-form-inner" onClick={e => e.stopPropagation()}>
-
-			<HiOutlineXMark className="close-icon" onClick={_ => props.setTrigger(false)} /> <br />
-			<h3>Input password for " {props.channel.name} "</h3>
-			<input type="password" id="channel-input" placeholder="Insert password" onChange={e => { setPassword(e.target.value); }} /><br />
-		
-			<button>Enter Channel</button>
 			</div>
 		</div>
 	);

@@ -7,32 +7,30 @@ import { IMessage } from "../../interface/Message";
 import { useAppSelector } from "../../redux/Hook";
 import { JoinChannel, LeaveChannel } from "./ChannelUtils";
 
-function ChannelHeader(props: { chan: any, user: any }) {
-	const [isOnChan, setIsOnChan] = useState(false);
+// function ChannelHeader(props: { chan: any, user: any }) {
+// 	const [isOnChan, setIsOnChan] = useState(false);
 
-	return (
-		<div className="body-header" >
-			{props.chan.name}
-			{
-				props.chan !== undefined &&
-				<ImCog style={{ float: 'right' }} />
-			}
-			{
-				props.chan.chanType == 1 &&
-				<HiLockClosed />}
-			{
-				isOnChan === false &&
-				<JoinChannel currentUser={props.user.user} chan={props.chan.id} />
-			}
-			{/* {
-			isOnChan === true &&
-			<span><LeaveChannel currentUser={currentUser.user} chanid={currentChan?.id} /></span>
-		} */}
-		</div>
-	);
-}
-
-
+// 	return (
+// 		<div className="body-header" >
+// 			{props.chan.name}
+// 			{
+// 				props.chan !== undefined &&
+// 				<ImCog style={{ float: 'right' }} />
+// 			}
+// 			{
+// 				props.chan.chanType == 1 &&
+// 				<HiLockClosed />}
+// 			{
+// 				isOnChan === false &&
+// 				<JoinChannel currentUser={props.user.user} chan={props.chan.id} />
+// 			}
+// 			{/* {
+// 			isOnChan === true &&
+// 			<span><LeaveChannel currentUser={currentUser.user} chanid={currentChan?.id} /></span>
+// 		} */}
+// 		</div>
+// 	);
+// }
 
 export function ChannelMessages(props: { id: any }) {
 	const [newInput, setNewInput] = useState("");
@@ -41,6 +39,7 @@ export function ChannelMessages(props: { id: any }) {
 	const currentUser = useAppSelector(state => state.user);
 	const [isOnChan, setIsOnChan] = useState(false);
 	const [announce, setAnnounce] = useState("");
+	const [passPopup, setPassPopup] = useState(false);
 
 	useEffect(() => {
 		const getChannel = async () => {
@@ -93,33 +92,33 @@ export function ChannelMessages(props: { id: any }) {
 				{
 					// isOnChan === false &&
 					currentChan !== undefined &&
-					<JoinChannel currentUser={currentUser.user} chan={currentChan} />
+					<JoinChannel trigger={passPopup} setTrigger={setPassPopup} currentUser={currentUser.user} channel={currentChan} />
 				}
 				{
 					// isOnChan === true &&
 					<LeaveChannel currentUser={currentUser.user} chanid={currentChan?.id} />
 				}
 				{/* <ChannelHeader chan={currentChan} user={currentUser?.user} /> */}
-				<div className="chat-messages">
-					{messageList.map(message => (
-						<div key={message.message} className="__wrap">
-							<div className="message-info">
-								<img className="user-avatar" src={message.sender?.avatar} />
-								{message.sender?.username}
-								<span className="timestamp">0000/00/00  00:00</span>
-							</div>
-							{message.message}
+			</div>
+			<div className="chat-messages">
+				{messageList.map(message => (
+					<div key={message.message} className="__wrap">
+						<div className="message-info">
+							<img className="user-avatar" src={message.sender?.avatar} />
+							{message.sender?.username}
+							<span className="timestamp">0000/00/00  00:00</span>
 						</div>
-					))}
-				</div>
-				{
-					props.id !== undefined &&
-					<form id="input_form" onSubmit={(e) => { handleSubmitNewMessage(e); }}>
-						<input type="text" onChange={(e) => { setNewInput(e.target.value) }}
-							placeholder="type message here" value={newInput} />
-					</form>
-				}
+						{message.message}
+					</div>
+				))}
 			</div>
-			</div>
-			);
+			{
+				props.id !== undefined &&
+				<form id="input_form" onSubmit={(e) => { handleSubmitNewMessage(e); }}>
+					<input type="text" onChange={(e) => { setNewInput(e.target.value) }}
+						placeholder="type message here" value={newInput} />
+				</form>
+			}
+		</div>
+	);
 }

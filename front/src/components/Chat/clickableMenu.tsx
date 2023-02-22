@@ -4,7 +4,7 @@ import { IChannel } from "../../interface/Channel";
 import { IUser } from "../../interface/User";
 import { useAppSelector } from "../../redux/Hook";
 import CustomGamePopup from "../Game/CustomGamePopup";
-import { BanUser, MuteUser } from "./ChannelUtils";
+import { AddAdmin, BanUser, MuteUser } from "./ChannelUtils";
 
 export default function CLickableMenu(props: { user: IUser, chan: IChannel }) {
 
@@ -24,6 +24,20 @@ export default function CLickableMenu(props: { user: IUser, chan: IChannel }) {
                     {
                         user.id !== myUser?.id &&
                         <>
+                            <li onClick={_ => setMyvar(true)}>
+                                Invite Game
+                            </li>
+                            <li>
+                                <Link to={`/Chat/dm/${user.id}`}>
+                                    DM
+                                </Link>
+                            </li>
+                            {/* ---admin menu--- show if [user] is [admin]*/}
+                            <li>
+                                <a onClick={_ => AddAdmin(props.chan.id, props.user.id)}>
+                                    Add to Admin
+                                </a>
+                            </li>
                             <li>
                                 <a onClick={() => MuteUser(props.chan.id, user.id)}>
                                     Mute
@@ -33,14 +47,6 @@ export default function CLickableMenu(props: { user: IUser, chan: IChannel }) {
                                 <a onClick={() => BanUser(props.chan.id, user.id)}>
                                     Ban
                                 </a>
-                            </li>
-                            <li onClick={_ => setMyvar(true)}>
-                                Invite Game
-                            </li>
-                            <li>
-                                <Link to={`/Chat/dm/${user.id}`}>
-                                    DM
-                                </Link>
                             </li>
                         </>
                     }
