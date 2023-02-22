@@ -47,41 +47,18 @@ export class ChatGateway
  async handleSendMessageUser(@ConnectedSocket() client: Socket, @MessageBody() messageUserDto: MessageUserDto)/* : Promise<any> */ {
   //  const user = await this.userService.getById(messageUserDto.useridtowho);
   const socketIdToWho = this.findSocketFromUser(messageUserDto.usertowho);
-  if (socketIdToWho)
-    console.log("socket: ", socketIdToWho.id);
-  
   if (socketIdToWho === null)
     throw new BadRequestException(); // no such user
   this.server.to(socketIdToWho.id).emit("sendMessageUserOK", messageUserDto);
-
-  // this.server.to()
- 
-
  }
 
 findSocketFromUser(user: User)
- {
-  //  userList.forEach(client => {
-  //   console.log("client: ", client.handshake.auth.user.username, client.handshake.auth.user.id, "user.id: ", user.id);
-     
-  //   if (client.handshake.auth.user.id === user.id)
-  //     return client;
-  //  });
-  //  return null;
-  
+ {  
   for (const iterator of userList) {
     if (iterator.handshake.auth.user.id === user.id)
       return iterator;
   }
   return null;
-  
-  //  for (const client of userList) {
-  //   if (client.handshake.auth.user.id === user.id)
-  //     return client;
-  //  }
-  //  return null;
-
-
  }
 
 
@@ -90,19 +67,11 @@ async handleSendMessageChannel(@ConnectedSocket() client: Socket, @MessageBody()
   const channel = await this.channelService.getById(messageChannelDto.chanid);
   if (channel == null)
     throw new BadRequestException(); // no such channel
-  const user = client.handshake.auth.user;
-  console.log("isMuted ?:", await this.channelService.isUserMuted({chanid: channel.id, userid: user.id}));
-  
+  const user = client.handshake.auth.user;  
   if (await this.channelService.isUserMuted({chanid: channel.id, userid: user.id}) || 
   await this.channelService.isUserBanned({chanid: channel.id, userid: user.id }))
-  {
-    console.log("be casse toi si t'as throw");
     throw new BadRequestException(); // user is ban or mute from this channel
-    
-  }
-  // console.log("shouldn see this if throw");
-  
-    const messageChannelok = { message: messageChannelDto.message, user: client.handshake.auth.user}
+  const messageChannelok = { message: messageChannelDto.message, user: client.handshake.auth.user}
   this.server.to("chan" + messageChannelDto.chanid).emit("sendMessageChannelOK", messageChannelDto);
 }
 
