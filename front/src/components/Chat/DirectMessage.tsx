@@ -94,7 +94,7 @@ function InfoFriend(props: {user: IUser}) {
 export function DmMessages(props: { id: any; currentdm: IUser | undefined; setCurrentDm: Function}) {
 
 	const [newInput, setNewInput] = useState("");
-	let newMessage: IMessage;
+
 	const [messageList, setMessageList] = useState<IMessage[]>([]);
 	const myUser = useAppSelector(state => state.user);
 
@@ -103,10 +103,10 @@ export function DmMessages(props: { id: any; currentdm: IUser | undefined; setCu
 		if (newInput != "") {
 			socket.emit('sendMessageUser', { usertowho: props.currentdm, sender: myUser.user, message: newInput });
 
-			// newMessage.sender = myUser.user;
-			// newMessage.usertowho = props.currentdm;
-			// newMessage.message = newInput;
-			// setMessageList([...messageList, newMessage]);
+
+			const newMessage: IMessage = {sender: myUser!.user, message: newInput, usertowho: props.currentdm };
+
+			setMessageList([...messageList, newMessage]);
 		}
 		setNewInput("");
 	}
