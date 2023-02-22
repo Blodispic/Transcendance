@@ -47,20 +47,41 @@ export class ChatGateway
  async handleSendMessageUser(@ConnectedSocket() client: Socket, @MessageBody() messageUserDto: MessageUserDto)/* : Promise<any> */ {
   //  const user = await this.userService.getById(messageUserDto.useridtowho);
   const socketIdToWho = this.findSocketFromUser(messageUserDto.usertowho);
+  if (socketIdToWho)
+    console.log("socket: ", socketIdToWho.id);
+  
   if (socketIdToWho === null)
     throw new BadRequestException(); // no such user
-  this.server.to(socketIdToWho).emit("sendMessageUserOk", messageUserDto);
+  this.server.to(socketIdToWho.id).emit("sendMessageUserOK", messageUserDto);
+
+  // this.server.to()
  
 
  }
 
 findSocketFromUser(user: User)
  {
-   userList.forEach(client => {
-     if (client.handshake.auth.user === user)
-      return client;
-   });
-   return null;
+  //  userList.forEach(client => {
+  //   console.log("client: ", client.handshake.auth.user.username, client.handshake.auth.user.id, "user.id: ", user.id);
+     
+  //   if (client.handshake.auth.user.id === user.id)
+  //     return client;
+  //  });
+  //  return null;
+  
+  for (const iterator of userList) {
+    if (iterator.handshake.auth.user.id === user.id)
+      return iterator;
+  }
+  return null;
+  
+  //  for (const client of userList) {
+  //   if (client.handshake.auth.user.id === user.id)
+  //     return client;
+  //  }
+  //  return null;
+
+
  }
 
 
@@ -70,10 +91,18 @@ async handleSendMessageChannel(@ConnectedSocket() client: Socket, @MessageBody()
   if (channel == null)
     throw new BadRequestException(); // no such channel
   const user = client.handshake.auth.user;
+  console.log("isMuted ?:", await this.channelService.isUserMuted({chanid: channel.id, userid: user.id}));
+  
   if (await this.channelService.isUserMuted({chanid: channel.id, userid: user.id}) || 
   await this.channelService.isUserBanned({chanid: channel.id, userid: user.id }))
+  {
+    console.log("be casse toi si t'as throw");
     throw new BadRequestException(); // user is ban or mute from this channel
-  const messageChannelok = { message: messageChannelDto.message, user: client.handshake.auth.user}
+    
+  }
+  // console.log("shouldn see this if throw");
+  
+    const messageChannelok = { message: messageChannelDto.message, user: client.handshake.auth.user}
   this.server.to("chan" + messageChannelDto.chanid).emit("sendMessageChannelOK", messageChannelDto);
 }
 
@@ -193,8 +222,8 @@ async handleMuteUser(@ConnectedSocket() client: Socket, @MessageBody() muteUserD
   const user = client.handshake.auth.user;
   if (channel === null || user === null)
     throw new BadRequestException(); // no such channel or user
-  if (!(await this.channelService.isUserAdmin(user)))
-    throw new BadRequestException();
+  // if (!(await this.channelService.isUserAdmin(user)))
+  //   throw new BadRequestException();
   this.channelService.muteUser(muteUserDto);
   const timer = 10000;
   console.log("muuuute");
