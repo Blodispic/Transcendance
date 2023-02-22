@@ -175,8 +175,8 @@ async handleBanUser(@ConnectedSocket() client: Socket, @MessageBody() banUserDto
   const user = client.handshake.auth.user;
   if (channel === null || user === null)
     throw new BadRequestException(); // no such channel or user
-  if (channel.owner != user)
-    throw new BadRequestException();
+  // if (channel.owner != user)
+  //   throw new BadRequestException();
   this.channelService.banUser(banUserDto);
   const timer = 180;
   setTimeout(() => {

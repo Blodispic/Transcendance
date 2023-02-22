@@ -107,7 +107,7 @@ export class ChannelService {
 
 	  async muteUser(muteUserDto: MuteUserDto) {
 		const channel: Channel | null = await this.channelRepository.findOne({
-			relations: { users: true },
+			relations: { users: true, muted: true },
 			where: { id: muteUserDto.chanid }
 		});
 		const user = await this.userService.getById(muteUserDto.userid);
@@ -119,7 +119,7 @@ export class ChannelService {
 	
 	  async banUser(muteUserDto: MuteUserDto) {
 		const channel: Channel | null = await this.channelRepository.findOne({
-			relations: { users: true },
+			relations: { users: true, banned: true },
 			where: { id: muteUserDto.chanid }
 		});
 		const user = await this.userService.getById(muteUserDto.userid);
