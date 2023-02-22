@@ -46,23 +46,17 @@ export class ChatGateway
  @SubscribeMessage('sendMessageUser')
  async handleSendMessageUser(@ConnectedSocket() client: Socket, @MessageBody() messageUserDto: MessageUserDto)/* : Promise<any> */ {
   //  const user = await this.userService.getById(messageUserDto.useridtowho);
-  console.log("ici", messageUserDto)
   const socketIdToWho = this.findSocketFromUser(messageUserDto.usertowho);
-  console.log("socketid: ", socketIdToWho);
-  
   if (socketIdToWho === null)
     throw new BadRequestException(); // no such user
   this.server.to(socketIdToWho).emit("sendMessageUserOk", messageUserDto);
-  // client.emit("sendMessageUserOk", messageUserDto);
  
 
  }
 
 findSocketFromUser(user: User)
  {
-    console.log("userList[0]: ", userList[0]);
-    
-    userList.forEach(client => {
+   userList.forEach(client => {
      if (client.handshake.auth.user === user)
       return client;
    });
@@ -135,7 +129,7 @@ async handleAddPassword(@ConnectedSocket() client: Socket, @MessageBody() chanPa
   const user = client.handshake.auth.user;
   if (channel === null || user === null)
     throw new BadRequestException(); // no such channel or user
-  if (channel.owner != user) // for now only the real owner/admin, soon any owner/admin
+  if (!(await this.channelService.isUserAdmin(user))) // for now only the real owner/admin, soon any owner/admin
     throw new BadRequestException(); // user willing to change password isn't admin/owner
   this.channelService.update(channel.id, {
     password: chanPasswordDto.password,
@@ -150,7 +144,7 @@ async handleRmPassword(@ConnectedSocket() client: Socket, @MessageBody() chanPas
   const user = client.handshake.auth.user;
   if (channel === null || user === null)
     throw new BadRequestException(); // no such channel or user
-  if (channel.owner != user) // for now only the real owner/admin, soon any owner/admin
+  if (!(await this.channelService.isUserAdmin(user))) // for now only the real owner/admin, soon any owner/admin
     throw new BadRequestException(); // user willing to change password isn't admin/owner
   this.channelService.update(channel.id, {
     password: null,
@@ -165,7 +159,7 @@ async handleChangePassword(@ConnectedSocket() client: Socket, @MessageBody() cha
   const user = client.handshake.auth.user;
   if (channel === null || user === null)
     throw new BadRequestException(); // no such channel or user
-  if (channel.owner != user) // for now only the real owner/admin, soon any owner/admin
+  if (!(await this.channelService.isUserAdmin(user))) // for now only the real owner/admin, soon any owner/admin
     throw new BadRequestException(); // user willing to change password isn't admin/owner
   if (channel.password === null)
     throw new BadRequestException(); // chan doesn't already have password
@@ -181,13 +175,15 @@ async handleBanUser(@ConnectedSocket() client: Socket, @MessageBody() banUserDto
   const user = client.handshake.auth.user;
   if (channel === null || user === null)
     throw new BadRequestException(); // no such channel or user
-  if (channel.owner != user)
+  if (!(await this.channelService.isUserAdmin(user)))
     throw new BadRequestException();
   this.channelService.banUser(banUserDto);
-  const timer = 180;
+  console.log('baaann');
+  const timer = 10000;
   setTimeout(() => {
     this.channelService.unmuteUser(user)
   }, timer);
+  console.log('end');
   client.emit("banUserOK", user.id, channel.id);
 }
 
@@ -197,13 +193,15 @@ async handleMuteUser(@ConnectedSocket() client: Socket, @MessageBody() muteUserD
   const user = client.handshake.auth.user;
   if (channel === null || user === null)
     throw new BadRequestException(); // no such channel or user
-  if (channel.owner != user)
+  if (!(await this.channelService.isUserAdmin(user)))
     throw new BadRequestException();
   this.channelService.muteUser(muteUserDto);
-  const timer = 180;
+  const timer = 10000;
+  console.log("muuuute");
   setTimeout(() => {
     this.channelService.unmuteUser(user)
   }, timer);
+  console.log("mute after timeout");
   client.emit("muteUserOK", user.id, channel.id);
 }
 
@@ -213,7 +211,7 @@ async handleGiveAdmin(@ConnectedSocket() client: Socket, @MessageBody() giveAdmi
   const user = client.handshake.auth.user;
   if (channel === null || user === null)
     throw new BadRequestException(); // no such channel or user
-  if (channel.owner != user)
+  if (!(await this.channelService.isUserAdmin(user)))
     throw new BadRequestException();
   this.channelService.addAdmin(giveAdminDto);
   client.emit("giveAdminOK", user.id, channel.id);

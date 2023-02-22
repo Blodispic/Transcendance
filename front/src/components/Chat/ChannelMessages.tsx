@@ -40,6 +40,7 @@ export function ChannelMessages(props: { id: any }) {
 	const [currentChan, setCurrentChan] = useState<IChannel | undefined>(undefined);
 	const currentUser = useAppSelector(state => state.user);
 	const [isOnChan, setIsOnChan] = useState(false);
+	const [announce, setAnnounce] = useState("");
 
 	useEffect(() => {
 		const getChannel = async () => {
@@ -64,7 +65,13 @@ export function ChannelMessages(props: { id: any }) {
 		setMessageList([...messageList, messageDto]);
 	})
 
-	// if (currentChan?.users !== undefined && currentChan?.users.find(currentUser.user)) {
+	socket.on('muteUserOK', (userId, chanId) => {
+		setAnnounce("")
+	});
+
+
+	// if (currentChan?.users !== undefined && currentChan?.users.find(value => currentUser.user)) {
+	// 	console.log('--test--');
 	// 	setIsOnChan(true);
 	// }
 
@@ -84,12 +91,12 @@ export function ChannelMessages(props: { id: any }) {
 					currentChan?.chanType == 1 &&
 					<HiLockClosed />}
 				{
-					isOnChan === false &&
+					// isOnChan === false &&
 					<JoinChannel currentUser={currentUser.user} chanid={currentChan?.id} />
 				}
 				{
-					isOnChan === true &&
-					<span><LeaveChannel currentUser={currentUser.user} chanid={currentChan?.id} /></span>
+					// isOnChan === true &&
+					<LeaveChannel currentUser={currentUser.user} chanid={currentChan?.id} />
 				}
 				{/* <ChannelHeader chan={currentChan} user={currentUser?.user} /> */}
 				<div className="chat-messages">

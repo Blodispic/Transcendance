@@ -45,7 +45,7 @@ $tab-color: rgba(var(--primary-color), 0.5); //rgb(121, 121, 121);
 		height: 30px;
 		line-height: 30px;
 		color: black;
-		display: flex;
+		// display: flex;
 	}
 
 	.right-sidebar {
@@ -158,7 +158,7 @@ $tab-color: rgba(var(--primary-color), 0.5); //rgb(121, 121, 121);
 }
 
 .chat-messages {
-	height: calc(100vh - 250px);
+	height: calc(100vh - 280px);
 	vertical-align: top;
 	overflow-y: scroll;
 	flex: 1;

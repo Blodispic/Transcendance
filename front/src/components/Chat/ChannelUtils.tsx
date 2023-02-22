@@ -38,6 +38,13 @@ export function LeaveChannel (props: {currentUser: any, chanid: any}) {
 	);
 }
 
-export function BanUser(props: {chanid: any, userid: any}) {
-	socket.emit('BanUser', {chanid: props.chanid, userid: props.userid});
+export function BanUser(chanid: any, userid: any) {
+	console.log('ban');
+	socket.emit('BanUser', {chanid: chanid, userid: userid});
+}
+
+export function MuteUser(chanid: any, userid: any) {
+	console.log('mute');
+	socket.emit('MuteUser', {chanid: chanid, userid: userid});
+	// socket.on('muteUserOK', (userId, chanId) => {});
 }

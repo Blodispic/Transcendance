@@ -132,7 +132,7 @@ function ChannelMemberList(props: { id: any }) {
 						<li>
 							{user.username}
 							{
-								currentChan.owner?.find(value=> user) &&
+								currentChan.owner?.find(value=> user) !== undefined &&
 								<FaCrown />
 							}
 						</li>
