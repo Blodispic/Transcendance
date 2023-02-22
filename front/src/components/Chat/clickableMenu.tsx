@@ -4,6 +4,7 @@ import { IChannel } from "../../interface/Channel";
 import { IUser } from "../../interface/User";
 import { useAppSelector } from "../../redux/Hook";
 import CustomGamePopup from "../Game/CustomGamePopup";
+import { BanUser, MuteUser } from "./ChannelUtils";
 
 export default function CLickableMenu(props: { user: IUser, chan: IChannel }) {
 
@@ -24,21 +25,23 @@ export default function CLickableMenu(props: { user: IUser, chan: IChannel }) {
                         user.id !== myUser?.id &&
                         <>
                             <li>
-                                <a>
+                                <a onClick={() => MuteUser(props.chan.id, user.id)}>
                                     Mute
                                 </a>
                             </li>
                             <li>
-                                Ban
+                                <a onClick={() => BanUser(props.chan.id, user.id)}>
+                                    Ban
+                                </a>
                             </li>
                             <li onClick={_ => setMyvar(true)}>
                                 Invite Game
                             </li>
                             <li>
-                        <Link to={`/Chat/dm/${user.id}`}>
-                        DM
-                        </Link>
-                    </li>
+                                <Link to={`/Chat/dm/${user.id}`}>
+                                    DM
+                                </Link>
+                            </li>
                         </>
                     }
                 </ul>
