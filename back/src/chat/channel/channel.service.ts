@@ -149,7 +149,6 @@ export class ChannelService {
 		if (channel === null || user === null)
 			throw new BadRequestException();
 		channel.muted.splice(channel.muted.indexOf(user, 0), 1);
-		console.log("unmuute");
 		return this.channelRepository.save(channel);
 	}
 
