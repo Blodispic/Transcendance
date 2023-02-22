@@ -34,7 +34,8 @@ export default function Header() {
   const logout = () => {
     cookies.remove('Token');
     dispatch(delete_user())
-    socket.emit("UpdateSomeone", { id: myUser.user?.id })
+    socket.emit("UpdateSomeone", { idChange: myUser.user?.id, idChange2: 0 })
+    console.log("ca logout ici ou quoi ");
   }
 
   const myUser = useAppSelector(state => state.user);

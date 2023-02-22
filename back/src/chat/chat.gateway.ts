@@ -46,17 +46,23 @@ export class ChatGateway
  @SubscribeMessage('sendMessageUser')
  async handleSendMessageUser(@ConnectedSocket() client: Socket, @MessageBody() messageUserDto: MessageUserDto)/* : Promise<any> */ {
   //  const user = await this.userService.getById(messageUserDto.useridtowho);
+  console.log("ici", messageUserDto)
   const socketIdToWho = this.findSocketFromUser(messageUserDto.usertowho);
+  console.log("socketid: ", socketIdToWho);
+  
   if (socketIdToWho === null)
     throw new BadRequestException(); // no such user
   this.server.to(socketIdToWho).emit("sendMessageUserOk", messageUserDto);
+  // client.emit("sendMessageUserOk", messageUserDto);
  
 
  }
 
 findSocketFromUser(user: User)
  {
-   userList.forEach(client => {
+    console.log("userList[0]: ", userList[0]);
+    
+    userList.forEach(client => {
      if (client.handshake.auth.user === user)
       return client;
    });

@@ -14,7 +14,9 @@ $tab-color: rgba(var(--primary-color), 0.5); //rgb(121, 121, 121);
 	background-color: $tab-color;
 	color: rgb(111, 111, 111);
 	font-family: 'Fredoka One', cursive;
+	height: 100%;
 }
+
 
 #chat-container {
 	font-family: 'Fredoka One', cursive;
@@ -48,12 +50,18 @@ $tab-color: rgba(var(--primary-color), 0.5); //rgb(121, 121, 121);
 
 	.right-sidebar {
 		float: right;
-		border-top-right-radius: 0 !important ;
+		border-top-right-radius: 0 !important;
 	}
+
 	.left-sidebar {
 		float: left;
 		position: relative;
-		border-top-left-radius: 0 !important ;
+		border-top-left-radius: 0 !important;
+
+		.title {
+			font-size: 20px;
+		}
+
 		.add-icon {
 			width: 90%;
 			display: flex;
@@ -62,13 +70,14 @@ $tab-color: rgba(var(--primary-color), 0.5); //rgb(121, 121, 121);
 			position: absolute;
 			margin: auto;
 			background: var(--sub-color2);
-			border-radius: 3px;			
+			border-radius: 3px;
+
 			.add-button {
 				cursor: pointer;
 			}
 		}
 	}
-	
+
 	.bottom {
 		height:40%;
 		position: absolute;
@@ -82,19 +91,19 @@ $tab-color: rgba(var(--primary-color), 0.5); //rgb(121, 121, 121);
 		cursor: pointer;
 		height: auto;
 	}
-	
-	li:hover{
-	border-radius: 3px;
-	box-shadow: none;
-	color: var(--primary-color);
-	text-decoration: none;
-	// background: var(--secondary-color);
-	cursor: pointer;
+
+	li:hover {
+		border-radius: 3px;
+		box-shadow: none;
+		color: var(--primary-color);
+		text-decoration: none;
+		// background: var(--secondary-color);
+		cursor: pointer;
 	}
-	
+
 	.chat-body {
 		float: none;
-		width: 60%;
+		width: 100%;
 		padding-bottom: 2%;
 		height: 60%;
 		// background-color: rgba(62, 62, 74, 0.76);
@@ -113,9 +122,10 @@ $tab-color: rgba(var(--primary-color), 0.5); //rgb(121, 121, 121);
 		}
 	}
 
-	
+
 	.user-list {
 		font-size: 18px;
+
 		ul {
 			padding-left: 0px;
 			font-size: smaller;
@@ -154,6 +164,7 @@ $tab-color: rgba(var(--primary-color), 0.5); //rgb(121, 121, 121);
 	flex: 1;
 
 }
+
 .__wrap {
 	font-size: 15px;
 	line-height: normal;
@@ -165,15 +176,15 @@ $tab-color: rgba(var(--primary-color), 0.5); //rgb(121, 121, 121);
 	padding: 20px;
 	margin: 10px;
 	word-wrap: break-word;
-	display:flexbox;
+	display: flexbox;
 
 	.message-info {
 		color: rgb(107, 107, 107);
 		font-size: 15px;
 		justify-content: center;
-	
+
 		.timestamp {
-			font-size:10px;
+			font-size: 10px;
 			margin-left: 10px;
 		}
 	}
@@ -244,12 +255,57 @@ $tab-color: rgba(var(--primary-color), 0.5); //rgb(121, 121, 121);
 }
 
 .clickable-menu {
-	margin-top: -47px !important;
+	margin-top: -15px !important;
+	background-color: rgba(0, 0, 0, 0.70) !important;
 
 
 }
 
 .Chat-onglets {
 	margin: 0 0 10px;
-	border-radius: 0px !important ;
+	border-radius: 0px !important;
+}
+
+.DM-profile {
+	height: 75px;
+	width: auto;
+	display: flex;
+	justify-content: center;
+	// justify-content;
+
+
+	a {
+		color: #000;
+		text-align: center;
+		font-size: larger;
+		margin-left: 20px;
+	}
+}
+
+.menu {
+
+	a,
+	li {
+		background-image: linear-gradient(to left,
+				#000 50%,
+				#147196 50%,
+				#147196) !important;
+	}
+
+	ul {
+		overflow-y: hidden !important;
+
+		list-style: none;
+		padding: 0;
+		margin: 0;
+
+		&>li {
+			padding: 6px 10px;
+
+			&:hover {
+				background-color: rgba(0, 0, 0, 0.20);
+				cursor: pointer;
+			}
+		}
+	}
 }

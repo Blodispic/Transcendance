@@ -1,12 +1,15 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { IChannel } from "../../interface/Channel";
 import { IUser } from "../../interface/User";
+import { useAppSelector } from "../../redux/Hook";
+import CustomGamePopup from "../Game/CustomGamePopup";
 
 export default function CLickableMenu(props: { user: IUser, chan: IChannel }) {
 
     const user: IUser = props.user;
-    console.log('chanid: ', props.chan.id);
+    const [myVar, setMyvar] = useState<boolean>(false);
+    const myUser = useAppSelector(state => state.user.user)
 
     return (
         <div className="dropdown-container">
@@ -17,25 +20,32 @@ export default function CLickableMenu(props: { user: IUser, chan: IChannel }) {
                             Profile
                         </Link>
                     </li>
-                    <li>
-                        <a >
-                            Mute
-                        </a>
-                    </li>
-                    <li>
-                        Ban
-                    </li>
-                    <li>
-                        Invite Game
-                    </li>
-                    <li>
+                    {
+                        user.id !== myUser?.id &&
+                        <>
+                            <li>
+                                <a>
+                                    Mute
+                                </a>
+                            </li>
+                            <li>
+                                Ban
+                            </li>
+                            <li onClick={_ => setMyvar(true)}>
+                                Invite Game
+                            </li>
+                            <li>
                         <Link to={`/Chat/dm/${user.id}`}>
                         DM
                         </Link>
                     </li>
+                        </>
+                    }
                 </ul>
             </div>
-
+            {
+                <CustomGamePopup trigger={myVar} setTrigger={setMyvar} friend={props.user} />
+            }
         </div>
     )
 }

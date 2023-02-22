@@ -107,7 +107,7 @@ const router = createBrowserRouter([
                 element:
                   <ProtectedRoute>
                     <Chat />
-                  </ProtectedRoute>
+                  </ProtectedRoute>,
               },
             ]
           },
@@ -123,7 +123,7 @@ const router = createBrowserRouter([
                 element:
                   <ProtectedRoute>
                     <DirectMessage />
-                  </ProtectedRoute>
+                  </ProtectedRoute>,
               },
             ]
           },
@@ -140,14 +140,14 @@ const router = createBrowserRouter([
         path: "/Game",
         element:
           <ProtectedRoute>
-            <Queue />,
+            <Queue />
           </ProtectedRoute>,
       },
       {
         path: "/Game/:id",
         element:
           <ProtectedRoute>
-            <GameApp />,
+            <GameApp />
           </ProtectedRoute>,
       },
     ]

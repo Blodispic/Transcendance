@@ -163,6 +163,7 @@ export function Channels(props: any) {
 			<div className="sidebar right-sidebar">
 				<ChannelMemberList id={props.chatId} />
 			</div>
+
 		</div>
 	);
 }
