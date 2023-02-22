@@ -71,6 +71,7 @@ function InfoFriend(props: {user: IUser}) {
                             <li>
                                 <a>
                                    add friend
+								   salut
                                 </a>
                             </li>
                            
