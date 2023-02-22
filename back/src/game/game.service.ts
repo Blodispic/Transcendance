@@ -195,6 +195,9 @@ let inputdefault: Move = { right: false, left: false };
 
 let move1: Move = { ...inputdefault };
 let move2: Move = { ...inputdefault };
+// let move1: Move = JSON.parse(JSON.stringify(inputdefault));
+// let move2: Move = JSON.parse(JSON.stringify(inputdefault));
+
 let paddleDimensions: Vec2 = { x: 100, y: 10 };
 let ballRadius: number = 10;
 
@@ -255,16 +258,18 @@ class Game {
 	constructor(gameService: GameService, server: Server, user1: Player, user2: Player, extra: boolean, scoreMax: number, socket1: any, socket2: any, roomId: number) {
 		this.gameService = gameService;
 		this.server = server;
-		this.gameState = gameStateDefault;
+		// this.gamestateInitializer();
+		// this.gameState = gameStateDefault;
+		this.gameState = JSON.parse(JSON.stringify(gameStateDefault));
 		this.gameState.gameFinished = false;
 		this.gameState.player1 = user1;
 		this.gameState.player2 = user2;
 		console.log("Avatar wesh: ", this.gameState.player1.avatar);
+		this.resetState(this.gameState);
 		this.gameState.player1.avatar = user1.avatar;
 		this.gameState.player2.avatar = user2.avatar;
 		this.gameState.player1.score = 0;
 		this.gameState.player2.score = 0;
-		this.resetState(this.gameState);
 		this.gameState.extra = extra;
 		this.socket1 = socket1;
 		this.socket2 = socket2;
@@ -274,6 +279,46 @@ class Game {
 		this.watchList = [];
 
 		this.gameRoomRun();
+	}
+
+	gamestateInitializer()
+	{
+		// this.gameState = new GameState;
+		this.gameState.area = { x: GAME_INTERNAL_WIDTH, y: GAME_INTERNAL_WIDTH * GAME_RATIO };
+		this.gameState.scale = 1;
+		this.gameState.scoreMax = 3;
+		this.gameState.resetCooldown = 60;
+		this.gameState.client_area = vector_zero();
+		this.gameState.player1 = {
+			paddle: {
+				position: vector_zero(),
+				speed: vector_zero(),
+				angle: 0,
+			},
+			input: inputdefault,
+			name: "Player1",
+			score: 0,
+			side: 0,
+			socket: "",
+			avatar: "",
+		};
+		this.gameState.player2 = {
+			paddle: {
+				position: vector_zero(),
+				speed: vector_zero(),
+				angle: 0,
+			},
+			input: inputdefault,
+			name: "Player2",
+			score: 0,
+			side: 1,
+			socket: "",
+			avatar: "",
+		};
+		this.gameState.ball = balldefault;
+		this.gameState.gameFinished = false;
+		this.gameState.extra = true;
+		this.gameState.roomId = 0;
 	}
 
 	addSpectator(client: string) {
