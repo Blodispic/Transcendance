@@ -60,10 +60,12 @@ export class ChatGateway
 
 findSocketFromUser(user: User)
  {
-    console.log("userList[0]: ", userList[0]);
+    // console.log("userList[0]: ", userList[0].handshake.auth);
     
     userList.forEach(client => {
-     if (client.handshake.auth.user === user)
+      console.log("userList:", client.handshake.auth.user);
+      
+     if (client.handshake.auth.user == user)
       return client;
    });
    return null;
