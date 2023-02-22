@@ -89,6 +89,18 @@ $tab-color: rgba(var(--primary-color), 0.5); //rgb(121, 121, 121);
 		font-size: smaller;
 		cursor: pointer;
 		height: auto;
+<<<<<<< HEAD
+=======
+	}
+	
+	li:hover{
+	border-radius: 3px;
+	box-shadow: none;
+	color: var(--primary-color);
+	text-decoration: none;
+	// background: var(--secondary-color);
+	cursor: pointer;
+>>>>>>> 1cb77015e0314af7b947edad5b4b8d59f8c674bc
 	}
 
 	li:hover {

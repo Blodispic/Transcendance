@@ -1,0 +1,60 @@
+import { useState } from "react";
+import { HiOutlineXMark, HiPlus } from "react-icons/hi2";
+import { socket } from "../../App";
+
+export function PopupCreateChannel(props: any) {
+	const [chanName, setChanName] = useState("");
+	const [password, setPassword] = useState("");
+	const [chanMode, setChanMode] = useState(0);
+
+	const handlePublic = () => {
+		setChanMode(0);
+	}
+	
+	const handlePrivate = () => {
+		setChanMode(1);
+	}
+
+	const handleProtected = () => {
+		setChanMode(2);
+	}
+
+	const handleCreateNewChan = () => {
+		if (chanName != "")
+			socket.emit('createChannel', { chanName: chanName, chanType: chanMode, password: password });
+		setChanName("");
+		setPassword("");
+		setChanMode(0);
+		props.setTrigger(false);
+	}
+
+	return (props.trigger) ? (
+		<div className="chat-form-popup" onClick={_ => props.setTrigger(false)}>
+			<div className="chat-form-inner" onClick={e => e.stopPropagation()}>
+				<HiOutlineXMark className="close-icon" onClick={_ => props.setTrigger(false)} /> <br />
+				<h3>Channel Name</h3>
+				<input type="text" id="channel-input" placeholder="Insert channel name" onChange={e => { setChanName(e.target.value) }} onSubmit={() => { handleCreateNewChan(); }} />
+				<h3>Channel Mode</h3>
+				<input type="radio" name="chanMode" value={0} onChange={handlePublic} defaultChecked />Public
+				<input type="radio" name="chanMode" value={1} onChange={handlePrivate} />Private
+				<input type="radio" name="chanMode" value={2} onChange={handleProtected} />Protected <br />
+				{
+					chanMode === 2 &&
+					<><input type="password" id="channel-input" placeholder="Insert password" onChange={e => { setPassword(e.target.value); }} /><br /></>
+				}
+				<button onClick={() => handleCreateNewChan()}>Create Channel</button><span></span>
+			</div>
+		</div>
+	) : <></>;
+}
+
+export function AddChannel() {
+	const [buttonPopup, setButtonPopup] = useState(false);
+
+	return (
+		<div className="add-icon" onClick={() => setButtonPopup(true)}>
+			<HiPlus className="add-button" />
+			<PopupCreateChannel trigger={buttonPopup} setTrigger={setButtonPopup} />
+		</div>
+	);
+}
