@@ -20,8 +20,8 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
 	handleConnection(client: any, ...args: any[]) {
 		userList.push(client);
 		console.log("open windows");
-		this.userService.SetStatus(client.handshake.auth.user, "Online");
-		this.server.emit("UpdateSomeone", { idChange: client.handshake.auth.user.id })
+		// this.userService.SetStatus(client.handshake.auth.user, "Online");
+		// this.server.emit("UpdateSomeone", { idChange: client.handshake.auth.user.id })
 
 	}
 
