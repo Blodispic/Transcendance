@@ -123,18 +123,40 @@ export class GameService {
 	}
 
 	updateMove1(move1: Move, client: string, roomId: number) {
-		if (this.gameRoom.length >= roomId)
+		// if (this.gameRoom.length >= roomId)
+		// {
+		// 	if (this.gameRoom[roomId - 1].gameState.player1.socket === client)
+		// 		this.gameRoom[roomId - 1].updateMove1(move1);
+		// }
+		let i: number = 0;
+		while (this.gameRoom[i])
 		{
-			if (this.gameRoom[roomId - 1].gameState.player1.socket === client)
-				this.gameRoom[roomId - 1].updateMove1(move1);
+			if (this.gameRoom[i].gameState.roomId === roomId
+				&& this.gameRoom[i].gameState.player1.socket === client)
+			{
+				this.gameRoom[i].updateMove1(move1);
+				return;
+			}
+			i++;
 		}
 	}
 
 	updateMove2(move2: Move, client: string, roomId: number) {
-		if (this.gameRoom.length >= roomId)
+		// if (this.gameRoom.length >= roomId)
+		// {
+		// 	if (this.gameRoom[roomId - 1].gameState.player2.socket === client)
+		// 		this.gameRoom[roomId - 1].updateMove2(move2);
+		// }
+		let i: number = 0;
+		while (this.gameRoom[i])
 		{
-			if (this.gameRoom[roomId - 1].gameState.player2.socket === client)
-				this.gameRoom[roomId - 1].updateMove2(move2);
+			if (this.gameRoom[i].gameState.roomId === roomId
+				&& this.gameRoom[i].gameState.player2.socket === client)
+			{
+				this.gameRoom[i].updateMove2(move2);
+				return;
+			}
+			i++;
 		}
 	}
 
@@ -334,11 +356,12 @@ class Game {
 	}
 
 	updateMove1(newMove1: Move) {
-		move1 = newMove1;
+		// move1 = newMove1;
+		move1 = JSON.parse(JSON.stringify(newMove1));
 	}
 
 	updateMove2(newMove2: Move) {
-		move2 = newMove2;
+		move2 = JSON.parse(JSON.stringify(newMove2));
 	}
 
 	disconnect(client: string) {

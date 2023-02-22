@@ -92,14 +92,12 @@ export class PongGateway implements OnGatewayDisconnect, OnGatewayInit {
 
 	@SubscribeMessage("Move1")
 	HandleMove1(@MessageBody() payload: any, @ConnectedSocket() client: Socket) {
-		console.log("input for room " + payload.roomId);
 		let input : Move = payload.input;
 		this.gameService.updateMove1(input, client.id, payload.roomId);
 	}
 
 	@SubscribeMessage("Move2")
 	HandleMove2(@MessageBody() payload: any, @ConnectedSocket() client: Socket) {
-		console.log("input for room " + payload.roomId);
 		let input : Move = payload.input;
 		this.gameService.updateMove2(input, client.id, payload.roomId);
 	}
