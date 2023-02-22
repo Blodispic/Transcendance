@@ -94,45 +94,46 @@ function InfoFriend(props: {user: IUser}) {
 export function DmMessages(props: { id: any; currentdm: IUser | undefined; setCurrentDm: Function}) {
 
 	const [newInput, setNewInput] = useState("");
+	let newMessage: IMessage;
 	const [messageList, setMessageList] = useState<IMessage[]>([]);
 	const myUser = useAppSelector(state => state.user);
 
 	const handleSubmitNewMessage = (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
-		if (newInput != "")
-			socket.emit('sendMessageUser', { newInput }); //
+		if (newInput != "") {
+			socket.emit('sendMessageUser', { usertowho: props.currentdm, sender: myUser.user, message: newInput });
+
+			// newMessage.sender = myUser.user;
+			// newMessage.usertowho = props.currentdm;
+			// newMessage.message = newInput;
+			// setMessageList([...messageList, newMessage]);
+		}
 		setNewInput("");
 	}
 
-	socket.on('sendMessageUserOk', (message) => {
-		buildNewMessage(message);
+	socket.on('sendMessageUserOK', (messageUserDto) => {
+		setMessageList([...messageList, messageUserDto]);
 	})
 
-	const buildNewMessage = (data: any) => {
-		setMessageList([...messageList, data]);
-	}
+	// if (currentChan?.users !== undefined && currentChan?.users.find(currentUser.user)) {
+	// 	setIsOnChan(true);
+	// }
 
-
-	return (props.currentdm) ? (
+	return (
 		<div className="chat-body">
-			<div className="DM-profile">
-				<img className='avatar litle-avatar' src={props.currentdm?.avatar}  alt={props.currentdm.login} />
-				
-				<div className="">
-					<a>
-				{props.currentdm.username}
-				</a>
-				</div>
-			</div>
+			{/* {
+				currentChan !== undefined && currentUser.user !== undefined &&
+			<ChannelTitle user={currentUser.user} channel={currentChan} />
+			} */}
 			<div className="chat-messages">
-				{messageList.map((dm) => (
-					<div key={dm.message} className="__wrap">
+				{messageList.map(message => (
+					<div key={message.message} className="__wrap">
 						<div className="message-info">
-							<img className="user-avatar" src={dm.sender?.avatar} />
-							{dm.sender?.username}
+							<img className="user-avatar" src={message.sender?.avatar} />
+							{message.sender?.username}
 							<span className="timestamp">0000/00/00  00:00</span>
 						</div>
-						{dm.message}
+						{message.message}
 					</div>
 				))}
 			</div>
@@ -143,11 +144,9 @@ export function DmMessages(props: { id: any; currentdm: IUser | undefined; setCu
 						placeholder="type message here" value={newInput} />
 				</form>
 			}
-
 		</div>
-	): <></>;
+	);
 }
-
 
 
 export function DirectMessage(props: any) {
