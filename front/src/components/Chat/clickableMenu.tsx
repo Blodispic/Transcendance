@@ -4,7 +4,7 @@ import { IChannel } from "../../interface/Channel";
 import { IUser } from "../../interface/User";
 import { useAppSelector } from "../../redux/Hook";
 import CustomGamePopup from "../Game/CustomGamePopup";
-import { AddAdmin, BanUser, MuteUser } from "./ChannelUtils";
+import { AddAdmin, BanUser, MuteUser } from "./AdminCommands";
 
 export default function CLickableMenu(props: { user: IUser, chan: IChannel }) {
 
@@ -46,6 +46,11 @@ export default function CLickableMenu(props: { user: IUser, chan: IChannel }) {
                             <li>
                                 <a onClick={() => BanUser(props.chan.id, user.id)}>
                                     Ban
+                                </a>
+                            </li>
+                            <li>
+                                <a>
+                                    Kick
                                 </a>
                             </li>
                         </>

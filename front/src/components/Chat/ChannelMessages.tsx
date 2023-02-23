@@ -6,7 +6,8 @@ import { socket } from "../../App";
 import { IChannel } from "../../interface/Channel";
 import { IMessage } from "../../interface/Message";
 import { useAppSelector } from "../../redux/Hook";
-import { JoinChannel, LeaveChannel } from "./ChannelUtils";
+import { ConfigurePass } from "./AdminCommands";
+import { JoinChannel, LeaveChannel } from "./JoinLeave";
 
 // function ChannelHeader(props: { chan: any, user: any }) {
 // 	const [isOnChan, setIsOnChan] = useState(false);
@@ -40,7 +41,7 @@ export function ChannelMessages(props: { id: any }) {
 	const currentUser = useAppSelector(state => state.user);
 	const [isOnChan, setIsOnChan] = useState(false);
 	const [announce, setAnnounce] = useState("");
-	const [passPopup, setPassPopup] = useState(false);
+	const [popup, setPopup] = useState(false);
 
 	useEffect(() => {
 		const getChannel = async () => {
@@ -85,7 +86,10 @@ export function ChannelMessages(props: { id: any }) {
 				{currentChan?.name}
 				{
 					currentChan?.id &&
-					<ImCog style={{ float: 'right' }} />
+					<>
+					<ImCog style={{ float: 'right' }} onClick={() => setPopup(true)}/>
+					<ConfigurePass trigger={popup} setTrigger={setPopup} channel={currentChan}/>
+					</>
 				}
 				{
 					currentChan?.chanType == 1 &&

@@ -1,8 +1,7 @@
 import { useState } from "react";
-import { HiOutlineXMark, HiPlus } from "react-icons/hi2";
+import { HiOutlineXMark } from "react-icons/hi2";
 import { socket } from "../../App";
 import { IChannel } from "../../interface/Channel";
-import { IUser } from "../../interface/User";
 
 export function CheckPassword(props: {trigger: boolean, setTrigger: Function, channel: IChannel}) {
 	const [password, setPassword] = useState("");
@@ -79,36 +78,3 @@ export function LeaveChannel (props: {currentUser: any, chanid: any}) {
 	);
 }
 
-export function BanUser(chanid: any, userid: any) {
-	console.log('ban');
-	socket.emit('BanUser', {chanid: chanid, userid: userid});
-}
-
-export function MuteUser(chanid: any, userid: any) {
-	console.log('mute');
-	socket.emit('MuteUser', {chanid: chanid, userid: userid});
-	// socket.on('muteUserOK', (userId, chanId) => {});
-}
-
-export function AddAdmin(chanid: any, userid: any) {
-	console.log('add admin');
-	socket.emit('GiveAdmin', {chanid: chanid, userid: userid});
-}
-
-export function ConfigurePassword(props: {trigger: boolean; setTrigger: Function; channel: IChannel; user: IUser}) {
-	const [newPassword, setNewPassword] = useState("");
-
-
-	return (
-		<div className="chat-form-popup" onClick={_ => props.setTrigger(false)}>
-			<div className="chat-form-inner" onClick={e => e.stopPropagation()}>
-				<HiOutlineXMark className="close-icon" onClick={_ => props.setTrigger(false)} /> <br />
-				<h3>Password Test</h3>
-				{ //public chan
-					props.channel.chanType === 0 &&
-					<><input type="password" id="channel-input" placeholder="Insert password" onChange={e => { setNewPassword(e.target.value); }} /><br /></>
-				}
-			</div>
-		</div>
-	);
-}
