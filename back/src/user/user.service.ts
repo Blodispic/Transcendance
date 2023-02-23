@@ -123,9 +123,20 @@ export class UserService {
     if (user) {
       //Si vous voulez plus de chose a update, mettez le dans le body et faites un if
       if (userUpdate.username)
-        user.username = userUpdate.username;
+      {
+        const checkUsername = await this.usersRepository.findOneBy({
+          username: userUpdate.username,
+        })
+        if ( checkUsername ) {
+          console.log("il exist dedf dgfsjsdhgdgfa etdhgf ")
+          throw new NotFoundException("Username exists");
+        }
+        else
+          user.username = userUpdate.username;
+      }
       if (userUpdate.status) {
         user.status = userUpdate.status;
+        
       }
       if (userUpdate.twoFaEnable)
         user.twoFaEnable = userUpdate.twoFaEnable

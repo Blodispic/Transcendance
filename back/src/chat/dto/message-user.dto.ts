@@ -5,6 +5,9 @@ export class MessageUserDto {
 	@IsNotEmpty()
 	usertowho: User;
 
+	@IsNotEmpty()
+	sender: User;
+
 	@IsString()
 	@IsNotEmpty()
 	message: string; 

@@ -7,7 +7,7 @@ import 'react-tabs/style/react-tabs.css';
 import { useNavigate, useParams } from "react-router-dom";
 import { page } from "../../interface/enum";
 
-export function ChatBody() {
+export function ChatBody(props: any) {
 
 	const [newInput, setNewInput] = useState("");
 	const [messageList, setMessageList] = useState<any[]>([]);
@@ -82,21 +82,9 @@ export default function Chat() {
 			}
 			{
 				current == page.PAGE_2 &&
-				<DirectMessage />
+				<DirectMessage dmId={id}/>
 			}
 
 		</div>
-		// <Tabs className="chat-tab">
-		// 	<TabList>
-		// 		<Tab onClick={_ => navigate(`/Chat/channel/`)} >Channels</Tab>
-		// 		<Tab onClick={_ => navigate(`/Chat/dm/`)}>DM</Tab>
-		// 	</TabList>
-		// <TabPanel>
-		// 	<Channels chatId={id}/>
-		// </TabPanel>
-		// <TabPanel>
-		// 	<DirectMessage />
-		// </TabPanel>
-		// </Tabs>
 	);
 }

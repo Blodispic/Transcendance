@@ -55,25 +55,25 @@ export default function Profile() {
         let { id } = useParams();
         const [pages, setPages] = useState<page>(page.PAGE_1);
         const myUser = useAppSelector(state => state.user);
-
-        const fetchid = async () => {
-                const response = await fetch(`${process.env.REACT_APP_BACK}user/id/${id}`, {
-                        method: 'GET',
-                })
-                setCurrentUser(await response.json());
-        }
+        
+                const fetchid = async () => {
+                        console.log(id);
+                        const response = await fetch(`${process.env.REACT_APP_BACK}user/id/${id}`, {
+                                method: 'GET',
+                        })
+                        setCurrentUser(await response.json());
+                }
         useEffect(() => {
                 if (id)
                         fetchid();
         }, [id])
 
-        socket.on('UpdateSomeone', (idChange) => {
-                console.log("ca dis quoi", idChange, myUser.user?.id)
+        socket.on('UpdateSomeone', (idChange, idChange2) => {
+                console.log("ca dis quoi", idChange, currentUser?.id)
 
-                if (idChange === myUser.user!.id)
-                        console.log("hein")
-                if (idChange === myUser.user!.id)
-                        fetchid();
+                if (idChange2 === id || idChange === id)
+                fetchid();
+
         })
         useEffect(() => {
         }, [Onglets])
