@@ -50,7 +50,7 @@ function App() {
         cookies.remove('Token');
       }
     })
-    .catch( function() {
+    .catch( (reponse) => {
       console.log("token inexistant or expired")
       cookies.remove('Token');
     }

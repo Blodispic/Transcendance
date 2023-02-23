@@ -149,7 +149,6 @@ export class ChannelService {
 		if (channel === null || user === null)
 			throw new BadRequestException();
 		channel.muted.splice(channel.muted.indexOf(user, 0), 1);
-		console.log("unmuute");
 		return this.channelRepository.save(channel);
 	}
 
@@ -162,16 +161,11 @@ export class ChannelService {
 		if (channel === null || user === null)
 			throw new BadRequestException();
 		if (!channel.muted)
-			return false;
-		console.log("user:", user.username, "chan:", channel.name);
-		
-		channel.muted.forEach(muted => {
-			if (muted == user)
-			{
-				console.log("muted : ", muted.username);
-				return true;
-			}
-		});
+			return false;		
+		for (const iterator of channel.muted) {
+			if (iterator.id == user.id)
+				return true;			
+		}	
 		return false;			
 	}
 
@@ -185,10 +179,10 @@ export class ChannelService {
 			throw new BadRequestException();
 		if (!channel.banned)
 			return false;
-		channel.banned.forEach(banned => {
-			if (banned === user)
-				return true;
-		});
+		for (const iterator of channel.banned) {
+			if (iterator.id == user.id)
+				return true;			
+		}
 		return false;			
 	}
 
@@ -217,10 +211,10 @@ export class ChannelService {
                 throw new BadRequestException();
         if (!channel.owner)
                 return false;
-        channel.owner.forEach(owner => {
-                if (owner === user)
-                        return true;
-        });
+		for (const iterator of channel.owner) {
+			if (iterator.id == user.id)
+				return true;			
+		}
         return false;
 }
 }

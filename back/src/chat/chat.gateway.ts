@@ -49,18 +49,16 @@ export class ChatGateway
   const socketIdToWho = this.findSocketFromUser(messageUserDto.usertowho);
   if (socketIdToWho === null)
     throw new BadRequestException(); // no such user
-  this.server.to(socketIdToWho).emit("sendMessageUserOk", messageUserDto);
- 
-
+  this.server.to(socketIdToWho.id).emit("sendMessageUserOK", messageUserDto);
  }
 
 findSocketFromUser(user: User)
- {
-   userList.forEach(client => {
-     if (client.handshake.auth.user === user)
-      return client;
-   });
-   return null;
+ {  
+  for (const iterator of userList) {
+    if (iterator.handshake.auth.user.id === user.id)
+      return iterator;
+  }
+  return null;
  }
 
 
@@ -69,7 +67,7 @@ async handleSendMessageChannel(@ConnectedSocket() client: Socket, @MessageBody()
   const channel = await this.channelService.getById(messageChannelDto.chanid);
   if (channel == null)
     throw new BadRequestException(); // no such channel
-  const user = client.handshake.auth.user;
+  const user = client.handshake.auth.user;  
   if (await this.channelService.isUserMuted({chanid: channel.id, userid: user.id}) || 
   await this.channelService.isUserBanned({chanid: channel.id, userid: user.id }))
     throw new BadRequestException(); // user is ban or mute from this channel
@@ -193,8 +191,8 @@ async handleMuteUser(@ConnectedSocket() client: Socket, @MessageBody() muteUserD
   const user = client.handshake.auth.user;
   if (channel === null || user === null)
     throw new BadRequestException(); // no such channel or user
-  if (!(await this.channelService.isUserAdmin(user)))
-    throw new BadRequestException();
+  // if (!(await this.channelService.isUserAdmin(user)))
+  //   throw new BadRequestException();
   this.channelService.muteUser(muteUserDto);
   const timer = 10000;
   console.log("muuuute");
