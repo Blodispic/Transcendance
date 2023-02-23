@@ -5,7 +5,6 @@ import { FaUserAlt } from "react-icons/fa";
 import { BsChevronRight, BsChevronLeft } from "react-icons/bs";
 import { Cookies } from 'react-cookie';
 import { delete_user } from '../../redux/user';
-import PeopleList from './people_list';
 import { socket } from '../../App';
 
 export default function Header() {
@@ -88,22 +87,7 @@ export default function Header() {
             }
           </div>
         }
-        {/* {
-            peopleBool == true &&
-          <div className="icon-header" onClick={_ => peopleclick()} >
-            <BsChevronRight />
-          </div>
-        }
-        {
-          peopleBool == false &&
-          <div className="icon-header" onClick={_ => peopleclick()} >
-            <BsChevronLeft />
-          </div>
-        }
-        {
-          peopleBool == true &&
-          <PeopleList />
-        } */}
+
       </div>
     </div>
   );

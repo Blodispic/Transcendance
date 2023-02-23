@@ -101,6 +101,7 @@ export function ChannelMessages(props: { id: any }) {
 				{/* <ChannelHeader chan={currentChan} user={currentUser?.user} /> */}
 				<div className="chat-messages">
 					{messageList.map(message => (
+						message.chanid == currentChan?.id && 
 						<div key={message.message} className="__wrap">
 							<div className="message-info">
 								<img className="user-avatar" src={message.sender?.avatar} />

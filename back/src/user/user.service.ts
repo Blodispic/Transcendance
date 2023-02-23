@@ -128,7 +128,7 @@ export class UserService {
           username: userUpdate.username,
         })
         if ( checkUsername ) {
-          console.log("il exist dedf dgfsjsdhgdgfa etdhgf ")
+          console.log("il exist dedf dgfgsjsdhgdgfa etdhgf ")
           throw new NotFoundException("Username exists");
         }
         else
@@ -136,10 +136,11 @@ export class UserService {
       }
       if (userUpdate.status) {
         user.status = userUpdate.status;
-        
+
       }
       if (userUpdate.twoFaEnable)
         user.twoFaEnable = userUpdate.twoFaEnable
+
       return await this.usersRepository.save(user);
     }
     return 'There is no user to update';

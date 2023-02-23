@@ -6,14 +6,15 @@ import { socket } from "../../App";
 import { useAppSelector } from "../../redux/Hook";
 import { IUser } from "../../interface/User";
 import { useSearchParams } from "react-router-dom";
+import AllPeople from "../utils/Allpeople";
 
 export default function CustomGamePopup(props: {trigger: boolean; setTrigger: Function; friend: IUser | undefined} ) {
     const [extra, setExtra] = useState(false);
     const [maxScore, setMaxScore] = useState(1);
     const [myVar, setMyvar] = useState<boolean>(false);
-    const [alluser, setAlluser] = useState<IUser[] | undefined>(undefined);
+
     const myUser = useAppSelector(state => state.user);
-    const [friend, setFriend] = useState<IUser| undefined>(props.friend);
+    const [friend, setFriend] = useState<IUser[] | undefined>(undefined);
     const [inpage, setInpage] = useState<boolean>(false);
 
 
@@ -23,29 +24,12 @@ export default function CustomGamePopup(props: {trigger: boolean; setTrigger: Fu
     }
 
     useEffect(() => {
-
+        if (props.friend !== undefined)
+            setFriend([props.friend])
         if ( window.location.href.search('Game') == -1 ) {
             setInpage(true);
         }
 
-          const get_all = async () => {
-            const response = await fetch(`${process.env.REACT_APP_BACK}user`, {
-                    method: 'GET',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-            })
-            const data = await response.json();
-            console.log("data? ", data);
-            setAlluser(data.filter((User: { status: string; }) => User.status === "Online"));
-            setAlluser(data.filter((User: { username: string; }) => User.username !== myUser.user?.username ));
-        }
-        if (props.friend === undefined)
-            get_all();
-        else
-            setFriend(props.friend);
-
-        console.log("les gens log ", alluser);
     }, [props])
 
     const changeScore = (event: any) => {
@@ -70,41 +54,8 @@ export default function CustomGamePopup(props: {trigger: boolean; setTrigger: Fu
             {/* ; setFriend(undefined) */}
                 <HiOutlineXMark className="close-icon" onClick={_ => {props.setTrigger(false); setMyvar(false); canErase() }} /> <br /> 
                 Create Custom Game
-                <div className='avatar-inpopup'>
-                    <img className='avatar' src={myUser.user?.avatar} />
-                    {
-                        friend !== undefined &&
-                        <>
-                            <a> Vs </a>
-                            {
-                                friend.avatar !== null &&
-                                <img className='avatar' src={friend.avatar} />
-                            }
-                                               {
-                                friend.avatar === null &&
-                                <img className='avatar' src={`${process.env.REACT_APP_BACK}user/${friend.id}/avatar`} />
-                            }
-                        </>
-                    }
-                    {
-                        friend === undefined &&
-                        <AiFillPlusCircle className="plus-circle pointer" onClick={_ => setMyvar(!myVar)} />
-                    }
-                    {
-                        myVar === true &&
-                        <div className="dropdown-container">
-                            <div className=" dropdown people-list hover-style">
-                                {alluser!.map(user => (
-                                    <ul key={user.username} >
-                                        <li onClick={_ => {setFriend(user);  setMyvar(!myVar)}}>
-                                            {user.username}
-                                        </li>
-                                    </ul>
-                                ))}
-                            </div>
-                        </div>
-                    }
-                </div>
+                <AllPeople friend={friend} setFriend={setFriend} myVar={myVar} setMyvar={setMyvar} />
+
                 <div className='sub-element'>Set Extra Mode <br />
                     <label> <input type="checkbox" onChange={changeExtra} /> Extra mode </label>
                 </div>
