@@ -6,7 +6,13 @@ import { IUser } from "../../interface/User";
 
 export function CheckPassword(props: {trigger: boolean, setTrigger: Function, channel: IChannel}) {
 	const [password, setPassword] = useState("");
-	
+
+	const handleJoinWithPass = () => {
+		socket.emit('joinChannel', {chanid: props.channel.id, channame: props.channel.name, password: password})
+		setPassword("");
+		props.setTrigger(false);
+	}
+
 	return (props.trigger) ? (
 		<div className="chat-form-popup" onClick={_ => props.setTrigger(false)}>
 			<div className="chat-form-inner" onClick={e => e.stopPropagation()}>
@@ -15,7 +21,7 @@ export function CheckPassword(props: {trigger: boolean, setTrigger: Function, ch
 			<h3>Input password for " {props.channel.name} "</h3>
 			<input type="password" id="channel-input" placeholder="Insert password" onChange={e => { setPassword(e.target.value); }} /><br />
 		
-			<button>Enter Channel</button>
+			<button onClick={handleJoinWithPass}>Enter Channel</button>
 			</div>
 		</div>
 	) : <></>;
