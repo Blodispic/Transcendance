@@ -31,7 +31,7 @@ export function ChatBody(props: any) {
 	return (
 		<div className="chat-body">
 			<div className="chat-messages">
-				{messageList.map((chat) => (
+				{messageList && messageList.map((chat) => (
 					<div key={chat.newInput} className="__wrap">
 						<div className="message_info">
 							<span className="user-avatar">

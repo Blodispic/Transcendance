@@ -37,7 +37,7 @@ function DMList(props: {currentdm: IUser | undefined; setCurrentDm: Function}) {
 		<div className="title"> Direct Messages <hr />
 			{alluser != undefined &&
 				<>
-					{alluser!.map(user => (
+					{alluser && alluser.map(user => (
 						<ul key={user.username} onClick={_ => props.setCurrentDm(user)} >
 							<li >
 								{user.username}

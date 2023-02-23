@@ -45,7 +45,7 @@ $tab-color: rgba(var(--primary-color), 0.5); //rgb(121, 121, 121);
 		height: 30px;
 		line-height: 30px;
 		color: black;
-		// display: flex;
+		display: flex;
 	}
 
 	.right-sidebar {
@@ -166,7 +166,7 @@ $tab-color: rgba(var(--primary-color), 0.5); //rgb(121, 121, 121);
 }
 
 .__wrap {
-	font-size: 15px;
+	font-size: 20px;
 	line-height: normal;
 	// color: rgb(111, 106, 106);
 	color: black;
@@ -175,25 +175,25 @@ $tab-color: rgba(var(--primary-color), 0.5); //rgb(121, 121, 121);
 	border-radius: 5px;
 	padding: 20px;
 	margin: 10px;
+	padding-top: 0;
 	word-wrap: break-word;
-	display: flexbox;
+	display:flexbox;
 
 	.message-info {
 		color: rgb(107, 107, 107);
-		font-size: 15px;
-		justify-content: center;
-
-		.timestamp {
-			font-size: 10px;
-			margin-left: 10px;
-		}
+		// font-size: 15px;
+		display: flex;
+		align-items: center;
 	}
-
+	
+	.timestamp {
+		font-size: 10px;
+		margin-left: 50px;
+	}
 }
 
 
 .user-avatar {
-	// display: inline-block;
 	margin-right: 10px;
 	align-self: center;
 	object-fit: cover;
