@@ -99,12 +99,9 @@ async handleCreateChannel(@ConnectedSocket() client: Socket, @MessageBody() crea
 
   let user: User = client.handshake.auth.user;
   const new_channel = await this.channelService.create(createChannelDto, user);
-  this.channelService.add({
-    user: user,
-    chanId: new_channel.id,
-  });
   client.join("chan" + new_channel.id);
-  // console.log(new_channel);
+  if (new_channel.chanType == 1 && createChannelDto.users)
+    this.inviteToChan(createChannelDto.users, new_channel.id);
   client.emit("createChannelOk", new_channel.id);
   // this.server.emit("reloadChannels"); // not sure for now
 }
@@ -228,8 +225,19 @@ async handleInvite(@ConnectedSocket() client: Socket, @MessageBody() inviteDto: 
     throw new BadRequestException();
   const socketIdToWho = this.findSocketFromUser(inviteDto.user);
   if (socketIdToWho)
-    this.server.to(socketIdToWho?.id).emit('invited', channel);
+    this.server.to(socketIdToWho.id).emit('invited', channel);
+  this.channelService.add({user: inviteDto.user, chanId: inviteDto.chanid});
   client.emit('inviteOK');
+}
+
+async inviteToChan(users: User[], chanid: number)
+{
+  users.forEach(user => {
+    let socketIdToWho = this.findSocketFromUser(user);
+    if (socketIdToWho)
+      this.server.to(socketIdToWho.id).emit("invited", chanid);
+    this.channelService.add({user: user, chanId: chanid});
+  });
 }
 
  afterInit(server: Server) {

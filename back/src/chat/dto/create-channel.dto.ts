@@ -1,4 +1,5 @@
 import { IsNotEmpty, IsNumber, IsOptional, isString, IsString } from "class-validator";
+import { User } from "src/user/entities/user.entity";
 
 
 export class CreateChannelDto {
@@ -13,4 +14,7 @@ export class CreateChannelDto {
 
 	@IsNumber()
 	chanType: number;
+
+	@IsOptional()
+	users?: User[];
 }
