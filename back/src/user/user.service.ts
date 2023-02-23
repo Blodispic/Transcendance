@@ -41,17 +41,11 @@ export class UserService {
   }
 
   async createResult(resultDto: CreateResultDto) {
-    let winner = await this.usersRepository.findOne({
+    const winner = await this.usersRepository.findOne({
       relations: {
         results: true,
       },
       where: { username: resultDto.winner }
-    });
-    let loser = await this.usersRepository.findOne({
-      relations: {
-        results: true,
-      },
-      where: { username: resultDto.loser }
     });
     const resultPush = await this.resultsRepository.save(resultDto);
     if (resultPush) {
@@ -60,29 +54,22 @@ export class UserService {
         winner.elo += 50;
         winner.results.push(resultPush);
         await this.usersRepository.save(winner);
-        winner = await this.usersRepository.findOne({
-          relations: {
-            results: true,
-          },
-          where: { username: resultDto.winner }
-        });
       }
+      const loser = await this.usersRepository.findOne({
+        relations: {
+          results: true,
+        },
+        where: { username: resultDto.loser }
+      });
       if (loser) {
         loser.lose += 1;
         loser.elo -= 50;
         loser.results.push(resultPush);
         await this.usersRepository.save(loser);
-        loser = await this.usersRepository.findOne({
-          relations: {
-            results: true,
-          },
-          where: { username: resultDto.loser }
-        });
       }
       return resultPush;
     }
   }
-  
 
   async save(updateUserDto: UpdateUserDto) {
     return (await this.usersRepository.save(updateUserDto));
@@ -162,8 +149,7 @@ export class UserService {
     })
     if (user) {
       //Si vous voulez plus de chose a update, mettez le dans le body et faites un if
-      if (userUpdate.username)
-      {
+      if (userUpdate.username) {
         const checkUsername = await this.usersRepository.findOneBy({
           username: userUpdate.username,
         })
