@@ -4,15 +4,15 @@ import { socket } from "../../App";
 import { IChannel } from "../../interface/Channel";
 import { IUser } from "../../interface/User";
 
-export function CheckPassword(trigger: boolean, setTrigger: Function, channel: IChannel) {
+export function CheckPassword(props: {trigger: boolean, setTrigger: Function, channel: IChannel}) {
 	const [password, setPassword] = useState("");
 	
-	return (trigger) ? (
-		<div className="chat-form-popup" onClick={_ => setTrigger(false)}>
+	return (props.trigger) ? (
+		<div className="chat-form-popup" onClick={_ => props.setTrigger(false)}>
 			<div className="chat-form-inner" onClick={e => e.stopPropagation()}>
 
-			<HiOutlineXMark className="close-icon" onClick={_ => setTrigger(false)} /> <br />
-			<h3>Input password for " {channel.name} "</h3>
+			<HiOutlineXMark className="close-icon" onClick={_ => props.setTrigger(false)} /> <br />
+			<h3>Input password for " {props.channel.name} "</h3>
 			<input type="password" id="channel-input" placeholder="Insert password" onChange={e => { setPassword(e.target.value); }} /><br />
 		
 			<button>Enter Channel</button>
@@ -21,21 +21,14 @@ export function CheckPassword(trigger: boolean, setTrigger: Function, channel: I
 	) : <></>;
 }
 
-export function JoinChannel(props: {trigger: boolean; setTrigger: Function; currentUser: any, channel: IChannel }) {
+export function JoinChannel(props: {currentUser: any, channel: IChannel }) {
+
+	const [passPopup, setPassPopup] = useState(false);
 
 	if (props.channel === undefined)
 	{	
 		return (<></>);
 	}
-	
-	// if (props.channel.chanType === 2) {
-
-	// 	return (
-	// 		<>
-	// 		<CheckPassword trigger={props.trigger} setTrigger={props.setTrigger} channel={props.channel} />
-	// 		</>
-	// 	)
-	// }
 
 	const handleJoin = () => {
 		socket.emit('joinChannel', {chanid: props.channel.id});
@@ -53,7 +46,10 @@ export function JoinChannel(props: {trigger: boolean; setTrigger: Function; curr
 			}
 			{
 				props.channel.chanType === 2 &&
-				<button onClick={() => CheckPassword(props.trigger, props.setTrigger, props.channel)}>Join</button>
+				<>
+				<button onClick={() => setPassPopup(true)}>Join</button>
+				<CheckPassword trigger={passPopup} setTrigger={setPassPopup} channel={props.channel} />
+				</>
 			}
 		</div>
 	);

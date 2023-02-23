@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { BsKeyFill } from "react-icons/bs";
 import { HiLockClosed } from "react-icons/hi2";
 import { ImCog } from "react-icons/im";
 import { socket } from "../../App";
@@ -88,11 +89,16 @@ export function ChannelMessages(props: { id: any }) {
 				}
 				{
 					currentChan?.chanType == 1 &&
-					<HiLockClosed />}
+					<HiLockClosed />
+				}
+				{
+					currentChan?.chanType == 2 &&
+					<BsKeyFill />
+				}
 				{
 					// isOnChan === false &&
 					currentChan !== undefined &&
-					<JoinChannel trigger={passPopup} setTrigger={setPassPopup} currentUser={currentUser.user} channel={currentChan} />
+					<JoinChannel currentUser={currentUser.user} channel={currentChan} />
 				}
 				{
 					// isOnChan === true &&
