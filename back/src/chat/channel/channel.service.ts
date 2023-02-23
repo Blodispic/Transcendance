@@ -11,6 +11,7 @@ import { RmUserDto } from './dto/rm-user.dto';
 import { MuteUserDto } from '../dto/mute-user.dto';
 import { CreateChannelDto } from '../dto/create-channel.dto';
 import { GiveAdminDto } from '../dto/give-admin.dto';
+var bcrypt = require('bcryptjs');
 
 @Injectable()
 export class ChannelService {
@@ -24,6 +25,11 @@ export class ChannelService {
 	) {}
 
 	async create(createChannelDto: CreateChannelDto, user: User) {
+		if (createChannelDto.password) {
+			const salt = await bcrypt.genSalt();
+			const hashPassword = await bcrypt.hash(createChannelDto.password, salt);
+			createChannelDto.password = hashPassword;
+		}
 		const channel: Channel = this.channelRepository.create({
 			name: createChannelDto.chanName,
 			password: createChannelDto.password,
@@ -80,11 +86,14 @@ export class ChannelService {
 			if (channelUpdate.users)
 				channel.users = channelUpdate.users;
 			if (channelUpdate.password)
-				channel.users = channelUpdate.password;
-		
-		  return await this.channelRepository.save(channel);
+			{
+				const salt = await bcrypt.genSalt();
+				const hashPassword = await bcrypt.hash(channelUpdate.password, salt);
+				channel.password = hashPassword;
+			}
+		  	return await this.channelRepository.save(channel);
 		}
-		return 'There is no user to update';
+		return 'There is no channel to update';
 	  }
 
 	getById(id: number) {
@@ -135,9 +144,9 @@ export class ChannelService {
 	  }
 
 	  getPublic() {
-		return this.channelRepository.find({
-			where: {chanType: 0,}, 
-		})
+		return this.channelRepository.findBy({
+				chanType: 0,
+			});
 	  }
 
 	  async unmuteUser(muteUserDto: MuteUserDto) {
@@ -216,5 +225,6 @@ export class ChannelService {
 				return true;			
 		}
         return false;
-}
+	}
+
 }
