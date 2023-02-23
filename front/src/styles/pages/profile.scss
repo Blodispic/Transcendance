@@ -363,67 +363,107 @@ span {
 
 .match-list {
     display: flex;
-    flex-direction: column;
-    align-items: center;
+    flex-direction: column-reverse;
+    overflow: hidden;
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
     justify-content: center;
-    width: 100%;
-    padding: 0;
-  }
-  
+    align-content: center;
+    padding-top: 1%;
+}
 
 .match-block {
+    position: relative;
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    background-color: #ccced9;
-    border-radius: 0.5px;
+    justify-content: center;
+    border-radius: 4.5px;
+    overflow: hidden;
+    text-decoration: none;
+    background: linear-gradient(to right, #41B94B, #E05068);
     border: 1px solid rgb(151, 139, 139);
     margin-bottom: 10px;
-    width: 90%;
-  }
-  
-  .winner-info {
-    display: flex;
-    align-items: center;
-  }
-  
-  .winner-img {
-    border-right: 0.2px solid rgb(0, 0, 0);
-    width: 100px;
-    height: 100px;
-    margin-right: 10px;
-  }
-  
-  .winner-img img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-  
-  .winner-name {
-    font-size: 24px;
-    font-family: "Fredoka One", cursive;
-  }
-  
-  .loser-info {
-    display: flex;
-    align-items: center;
-  }
-  
-  .loser-img {
-    border-left: 0.2px solid rgb(0, 0, 0);
-    width: 100px;
-    height: 100px;
     margin-left: 10px;
-  }
-  
-  .loser-img img {
-    width: 100%;
+    width: 90%;
+    display: flex;
+    align-items: flex-start;
+}
+
+.winner-img {
+    border-right: 0.2px solid rgb(0, 0, 0);
+    height: 75px;
+    width: 75px;
+}
+
+.winner-img img {
     height: 100%;
+    width: 100%;
     object-fit: cover;
-  }
-  
-  .loser-name {
-    font-size: 24px;
+}
+
+.loser-img {
+    border-left: 0.2px solid rgb(0, 0, 0);
+    height: 75px;
+    width: 75px;
+}
+
+.loser-img img {
+    height: 100%;
+    width: 100%;
+    object-fit: cover;
+}
+
+.match-info {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    flex-grow: 1;
+    margin: 0 10px;
+    flex-direction: column;
+    width: 100px;
+}
+
+.match-name {
     font-family: "Fredoka One", cursive;
-  }
+}
+
+.match-elo {
+    font-size: 14px;
+}
+
+.match-score {
+    font-family: "Fredoka One", cursive;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    align-items: center;
+    width: 124px;
+    height: 70px;
+    border-radius: 50%;
+    font-size: 36px;
+}
+
+.match-score-container {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-grow: 1;
+}
+
+.winner {
+    flex-grow: 1;
+    display: flex;
+    align-items: center;
+}
+
+.loser {
+    flex-grow: 1;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+}

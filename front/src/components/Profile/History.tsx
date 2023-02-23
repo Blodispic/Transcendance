@@ -1,9 +1,11 @@
 import { useEffect, useState } from "react";
 import { IUser } from "../../interface/User";
+import { GiCrossedSwords } from "react-icons/gi";
+import {Result} from "../../interface/Result"
 
 export function History(props: { user: IUser }) {
     const { user } = props;
-    const [matchReq, setMatches] = useState<{ winner: string, loser: string, winner_score: number, loser_score: number, winner_avatar: string, loser_avatar: string, winner_elo: number, loser_elo: number, }[]>([]);
+    const [matchReq, setMatches] = useState<Result[]>([]);
 
     useEffect(() => {
         const checkMatchRequest = async () => {
@@ -13,53 +15,55 @@ export function History(props: { user: IUser }) {
                 headers: { 'Content-Type': 'application/json' }
             });
             const data = await response.json();
+            console.log(data);
             setMatches(data);
         };
 
         checkMatchRequest();
-    }, []);
-
-    interface MatchesListProps {
-        matches: { winner: string, loser: string, winner_score: number, loser_score: number, winner_avatar: string, loser_avatar: string, winner_elo: number, loser_elo: number, }[];
-    }
-
-    const MatchList = (props: MatchesListProps) => {
-        return (
-          <ul className="match-list">
-            {props.matches.map((match) => (
-              <li className="match-block" key={match.winner}>
-                <div className="winner-info">
-                  <div className="winner-img">
-                    <img src={match.winner_avatar} alt={match.winner} />
-                  </div>
-                  <div className="winner-name">{match.winner}</div>
-                  <div className="winner-name">{match.winner_elo}</div>
-                </div>
-                <div className="loser-info">
-                  <div className="loser-name">{match.loser_elo}</div>
-                  <div className="loser-name">{match.loser}</div>
-                  <div className="loser-img">
-                    <img src={match.loser_avatar} alt={match.loser} />
-                  </div>
-                </div>
-              </li>
-            ))}
-          </ul>
-        );
-      };
+    }, [user]);
 
     const MatchesReq = () => {
-        console.log(matchReq)
-        return <MatchList matches={matchReq} />;
-    }
+      return (
+        <div className="match-list">
+          {matchReq.map((match) => (
+            <div className="match-block" key={match.id + match.winner.username + match.loser.username}>
+              <div className="winner">
+                <div className="winner-img">
+                  <img src={`${process.env.REACT_APP_BACK}user/${match.winner.id}/avatar`} alt={match.winner.username} />
+                </div>
+                <div className="match-info">
+                  <div className="match-name">{match.winner.username}</div>
+                  <div className="match-elo">{match.winner_elo} ELO</div>
+                </div>
+              </div>
+              <div className="match-score-container">
+                <div className="match-score">
+                  {match.winner_score} <GiCrossedSwords /> {match.loser_score}
+                </div>
+              </div>
+              <div className="loser">
+                <div className="match-info">
+                  <div className="match-name">{match.loser.username}</div>
+                  <div className="match-elo">{match.loser_elo} ELO</div>
+                </div>
+                <div className="loser-img">
+                  <img src={`${process.env.REACT_APP_BACK}user/${match.loser.id}/avatar`} alt={match.loser.username} />
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      );
+    };
+    
 
     return (
         <div>
-            <div className='FriendHeader'>
+            <div className='MatchHeader'>
                 <MatchesReq />
-                <div className='FriendRequestBlock'>
+                <div className='MatchRequestBlock'>
                 </div>
-                <div className='FriendListBlock'>
+                <div className='MatchListBlock'>
                 </div>
             </div>
         </div>

@@ -41,39 +41,51 @@ export class UserService {
   }
 
   async createResult(resultDto: CreateResultDto) {
-    console.log("result = ", resultDto);
-
-    const user1 = await this.getByUsername(resultDto.winner);
-    const user2 = await this.getByUsername(resultDto.loser);
-    const result = await this.resultsRepository.save(resultDto);
-
-    console.log("---- User1 ---- = ", user1);
-    console.log("---- User2 ---- = ", user2);
-    console.log("---- result ---- = ", result);
-
-    if (user1) {
-      if (!user1.results)
-        user1.results = [];
-      user1.results.push(result);
-      console.log("---- User1 ---- = ", user1);
-      this.usersRepository.save(user1);
+    let winner = await this.usersRepository.findOne({
+      relations: {
+        results: true,
+      },
+      where: { username: resultDto.winner }
+    });
+    let loser = await this.usersRepository.findOne({
+      relations: {
+        results: true,
+      },
+      where: { username: resultDto.loser }
+    });
+    const resultPush = await this.resultsRepository.save(resultDto);
+    if (resultPush) {
+      if (winner) {
+        winner.win += 1;
+        winner.elo += 50;
+        winner.results.push(resultPush);
+        await this.usersRepository.save(winner);
+        winner = await this.usersRepository.findOne({
+          relations: {
+            results: true,
+          },
+          where: { username: resultDto.winner }
+        });
+      }
+      if (loser) {
+        loser.lose += 1;
+        loser.elo -= 50;
+        loser.results.push(resultPush);
+        await this.usersRepository.save(loser);
+        loser = await this.usersRepository.findOne({
+          relations: {
+            results: true,
+          },
+          where: { username: resultDto.loser }
+        });
+      }
+      return resultPush;
     }
-    else
-      return ;
-    if (user2) {
-      if (!user2.results)
-        user2.results = [];
-      user2.results.push(result);
-      console.log("---- User2 ---- = ", user2);
-      this.usersRepository.save(user2);
-    }
-    else
-      return ;
-    return (result);
   }
+  
 
   async save(updateUserDto: UpdateUserDto) {
-    return (this.usersRepository.save(updateUserDto));
+    return (await this.usersRepository.save(updateUserDto));
   }
 
 
@@ -89,8 +101,6 @@ export class UserService {
 
   async check2FA(id: number, userCode: string): Promise<boolean> {
     const user = await this.usersRepository.findOneBy({ id: id });
-
-
     if (user) {
       console.log("User code = ", userCode, "twofactorsecret = ", user?.two_factor_secret);
       console.log("check = ", authenticator.check(userCode, user.two_factor_secret));
@@ -152,8 +162,14 @@ export class UserService {
     })
     if (user) {
       //Si vous voulez plus de chose a update, mettez le dans le body et faites un if
-      if (userUpdate.username)
+      if (userUpdate.username) {
+        const checkUsername = await this.usersRepository.findOneBy({
+          username: userUpdate.username,
+        })
+        if (checkUsername && checkUsername.id !== user.id)
+          throw new NotFoundException("Username already in use");
         user.username = userUpdate.username;
+      }
       if (userUpdate.status)
         user.status = userUpdate.status;
       if (userUpdate.twoFaEnable)
@@ -298,22 +314,16 @@ export class UserService {
         this.usersRepository.findOne({ where: { username: request.winner } }),
         this.usersRepository.findOne({ where: { username: request.loser } })
       ]);
-    
-      const winnerAvatar = winner ? winner.avatar || winner.intra_avatar : null;
-      const loserAvatar = loser ? loser.avatar || loser.intra_avatar : null;
-    
       return {
-        winner: winner ? request.winner : "Unknown",
+        id: request.id,
+        winner: winner ? winner : "Unknown",
         winner_score: request.winner_score || 0,
-        loser: loser ? request.loser : "Unknown",
+        loser: loser ? loser : "Unknown",
         loser_score: request.loser_score || 0,
-        winner_avatar: winnerAvatar,
-        loser_avatar: loserAvatar,
         winner_elo: winner ? request.winner_elo : 0,
         loser_elo: loser ? request.loser_elo : 0
       };
     }));
-    
   }
 
   async updateFriendRequestStatus(friendId: number, receiver: User, status: FriendRequestStatus) {

@@ -59,7 +59,7 @@ export class User {
   @Column({ default: 0 })
   lose: number;
 
-  @OneToMany(() => Results, result => result.user)
+  @ManyToMany(() => Results, result => result.user)
   @JoinTable()
   results: Results[];
 
