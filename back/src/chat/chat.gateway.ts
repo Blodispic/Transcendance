@@ -20,6 +20,7 @@ import { BanUserDto } from "./dto/ban-user.dto";
 import { MuteUserDto } from "./dto/mute-user.dto";
 import { Channel } from "./channel/entities/channel.entity";
 import { GiveAdminDto } from "./dto/give-admin.dto";
+import { InviteDto } from "./dto/invite-user.dto";
 var bcrypt = require('bcryptjs');
 
 @WebSocketGateway({
@@ -113,7 +114,7 @@ async handleCreateChannel(@ConnectedSocket() client: Socket, @MessageBody() crea
   client.join("chan" + new_channel.id);
   console.log(new_channel);
   client.emit("createChannelOk", new_channel.id);
-  this.server.emit("reloadChannels");
+  // this.server.emit("reloadChannels"); // not sure for now
 }
 
 @SubscribeMessage('leaveChannel')
@@ -152,7 +153,7 @@ async handleRmPassword(@ConnectedSocket() client: Socket, @MessageBody() chanPas
   if (!(await this.channelService.isUserAdmin(user))) // for now only the real owner/admin, soon any owner/admin
     throw new BadRequestException(); // user willing to change password isn't admin/owner
   this.channelService.update(channel.id, {
-    password: null,
+    rmPassword: 1,
     chanType: 0,
   });
   client.emit("rmPasswordOK", channel.id);
@@ -223,6 +224,20 @@ async handleGiveAdmin(@ConnectedSocket() client: Socket, @MessageBody() giveAdmi
   client.emit("giveAdminOK", user.id, channel.id);
 }
 
+@SubscribeMessage('Invite')
+async handleInvite(@ConnectedSocket() client: Socket, @MessageBody() inviteDto: InviteDto)
+{
+  const channel = await this.channelService.getById(inviteDto.chanid);
+  const user = client.handshake.auth.user;
+  if (channel === null || user === null)
+    throw new BadRequestException();
+  if (!(await this.channelService.isUserAdmin(user)))
+    throw new BadRequestException();
+  const socketIdToWho = this.findSocketFromUser(inviteDto.user);
+  if (socketIdToWho)
+    this.server.to(socketIdToWho?.id).emit('invited', channel);
+  client.emit('inviteOK');
+}
 
  afterInit(server: Server) {
 //    console.log(server);

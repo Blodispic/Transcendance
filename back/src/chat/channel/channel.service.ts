@@ -89,6 +89,10 @@ export class ChannelService {
 				const hashPassword = await bcrypt.hash(channelUpdate.password, salt);
 				channel.password = hashPassword;
 			}
+			if (channelUpdate.rmPassword)
+				channel.password = ""; // for now
+			if (channelUpdate.chanType)
+				channel.chanType = channelUpdate.chanType;
 		  	return await this.channelRepository.save(channel);
 		}
 		return 'There is no channel to update';
