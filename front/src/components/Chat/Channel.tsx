@@ -120,8 +120,6 @@ function ChannelMemberList(props: { id: any }) {
 			</div>
 		)
 	}
-	if (currentChan !== undefined)
-		console.log(currentChan.owner);
 
 	return (
 		<div className="title"> Members <hr />

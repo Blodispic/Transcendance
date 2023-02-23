@@ -9,37 +9,11 @@ import { useAppSelector } from "../../redux/Hook";
 import { ConfigurePass } from "./AdminCommands";
 import { JoinChannel, LeaveChannel } from "./JoinLeave";
 
-// function ChannelHeader(props: { chan: any, user: any }) {
-// 	const [isOnChan, setIsOnChan] = useState(false);
-
-// 	return (
-// 		<div className="body-header" >
-// 			{props.chan.name}
-// 			{
-// 				props.chan !== undefined &&
-// 				<ImCog style={{ float: 'right' }} />
-// 			}
-// 			{
-// 				props.chan.chanType == 1 &&
-// 				<HiLockClosed />}
-// 			{
-// 				isOnChan === false &&
-// 				<JoinChannel currentUser={props.user.user} chan={props.chan.id} />
-// 			}
-// 			{/* {
-// 			isOnChan === true &&
-// 			<span><LeaveChannel currentUser={currentUser.user} chanid={currentChan?.id} /></span>
-// 		} */}
-// 		</div>
-// 	);
-// }
-
 export function ChannelMessages(props: { id: any }) {
 	const [newInput, setNewInput] = useState("");
 	const [messageList, setMessageList] = useState<IMessage[]>([]);
 	const [currentChan, setCurrentChan] = useState<IChannel | undefined>(undefined);
 	const currentUser = useAppSelector(state => state.user);
-	const [isOnChan, setIsOnChan] = useState(false);
 	const [announce, setAnnounce] = useState("");
 	const [popup, setPopup] = useState(false);
 
@@ -70,25 +44,20 @@ export function ChannelMessages(props: { id: any }) {
 		setAnnounce("")
 	});
 
-
-	// if (currentChan?.users !== undefined && currentChan?.users.find(value => currentUser.user)) {
-	// 	console.log('--test--');
-	// 	setIsOnChan(true);
-	// }
-
 	return (
 		<div className="chat-body">
-			{/* {
-				currentChan !== undefined && currentUser.user !== undefined &&
-			<ChannelTitle user={currentUser.user} channel={currentChan} /> */}
-
 			<div className="body-header" >
 				{currentChan?.name}
 				{
 					currentChan?.id &&
 					<>
-					<ImCog style={{ float: 'right' }} onClick={() => setPopup(true)}/>
-					<ConfigurePass trigger={popup} setTrigger={setPopup} channel={currentChan}/>
+					{
+						currentChan.chanType !== 1 && 
+						<>
+						<ImCog style={{ float: 'right' }} onClick={() => setPopup(true)}/>
+						<ConfigurePass trigger={popup} setTrigger={setPopup} channel={currentChan}/>
+						</>
+					}
 					</>
 				}
 				{
@@ -100,15 +69,12 @@ export function ChannelMessages(props: { id: any }) {
 					<BsKeyFill />
 				}
 				{
-					// isOnChan === false &&
 					currentChan !== undefined &&
 					<JoinChannel currentUser={currentUser.user} channel={currentChan} />
 				}
 				{
-					// isOnChan === true &&
 					<LeaveChannel currentUser={currentUser.user} chanid={currentChan?.id} />
 				}
-				{/* <ChannelHeader chan={currentChan} user={currentUser?.user} /> */}
 			</div>
 			<div className="chat-messages">
 				{messageList.map(message => (

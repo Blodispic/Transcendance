@@ -4,41 +4,6 @@ import { socket } from "../../App";
 import { IUser } from "../../interface/User";
 import { useAppSelector } from "../../redux/Hook";
 
-function InviteToChannel( props: {friend: IUser | undefined} ) {
-    const [inpage, setInpage] = useState<boolean>(false);
-    const [alluser, setAlluser] = useState<IUser[] | undefined>(undefined);
-    const [friend, setFriend] = useState<IUser| undefined>(props.friend);
-	const myUser = useAppSelector(state => state.user);
-
-	useEffect(() => {
-
-        if ( window.location.href.search('Game') == -1 ) {
-            setInpage(true);
-        }
-
-          const get_all = async () => {
-            const response = await fetch(`${process.env.REACT_APP_BACK}user`, {
-                    method: 'GET',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-            })
-            const data = await response.json();
-            console.log("data? ", data);
-            setAlluser(data.filter((User: { status: string; }) => User.status === "Online"));
-            setAlluser(data.filter((User: { username: string; }) => User.username !== myUser.user?.username ));
-        }
-        if (props.friend === undefined)
-            get_all();
-        else
-            setFriend(props.friend);
-
-        console.log("les gens log ", alluser);
-    }, [props]);
-
-}
-
-
 export function PopupCreateChannel(props: any) {
 	const [chanName, setChanName] = useState("");
 	const [password, setPassword] = useState("");
