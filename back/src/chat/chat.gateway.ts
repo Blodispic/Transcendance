@@ -68,6 +68,8 @@ async handleSendMessageChannel(@ConnectedSocket() client: Socket, @MessageBody()
   if (channel == null)
     throw new BadRequestException(); // no such channel
   const user = client.handshake.auth.user;
+  if (!(await this.channelService.isUserinChan(channel, user)))
+    throw new BadRequestException();
   if (await this.channelService.isUserMuted({chanid: channel.id, userid: user.id}) || 
   await this.channelService.isUserBanned({chanid: channel.id, userid: user.id }))
     throw new BadRequestException(); // user is ban or mute from this channel

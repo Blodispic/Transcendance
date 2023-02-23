@@ -227,4 +227,9 @@ export class ChannelService {
         return false;
 	}
 
+	async isUserinChan(channel: Channel, user: User) {
+		if (channel.users.find(elem => elem.id == user.id))
+			return true;
+		return false;
+	}
 }
