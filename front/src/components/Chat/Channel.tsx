@@ -132,7 +132,7 @@ function ChannelMemberList(props: { id: any }) {
 						<li>
 							{user.username}
 							{
-								currentChan.owner?.find(value=> user) &&
+								currentChan.owner?.find(value=> user) !== undefined &&
 								<FaCrown />
 							}
 						</li>
@@ -156,8 +156,8 @@ export function Channels(props: any) {
 		<div id="chat-container">
 			<div className="sidebar left-sidebar">
 				<JoinedChannelList />
-				<AddChannel />
 				<ChannelList />
+				<AddChannel />
 			</div>
 			<ChannelMessages id={props.chatId} />
 			<div className="sidebar right-sidebar">

@@ -15,19 +15,13 @@ export default function Sign() {
     const myUser = useAppSelector(state => state.user);
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
+    const [nameExist, SetNameExist] = useState<Boolean>(false);
 
 
     const fetch_name_avatar = async (e: any) => {
 
         e.preventDefault();
         if (newname !== '' && myUser.user) {
-            await fetch(`${process.env.REACT_APP_BACK}user/${myUser.user.id}`, {
-                method: 'PATCH',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ username: newname }),
-            })
 
             if (file) {
                 formData.append('file', file);
@@ -38,12 +32,28 @@ export default function Sign() {
                 formData.delete('file');
                 dispatch(change_avatar(avatar));
             }
-            dispatch(change_name(newname));
-            dispatch(set_status(UserStatus.ONLINE));
-            
-        
 
-            navigate("/Home");
+            await fetch(`${process.env.REACT_APP_BACK}user/${myUser.user.id}`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ username: newname }),
+            })
+                .then(async response => {
+                    if (!response.ok)
+                        SetNameExist(true);
+                    else {
+                        console.log("response", response);
+                        dispatch(change_name(newname));
+                        dispatch(set_status(UserStatus.ONLINE));
+                        navigate("/Home");
+                    }
+
+                })
+                .catch( error => {
+                    console.log ("JY ARRIVE ???? ")
+                })
         }
     }
 
@@ -70,6 +80,10 @@ export default function Sign() {
                         <button onClick={(e) => fetch_name_avatar(e)}>
                             <a>ok</a>
                         </button>
+                    }
+                    {
+                        nameExist && 
+                        <a> this username already use</a>
                     }
                 </form >
             </div >
