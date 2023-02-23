@@ -37,14 +37,7 @@ export class ChatGateway
  
  
   @WebSocketServer() server: Server;
- 
-//  @SubscribeMessage('sendMessage')
-//  async handleSendMessage(@ConnectedSocket() client: Socket, @MessageBody() data: any): Promise<void> {
-// 	console.log(data)
-//   // this.server.to(client.id).emit("cc", "bjr")
-//    this.server.emit('recMessage', data);
-//  }
- 
+  
  @SubscribeMessage('sendMessageUser')
  async handleSendMessageUser(@ConnectedSocket() client: Socket, @MessageBody() messageUserDto: MessageUserDto)/* : Promise<any> */ {
   //  const user = await this.userService.getById(messageUserDto.useridtowho);
@@ -84,8 +77,7 @@ async handleJoinChannel(@ConnectedSocket() client: Socket, @MessageBody() joinCh
   if (channel === null)
     throw new BadRequestException(); // no such channel
   const user = client.handshake.auth.user;
-  // if (channel.password && channel.password != joinChannelDto.password) 
-  if (channel.password && !(await bcrypt.compare(channel.password, joinChannelDto.password)))
+  if (channel.password && !(await bcrypt.compare(joinChannelDto.password, channel.password)))
     throw new BadRequestException(); // wrong password
   if (await this.channelService.isUserBanned({chanid: channel.id, userid: user.id}))
     throw new BadRequestException();
@@ -112,7 +104,7 @@ async handleCreateChannel(@ConnectedSocket() client: Socket, @MessageBody() crea
     chanId: new_channel.id,
   });
   client.join("chan" + new_channel.id);
-  console.log(new_channel);
+  // console.log(new_channel);
   client.emit("createChannelOk", new_channel.id);
   // this.server.emit("reloadChannels"); // not sure for now
 }
@@ -171,6 +163,7 @@ async handleChangePassword(@ConnectedSocket() client: Socket, @MessageBody() cha
     throw new BadRequestException(); // chan doesn't already have password
   this.channelService.update(channel.id, {
     password: chanPasswordDto.password,
+    chanType: 2,
   });
   client.emit("changePasswordOK", channel.id);
   }
