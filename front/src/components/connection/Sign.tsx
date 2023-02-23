@@ -19,7 +19,6 @@ export default function Sign() {
 
 
     const fetch_name_avatar = async (e: any) => {
-
         e.preventDefault();
         if (newname !== '' && myUser.user) {
 
@@ -44,18 +43,20 @@ export default function Sign() {
                     if (!response.ok)
                         SetNameExist(true);
                     else {
-                        console.log("response", response);
+                        SetNameExist(false);
                         dispatch(change_name(newname));
                         dispatch(set_status(UserStatus.ONLINE));
-                        navigate("/Home");
+
+                        if (window.location.href.search('Profile') === -1) {
+                            navigate("/Home");
+                        }
                     }
 
                 })
-                .catch( error => {
-                    console.log ("JY ARRIVE ???? ")
-                })
         }
     }
+
+
 
     const onChangeFile = (e: any) => {
         const myFile: File = e.target.files[0];
@@ -63,7 +64,8 @@ export default function Sign() {
         setavatar(URL.createObjectURL(myFile));
     }
     return (
-        <div className='center form  white'>
+        <div className='center2'>
+        <div className=' form  white'>
             <div className=' color_sign'>
                 <form>
                     <label >
@@ -76,7 +78,7 @@ export default function Sign() {
                         <input type="file" name="avatar" onChange={e => onChangeFile(e)} accept="image/png, image/jpeg" />
                     </label>
                     {
-                        newname &&
+                       ( newname || (file && window.location.href.search('Profile') !== -1 )) &&
                         <button onClick={(e) => fetch_name_avatar(e)}>
                             <a>ok</a>
                         </button>
@@ -87,6 +89,7 @@ export default function Sign() {
                     }
                 </form >
             </div >
+        </div>
         </div>
     );
 };

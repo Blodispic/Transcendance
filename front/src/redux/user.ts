@@ -67,7 +67,10 @@ export const userSlice = createSlice({
             state.isOauth = false;
         },
         enableTwoFa: (state) => {
+            if (state.user!.twoFaEnable == false)
             state.user!.twoFaEnable = true;
+            else 
+            state.user!.twoFaEnable = false;
         }
     },
 })

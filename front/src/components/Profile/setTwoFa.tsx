@@ -10,6 +10,26 @@ export default function TwoFa() {
     const [isValid, setIsValid] = useState<boolean | undefined>(undefined);
     const myStore = useAppSelector(state => state.user);
 
+    const disable2fa = async (e: any) => {
+        e.preventDefault();
+        await fetch(`${process.env.REACT_APP_BACK}user/${myStore.user?.id}`, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                twoFaEnable: false,
+            }),
+        })
+        .then ( async response => {
+            if (response.ok) {
+                dispatch(enableTwoFa());
+                fetch_qrcode();
+                setIsValid(false);
+            }
+        } )
+    }
+
     const fetchCodeForQr = async (e: any) => {
         e.preventDefault();
         await fetch(`${process.env.REACT_APP_BACK}user/2fa/check`, {
@@ -39,21 +59,21 @@ export default function TwoFa() {
             .catch()
     }
 
-    useEffect(() => {
-        const fetch_qrcode = async () => {
-            await fetch(`${process.env.REACT_APP_BACK}user/2fa/qrcode`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ user: myStore.user }),
+    const fetch_qrcode = async () => {
+        await fetch(`${process.env.REACT_APP_BACK}user/2fa/qrcode`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ user: myStore.user }),
+        })
+            .then(async response => {
+                const data = await response.json();
+                setQrcode(data.qrCode);
             })
-                .then(async response => {
-                    const data = await response.json();
-                    setQrcode(data.qrCode);
-                })
-                .catch()
-        }
+            .catch()
+    }
+    useEffect(() => {
         fetch_qrcode();
     }, [])
 
@@ -83,6 +103,14 @@ export default function TwoFa() {
                             }
                         </div>
                     </div>
+                </div>
+            }
+            {
+                isValid !== false &&
+                <div className="center2" >
+                    <button onClick={(e) => {disable2fa(e)}}>
+                        <a>Disable 2fa</a>
+                    </button>
                 </div>
             }
         </div>
