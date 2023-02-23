@@ -24,7 +24,7 @@ export class ChannelService {
 
 	) {}
 
-	async create(createChannelDto: CreateChannelDto, user: User) {
+	async create(createChannelDto: CreateChannelDto, user: User) {		
 		if (createChannelDto.password) {
 			const salt = await bcrypt.genSalt();
 			const hashPassword = await bcrypt.hash(createChannelDto.password, salt);
@@ -73,7 +73,7 @@ export class ChannelService {
 
 	async update(id: number, channelUpdate: any) {		
 		const channel = await this.channelRepository.findOne({
-			relations: { users: true, /* owner: true */ },
+			relations: { users: true },
 			where: {
 				id,
 			}
@@ -81,8 +81,6 @@ export class ChannelService {
 		if (channel) {
 			if (channelUpdate.channame)
 				channel.name = channelUpdate.channame;
-			// if (channelUpdate.owner)
-			// 	channel.owner = channelUpdate.owner;
 			if (channelUpdate.users)
 				channel.users = channelUpdate.users;
 			if (channelUpdate.password)
@@ -143,10 +141,13 @@ export class ChannelService {
 		return this.channelRepository.find();
 	  }
 
-	  getPublic() {
-		return this.channelRepository.findBy({
-				chanType: 0,
+	  getPublic() {		
+		return this.channelRepository.find({
+			where: {
+					chanType: 0,
+				}
 			});
+		
 	  }
 
 	  async unmuteUser(muteUserDto: MuteUserDto) {
