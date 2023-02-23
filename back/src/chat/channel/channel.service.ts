@@ -11,6 +11,7 @@ import { RmUserDto } from './dto/rm-user.dto';
 import { MuteUserDto } from '../dto/mute-user.dto';
 import { CreateChannelDto } from '../dto/create-channel.dto';
 import { GiveAdminDto } from '../dto/give-admin.dto';
+var bcrypt = require('bcryptjs');
 
 @Injectable()
 export class ChannelService {
@@ -23,7 +24,12 @@ export class ChannelService {
 
 	) {}
 
-	async create(createChannelDto: CreateChannelDto, user: User) {
+	async create(createChannelDto: CreateChannelDto, user: User) {		
+		if (createChannelDto.password) {
+			const salt = await bcrypt.genSalt();
+			const hashPassword = await bcrypt.hash(createChannelDto.password, salt);
+			createChannelDto.password = hashPassword;
+		}
 		const channel: Channel = this.channelRepository.create({
 			name: createChannelDto.chanName,
 			password: createChannelDto.password,
@@ -67,7 +73,7 @@ export class ChannelService {
 
 	async update(id: number, channelUpdate: any) {		
 		const channel = await this.channelRepository.findOne({
-			relations: { users: true, /* owner: true */ },
+			relations: { users: true },
 			where: {
 				id,
 			}
@@ -75,16 +81,21 @@ export class ChannelService {
 		if (channel) {
 			if (channelUpdate.channame)
 				channel.name = channelUpdate.channame;
-			// if (channelUpdate.owner)
-			// 	channel.owner = channelUpdate.owner;
 			if (channelUpdate.users)
 				channel.users = channelUpdate.users;
 			if (channelUpdate.password)
-				channel.users = channelUpdate.password;
-		
-		  return await this.channelRepository.save(channel);
+			{
+				const salt = await bcrypt.genSalt();
+				const hashPassword = await bcrypt.hash(channelUpdate.password, salt);
+				channel.password = hashPassword;
+			}
+			if (channelUpdate.rmPassword)
+				channel.password = ""; // for now
+			if (channelUpdate.chanType)
+				channel.chanType = channelUpdate.chanType;
+		  	return await this.channelRepository.save(channel);
 		}
-		return 'There is no user to update';
+		return 'There is no channel to update';
 	  }
 
 	getById(id: number) {
@@ -107,10 +118,11 @@ export class ChannelService {
 
 	  async muteUser(muteUserDto: MuteUserDto) {
 		const channel: Channel | null = await this.channelRepository.findOne({
-			relations: { users: true },
+			relations: { users: true, muted: true, },
 			where: { id: muteUserDto.chanid }
 		});
 		const user = await this.userService.getById(muteUserDto.userid);
+		console.log(user);
 		if (channel === null || user === null)
 			throw new BadRequestException();
 		channel.muted.push(user);
@@ -119,7 +131,7 @@ export class ChannelService {
 	
 	  async banUser(muteUserDto: MuteUserDto) {
 		const channel: Channel | null = await this.channelRepository.findOne({
-			relations: { users: true },
+			relations: { users: true, banned: true },
 			where: { id: muteUserDto.chanid }
 		});
 		const user = await this.userService.getById(muteUserDto.userid);
@@ -133,15 +145,18 @@ export class ChannelService {
 		return this.channelRepository.find();
 	  }
 
-	  getPublic() {
+	  getPublic() {		
 		return this.channelRepository.find({
-			where: {chanType: 0,}, 
-		})
+			where: {
+					chanType: 0,
+				}
+			});
+		
 	  }
 
 	  async unmuteUser(muteUserDto: MuteUserDto) {
 		const channel: Channel | null = await this.channelRepository.findOne({
-			relations: { users: true },
+			relations: { users: true, muted: true },
 			where: { id: muteUserDto.chanid }
 		});
 		const user = await this.userService.getById(muteUserDto.userid);
@@ -153,24 +168,24 @@ export class ChannelService {
 
 	async isUserMuted(muteUserDto: MuteUserDto) {
 		const channel: Channel | null = await this.channelRepository.findOne({
-			relations: { users: true },
+			relations: { users: true, muted: true, },
 			where: { id: muteUserDto.chanid }
 		});
 		const user = await this.userService.getById(muteUserDto.userid);
 		if (channel === null || user === null)
 			throw new BadRequestException();
 		if (!channel.muted)
-			return false;
-		channel.muted.forEach(muted => {
-			if (muted === user)
-				return true;
-		});
+			return false;		
+		for (const iterator of channel.muted) {
+			if (iterator.id == user.id)
+				return true;			
+		}	
 		return false;			
 	}
 
 	async isUserBanned(muteUserDto: MuteUserDto) {
 		const channel: Channel | null = await this.channelRepository.findOne({
-			relations: { users: true },
+			relations: { users: true, banned: true },
 			where: { id: muteUserDto.chanid }
 		});
 		const user = await this.userService.getById(muteUserDto.userid);
@@ -178,17 +193,17 @@ export class ChannelService {
 			throw new BadRequestException();
 		if (!channel.banned)
 			return false;
-		channel.banned.forEach(banned => {
-			if (banned === user)
-				return true;
-		});
+		for (const iterator of channel.banned) {
+			if (iterator.id == user.id)
+				return true;			
+		}
 		return false;			
 	}
 
 	async addAdmin(giveAdminDto: GiveAdminDto)
 	{
 		const channel: Channel | null = await this.channelRepository.findOne({
-			relations: { users: true },
+			relations: { users: true, owner: true },
 			where: {
 				id: giveAdminDto.chanid
 			}
@@ -198,5 +213,28 @@ export class ChannelService {
 			throw new NotFoundException();
 		channel.owner.push(user);
 		return this.channelRepository.save(channel);
+	}
+
+	async isUserAdmin(giveAdminDto: GiveAdminDto) {
+        const channel: Channel | null = await this.channelRepository.findOne({
+                relations: { users: true, owner: true },
+                where: { id: giveAdminDto.chanid }
+        });
+        const user = await this.userService.getById(giveAdminDto.userid);
+        if (channel === null || user === null)
+                throw new BadRequestException();
+        if (!channel.owner)
+                return false;
+		for (const iterator of channel.owner) {
+			if (iterator.id == user.id)
+				return true;			
+		}
+        return false;
+	}
+
+	async isUserinChan(channel: Channel, user: User) {
+		if (channel.users.find(elem => elem.id == user.id))
+			return true;
+		return false;
 	}
 }

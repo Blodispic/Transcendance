@@ -5,7 +5,6 @@ import { FaUserAlt } from "react-icons/fa";
 import { BsChevronRight, BsChevronLeft } from "react-icons/bs";
 import { Cookies } from 'react-cookie';
 import { delete_user } from '../../redux/user';
-import PeopleList from './people_list';
 import { socket } from '../../App';
 
 export default function Header() {
@@ -34,7 +33,8 @@ export default function Header() {
   const logout = () => {
     cookies.remove('Token');
     dispatch(delete_user())
-    socket.emit("UpdateSomeone", { id: myUser.user?.id })
+    socket.emit("UpdateSomeone", { idChange: myUser.user?.id, idChange2: 0 })
+    console.log("ca logout ici ou quoi ");
   }
 
   const myUser = useAppSelector(state => state.user);
@@ -87,22 +87,7 @@ export default function Header() {
             }
           </div>
         }
-        {/* {
-            peopleBool == true &&
-          <div className="icon-header" onClick={_ => peopleclick()} >
-            <BsChevronRight />
-          </div>
-        }
-        {
-          peopleBool == false &&
-          <div className="icon-header" onClick={_ => peopleclick()} >
-            <BsChevronLeft />
-          </div>
-        }
-        {
-          peopleBool == true &&
-          <PeopleList />
-        } */}
+
       </div>
     </div>
   );
