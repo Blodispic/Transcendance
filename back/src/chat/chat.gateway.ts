@@ -20,6 +20,8 @@ import { BanUserDto } from "./dto/ban-user.dto";
 import { MuteUserDto } from "./dto/mute-user.dto";
 import { Channel } from "./channel/entities/channel.entity";
 import { GiveAdminDto } from "./dto/give-admin.dto";
+import { InviteDto } from "./dto/invite-user.dto";
+var bcrypt = require('bcryptjs');
 
 @WebSocketGateway({
 	cors: {
@@ -67,11 +69,12 @@ async handleSendMessageChannel(@ConnectedSocket() client: Socket, @MessageBody()
   const channel = await this.channelService.getById(messageChannelDto.chanid);
   if (channel == null)
     throw new BadRequestException(); // no such channel
-  const user = client.handshake.auth.user;  
+  const user = client.handshake.auth.user;
+  if (!(await this.channelService.isUserinChan(channel, user)))
+    throw new BadRequestException();
   if (await this.channelService.isUserMuted({chanid: channel.id, userid: user.id}) || 
   await this.channelService.isUserBanned({chanid: channel.id, userid: user.id }))
     throw new BadRequestException(); // user is ban or mute from this channel
-  const messageChannelok = { message: messageChannelDto.message, user: client.handshake.auth.user}
   this.server.to("chan" + messageChannelDto.chanid).emit("sendMessageChannelOK", messageChannelDto);
 }
 
@@ -80,9 +83,13 @@ async handleJoinChannel(@ConnectedSocket() client: Socket, @MessageBody() joinCh
   const channel = await this.channelService.getById(joinChannelDto.chanid);
   if (channel === null)
     throw new BadRequestException(); // no such channel
-  if (channel.password && channel.password != joinChannelDto.password) 
+  const user = client.handshake.auth.user;
+  // if (channel.password && channel.password != joinChannelDto.password) 
+  if (channel.password && !(await bcrypt.compare(channel.password, joinChannelDto.password)))
     throw new BadRequestException(); // wrong password
-  this.channelService.add({
+  if (await this.channelService.isUserBanned({chanid: channel.id, userid: user.id}))
+    throw new BadRequestException();
+    this.channelService.add({
     user: client.handshake.auth.user,
     chanId: channel.id,
   });
@@ -107,6 +114,7 @@ async handleCreateChannel(@ConnectedSocket() client: Socket, @MessageBody() crea
   client.join("chan" + new_channel.id);
   console.log(new_channel);
   client.emit("createChannelOk", new_channel.id);
+  // this.server.emit("reloadChannels"); // not sure for now
 }
 
 @SubscribeMessage('leaveChannel')
@@ -145,7 +153,7 @@ async handleRmPassword(@ConnectedSocket() client: Socket, @MessageBody() chanPas
   if (!(await this.channelService.isUserAdmin(user))) // for now only the real owner/admin, soon any owner/admin
     throw new BadRequestException(); // user willing to change password isn't admin/owner
   this.channelService.update(channel.id, {
-    password: null,
+    rmPassword: 1,
     chanType: 0,
   });
   client.emit("rmPasswordOK", channel.id);
@@ -176,12 +184,13 @@ async handleBanUser(@ConnectedSocket() client: Socket, @MessageBody() banUserDto
   if (!(await this.channelService.isUserAdmin(user)))
     throw new BadRequestException();
   this.channelService.banUser(banUserDto);
-  console.log('baaann');
-  const timer = 10000;
+  this.channelService.rm({user: user, chanid: channel.id});
+  let timer = 60000;
+  if (banUserDto.timeout)
+    timer = banUserDto.timeout;
   setTimeout(() => {
     this.channelService.unmuteUser(user)
   }, timer);
-  console.log('end');
   client.emit("banUserOK", user.id, channel.id);
 }
 
@@ -191,15 +200,15 @@ async handleMuteUser(@ConnectedSocket() client: Socket, @MessageBody() muteUserD
   const user = client.handshake.auth.user;
   if (channel === null || user === null)
     throw new BadRequestException(); // no such channel or user
-  // if (!(await this.channelService.isUserAdmin(user)))
-  //   throw new BadRequestException();
+  if (!(await this.channelService.isUserAdmin(user)))
+    throw new BadRequestException();
   this.channelService.muteUser(muteUserDto);
-  const timer = 10000;
-  console.log("muuuute");
+  let timer = 60000;
+  if (muteUserDto.timeout)
+    timer = muteUserDto.timeout;
   setTimeout(() => {
     this.channelService.unmuteUser(user)
   }, timer);
-  console.log("mute after timeout");
   client.emit("muteUserOK", user.id, channel.id);
 }
 
@@ -215,6 +224,20 @@ async handleGiveAdmin(@ConnectedSocket() client: Socket, @MessageBody() giveAdmi
   client.emit("giveAdminOK", user.id, channel.id);
 }
 
+@SubscribeMessage('Invite')
+async handleInvite(@ConnectedSocket() client: Socket, @MessageBody() inviteDto: InviteDto)
+{
+  const channel = await this.channelService.getById(inviteDto.chanid);
+  const user = client.handshake.auth.user;
+  if (channel === null || user === null)
+    throw new BadRequestException();
+  if (!(await this.channelService.isUserAdmin(user)))
+    throw new BadRequestException();
+  const socketIdToWho = this.findSocketFromUser(inviteDto.user);
+  if (socketIdToWho)
+    this.server.to(socketIdToWho?.id).emit('invited', channel);
+  client.emit('inviteOK');
+}
 
  afterInit(server: Server) {
 //    console.log(server);

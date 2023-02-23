@@ -13,21 +13,23 @@ import { CreateChannelDto } from '../dto/create-channel.dto';
 @Controller('channel')
 export class ChannelController {
 	constructor(private readonly channelService: ChannelService) {}
+	
+	@Get('public')
+	async getPublic() {		
+		return await this.channelService.getPublic();
+	}
 
 	@Get(':id')
 	async get(@Param('id') id: number): Promise<Channel | null> {
 		return await this.channelService.getById(id);
 	}
 	
+	
 	@Get()
 	async getAll() {
 		return await this.channelService.getAll();
 	}
 
-	@Get('public')
-	async getPublic() {
-		return await this.channelService.getPublic();
-	}
 
 	@Post()
 	async create(@Body() createChannelDto: CreateChannelDto, user: User): Promise<Channel> {
