@@ -77,6 +77,7 @@ export function ChannelMessages(props: { id: any }) {
 				{/* <ChannelHeader chan={currentChan} user={currentUser?.user} /> */}
 			</div>
 			<div className="chat-messages">
+				<div className="reverse">
 				{messageList && messageList.map(message => (
 					message.chanid == currentChan?.id &&
 					<div key={message.message} className="__wrap">
@@ -88,6 +89,7 @@ export function ChannelMessages(props: { id: any }) {
 						{message.message}
 					</div>
 				))}
+			</div>
 			</div>
 			{
 				props.id !== undefined &&
