@@ -2,10 +2,12 @@ import { useEffect, useState } from "react";
 import { IUser } from "../../interface/User";
 import { GiCrossedSwords } from "react-icons/gi";
 import {Result} from "../../interface/Result"
+import { useNavigate } from "react-router-dom";
 
 export function History(props: { user: IUser }) {
     const { user } = props;
     const [matchReq, setMatches] = useState<Result[]>([]);
+    const navigate = useNavigate();
 
     useEffect(() => {
         const checkMatchRequest = async () => {
@@ -29,7 +31,7 @@ export function History(props: { user: IUser }) {
             <div className="match-block" key={match.id + match.winner.username + match.loser.username}>
               <div className="winner">
                 <div className="winner-img">
-                  <img src={`${process.env.REACT_APP_BACK}user/${match.winner.id}/avatar`} alt={match.winner.username} />
+                  <img src={`${process.env.REACT_APP_BACK}user/${match.winner.id}/avatar`} alt={match.winner.username} onClick={_ =>  navigate(`../Profile/${match.winner.id}`)  } />
                 </div>
                 <div className="match-info">
                   <div className="match-name">{match.winner.username}</div>
@@ -48,7 +50,7 @@ export function History(props: { user: IUser }) {
 
                 </div>
                 <div className="loser-img">
-                  <img src={`${process.env.REACT_APP_BACK}user/${match.loser.id}/avatar`} alt={match.loser.username} />
+                  <img src={`${process.env.REACT_APP_BACK}user/${match.loser.id}/avatar`} alt={match.loser.username} onClick={_ =>  navigate(`../Profile/${match.loser.id}`) } />
                 </div>
               </div>
             </div>
