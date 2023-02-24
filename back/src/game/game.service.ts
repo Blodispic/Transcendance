@@ -20,7 +20,25 @@ export class GameService {
 	public gameRoom: Game[] = [];
 
 	async addToWaitingRoom(client: any) {
+		let i : number = 0;
+		while (i < this.waitingRoom.length)
+		{
+			if (this.waitingRoom[i] === client)
+				return;
+			i++;
+		}
 		this.waitingRoom.push(client);
+	}
+
+	removeFromWaitingRoom(client: any)
+	{
+		let i : number = 0;
+		while (i < this.waitingRoom.length)
+		{
+			if (this.waitingRoom[i].id === client)
+				this.waitingRoom.splice(i, 1);
+			i++;
+		}
 	}
 
 	startGame(server: Server) {
@@ -134,8 +152,6 @@ export class GameService {
 		let i: number = 0;
 		while (i < this.gameRoom.length)
 		{
-			console.log("input [" + (i + 1) + "]: l=" + this.gameRoom[i].gameState.player1.input.left + " r=" + this.gameRoom[i].gameState.player1.input.right);
-
 			if (this.gameRoom[i].gameState.roomId === roomId
 				&& this.gameRoom[i].gameState.player1.socket === client)
 			{

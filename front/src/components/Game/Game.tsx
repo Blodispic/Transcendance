@@ -504,38 +504,36 @@ function movePlayer(player: Player, state: GameState) {
 function keyEvent(event: KeyboardEvent) {
 	let key = event.key;
 	let keyState = event.type === "keydown";
-	if (key === "ArrowLeft" && keyState) {
+	if (key === "ArrowLeft" && keyState && selfID === 1) {
 		//move left
 		move1.left = true;
-	} else if (key === "ArrowLeft") {
+	} else if (key === "ArrowLeft" && selfID === 1) {
 		//move left
 		move1.left = false;
-	} else if (key === "ArrowRight" && keyState) {
+	} else if (key === "ArrowRight" && keyState && selfID === 1) {
 		//move left
 		move1.right = true;
-	} else if (key === "ArrowRight") {
+	} else if (key === "ArrowRight" && selfID === 1) {
 		//move left
 		move1.right = false;
 	}
 
-	if ((key === "A" || key === "a") && keyState) {
+	if (key === "ArrowLeft" && keyState && selfID === 2) {
 		//move left
 		move2.left = true;
-	} else if (key === "A" || key === "a") {
+	} else if (key === "ArrowLeft" && selfID === 2) {
 		//move left
 		move2.left = false;
-	} else if ((key === "D" || key === "d") && keyState) {
+	} else if (key === "ArrowRight" && keyState && selfID === 2) {
 		//move left
 		move2.right = true;
-	} else if (key === "D" || key === "d") {
+	} else if (key === "ArrowRight" && selfID === 2) {
 		//move left
 		move2.right = false;
 	}
-	if (key === "ArrowLeft" || key === "ArrowRight")
-		socket.emit("Move1", {input: move1, roomId: roomId});
-	else
-		socket.emit("Move2", {input: move2, roomId: roomId});
-	// socket.removeAllListeners()
-}
 
-// export default GameApp;
+	if ((key === "ArrowLeft" || key === "ArrowRight") && selfID === 1)
+		socket.emit("Move1", {input: move1, roomId: roomId});
+	else if ((key === "ArrowLeft" || key === "ArrowRight") && selfID === 2)
+		socket.emit("Move2", {input: move2, roomId: roomId});
+}
