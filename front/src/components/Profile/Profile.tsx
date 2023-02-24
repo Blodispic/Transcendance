@@ -79,13 +79,14 @@ export default function Profile() {
                         fetchid();
         }, [id])
 
+        // useEffect(() => {
         socket.on('UpdateSomeone', (idChange, idChange2) => {
                 console.log("ca dis quoi", idChange, currentUser?.id)
 
-                if (idChange2 === id || idChange === id)
+                // if (idChange2 === id || idChange === id)
                 fetchid();
-
         })
+        // }, [currentUser])
 
         useEffect(() => {
                 console.log("ca recharge");
