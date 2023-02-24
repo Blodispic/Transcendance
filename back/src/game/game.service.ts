@@ -36,7 +36,7 @@ export class GameService {
 					speed: vector_zero(),
 					angle: 0,
 				},
-				input: inputdefault,
+				input: JSON.parse(JSON.stringify(inputdefault)),
 				name: "Player1",
 				score: 0,
 				side: 0,
@@ -52,7 +52,7 @@ export class GameService {
 					speed: vector_zero(),
 					angle: 0,
 				},
-				input: inputdefault,
+				input: JSON.parse(JSON.stringify(inputdefault)),
 				name: "Player2",
 				score: 0,
 				side: 1,
@@ -90,7 +90,7 @@ export class GameService {
 				speed: vector_zero(),
 				angle: 0,
 			},
-			input: inputdefault,
+			input: JSON.parse(JSON.stringify(inputdefault)),
 			name: "Player1",
 			score: 0,
 			side: 0,
@@ -106,7 +106,7 @@ export class GameService {
 				speed: vector_zero(),
 				angle: 0,
 			},
-			input: inputdefault,
+			input: JSON.parse(JSON.stringify(inputdefault)),
 			name: "Player2",
 			score: 0,
 			side: 1,
@@ -123,30 +123,22 @@ export class GameService {
 	}
 
 	updateMove1(move1: Move, client: string, roomId: number) {
-		// if (this.gameRoom.length >= roomId)
-		// {
-		// 	if (this.gameRoom[roomId - 1].gameState.player1.socket === client)
-		// 		this.gameRoom[roomId - 1].updateMove1(move1);
-		// }
 		let i: number = 0;
-		while (this.gameRoom[i])
+		while (i < this.gameRoom.length)
 		{
+			console.log("input [" + (i + 1) + "]: l=" + this.gameRoom[i].gameState.player1.input.left + " r=" + this.gameRoom[i].gameState.player1.input.right);
+
 			if (this.gameRoom[i].gameState.roomId === roomId
 				&& this.gameRoom[i].gameState.player1.socket === client)
 			{
 				this.gameRoom[i].updateMove1(move1);
-				return;
+				break;
 			}
 			i++;
 		}
 	}
 
 	updateMove2(move2: Move, client: string, roomId: number) {
-		// if (this.gameRoom.length >= roomId)
-		// {
-		// 	if (this.gameRoom[roomId - 1].gameState.player2.socket === client)
-		// 		this.gameRoom[roomId - 1].updateMove2(move2);
-		// }
 		let i: number = 0;
 		while (this.gameRoom[i])
 		{
@@ -215,11 +207,6 @@ const vector_zero = (): Vec2 => ({ x: 0, y: 0 });
 
 let inputdefault: Move = { right: false, left: false };
 
-let move1: Move = { ...inputdefault };
-let move2: Move = { ...inputdefault };
-// let move1: Move = JSON.parse(JSON.stringify(inputdefault));
-// let move2: Move = JSON.parse(JSON.stringify(inputdefault));
-
 let paddleDimensions: Vec2 = { x: 100, y: 10 };
 let ballRadius: number = 10;
 
@@ -277,6 +264,9 @@ class Game {
 	socket2: any;
 	watchList: string[];
 
+	move1: Move = JSON.parse(JSON.stringify(inputdefault));
+	move2: Move = JSON.parse(JSON.stringify(inputdefault));
+
 	constructor(gameService: GameService, server: Server, user1: Player, user2: Player, extra: boolean, scoreMax: number, socket1: any, socket2: any, roomId: number) {
 		this.gameService = gameService;
 		this.server = server;
@@ -286,7 +276,6 @@ class Game {
 		this.gameState.gameFinished = false;
 		this.gameState.player1 = user1;
 		this.gameState.player2 = user2;
-		console.log("Avatar wesh: ", this.gameState.player1.avatar);
 		this.resetState(this.gameState);
 		this.gameState.player1.avatar = user1.avatar;
 		this.gameState.player2.avatar = user2.avatar;
@@ -305,7 +294,6 @@ class Game {
 
 	gamestateInitializer()
 	{
-		// this.gameState = new GameState;
 		this.gameState.area = { x: GAME_INTERNAL_WIDTH, y: GAME_INTERNAL_WIDTH * GAME_RATIO };
 		this.gameState.scale = 1;
 		this.gameState.scoreMax = 3;
@@ -317,7 +305,7 @@ class Game {
 				speed: vector_zero(),
 				angle: 0,
 			},
-			input: inputdefault,
+			input: JSON.parse(JSON.stringify(inputdefault)),
 			name: "Player1",
 			score: 0,
 			side: 0,
@@ -330,7 +318,7 @@ class Game {
 				speed: vector_zero(),
 				angle: 0,
 			},
-			input: inputdefault,
+			input: JSON.parse(JSON.stringify(inputdefault)),
 			name: "Player2",
 			score: 0,
 			side: 1,
@@ -356,12 +344,11 @@ class Game {
 	}
 
 	updateMove1(newMove1: Move) {
-		// move1 = newMove1;
-		move1 = JSON.parse(JSON.stringify(newMove1));
+		this.move1 = JSON.parse(JSON.stringify(newMove1));
 	}
 
 	updateMove2(newMove2: Move) {
-		move2 = JSON.parse(JSON.stringify(newMove2));
+		this.move2 = JSON.parse(JSON.stringify(newMove2));
 	}
 
 	disconnect(client: string) {
@@ -394,8 +381,11 @@ class Game {
 	updateGameState(state: GameState) {
 		state.scale = state.client_area.x / state.area.x;
 
-		state.player1.input = { ...move1 };
-		state.player2.input = { ...move2 };
+		state.player1.input = { ...this.move1 };
+		// state.player1.input = JSON.parse(JSON.stringify(move1));
+		
+		state.player2.input = { ...this.move2 };
+		// state.player2.input = JSON.parse(JSON.stringify(move2));
 		if (state.player1.score === state.scoreMax || state.player2.score === state.scoreMax) {
 			state.gameFinished = true;
 		}
@@ -513,7 +503,6 @@ class Game {
 		) {
 			if (ball.position.y > state.area.y - ballRadius) {
 				state.player2.score++;
-				console.log("Room: " + state.roomId + ", p1: " + state.player1.score + ", p2: " + state.player2.score);
 				this.resetState(state);
 				if (state.player2.score >= state.scoreMax) {
 					//END THE GAME
@@ -521,7 +510,6 @@ class Game {
 				}
 			} else if (ball.position.y < 0 + ballRadius) {
 				state.player1.score++;
-				console.log("Room: " + state.roomId + ", p1: " + state.player1.score + ", p2: " + state.player2.score);
 				this.resetState(state);
 				if (state.player1.score >= state.scoreMax) {
 					//END THE GAME
