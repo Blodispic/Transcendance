@@ -29,9 +29,8 @@ export class PongGateway implements OnGatewayDisconnect, OnGatewayInit {
 	// }
 
 	handleDisconnect(client: any) {
-
-		//Need to remove user from game and make the other player win
 		this.gameService.playerDisconnect(client.id);
+		this.gameService.removeFromWaitingRoom(client.id);
 	}
 
 	@SubscribeMessage("addToWaitingRoom")

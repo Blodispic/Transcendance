@@ -32,8 +32,9 @@ export default function Header() {
 
   const logout = () => {
     cookies.remove('Token');
-    dispatch(delete_user())
-    socket.emit("UpdateSomeone", { idChange: myUser.user?.id, idChange2: 0 })
+    dispatch(delete_user());
+    socket.emit("UpdateSomeone", { idChange: myUser.user?.id, idChange2: 0 });
+    socket.disconnect();
     console.log("ca logout ici ou quoi ");
   }
 
