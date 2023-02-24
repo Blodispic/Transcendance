@@ -43,17 +43,19 @@ export default function TwoFa() {
             }),
         })
             .then(async response => {
-                const data = await response.json();
-                setIsValid(data.result);
-                if (data.result === true) {
-                    dispatch(enableTwoFa());
-                    fetch(`${process.env.REACT_APP_BACK}user/${myStore.user?.id}`, {
-                        method: 'PATCH',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({ twoFaEnable: true }),
-                    })
+                if (response.ok) {
+                    const data = await response.json();
+                    setIsValid(data.result);
+                    if (data.result === true) {
+                        dispatch(enableTwoFa());
+                        fetch(`${process.env.REACT_APP_BACK}user/${myStore.user?.id}`, {
+                            method: 'PATCH',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({ twoFaEnable: true }),
+                        })
+                    }
                 }
             })
             .catch()
@@ -68,20 +70,23 @@ export default function TwoFa() {
             body: JSON.stringify({ user: myStore.user }),
         })
             .then(async response => {
-                const data = await response.json();
-                setQrcode(data.qrCode);
+                if (response.ok) {
+                    const data = await response.json();
+                    setQrcode(data.qrCode);
+                }
             })
             .catch()
     }
     useEffect(() => {
+        if (myStore.user?.twoFaEnable === false )
         fetch_qrcode();
     }, [])
 
     return (
-        <>
+        <div className="container">
             {
-                isValid !== true &&
-                <div className='form-qrcode center'>
+                isValid !== true && myStore.user?.twoFaEnable == false  && 
+                <div className='form-qrcode'>
                     <div className=''>
                         <div>
                             <div className=''>
@@ -106,13 +111,13 @@ export default function TwoFa() {
                 </div>
             }
             {
-                isValid !== false &&
+                myStore.user?.twoFaEnable == true && 
                 <div className="center2" >
                     <button onClick={(e) => {disable2fa(e)}}>
                         <a>Disable 2fa</a>
                     </button>
                 </div>
             }
-        </>
+        </div>
     )
 }

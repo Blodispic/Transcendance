@@ -77,12 +77,12 @@ export default function Profile() {
         useEffect(() => {
                 if (id)
                         fetchid();
+                setPages(page.PAGE_1);
         }, [id])
 
         // useEffect(() => {
         socket.on('UpdateSomeone', (idChange, idChange2) => {
                 console.log("ca dis quoi", idChange, currentUser?.id)
-
                 // if (idChange2 === id || idChange === id)
                 fetchid();
         })
@@ -91,7 +91,10 @@ export default function Profile() {
         useEffect(() => {
                 console.log("ca recharge");
                 if (currentUser?.id == myUser.user?.id)
+                {
                         setCurrentUser(myUser.user);
+
+                }
         }, [Onglets, myUser.user?.username])
 
 
