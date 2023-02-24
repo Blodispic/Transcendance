@@ -15,20 +15,12 @@ export default function Sign() {
     const myUser = useAppSelector(state => state.user);
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
+    const [nameExist, SetNameExist] = useState<Boolean>(false);
 
 
     const fetch_name_avatar = async (e: any) => {
-
         e.preventDefault();
         if (newname !== '' && myUser.user) {
-
-            await fetch(`${process.env.REACT_APP_BACK}user/${myUser.user.id}`, {
-                method: 'PATCH',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ username: newname }),
-            })
 
             if (file) {
                 formData.append('file', file);
@@ -39,13 +31,32 @@ export default function Sign() {
                 formData.delete('file');
                 dispatch(change_avatar(avatar));
             }
-            dispatch(change_name(newname));
-            dispatch(set_status(UserStatus.ONLINE));
-            socket.emit("UpdateSomeone", {id: myUser.user?.id })
 
-            navigate("/Home");
+            await fetch(`${process.env.REACT_APP_BACK}user/${myUser.user.id}`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ username: newname }),
+            })
+                .then(async response => {
+                    if (!response.ok)
+                        SetNameExist(true);
+                    else {
+                        SetNameExist(false);
+                        dispatch(change_name(newname));
+                        dispatch(set_status(UserStatus.ONLINE));
+
+                        if (window.location.href.search('Profile') === -1) {
+                            navigate("/Home");
+                        }
+                    }
+
+                })
         }
     }
+
+
 
     const onChangeFile = (e: any) => {
         const myFile: File = e.target.files[0];
@@ -53,12 +64,13 @@ export default function Sign() {
         setavatar(URL.createObjectURL(myFile));
     }
     return (
-        <div className='center form  white'>
+        <div className='center2'>
+        <div className=' form  white'>
             <div className=' color_sign'>
                 <form>
                     <label >
                         Name:
-                        <input type="text" name="user" value={newname} onChange={e => setNewname(e.target.value)} />
+                        <input type="text" name="user" value={newname} maxLength={15} onChange={e => setNewname(e.target.value)} />
                     </label>
 
                     <label >
@@ -66,13 +78,18 @@ export default function Sign() {
                         <input type="file" name="avatar" onChange={e => onChangeFile(e)} accept="image/png, image/jpeg" />
                     </label>
                     {
-                        newname &&
+                       ( newname || (file && window.location.href.search('Profile') !== -1 )) &&
                         <button onClick={(e) => fetch_name_avatar(e)}>
                             <a>ok</a>
                         </button>
                     }
+                    {
+                        nameExist && 
+                        <a> this username already use</a>
+                    }
                 </form >
             </div >
+        </div>
         </div>
     );
 };

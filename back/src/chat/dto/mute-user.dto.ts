@@ -1,4 +1,4 @@
-import { IsNumber } from "class-validator";
+import { IsNumber, IsOptional } from "class-validator";
 
 export class MuteUserDto {
     @IsNumber()
@@ -6,4 +6,8 @@ export class MuteUserDto {
     
     @IsNumber()
     userid: number;
+
+    @IsOptional()
+    @IsNumber()
+    timeout?: number;
 }

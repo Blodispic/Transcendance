@@ -33,17 +33,31 @@
 
 .custom-popup{
     position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100vh;
-    background-color: rgba(0, 0, 0, 0.5);
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100vh;
+        background-color: rgba(0, 0, 0, 0.5);
+    
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    
+    }
+    .avatar-inpopup {
+        height: 50px;
+        padding: 10px 0 10px 0;
 
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
+        .avatar {
+            height: 50px !important;
+            width: 50px !important;
 
+            &:hover {
+                background-color: rgba(0, 0, 0, 0.5) !important;
+            }
+
+        }
+    }
 .custom-popup-inner {
     font-family: 'Fredoka One', cursive;
     border-radius: 5px;
@@ -58,7 +72,7 @@
     z-index: 100;
 
     .sub-element {
-        padding: 20px 0px 20px 0px;
+        padding: 20px 0 0 0;
         font-size: 25px;
     }
 }
@@ -73,4 +87,30 @@
 label {
     font-size: 20px;
     font-family: 'Fredoka One', cursive;
+}
+.plus-circle {
+    font-size: 155%;
+    padding: 0 0 0 5px;
+}
+
+.people-list {
+    width: auto !important;
+    max-width: 125px;
+    height: auto;
+    border-radius: 1px;
+    overflow: hidden;
+    margin-top: -60px !important;
+    left: 65% !important;
+     
+    a {
+		background-image: linear-gradient(to left,
+		var(--sub-color1) 50%,
+		white 50%,
+		white) !important;
+	}
+    ul {
+      &>li {
+        font-size: medium;
+      }
+    }
 }
