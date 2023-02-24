@@ -11,6 +11,10 @@ import { ChannelMessages } from "./ChannelMessages";
 import CLickableMenu from "./clickableMenu";
 import { AddChannel } from "./CreateChannel";
 
+function GetChannelList(props: any) {
+	
+}
+
 function ChannelList(props: any) {
 	const [chanList, setChanList] = useState<IChannel[]>([]);
 	const [chanId, setChanId] = useState("");
@@ -141,7 +145,6 @@ function ChannelMemberList(props: { id: any }) {
 		<div className="title"> Members <hr />
 			{currentChan && currentChan.users.map(user => (
 				<div className="user-list">
-
 					<ul key={user.username} onClick={e => { changeId(user.id) }}>
 						<li>
 							{user.username}
