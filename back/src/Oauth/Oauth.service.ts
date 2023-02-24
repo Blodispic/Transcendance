@@ -47,17 +47,7 @@ export class OauthService {
       },
     });
     const data = await response.json();
-    // const response = await fetch('https://api.intra.42.fr/v2/me', {
-    //   method: 'GET',
-    //   headers: {
-    //     'Authorization': `Bearer ${intra_token}`,
-    //   },
-    // })
-    // .then((ret) => {return ret.json()})
-    // .then((data) => {
-    //   console.log(data);
-    // })
-    // .catch((err) => {console.log(err)})
+    
     const user = await this.usersService.getByLogin(data.login);
     if (user)
       return (user);

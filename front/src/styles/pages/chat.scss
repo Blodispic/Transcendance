@@ -221,7 +221,7 @@ $tab-color: rgba(var(--primary-color), 0.5); //rgb(121, 121, 121);
 	color: black;
 	border-color: var(--sub-color1);
 	width: 500px;
-	height: 350px;
+	height: 400px;
 	justify-content: center;
 	align-items: center;
 	text-align: center;
@@ -243,10 +243,6 @@ $tab-color: rgba(var(--primary-color), 0.5); //rgb(121, 121, 121);
 	}
 }
 
-.add-icon {
-	cursor: pointer;
-	float: right;
-}
 
 .close-icon {
 	float: right;
@@ -308,4 +304,14 @@ $tab-color: rgba(var(--primary-color), 0.5); //rgb(121, 121, 121);
 			}
 		}
 	}
+}
+
+.allpoeple {
+	font-size:  35px;
+}
+
+
+
+.cursor-onsomoene {
+	cursor: w-resize;
 }

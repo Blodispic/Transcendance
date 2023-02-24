@@ -27,6 +27,7 @@ export interface Player {
 	score: number;
 	side: number;
 	avatar: string;
+	id: number;
 }
 
 export interface Ball {
@@ -47,6 +48,7 @@ export interface GameState {
 	ball: Ball;
 	gameFinished: boolean;
 	extra: boolean;
+	roomId: number;
 }
 
 const GAME_RATIO = 1.5;
@@ -60,6 +62,7 @@ let paddleDimensions: Vec2 = { x: 100, y: 10 };
 let ballRadius: number = 10;
 
 let selfID: number = 0;
+let roomId: number = 0;
 
 const vector_zero = (): Vec2 => ({ x: 0, y: 0 });
 
@@ -87,6 +90,7 @@ let gameStateDefault: GameState = {
 		score: 0,
 		side: 0,
 		avatar: "",
+		id: 0,
 	},
 	player2: {
 		paddle: {
@@ -99,10 +103,12 @@ let gameStateDefault: GameState = {
 		score: 0,
 		side: 1,
 		avatar: "",
+		id: 0,
 	},
 	ball: balldefault,
 	gameFinished: false,
 	extra: true,
+	roomId: 0,
 };
 
 resetState(gameStateDefault);
@@ -124,7 +130,7 @@ export default function GameApp() {
 			const convertedState: GameState = convertState(newGameState);
 			selfID = player;
 			setGameState(convertedState);
-		});
+			});
 
 		socket.on("GameEnd", (result: any) => {
 			console.log("Ending game")
@@ -162,9 +168,8 @@ export default function GameApp() {
 	return (
 		<div id="game-container">
 			{ gameState.gameFinished ? (result ? <ResultPopup win={true} /> : <ResultPopup win={false} />) : <></> }
-			{/* { gameState.gameFinished ? (result ? <Victory /> : <Defeat />) : <></> } */}
 			<h3 className="display-player">
-				<img src={gameState.player2.avatar} alt={gameState.player2.name} />
+				<img src={`${process.env.REACT_APP_BACK}user/${gameState.player2.id}/avatar`} alt={gameState.player2.name} />
 				{gameState.player2.name} : {gameState.player2.score}
 			</h3>
 			<Stage
@@ -215,7 +220,8 @@ export default function GameApp() {
 				</Layer>
 			</Stage>
 			<h3 className="display-player">
-			<img src={gameState.player1.avatar} alt={gameState.player1.name}/>
+			<img src={`${process.env.REACT_APP_BACK}user/${gameState.player1.id}/avatar`} alt={gameState.player1.name}/>
+			
 				{gameState.player1.name} : {gameState.player1.score}
 			</h3>
 		</div>
@@ -277,6 +283,10 @@ function convertState(state: GameState) {
 	newState.scoreMax = state.scoreMax;
 	newState.player1.avatar = state.player1.avatar;
 	newState.player2.avatar = state.player2.avatar;
+	newState.roomId = state.roomId;
+	roomId = state.roomId;
+	newState.player1.id = state.player1.id;
+	newState.player2.id = state.player2.id;
 	return newState;
 }
 
@@ -522,9 +532,9 @@ function keyEvent(event: KeyboardEvent) {
 		move2.right = false;
 	}
 	if (key === "ArrowLeft" || key === "ArrowRight")
-		socket.emit("Move1", move1);
+		socket.emit("Move1", {input: move1, roomId: roomId});
 	else
-		socket.emit("Move2", move2);
+		socket.emit("Move2", {input: move2, roomId: roomId});
 	// socket.removeAllListeners()
 }
 

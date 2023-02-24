@@ -62,6 +62,20 @@ export function ChannelMessages(props: { id: any }) {
 						<LeaveChannel currentUser={currentUser.user} chanid={currentChan?.id} />
 					</>
 				}
+				{/* <ChannelHeader chan={currentChan} user={currentUser?.user} /> */}
+				<div className="chat-messages">
+					{messageList.map(message => (
+						message.chanid == currentChan?.id && 
+						<div key={message.message} className="__wrap">
+							<div className="message-info">
+								<img className="user-avatar" src={message.sender?.avatar} />
+								{message.sender?.username}
+								<span className="timestamp">0000/00/00  00:00</span>
+							</div>
+							{message.message}
+						</div>
+					))}
+				</div>
 				{
 					currentChan?.id &&
 					<>

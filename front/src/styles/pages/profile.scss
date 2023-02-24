@@ -2,19 +2,18 @@
     width: 100%;
     height: 100%;
 }
-.avatar {
-    height: 130px;
-    width: 130px;
-    border-radius: 50%;
-    margin: auto;
-    align-self: center;
-    overflow: hidden;
-point
-    .logo {
-        width: 140px;
-        height: auto;
-    }
-}
+// .avatar {
+//     height: 130px;
+//     width: 130px;
+//     border-radius: 50%;
+//     margin: auto;
+//     align-self: center;
+//     overflow: hidden;
+//     .logo {
+//         width: 140px;
+//         height: auto;
+//     }
+// }
 
 .profile-header {
     width: 100%;
@@ -37,6 +36,20 @@ point
             display: flex;
             flex-direction: column;
             align-items: center;
+
+            .avatar {
+                height: 130px;
+                width: 130px;
+                border-radius: 50%;
+                margin: auto;
+                align-self: center;
+                overflow: hidden;
+
+                .logo {
+                    width: 140px;
+                    height: auto;
+                }
+            }
         }
         
         .info-header {
@@ -74,11 +87,11 @@ point
                     .color-status.Offline {
                         color: #747f8d;
                     }
-                    
+
                     .color-status.Online {
                         color: #43b581;
                     }
-                    
+
                     .color-status.InGame {
                         color: #f04747;
                     }
@@ -98,15 +111,15 @@ point
 
                 .win {
                     color: #41b94b;
-                  }
-                  
-                  .lose {
-                    color: #e05068;
-                  }
+                }
 
-                  .winrate {
-                    color: #808080; 
-                  }
+                .lose {
+                    color: #e05068;
+                }
+
+                .winrate {
+                    color: #808080;
+                }
             }
 
             .rank {
@@ -116,29 +129,29 @@ point
 
                 .rank {
                     color: #a5a5a5;
-                  }
-                  ﻿￼﻿﻿
+                }
+
                 .rank.bronze {
                     color: #b3782d;
-                  }
-                  
-                  .rank.silver {
+                }
+
+                .rank.silver {
                     color: #c0c0c0;
-                  }
-                  
-                  .rank.gold {
+                }
+
+                .rank.gold {
                     color: #ffd700;
-                  }
-                  
-                  .rank.platinum {
+                }
+
+                .rank.platinum {
                     color: #00bfff;
-                  }
-                  
-                  .rank.diamond {
+                }
+
+                .rank.diamond {
                     color: #00ced1;
-                  }
+                }
             }
-            
+
         }
     }
 
@@ -266,6 +279,11 @@ point
     height: 100%;
 }
 
+li {
+    float: left;
+    display: block;
+}
+
 .accept-button,
 .refuse-button {
     padding: 5px 8px;
@@ -312,27 +330,147 @@ point
     height: auto;
     display: flex;
     border-radius: 5px;
+
     button {
-        border: 1px solid #555;
+        width: 100%;
+        border: 1px solid #534f4f;
         border-bottom-right-radius: 5px;
         border-bottom-left-radius: 5px;
-        width: auto;
-        padding: 3px 10px 1px;
+        padding: 10px 20px 5px;
+
         a {
-            font-size:x-large;
+            font-size: 24px;
             width: 100%;
             height: 100%;
         }
-        
+    }
+
+    .not-selected {
+        opacity: 0.7;
+    }
+
+    .pointer {
+        font-family: 'Fredoka One', cursive;
+        cursor: pointer;
+    }
+
+    button:not(.not-selected) {
+        background-color: #8860D0;
+        color: #FFFFFF;
+    }
+
+    button:not(.not-selected):hover {
+        background-color: #8860D0;
     }
 }
 
-  .not-selected {
-    background-color: #fff;
-  }
+.not-selected {
+    background-color: #FFFFFF;
+}
 
-  span {
-    display: block;
-    text-align: center;
-  }
-  
+.match-list {
+    display: flex;
+    flex-direction: column-reverse;
+    overflow: hidden;
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-content: center;
+    padding-top: 1%;
+}
+
+.match-block {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4.5px;
+    overflow: hidden;
+    text-decoration: none;
+    background: linear-gradient(to right, #41B94B, #E05068);
+    border: 1px solid rgb(151, 139, 139);
+    margin-bottom: 10px;
+    margin-left: 10px;
+    width: 90%;
+    display: flex;
+    align-items: flex-start;
+}
+
+.winner-img {
+    border-right: 0.2px solid rgb(0, 0, 0);
+    height: 75px;
+    width: 75px;
+}
+
+.winner-img img {
+    height: 100%;
+    width: 100%;
+    object-fit: cover;
+}
+
+.loser-img {
+    border-left: 0.2px solid rgb(0, 0, 0);
+    height: 75px;
+    width: 75px;
+}
+
+.loser-img img {
+    height: 100%;
+    width: 100%;
+    object-fit: cover;
+}
+
+.match-info {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    flex-grow: 1;
+    margin: 0 10px;
+    flex-direction: column;
+    width: 100px;
+}
+
+.match-name {
+    font-family: "Fredoka One", cursive;
+}
+
+.match-elo {
+    font-size: 14px;
+}
+
+.match-score {
+    font-family: "Fredoka One", cursive;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    align-items: center;
+    width: 124px;
+    height: 70px;
+    border-radius: 50%;
+    font-size: 36px;
+}
+
+.match-score-container {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-grow: 1;
+}
+
+.winner {
+    flex-grow: 1;
+    display: flex;
+    align-items: center;
+}
+
+.loser {
+    flex-grow: 1;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+}

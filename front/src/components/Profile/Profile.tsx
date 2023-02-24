@@ -11,6 +11,7 @@ import { History } from './History';
 import TwoFa from './setTwoFa';
 import { socket } from '../../App';
 import { UserStatus } from '../../interface/User';
+import Sign from '../connection/Sign';
 
 
 
@@ -25,7 +26,7 @@ function Onglets(props: { currentUser: IUser, current: page, setOnglets: Functio
                         <button className={`pointer ${current === page.PAGE_1 ? "" : "not-selected"}`}
                                 onClick={e => setOnglets(page.PAGE_1)}>
                                 <a >
-                                        history
+                                        History
                                 </a>
                         </button>
                         {
@@ -33,22 +34,32 @@ function Onglets(props: { currentUser: IUser, current: page, setOnglets: Functio
                                 <button className={`pointer ${current === page.PAGE_2 ? "" : "not-selected"}`}
                                         onClick={e => setOnglets(page.PAGE_2)} >
                                         <a >
-                                                friend_request
+                                                Friend Request
                                         </a>
                                 </button>
                         }
                         {
-                                currentUser.login === myUser.user?.login && myUser.user?.twoFaEnable === false &&
+                                currentUser.login === myUser.user?.login &&
                                 <button className={`pointer ${current === page.PAGE_3 ? "" : "not-selected"}`}
                                         onClick={e => setOnglets(page.PAGE_3)}>
                                         <a >
-                                                2fa
+                                                2FA
+                                        </a>
+                                </button>
+                        }
+                         {
+                                currentUser.login === myUser.user?.login &&
+                                <button className={`pointer ${current === page.PAGE_4 ? "" : "not-selected"}`}
+                                        onClick={e => setOnglets(page.PAGE_4)} >
+                                        <a >
+                                                settings
                                         </a>
                                 </button>
                         }
                 </div>
         )
 }
+
 export default function Profile() {
         const [currentUser, setCurrentUser] = useState<IUser | undefined>(undefined);
         let avatar: string = "";
@@ -68,21 +79,26 @@ export default function Profile() {
                         fetchid();
         }, [id])
 
+        // useEffect(() => {
         socket.on('UpdateSomeone', (idChange, idChange2) => {
                 console.log("ca dis quoi", idChange, currentUser?.id)
 
-                if (idChange2 === id || idChange === id)
+                // if (idChange2 === id || idChange === id)
                 fetchid();
-
         })
+        // }, [currentUser])
+
         useEffect(() => {
-        }, [Onglets])
+                console.log("ca recharge");
+                if (currentUser?.id == myUser.user?.id)
+                        setCurrentUser(myUser.user);
+        }, [Onglets, myUser.user?.username])
 
 
         if (currentUser === undefined || avatar === undefined) {
                 return (
                         <div className='center'>
-                                <h1>USER DONT EXIST </h1>
+                                <h1>USER DOESN'T EXIST </h1>
                         </div>
                 );
         }
@@ -96,7 +112,7 @@ export default function Profile() {
                                 <Onglets currentUser={currentUser} current={pages} setOnglets={setPages} />
                                 {
                                         pages == page.PAGE_1 &&
-                                        <History />
+                                        <History user={currentUser} />
                                 }
                                 {
                                         pages == page.PAGE_2 &&
@@ -105,6 +121,10 @@ export default function Profile() {
                                 {
                                         pages == page.PAGE_3 &&
                                         <TwoFa />
+                                }
+                                 {
+                                        pages == page.PAGE_4 &&
+                                        <Sign />
                                 }
 
                         </div>
