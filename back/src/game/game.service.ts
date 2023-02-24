@@ -37,7 +37,7 @@ export class GameService {
 					speed: vector_zero(),
 					angle: 0,
 				},
-				input: inputdefault,
+				input: JSON.parse(JSON.stringify(inputdefault)),
 				name: "Player1",
 				score: 0,
 				side: 0,
@@ -54,7 +54,7 @@ export class GameService {
 					speed: vector_zero(),
 					angle: 0,
 				},
-				input: inputdefault,
+				input: JSON.parse(JSON.stringify(inputdefault)),
 				name: "Player2",
 				score: 0,
 				side: 1,
@@ -69,7 +69,7 @@ export class GameService {
 			player2.avatar = socket2.handshake.auth.user.avatar;
 			player2.id = socket2.handshake.auth.user.id;
 
-			this.gameRoom.push(new Game(this, server, player1, player2, true, 3, socket1, socket2));
+			this.gameRoom.push(new Game(this, server, player1, player2, true, 3, socket1, socket2, this.gameRoom.length + 1));
 			server.to(player1.socket).emit("RoomStart", this.gameRoom.length, player1);
 			server.to(player2.socket).emit("RoomStart", this.gameRoom.length, player2);
 			this.userService.SetStatus(socket1.handshake.auth.user, "InGame");
@@ -94,7 +94,7 @@ export class GameService {
 				speed: vector_zero(),
 				angle: 0,
 			},
-			input: inputdefault,
+			input: JSON.parse(JSON.stringify(inputdefault)),
 			name: "Player1",
 			score: 0,
 			side: 0,
@@ -111,7 +111,7 @@ export class GameService {
 				speed: vector_zero(),
 				angle: 0,
 			},
-			input: inputdefault,
+			input: JSON.parse(JSON.stringify(inputdefault)),
 			name: "Player2",
 			score: 0,
 			side: 1,
@@ -125,26 +125,38 @@ export class GameService {
 		player2.name = socket2.handshake.auth.user.username;
 		player2.avatar = socket2.handshake.auth.user.avatar;
 		player2.id = socket2.handshake.auth.user.id;
-		this.gameRoom.push(new Game(this, server, player1, player2, extra, scoreMax, socket1, socket2));
+		this.gameRoom.push(new Game(this, server, player1, player2, extra, scoreMax, socket1, socket2, this.gameRoom.length + 1));
 		server.to(player1.socket).emit("RoomStart", this.gameRoom.length, player1);
 		server.to(player2.socket).emit("RoomStart", this.gameRoom.length, player2);
 	}
 
-	updateMove1(move1: Move, client: string) {
-		let roomId: number = 0;
-		while (roomId < this.gameRoom.length && this.gameRoom.length > 0) {
-			if (this.gameRoom[roomId].gameState.player1.socket == client)
-				this.gameRoom[roomId].updateMove1(move1);
-			roomId++;
+	updateMove1(move1: Move, client: string, roomId: number) {
+		let i: number = 0;
+		while (i < this.gameRoom.length)
+		{
+			console.log("input [" + (i + 1) + "]: l=" + this.gameRoom[i].gameState.player1.input.left + " r=" + this.gameRoom[i].gameState.player1.input.right);
+
+			if (this.gameRoom[i].gameState.roomId === roomId
+				&& this.gameRoom[i].gameState.player1.socket === client)
+			{
+				this.gameRoom[i].updateMove1(move1);
+				break;
+			}
+			i++;
 		}
 	}
 
-	updateMove2(move2: Move, client: string) {
-		let roomId: number = 0;
-		while (roomId < this.gameRoom.length && this.gameRoom.length > 0) {
-			if (this.gameRoom[roomId].gameState.player2.socket == client)
-				this.gameRoom[roomId].updateMove2(move2);
-			roomId++;
+	updateMove2(move2: Move, client: string, roomId: number) {
+		let i: number = 0;
+		while (this.gameRoom[i])
+		{
+			if (this.gameRoom[i].gameState.roomId === roomId
+				&& this.gameRoom[i].gameState.player2.socket === client)
+			{
+				this.gameRoom[i].updateMove2(move2);
+				return;
+			}
+			i++;
 		}
 	}
 
@@ -196,8 +208,6 @@ const vector_zero = (): Vec2 => ({ x: 0, y: 0 });
 
 let inputdefault: Move = { right: false, left: false };
 
-let move1: Move = { ...inputdefault };
-let move2: Move = { ...inputdefault };
 let paddleDimensions: Vec2 = { x: 100, y: 10 };
 let ballRadius: number = 10;
 
@@ -246,6 +256,7 @@ let gameStateDefault: GameState = {
 	ball: balldefault,
 	gameFinished: false,
 	extra: true,
+	roomId: 0,
 };
 
 class Game {
@@ -256,30 +267,75 @@ class Game {
 	socket2: any;
 	watchList: string[];
 
-	constructor(gameService: GameService, server: Server, user1: Player, user2: Player, extra: boolean, scoreMax: number, socket1: any, socket2: any) {
+	move1: Move = JSON.parse(JSON.stringify(inputdefault));
+	move2: Move = JSON.parse(JSON.stringify(inputdefault));
+
+	constructor(gameService: GameService, server: Server, user1: Player, user2: Player, extra: boolean, scoreMax: number, socket1: any, socket2: any, roomId: number) {
 		this.gameService = gameService;
 		this.server = server;
-		this.gameState = gameStateDefault;
+		// this.gamestateInitializer();
+		// this.gameState = gameStateDefault;
+		this.gameState = JSON.parse(JSON.stringify(gameStateDefault));
 		this.gameState.gameFinished = false;
 		this.gameState.player1 = user1;
 		this.gameState.player2 = user2;
-		console.log("Avatar wesh: ", this.gameState.player1.avatar);
+		this.resetState(this.gameState);
 		this.gameState.player1.avatar = user1.avatar;
 		this.gameState.player2.avatar = user2.avatar;
 		this.gameState.player1.id = user1.id;
 		this.gameState.player2.id = user2.id;
 		this.gameState.player1.score = 0;
 		this.gameState.player2.score = 0;
-		this.resetState(this.gameState);
 		this.gameState.extra = extra;
 		this.socket1 = socket1;
 		this.socket2 = socket2;
 		this.gameState.scoreMax = scoreMax;
-		console.log("score max = ", scoreMax);
+		this.gameState.roomId = roomId;
 		
 		this.watchList = [];
 
 		this.gameRoomRun();
+	}
+
+	gamestateInitializer()
+	{
+		this.gameState.area = { x: GAME_INTERNAL_WIDTH, y: GAME_INTERNAL_WIDTH * GAME_RATIO };
+		this.gameState.scale = 1;
+		this.gameState.scoreMax = 3;
+		this.gameState.resetCooldown = 60;
+		this.gameState.client_area = vector_zero();
+		this.gameState.player1 = {
+			paddle: {
+				position: vector_zero(),
+				speed: vector_zero(),
+				angle: 0,
+			},
+			input: JSON.parse(JSON.stringify(inputdefault)),
+			name: "Player1",
+			score: 0,
+			side: 0,
+			socket: "",
+			avatar: "",
+			id: 0,
+		};
+		this.gameState.player2 = {
+			paddle: {
+				position: vector_zero(),
+				speed: vector_zero(),
+				angle: 0,
+			},
+			input: JSON.parse(JSON.stringify(inputdefault)),
+			name: "Player2",
+			score: 0,
+			side: 1,
+			socket: "",
+			avatar: "",
+			id: 0,
+		};
+		this.gameState.ball = balldefault;
+		this.gameState.gameFinished = false;
+		this.gameState.extra = true;
+		this.gameState.roomId = 0;
 	}
 
 	addSpectator(client: string) {
@@ -295,11 +351,11 @@ class Game {
 	}
 
 	updateMove1(newMove1: Move) {
-		move1 = newMove1;
+		this.move1 = JSON.parse(JSON.stringify(newMove1));
 	}
 
 	updateMove2(newMove2: Move) {
-		move2 = newMove2;
+		this.move2 = JSON.parse(JSON.stringify(newMove2));
 	}
 
 	disconnect(client: string) {
@@ -332,8 +388,11 @@ class Game {
 	updateGameState(state: GameState) {
 		state.scale = state.client_area.x / state.area.x;
 
-		state.player1.input = { ...move1 };
-		state.player2.input = { ...move2 };
+		state.player1.input = { ...this.move1 };
+		// state.player1.input = JSON.parse(JSON.stringify(move1));
+		
+		state.player2.input = { ...this.move2 };
+		// state.player2.input = JSON.parse(JSON.stringify(move2));
 		if (state.player1.score === state.scoreMax || state.player2.score === state.scoreMax) {
 			state.gameFinished = true;
 		}
@@ -435,11 +494,16 @@ class Game {
 	}
 
 	wallCollision(ball: Ball, state: GameState) {
-		if (
-			ball.position.x + ballRadius > state.area.x ||
-			ball.position.x - ballRadius < 0
-		)
+		if (ball.position.x + ballRadius > state.area.x)
+		{
+			ball.position.x = state.area.x - ballRadius;
 			ball.speed.x = -ball.speed.x;
+		}
+		else if( ball.position.x - ballRadius < 0)
+		{
+			ball.position.x = 0 + ballRadius;
+			ball.speed.x = -ball.speed.x;
+		}
 		if (
 			this.paddleCollision(ball, state.player1) === 0 &&
 			this.paddleCollision(ball, state.player2) === 0
@@ -447,19 +511,15 @@ class Game {
 			if (ball.position.y > state.area.y - ballRadius) {
 				state.player2.score++;
 				this.resetState(state);
-				console.log("if player2 score >= scoreMax " + (state.player2.score >= state.scoreMax))
 				if (state.player2.score >= state.scoreMax) {
 					//END THE GAME
-					console.log("p2: " + state.player2.score);
 					this.finishGame();
 				}
 			} else if (ball.position.y < 0 + ballRadius) {
 				state.player1.score++;
 				this.resetState(state);
-				console.log("if player1 score >= scoreMax " + (state.player1.score >= state.scoreMax))
 				if (state.player1.score >= state.scoreMax) {
 					//END THE GAME
-					console.log("p1: " + state.player1.score);
 					this.finishGame()
 				}
 			}
