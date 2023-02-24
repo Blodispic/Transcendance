@@ -47,7 +47,7 @@ export const userSlice = createSlice({
             state.isLog = false;
             else 
             state.isLog = true;
-            // socket.emit("UpdateSomeone", {id: state.user?.id})
+            // socket.emit("UpdateSomeone", {idChange : state.user?.id})
             const response = fetch(`${process.env.REACT_APP_BACK}user/${state.user?.id}`, {
                 method: 'PATCH',
                 headers: {
@@ -67,7 +67,10 @@ export const userSlice = createSlice({
             state.isOauth = false;
         },
         enableTwoFa: (state) => {
+            if (state.user!.twoFaEnable == false)
             state.user!.twoFaEnable = true;
+            else 
+            state.user!.twoFaEnable = false;
         }
     },
 })

@@ -117,8 +117,6 @@ export function Friends(props: { user: IUser }) {
         const FriendsReq = () => {
                 console.log(friendReq)
                 return <FriendsList friends={friendReq} />;
-
-
         }
 
         return (

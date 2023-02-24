@@ -40,18 +40,39 @@ export class UserService {
     return this.usersRepository.save(user);
   }
 
-  async createResults(createResultDto: CreateResultDto): Promise<Results> {
-    const check = await this.resultsRepository.findOneBy({
-      winner: createResultDto.winner
-    })
-    if (check)
-      return (check);
-    const result: Results = this.resultsRepository.create(createResultDto);
-    return this.resultsRepository.save(result);
+  async createResult(resultDto: CreateResultDto) {
+    const winner = await this.usersRepository.findOne({
+      relations: {
+        results: true,
+      },
+      where: { username: resultDto.winner }
+    });
+    const resultPush = await this.resultsRepository.save(resultDto);
+    if (resultPush) {
+      if (winner) {
+        winner.win += 1;
+        winner.elo += 50;
+        winner.results.push(resultPush);
+        await this.usersRepository.save(winner);
+      }
+      const loser = await this.usersRepository.findOne({
+        relations: {
+          results: true,
+        },
+        where: { username: resultDto.loser }
+      });
+      if (loser) {
+        loser.lose += 1;
+        loser.elo -= 50;
+        loser.results.push(resultPush);
+        await this.usersRepository.save(loser);
+      }
+      return resultPush;
+    }
   }
 
   async save(updateUserDto: UpdateUserDto) {
-    return (this.usersRepository.save(updateUserDto));
+    return (await this.usersRepository.save(updateUserDto));
   }
 
 
@@ -67,8 +88,6 @@ export class UserService {
 
   async check2FA(id: number, userCode: string): Promise<boolean> {
     const user = await this.usersRepository.findOneBy({ id: id });
-
-
     if (user) {
       console.log("User code = ", userCode, "twofactorsecret = ", user?.two_factor_secret);
       console.log("check = ", authenticator.check(userCode, user.two_factor_secret));
@@ -82,9 +101,13 @@ export class UserService {
   }
 
   getById(id: number): Promise<User | null> {
-    return this.usersRepository.findOneBy({
-      id: id
-    })
+    return this.usersRepository.findOne({
+      relations: {
+        friends: true,
+        results: true,
+      },
+      where: { id: id }
+    });
   }
 
   getByLogin(login: string): Promise<User | null> {
@@ -110,9 +133,13 @@ export class UserService {
   }
 
   async getByUsername(username: string) {
-    const userfindName = await this.usersRepository.findOneBy({
-      username: username
-    })
+    const userfindName = await this.usersRepository.findOne({
+      relations: {
+        friends: true,
+        results: true,
+      },
+      where: { username: username }
+    });
     return userfindName;
   }
 
@@ -122,13 +149,26 @@ export class UserService {
     })
     if (user) {
       //Si vous voulez plus de chose a update, mettez le dans le body et faites un if
-      if (userUpdate.username)
-        user.username = userUpdate.username;
+      if (userUpdate.username) {
+        const checkUsername = await this.usersRepository.findOneBy({
+          username: userUpdate.username,
+        })
+        if (checkUsername && checkUsername.id !== user.id) {
+          console.log("il exist dedf dgfgsjsdhgdgfa etdhgf ")
+          throw new NotFoundException("Username exists");
+        }
+        else
+          user.username = userUpdate.username;
+      }
       if (userUpdate.status) {
         user.status = userUpdate.status;
+
       }
+      if (userUpdate.status)
+        user.status = userUpdate.status;
       if (userUpdate.twoFaEnable)
         user.twoFaEnable = userUpdate.twoFaEnable
+
       return await this.usersRepository.save(user);
     }
     return 'There is no user to update';
@@ -254,7 +294,31 @@ export class UserService {
       }
       return {};
     });
+  }
 
+  async GetMatchRequest(user: User) {
+    const my_user = await this.usersRepository.findOne({
+      relations: ['results'],
+      where: { id: user.id }
+    });
+    if (!my_user) {
+      return [];
+    }
+    return Promise.all(my_user.results.map(async request => {
+      const [winner, loser] = await Promise.all([
+        this.usersRepository.findOne({ where: { username: request.winner } }),
+        this.usersRepository.findOne({ where: { username: request.loser } })
+      ]);
+      return {
+        id: request.id,
+        winner: winner ? winner : "Unknown",
+        winner_score: request.winner_score || 0,
+        loser: loser ? loser : "Unknown",
+        loser_score: request.loser_score || 0,
+        winner_elo: winner ? request.winner_elo : 0,
+        loser_elo: loser ? request.loser_elo : 0
+      };
+    }));
   }
 
   async updateFriendRequestStatus(friendId: number, receiver: User, status: FriendRequestStatus) {
@@ -367,10 +431,11 @@ export class UserService {
   async getResults(id: number): Promise<Results[]> {
     const user = await this.usersRepository.findOne({
       relations: {
-        friends: true,
+        results: true,
       },
       where: { id: id }
     });
     return user ? user.results : [];
   }
+
 }

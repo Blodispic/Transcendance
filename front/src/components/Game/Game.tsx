@@ -27,6 +27,7 @@ export interface Player {
 	score: number;
 	side: number;
 	avatar: string;
+	id: number;
 }
 
 export interface Ball {
@@ -89,6 +90,7 @@ let gameStateDefault: GameState = {
 		score: 0,
 		side: 0,
 		avatar: "",
+		id: 0,
 	},
 	player2: {
 		paddle: {
@@ -101,6 +103,7 @@ let gameStateDefault: GameState = {
 		score: 0,
 		side: 1,
 		avatar: "",
+		id: 0,
 	},
 	ball: balldefault,
 	gameFinished: false,
@@ -166,7 +169,7 @@ export default function GameApp() {
 		<div id="game-container">
 			{ gameState.gameFinished ? (result ? <ResultPopup win={true} /> : <ResultPopup win={false} />) : <></> }
 			<h3 className="display-player">
-				<img src={gameState.player2.avatar} alt={gameState.player2.name} />
+				<img src={`${process.env.REACT_APP_BACK}user/${gameState.player2.id}/avatar`} alt={gameState.player2.name} />
 				{gameState.player2.name} : {gameState.player2.score}
 			</h3>
 			<Stage
@@ -217,7 +220,8 @@ export default function GameApp() {
 				</Layer>
 			</Stage>
 			<h3 className="display-player">
-			<img src={gameState.player1.avatar} alt={gameState.player1.name}/>
+			<img src={`${process.env.REACT_APP_BACK}user/${gameState.player1.id}/avatar`} alt={gameState.player1.name}/>
+			
 				{gameState.player1.name} : {gameState.player1.score}
 			</h3>
 		</div>
@@ -281,6 +285,8 @@ function convertState(state: GameState) {
 	newState.player2.avatar = state.player2.avatar;
 	newState.roomId = state.roomId;
 	roomId = state.roomId;
+	newState.player1.id = state.player1.id;
+	newState.player2.id = state.player2.id;
 	return newState;
 }
 
