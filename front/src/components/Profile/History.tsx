@@ -33,7 +33,7 @@ export function History(props: { user: IUser }) {
                 </div>
                 <div className="match-info">
                   <div className="match-name">{match.winner.username}</div>
-                  <div className="match-elo">{match.winner_elo} ELO</div>
+                  <div className="match-elo">{match.winner_elo} <span style={{color: '#357E3B'}}>(+50)</span></div>
                 </div>
               </div>
               <div className="match-score-container">
@@ -44,7 +44,8 @@ export function History(props: { user: IUser }) {
               <div className="loser">
                 <div className="match-info">
                   <div className="match-name">{match.loser.username}</div>
-                  <div className="match-elo">{match.loser_elo} ELO</div>
+                  <div className="match-elo">{match.loser_elo} <span style={{color: '#A83349'}}>(-50)</span></div>
+
                 </div>
                 <div className="loser-img">
                   <img src={`${process.env.REACT_APP_BACK}user/${match.loser.id}/avatar`} alt={match.loser.username} />
