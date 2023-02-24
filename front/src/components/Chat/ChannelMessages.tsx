@@ -68,7 +68,7 @@ export function ChannelMessages(props: { id: any }) {
 						{
 							currentChan.chanType !== 1 &&
 							<>
-								<ImCog style={{ float: 'right' }} onClick={() => setPopup(true)} />
+								<ImCog className="config-icon" onClick={() => setPopup(true)} />
 								<ConfigurePass trigger={popup} setTrigger={setPopup} channel={currentChan} />
 							</>
 						}

@@ -17,7 +17,6 @@ $tab-color: rgba(var(--primary-color), 0.5); //rgb(121, 121, 121);
 	height: 100%;
 }
 
-
 #chat-container {
 	font-family: 'Fredoka One', cursive;
 
@@ -176,13 +175,13 @@ $tab-color: rgba(var(--primary-color), 0.5); //rgb(121, 121, 121);
 	// color: rgb(111, 106, 106);
 	color: black;
 	background-color: rgba($color: rgb(80, 165, 174), $alpha: 0.3);
-	max-width: 700px;
+	max-width: 100%;
 	border-radius: 5px;
 	padding: 20px;
 	margin: 10px;
 	padding-top: 0;
+	display: flexbox;
 	word-wrap: break-word;
-	display:flexbox;
 
 	.message-info {
 		color: rgb(107, 107, 107);
@@ -191,12 +190,12 @@ $tab-color: rgba(var(--primary-color), 0.5); //rgb(121, 121, 121);
 		align-items: center;
 	}
 	
-	.timestamp {
-		font-size: 10px;
-		margin-left: 50px;
-	}
 }
 
+.timestamp {
+	font-size: 10px;
+	margin-left: 50px;
+}
 
 .user-avatar {
 	margin-right: 10px;
@@ -206,7 +205,6 @@ $tab-color: rgba(var(--primary-color), 0.5); //rgb(121, 121, 121);
 	width: 30px;
 	border-radius: 50%;
 }
-
 
 .chat-form-popup {
 	position: fixed;
@@ -247,7 +245,6 @@ $tab-color: rgba(var(--primary-color), 0.5); //rgb(121, 121, 121);
 		text-align: center;
 	}
 }
-
 
 .close-icon {
 	float: right;
@@ -315,8 +312,11 @@ $tab-color: rgba(var(--primary-color), 0.5); //rgb(121, 121, 121);
 	font-size:  35px;
 }
 
-
-
 .cursor-onsomoene {
 	cursor: w-resize;
+}
+
+.config-icon {
+	float: right;
+	cursor: pointer;
 }

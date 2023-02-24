@@ -11,10 +11,6 @@ import { ChannelMessages } from "./ChannelMessages";
 import CLickableMenu from "./clickableMenu";
 import { AddChannel } from "./CreateChannel";
 
-function GetChannelList(props: any) {
-	
-}
-
 function ChannelList(props: any) {
 	const [chanList, setChanList] = useState<IChannel[]>([]);
 	const [chanId, setChanId] = useState("");
