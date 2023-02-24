@@ -21,6 +21,8 @@
         display: inline-block;
         span {
             font-size:x-large;
+            display: unset;
+            text-align: left;
         }
     }
 }
@@ -45,6 +47,8 @@
             width: 50%;
             align-self: center;
             border-radius: 50%;
+            height: unset;
+            margin: unset;
         }
         .text{
             text-align: left;
