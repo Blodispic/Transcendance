@@ -20,6 +20,13 @@ export class GameService {
 	public gameRoom: Game[] = [];
 
 	async addToWaitingRoom(client: any) {
+		let i : number = 0;
+		while (i < this.waitingRoom.length)
+		{
+			if (this.waitingRoom[i] === client)
+				return;
+			i++;
+		}
 		this.waitingRoom.push(client);
 	}
 
