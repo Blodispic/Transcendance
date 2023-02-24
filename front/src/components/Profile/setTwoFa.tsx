@@ -78,10 +78,10 @@ export default function TwoFa() {
     }, [])
 
     return (
-        <div className="container">
+        <>
             {
                 isValid !== true &&
-                <div className='form-qrcode'>
+                <div className='form-qrcode center'>
                     <div className=''>
                         <div>
                             <div className=''>
@@ -113,6 +113,6 @@ export default function TwoFa() {
                     </button>
                 </div>
             }
-        </div>
+        </>
     )
 }

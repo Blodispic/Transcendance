@@ -9,6 +9,7 @@ import { UserService } from "src/user/user.service";
 import { Repository } from "typeorm";
 import { GameInfo } from "./entities/game.entity";
 import { Ball, GameState, Move, Player, Vec2 } from "./game.interfaces";
+import { CreateResultDto } from "src/results/dto/create-result.dto";
 
 @Injectable()
 export class GameService {
@@ -42,6 +43,7 @@ export class GameService {
 				side: 0,
 				socket: socket1.id,
 				avatar: "",
+				id: 0,
 			};
 			let player2: Player = {
 				paddle: {
@@ -58,11 +60,15 @@ export class GameService {
 				side: 1,
 				socket: socket2.id,
 				avatar: "",
+				id: 0,
 			};
 			player1.name = socket1.handshake.auth.user.username;
 			player1.avatar = socket1.handshake.auth.user.avatar;
+			player1.id = socket1.handshake.auth.user.id;
 			player2.name = socket2.handshake.auth.user.username;
 			player2.avatar = socket2.handshake.auth.user.avatar;
+			player2.id = socket2.handshake.auth.user.id;
+
 			this.gameRoom.push(new Game(this, server, player1, player2, true, 3, socket1, socket2));
 			server.to(player1.socket).emit("RoomStart", this.gameRoom.length, player1);
 			server.to(player2.socket).emit("RoomStart", this.gameRoom.length, player2);
@@ -94,6 +100,7 @@ export class GameService {
 			side: 0,
 			socket: socket1.id,
 			avatar: "",
+			id: 0,
 		};
 		let player2: Player = {
 			paddle: {
@@ -110,11 +117,14 @@ export class GameService {
 			side: 1,
 			socket: socket2.id,
 			avatar: "",
+			id: 0,
 		};
 		player1.name = socket1.handshake.auth.user.username;
 		player1.avatar = socket1.handshake.auth.user.avatar;
+		player1.id = socket1.handshake.auth.user.id;
 		player2.name = socket2.handshake.auth.user.username;
 		player2.avatar = socket2.handshake.auth.user.avatar;
+		player2.id = socket2.handshake.auth.user.id;
 		this.gameRoom.push(new Game(this, server, player1, player2, extra, scoreMax, socket1, socket2));
 		server.to(player1.socket).emit("RoomStart", this.gameRoom.length, player1);
 		server.to(player2.socket).emit("RoomStart", this.gameRoom.length, player2);
@@ -148,28 +158,21 @@ export class GameService {
 		}
 	}
 
-	async save(results: any, server: Server) {
+	async save(results: CreateResultDto, server: Server) {
 		const winner = await this.userService.getByUsername(results.winner);
-		const loser = await this.userService.getByUsername(results.loser);
-		if (winner) {
-			winner.win += 1;
-			winner.elo += 50;
-			this.userService.save(winner);
+		const loser = await this.userService.getByUsername(results.loser);  
+		const resultReturn = {
+		  winner: results.winner,
+		  loser: results.loser,
+		  winner_score: results.winner_score,
+		  loser_score: results.loser_score,
+		  winner_elo: winner ? winner.elo : 0,
+		  loser_elo: loser ? loser.elo : 0
 		}
-		else {
-			// winner doesn't exist
-		}
-		if (loser) {
-			loser.lose += 1;
-			loser.elo -= 50;
-			this.userService.save(loser);
-		}
-		else {
-			// loser doesn't exist
-		}
-
-		this.userService.createResults(results);
-	}
+	  
+		const resultPush = await this.userService.createResult(resultReturn);
+	  }
+	  
 
 	EndGame(client: string, server: Server) {
         let roomId: number = 0;
@@ -224,6 +227,7 @@ let gameStateDefault: GameState = {
 		side: 0,
 		socket: "",
 		avatar: "",
+		id: 0,
 	},
 	player2: {
 		paddle: {
@@ -237,6 +241,7 @@ let gameStateDefault: GameState = {
 		side: 1,
 		socket: "",
 		avatar: "",
+		id: 0,
 	},
 	ball: balldefault,
 	gameFinished: false,
@@ -261,6 +266,8 @@ class Game {
 		console.log("Avatar wesh: ", this.gameState.player1.avatar);
 		this.gameState.player1.avatar = user1.avatar;
 		this.gameState.player2.avatar = user2.avatar;
+		this.gameState.player1.id = user1.id;
+		this.gameState.player2.id = user2.id;
 		this.gameState.player1.score = 0;
 		this.gameState.player2.score = 0;
 		this.resetState(this.gameState);
@@ -306,17 +313,17 @@ class Game {
 		}
 	}
 
-	finishGame() {
+	async finishGame() {
 		this.gameState.gameFinished = true;
 		if (this.gameState.player1.score === this.gameState.scoreMax) {
 			let result: any = { winner: this.gameState.player1.name, loser: this.gameState.player2.name, winner_score: this.gameState.player1.score.toString(), loser_score: this.gameState.player2.score.toString() };
-			this.gameService.save(result, this.server);
+			await this.gameService.save(result, this.server);
 			this.server.to(this.gameState.player1.socket).emit("GameEnd", result);
 			this.server.to(this.gameState.player2.socket).emit("GameEnd", result);
 		}
 		else {
 			let result: any = { winner: this.gameState.player2.name, loser: this.gameState.player1.name, winner_score: this.gameState.player2.score.toString(), loser_score: this.gameState.player1.score.toString() };
-			this.gameService.save(result, this.server);
+			await this.gameService.save(result, this.server);
 			this.server.to(this.gameState.player1.socket).emit("GameEnd", result);
 			this.server.to(this.gameState.player2.socket).emit("GameEnd", result);
 		}

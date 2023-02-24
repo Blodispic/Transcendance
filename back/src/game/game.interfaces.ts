@@ -15,6 +15,7 @@ export interface Move {
 }
 
 export interface Player {
+	id: number
 	paddle: Paddle;
 	input: Move;
 	name: string;
