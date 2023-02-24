@@ -1,6 +1,3 @@
-import { useState, useEffect } from 'react';
-import { Navigate, useNavigate, useSearchParams } from "react-router-dom";
-
 export default function Home() {
 
 
@@ -16,7 +13,7 @@ export default function Home() {
                     To reduce the lag, the game runs both in the front and in the back, so that the game can anticipate frames if it doesn't receive them from the back.<br/>
                     You can create a custom match, choose how many points are needed to win and invite a friend to join you.<br/><br/>
 
-                    When the game ends, you get or loose some points and you can go back to the game lobby to play again.
+                    When the game ends, you get or lose some points and you can go back to the game lobby to play again.
                 </a>
             </div>
             <h2>
