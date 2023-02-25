@@ -37,7 +37,7 @@ function DMList(props: {currentdm: IUser | undefined; setCurrentDm: Function}) {
 		<div className="title"> Direct Messages <hr />
 			{alluser != undefined &&
 				<>
-					{alluser!.map(user => (
+					{alluser && alluser.map(user => (
 						<ul key={user.username} onClick={_ => props.setCurrentDm(user)} >
 							<li >
 								{user.username}
@@ -70,8 +70,7 @@ function InfoFriend(props: {user: IUser}) {
                         <>
                             <li>
                                 <a>
-                                   add friend
-								   salut
+                                   Add friend
                                 </a>
                             </li>
                            
@@ -126,6 +125,8 @@ export function DmMessages(props: { id: any; currentdm: IUser | undefined; setCu
 			<ChannelTitle user={currentUser.user} channel={currentChan} />
 			} */}
 			<div className="chat-messages">
+				<div className="reverse">
+
 				{messageList.map(message => (
 					<div key={message.message} className="__wrap">
 						<div className="message-info">
@@ -136,6 +137,7 @@ export function DmMessages(props: { id: any; currentdm: IUser | undefined; setCu
 						{message.message}
 					</div>
 				))}
+				</div>
 			</div>
 			{
 				props.id !== undefined &&
