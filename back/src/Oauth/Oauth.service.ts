@@ -40,6 +40,7 @@ export class OauthService {
   }
 
   async getInfo(intra_token: string) {
+    console.log("ca passe icic " );
     const response = await fetch('https://api.intra.42.fr/v2/me', {
       method: 'GET',
       headers: {
@@ -57,9 +58,11 @@ export class OauthService {
     const payload = { username: data.login, }
     const token = await this.jwtService.signAsync(payload, {
       secret: jwtConstants.secret,
-      expiresIn: '900s',
+      expiresIn: '9000s',
     });
 
+    console.log("le token cree est : ", token);
+    
     const userDto: CreateUserDto = {
       username: "",
       login: data.login,

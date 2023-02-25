@@ -117,14 +117,16 @@ export class UserService {
   }
 
   async GetByAccessToken(access_token: any) {
+    console.log("le token recu au moment de la connecion : ", access_token);
+    
     const decoded_access_token: any = await this.jwtService.decode(access_token.token, { json: true });
     const user = await this.usersRepository.findOneBy({ login: decoded_access_token.username });
-    // console.log(decoded_access_token);
-    // console.log("exp = ", decoded_access_token.exp);
-    // console.log((Date.now() / 1000));
-    // console.log(decoded_access_token.exp - (Date.now() / 1000));
+    console.log(decoded_access_token);
+    console.log("exp = ", decoded_access_token.exp);
+    console.log((Date.now() / 1000));
+    console.log(decoded_access_token.exp - (Date.now() / 1000));
     if (decoded_access_token.exp && decoded_access_token.exp < Date.now() / 1000) {
-      // console.log("expired");
+      console.log("expired");
       throw new NotFoundException("Token expired");
     }
     else if (user)

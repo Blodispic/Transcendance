@@ -20,39 +20,43 @@ export default function Sign() {
 
     const fetch_name_avatar = async (e: any) => {
         e.preventDefault();
-        if (newname !== '' && myUser.user) {
-
-            if (file) {
-                formData.append('file', file);
-                await fetch(`${process.env.REACT_APP_BACK}user/${myUser.user.id}/avatar`, {
-                    method: 'PATCH',
-                    body: formData,
-                })
-                formData.delete('file');
-                dispatch(change_avatar(avatar));
-            }
-
-            await fetch(`${process.env.REACT_APP_BACK}user/${myUser.user.id}`, {
+        
+        if (file && myUser.user) {
+            console.log("beh alors");
+            formData.append('file', file);
+            await fetch(`${process.env.REACT_APP_BACK}user/${myUser.user.id}/avatar`, {
                 method: 'PATCH',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ username: newname }),
+                body: formData,
             })
-                .then(async response => {
-                    if (!response.ok)
-                        SetNameExist(true);
-                    else {
-                        SetNameExist(false);
-                        dispatch(change_name(newname));
-                        dispatch(set_status(UserStatus.ONLINE));
+            formData.delete('file');
+            dispatch(change_avatar(avatar));
+        }
+        if (newname !== '' && myUser.user) {
+            console.log("beh alors");
 
-                        if (window.location.href.search('Profile') === -1) {
-                            navigate("/Home");
-                        }
-                    }
-
+            if (newname) {
+                await fetch(`${process.env.REACT_APP_BACK}user/${myUser.user.id}`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ username: newname }),
                 })
+                    .then(async response => {
+                        if (!response.ok)
+                            SetNameExist(true);
+                        else {
+                            SetNameExist(false);
+                            dispatch(change_name(newname));
+                            dispatch(set_status(UserStatus.ONLINE));
+
+                            if (window.location.href.search('Profile') === -1) {
+                                navigate("/Home");
+                            }
+                        }
+
+                    })
+            }
         }
     }
 

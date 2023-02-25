@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { HiOutlineMagnifyingGlassCircle } from "react-icons/hi2";
 import { useNavigate } from "react-router-dom";
-import { IUser } from "../../interface/User";
+import { socket } from "../../App";
+import { IUser, UserStatus } from "../../interface/User";
 import { useAppSelector } from "../../redux/Hook";
 import { InviteButton } from "./friend_request";
 
@@ -56,6 +57,9 @@ export function Header(props: { currentUser: IUser, setCurrentUser: Function }) 
 
         const formattedPercentage = winPercentage.toFixed(2) + '%';
 
+        const spectate = () => {
+                socket.emit("spectateGame", currentUser);
+        }
         const rank = () => {
                 if (currentUser.elo >= 1900) {
                         return 'DIAMOND';
@@ -163,7 +167,17 @@ export function Header(props: { currentUser: IUser, setCurrentUser: Function }) 
                                                 </div>
 
                                                 <div className=' block'>
+                                                        <>
+
                                                         <span className={"color-status " + currentUser.status}>{currentUser.status}</span>
+                                                        </>
+                                                        {
+                                                                currentUser.status === UserStatus.INGAME &&
+                                                                <>
+                                                                <button className="button-style" onClick={_ => spectate() }> Spectate </button>
+                                                                </>
+
+                                                        }
                                                 </div>
                                         </div>
                                 </div>

@@ -49,7 +49,7 @@ export function History(props: { user: IUser }) {
                   <div className="match-elo">{match.loser_elo} <span style={{color: '#A83349'}}>(-50)</span></div>
 
                 </div>
-                <div className="loser-img pointer" onClick={_ =>  navigate(`../Profile/${match.loser.id}`)  }>
+                <div className="loser-img pointeraccess" onClick={_ =>  navigate(`../Profile/${match.loser.id}`)  }>
                   <img src={`${process.env.REACT_APP_BACK}user/${match.loser.id}/avatar`} alt={match.loser.username}/>
                 </div>
               </div>

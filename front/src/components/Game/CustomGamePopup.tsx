@@ -9,7 +9,7 @@ import { useSearchParams } from "react-router-dom";
 import AllPeople from "../utils/Allpeople";
 
 export default function CustomGamePopup(props: {trigger: boolean; setTrigger: Function; friend: IUser | undefined} ) {
-    const [extra, setExtra] = useState(false);
+    const [extra, setExtra] = useState<boolean>(false);
     const [maxScore, setMaxScore] = useState(1);
     const [myVar, setMyvar] = useState<boolean>(false);
 

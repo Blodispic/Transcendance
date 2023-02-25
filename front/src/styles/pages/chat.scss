@@ -155,6 +155,24 @@ $tab-color: rgba(var(--primary-color), 0.5); //rgb(121, 121, 121);
 	}
 }
 
+.button-style{
+
+
+		font-family: 'Fredoka One', cursive;
+		display: inline-block;
+		width: auto;
+		border-radius: 30px;
+		font-size: small;
+		text-align: center;
+		cursor: pointer;
+		padding: 5px 5px;
+		background: var(--primary-color);
+		color: white;
+		transition: .3s;
+		// border: 2px solid var(--primary-color);
+		margin-left: 5px;
+
+}
 .chat-messages {
 	height: calc(100vh - 280px);
 	vertical-align: top;
