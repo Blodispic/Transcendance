@@ -175,6 +175,9 @@ async handleBanUser(@ConnectedSocket() client: Socket, @MessageBody() banUserDto
     throw new BadRequestException();
   this.channelService.banUser(banUserDto);
   this.channelService.rm({user: user, chanid: channel.id});
+  client.leave("chan" + channel.id);
+  console.log("client :::::", client.handshake.auth.user.username);
+  
   let timer = 60000;
   if (banUserDto.timeout)
     timer = banUserDto.timeout;
@@ -226,6 +229,7 @@ async handleInvite(@ConnectedSocket() client: Socket, @MessageBody() inviteDto: 
   const socketIdToWho = this.findSocketFromUser(inviteDto.user);
   if (socketIdToWho)
     this.server.to(socketIdToWho.id).emit('invited', channel);
+  socketIdToWho?.join("chan" + channel.id);
   this.channelService.add({user: inviteDto.user, chanId: inviteDto.chanid});
   client.emit('inviteOK');
 }
@@ -236,6 +240,7 @@ async inviteToChan(users: User[], chanid: number)
     let socketIdToWho = this.findSocketFromUser(user);
     if (socketIdToWho)
       this.server.to(socketIdToWho.id).emit("invited", chanid);
+    socketIdToWho?.join("chan" + chanid);
     this.channelService.add({user: user, chanId: chanid});
   });
 }
