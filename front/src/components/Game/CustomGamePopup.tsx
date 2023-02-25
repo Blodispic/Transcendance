@@ -33,16 +33,13 @@ export default function CustomGamePopup(props: {trigger: boolean; setTrigger: Fu
     }, [props])
 
     const changeScore = (event: any) => {
-        console.log(event.target.value);
         setMaxScore(event.target.value);
     };
 
     const changeExtra = (event: any) => {
-        console.log(event.target.checked);
         setExtra(event.target.checked);
     };
     function CreateCustomRoom(extra: any, Max: any) {
-        console.log("extra = " + extra + ", Max = " + Max);
         socket.emit("createCustomGame", { user1: myUser.user, user2: friend, extra: extra, scoreMax: Max });
 
         return;

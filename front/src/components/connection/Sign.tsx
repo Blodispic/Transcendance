@@ -20,9 +20,7 @@ export default function Sign() {
 
     const fetch_name_avatar = async (e: any) => {
         e.preventDefault();
-        
         if (file && myUser.user) {
-            console.log("beh alors");
             formData.append('file', file);
             await fetch(`${process.env.REACT_APP_BACK}user/${myUser.user.id}/avatar`, {
                 method: 'PATCH',
@@ -32,8 +30,6 @@ export default function Sign() {
             dispatch(change_avatar(avatar));
         }
         if (newname !== '' && myUser.user) {
-            console.log("beh alors");
-
             if (newname) {
                 await fetch(`${process.env.REACT_APP_BACK}user/${myUser.user.id}`, {
                     method: 'PATCH',

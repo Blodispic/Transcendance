@@ -66,7 +66,6 @@ export function Friends(props: { user: IUser }) {
         }
 
         const acceptFriendRequest = async (friendId: number) => {
-                console.log("friend = ", friendId);
                 const response = await fetch(`${process.env.REACT_APP_BACK}user/friends/accept`, {
                         method: 'POST',
                         body: JSON.stringify({ friendId, user }),
@@ -115,7 +114,6 @@ export function Friends(props: { user: IUser }) {
 
 
         const FriendsReq = () => {
-                console.log(friendReq)
                 return <FriendsList friends={friendReq} />;
         }
 

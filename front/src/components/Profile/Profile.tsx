@@ -68,7 +68,6 @@ export default function Profile() {
         const myUser = useAppSelector(state => state.user);
         
                 const fetchid = async () => {
-                        console.log(id);
                         const response = await fetch(`${process.env.REACT_APP_BACK}user/id/${id}`, {
                                 method: 'GET',
                         })
@@ -82,14 +81,12 @@ export default function Profile() {
 
         // useEffect(() => {
         socket.on('UpdateSomeone', (idChange, idChange2) => {
-                console.log("ca dis quoi", idChange, currentUser?.id)
                 // if (idChange2 === id || idChange === id)
                 fetchid();
         })
         // }, [currentUser])
 
         useEffect(() => {
-                console.log("ca recharge");
                 if (currentUser?.id == myUser.user?.id)
                 {
                         setCurrentUser(myUser.user);

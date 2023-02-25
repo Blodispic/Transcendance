@@ -41,7 +41,6 @@ export const userSlice = createSlice({
         },
         set_status: (state, { payload }: PayloadAction<UserStatus>) => {
 
-            console.log("change le status normalement",state.user,  payload)
             state.user!.status = payload;
             if (payload === UserStatus.OFFLINE) 
             state.isLog = false;
@@ -56,10 +55,8 @@ export const userSlice = createSlice({
                 body: JSON.stringify( {status: payload }),
             })
             .then(response => { return response.json()} )
-            .then(data => ( console.log(data) ))
         },
         delete_user: (state) => {
-            console.log("ca passe la 1")
             userSlice.caseReducers.set_status(state, { type: 'set_status', payload: UserStatus.OFFLINE })
             // set_status(UserStatus.OFFLINE);
             state.user = undefined;

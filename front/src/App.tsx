@@ -30,7 +30,7 @@ function App() {
       });
       socket.emit("UpdateSomeone", { idChange: myStore.user?.id, idChange2: 0 })
       socket.on("invitationInGame", (payload: any) => {
-        console.log("on m'invite");
+
         setInfoGame(payload);
         setTrigger(true);
     
@@ -50,7 +50,7 @@ function App() {
     .then(async response => {
       const data = await response.json();
       // check for error response
-      console.log(data);
+
       if (response.ok && data.username !== "") {
         dispatch(setUser(data))
         dispatch(set_status(UserStatus.ONLINE))
