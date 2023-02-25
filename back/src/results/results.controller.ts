@@ -1,4 +1,4 @@
-import { Body, Controller, Post } from "@nestjs/common";
+import { Body, Controller, Get, Param, Post } from "@nestjs/common";
 import { ResultService } from "./results.service";
 import { Results } from "./entities/results.entity";
 
@@ -10,5 +10,4 @@ export class ResultController {
   async createResults(@Body() resultDto: Results) {
     return await this.resultService.createResult(resultDto);
   }
-
 }

@@ -15,6 +15,7 @@ export interface Move {
 }
 
 export interface Player {
+	id: number
 	paddle: Paddle;
 	input: Move;
 	name: string;
@@ -42,4 +43,5 @@ export interface GameState {
 	ball: Ball;
 	gameFinished: boolean;
 	extra: boolean;
+	roomId: number;
 }

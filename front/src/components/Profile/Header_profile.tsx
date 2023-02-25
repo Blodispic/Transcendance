@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { HiOutlineMagnifyingGlassCircle } from "react-icons/hi2";
 import { useNavigate } from "react-router-dom";
 import { IUser } from "../../interface/User";
@@ -57,20 +57,64 @@ export function Header(props: { currentUser: IUser, setCurrentUser: Function }) 
         const formattedPercentage = winPercentage.toFixed(2) + '%';
 
         const rank = () => {
-                if (currentUser.elo >= 2000) {
+                if (currentUser.elo >= 1900) {
                         return 'DIAMOND';
                 }
                 else if (currentUser.elo >= 1500) {
                         return 'PLATINUM';
                 }
-                else if (currentUser.elo >= 1000) {
+                else if (currentUser.elo >= 1100) {
                         return 'GOLD';
                 }
-                else if (currentUser.elo >= 500) {
+                else if (currentUser.elo >= 700) {
                         return 'SILVER';
                 }
                 else
                         return 'BRONZE'
+        };
+        const rank2 = () => {
+                if (currentUser.elo >= 2500) {
+                        return 'MANUTIER';
+                }else if (currentUser.elo >= 2200) {
+                        return 'DIAMOND I';
+                }else if (currentUser.elo >= 2100) {
+                        return 'DIAMOND II';
+                }else if (currentUser.elo >= 2000) {
+                        return 'DIAMOND III';
+                }else if (currentUser.elo >= 1900) {
+                        return 'DIAMOND IV';
+                }else if (currentUser.elo >= 1800) {
+                        return 'PLATINUM I';
+                }else if (currentUser.elo >= 1700) {
+                        return 'PLATINUM II';
+                }else if (currentUser.elo >= 1600) {
+                        return 'PLATINUM III';
+                }else if (currentUser.elo >= 1500) {
+                        return 'PLATINUM IV';
+                }else if (currentUser.elo >= 1400) {
+                        return 'GOLD I';
+                }else if (currentUser.elo >= 1300) {
+                        return 'GOLD II';
+                }else if (currentUser.elo >= 1200) {
+                        return 'GOLD III';
+                }else if (currentUser.elo >= 1100) {
+                        return 'GOLD IV';
+                }else if (currentUser.elo >= 1000) {
+                        return 'SILVER I';
+                }else if (currentUser.elo >= 900) {
+                        return 'SILVER II';
+                }else if (currentUser.elo >= 800) {
+                        return 'SILVER III';
+                }else if (currentUser.elo >= 700) {
+                        return 'SILVER IV';
+                }else if (currentUser.elo >= 600) {
+                        return 'BRONZE I';
+                }else if (currentUser.elo >= 500) {
+                        return 'BRONZE II';
+                }else if (currentUser.elo >= 400) {
+                        return 'BRONZE III';
+                }else
+                        return 'BRONZE IV'
         };
 
         return (
@@ -107,7 +151,7 @@ export function Header(props: { currentUser: IUser, setCurrentUser: Function }) 
                                                 </div>
                                                 <div className='rank'>
                                                         <span>RANK</span>
-                                                        <span className={`rank ${rank().toLowerCase()}`}>{rank()}</span>
+                                                        <span className={`rank ${rank().toLowerCase()}`}>{rank2()}</span>
                                                 </div>
                                         </div>
 

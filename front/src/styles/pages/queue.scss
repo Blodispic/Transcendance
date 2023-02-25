@@ -43,14 +43,19 @@
         justify-content: center;
         align-items: center;
     
-        .avatar-inpopup {
-            height: 10%;
-            padding: 10px 0 10px 0;
-    
-            .avatar {
-                height: 50px !important;
-                width: 50px !important;
+    }
+    .avatar-inpopup {
+        height: 50px;
+        padding: 10px 0 10px 0;
+
+        .avatar {
+            height: 50px !important;
+            width: 50px !important;
+
+            &:hover {
+                background-color: rgba(0, 0, 0, 0.5) !important;
             }
+
         }
     }
 .custom-popup-inner {

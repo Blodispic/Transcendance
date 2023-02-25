@@ -40,6 +40,14 @@ services:
     init: true
     networks:
       - Wow
+  
+  adminer :
+    image: adminer
+    restart: always
+    ports: 
+      - 8080:8080
+    networks: 
+      - Wow
 
 networks:
   Wow:

@@ -1,46 +1,22 @@
 import { useEffect, useState } from "react";
+import { BsKeyFill } from "react-icons/bs";
 import { HiLockClosed } from "react-icons/hi2";
 import { ImCog } from "react-icons/im";
 import { socket } from "../../App";
 import { IChannel } from "../../interface/Channel";
 import { IMessage } from "../../interface/Message";
 import { useAppSelector } from "../../redux/Hook";
-import { JoinChannel, LeaveChannel } from "./ChannelUtils";
-
-function ChannelHeader(props: { chan: any, user: any }) {
-	const [isOnChan, setIsOnChan] = useState(false);
-
-	return (
-		<div className="body-header" >
-			{props.chan.name}
-			{
-				props.chan !== undefined &&
-				<ImCog style={{ float: 'right' }} />
-			}
-			{
-				props.chan.chanType == 1 &&
-				<HiLockClosed />}
-			{
-				isOnChan === false &&
-				<JoinChannel currentUser={props.user.user} chanid={props.chan.id} />
-			}
-			{/* {
-			isOnChan === true &&
-			<span><LeaveChannel currentUser={currentUser.user} chanid={currentChan?.id} /></span>
-		} */}
-		</div>
-	);
-}
-
-
+import { ConfigurePass } from "./AdminCommands";
+import { JoinChannel, LeaveChannel } from "./JoinLeave";
 
 export function ChannelMessages(props: { id: any }) {
 	const [newInput, setNewInput] = useState("");
 	const [messageList, setMessageList] = useState<IMessage[]>([]);
 	const [currentChan, setCurrentChan] = useState<IChannel | undefined>(undefined);
 	const currentUser = useAppSelector(state => state.user);
-	const [isOnChan, setIsOnChan] = useState(false);
-	const [announce, setAnnounce] = useState("");
+	const [popup, setPopup] = useState(false);
+	const [isOnChannel, setIsOnChannel] = useState(false);
+	let date: string;
 
 	useEffect(() => {
 		const getChannel = async () => {
@@ -57,69 +33,70 @@ export function ChannelMessages(props: { id: any }) {
 	const handleSubmitNewMessage = (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
 		if (newInput != "")
-			socket.emit('sendMessageChannel', { chanid: props.id, sender: currentUser.user, message: newInput });
+			socket.emit('sendMessageChannel', { chanid: currentChan?.id, sender: currentUser.user, message: newInput });
 		setNewInput("");
 	}
 
 	socket.on('sendMessageChannelOK', (messageDto) => {
 		setMessageList([...messageList, messageDto]);
 	})
-
-	socket.on('muteUserOK', (userId, chanId) => {
-		setAnnounce("")
-	});
-
-
-	// if (currentChan?.users !== undefined && currentChan?.users.find(value => currentUser.user)) {
-	// 	console.log('--test--');
-	// 	setIsOnChan(true);
-	// }
+	date = new Date().toLocaleString();
 
 	return (
 		<div className="chat-body">
-			{/* {
-				currentChan !== undefined && currentUser.user !== undefined &&
-			<ChannelTitle user={currentUser.user} channel={currentChan} /> */}
-
 			<div className="body-header" >
 				{currentChan?.name}
 				{
-					currentChan !== undefined &&
-					<ImCog style={{ float: 'right' }} />
-				}
-				{
 					currentChan?.chanType == 1 &&
-					<HiLockClosed />}
-				{
-					// isOnChan === false &&
-					<JoinChannel currentUser={currentUser.user} chanid={currentChan?.id} />
+					<HiLockClosed />
 				}
 				{
-					// isOnChan === true &&
-					<LeaveChannel currentUser={currentUser.user} chanid={currentChan?.id} />
+					currentChan?.chanType == 2 &&
+					<BsKeyFill />
 				}
-				{/* <ChannelHeader chan={currentChan} user={currentUser?.user} /> */}
-				<div className="chat-messages">
-					{messageList.map(message => (
-						message.chanid == currentChan?.id &&
-						<div key={message.message} className="__wrap">
-							<div className="message-info">
-								<img className="user-avatar" src={message.sender?.avatar} />
-								{message.sender?.username}
-								<span className="timestamp">0000/00/00  00:00</span>
-							</div>
-							{message.message}
+				{
+					currentChan !== undefined &&
+					<>
+						<JoinChannel currentUser={currentUser.user} channel={currentChan} />
+
+						<LeaveChannel currentUser={currentUser.user} chanid={currentChan?.id} />
+					</>
+				}
+				{
+					currentChan?.id &&
+					<>
+						{
+							currentChan.chanType !== 1 &&
+							<>
+								<ImCog className="config-icon" onClick={() => setPopup(true)} />
+								<ConfigurePass trigger={popup} setTrigger={setPopup} channel={currentChan} />
+							</>
+						}
+					</>
+				}
+			</div>
+			<div className="chat-messages">
+				<div className="reverse">
+				{messageList && messageList.map(message => (
+					message.chanid == currentChan?.id &&
+					<div key={message.message} className="__wrap">
+						<div className="message-info">
+							<img className="user-avatar" src={message.sender?.avatar} />
+							<p>{message.sender?.username}</p>
+							<p className="timestamp">{date}</p>
 						</div>
-					))}
-				</div>
-				{
-					props.id !== undefined &&
-					<form id="input_form" onSubmit={(e) => { handleSubmitNewMessage(e); }}>
-						<input type="text" onChange={(e) => { setNewInput(e.target.value) }}
-							placeholder="type message here" value={newInput} />
-					</form>
-				}
+						{message.message}
+					</div>
+				))}
 			</div>
 			</div>
-			);
+			{
+				props.id !== undefined &&
+				<form id="input_form" onSubmit={(e) => { handleSubmitNewMessage(e); }}>
+					<input type="text" onChange={(e) => { setNewInput(e.target.value) }}
+						placeholder="type message here" value={newInput} />
+				</form>
+			}
+		</div>
+	);
 }

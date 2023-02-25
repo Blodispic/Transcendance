@@ -5,15 +5,24 @@
     transform: translate(-50%, -50%);
 }
 
+.center2 {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 50%;
+}
+
 .form-qrcode {
-    margin-top: 15%;
+
     height: auto;
     width: 150px;
     display: flex;
-    margin-left: 50%;
-    background-color: #3352cb;
+    margin: 0 auto;
+    background-color: #59a7d1;
     text-align: center;
     width: min-content;
+    border: 0.5px solid;
+    border-radius: 4px;
     padding: 15px;
     .qrcode {
         text-align: center;

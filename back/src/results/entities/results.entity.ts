@@ -21,6 +21,12 @@ export class Results {
   @Column()
   loser_score: string;
 
+  @Column()
+  winner_elo: number;
+
+  @Column()
+  loser_elo: number;
+
   // @Column()
   // winner_avatar: string;
 
