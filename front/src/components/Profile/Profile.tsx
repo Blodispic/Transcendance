@@ -77,6 +77,8 @@ export default function Profile() {
                 if (id)
                         fetchid();
                 setPages(page.PAGE_1);
+               if (myUser.user!.friends )
+               console.log ("est ce que c'est mon copain",  myUser.user!.friends.find(allfriend => allfriend.id === currentUser!.id));
         }, [id])
 
         // useEffect(() => {
