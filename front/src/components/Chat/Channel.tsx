@@ -145,7 +145,7 @@ function ChannelMemberList(props: { id: any }) {
 						<li>
 							{user.username}
 							{
-								currentChan.owner?.find(obj => obj === user) &&
+								currentChan.admin?.find(obj => obj === user) &&
 								<FaCrown />
 							}
 						</li>
