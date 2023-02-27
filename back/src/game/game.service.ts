@@ -136,6 +136,9 @@ export class GameService {
 		player2.name = socket2.handshake.auth.user.username;
 		player2.id = socket2.handshake.auth.user.id;
 		this.gameRoom.push(new Game(this, server, player1, player2, extra, scoreMax, socket1, socket2, this.gameRoom.length + 1));
+		this.userService.SetStatus(socket1.handshake.auth.user, "InGame");
+		this.userService.SetStatus(socket2.handshake.auth.user, "InGame");
+		server.emit("UpdateSomeone", { idChange: socket1.handshake.auth.user.id, idChange2: socket2.handshake.auth.user.id  });
 		server.to(player1.socket).emit("RoomStart", this.gameRoom.length, player1);
 		server.to(player2.socket).emit("RoomStart", this.gameRoom.length, player2);
 	}
