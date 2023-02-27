@@ -58,6 +58,7 @@ export class OauthService {
     if (user)
     {
       user.access_token = token
+      await this.usersService.save(user);
       return (user);
     }
     if (data.error)
