@@ -4,7 +4,7 @@ import { IUser } from "../../interface/User";
 import { useAppSelector } from "../../redux/Hook";
 
 
-export default function InviteInGame(props : {infoGame: any, setTrigger: Function}) {
+export default function InviteGame(props : {infoGame: any, setTrigger: Function}) {
 
 
     const myUser = useAppSelector(state => state.user);
