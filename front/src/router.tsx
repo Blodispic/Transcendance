@@ -14,6 +14,7 @@ import { Log } from './components/connection/Log';
 import Home from './components/Home/Home';
 import { Channels } from './components/Chat/Channel';
 import { DirectMessage } from './components/Chat/DirectMessage';
+import PageNotfound from './components/404/PageNotFound';
 
 const Layout = () => (
   <>
@@ -149,6 +150,11 @@ const router = createBrowserRouter([
           <ProtectedRoute>
             <GameApp />
           </ProtectedRoute>,
+      },
+      {
+        path: "*",
+        element:
+            <PageNotfound />
       },
     ]
   }

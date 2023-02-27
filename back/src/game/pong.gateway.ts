@@ -54,14 +54,13 @@ export class PongGateway implements OnGatewayDisconnect, OnGatewayInit {
 	}
 
 	//test
-	findSocketFromUser(user: User)
- {  
-  for (const iterator of userList) {
-    if (iterator.handshake.auth.user.id === user.id)
-      return iterator;
-  }
-  return null;
- }
+	findSocketFromUser(user: User) {
+		for (const iterator of userList) {
+			if (iterator.handshake.auth.user.id === user.id)
+				return iterator;
+		}
+		return null;
+	}
 
 	@SubscribeMessage("createCustomGame")
 	HandleCustomGame(@MessageBody() payload: any, @ConnectedSocket() client: Socket) {
