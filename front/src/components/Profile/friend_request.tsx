@@ -88,7 +88,7 @@ export function Friends(props: { user: IUser }) {
 
 
 
-        const FriendsList = (props: FriendsListProps) => {
+        const FriendsReqList = (props: FriendsListProps) => {
                 return (
                         <ul className="friends-list">
                                 {props.friends.map(friend => (
@@ -115,6 +115,49 @@ export function Friends(props: { user: IUser }) {
 
 
         const FriendsReq = () => {
+                const friendReq = [
+                        { name: 'Ross', avatar: 'https://img.freepik.com/vecteurs-premium/panda-mignon-tenant-bambou-pouce-vers-haut-icone-vecteur-dessin-anime-illustration-nature-animale-isolee_138676-4817.jpg?w=360', status: 'Online', id: 1 ,  ReqStatus: 'Pending', UserStatus: 'Online', },
+                        { name: 'Rachel', avatar: 'http://10.1.8.1:4000/user/3/avatar', status: 'Online', id: 2 ,  ReqStatus: 'Pending', UserStatus: 'Online',  },
+                        { name: 'Joey', avatar: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRpamtYxWbURGcTSVFTmsrY16rf3d_I39DhAQ&usqp=CAU', status: 'Online' , id: 3,  ReqStatus: 'Pending', UserStatus: 'Online',  },
+                        { name: 'Phoebe', avatar: 'https://i.pinimg.com/originals/d0/a2/e2/d0a2e243610bde1be54defdca162e47a.jpg', status: 'Online', id: 4 ,  ReqStatus: 'Pending', UserStatus: 'Online',  },
+                        { name: 'Chandler', avatar: 'https://ih1.redbubble.net/image.1343394098.5639/flat,750x,075,f-pad,750x1000,f8f8f8.jpg', status: 'Online', id: 5 ,  ReqStatus: 'Pending', UserStatus: 'Online',  },
+                        { name: 'Monica', avatar: 'https://www.gamosaurus.com/wp-content/uploads/Users/pikavatarsurf.png', status: 'Online', id: 6,  ReqStatus: 'Pending', UserStatus: 'Online', },
+                ];
+                console.log(friendReq)
+                return <FriendsReqList friends={friendReq} />;
+        }
+
+        const FriendsList = (props: FriendsListProps) => {
+                return (
+                        <ul className="friends-list">
+                                {props.friends.map(friend => (
+                                        <li className="friend-block" key={friend.name}>
+                                                <div className="friend-img">
+                                                        <img src={friend.avatar} alt={friend.name} />
+                                                </div>
+                                                <div className="friend-info">
+                                                        <div className="friend-name">{friend.name}</div>
+                                                        <div className={"color-status " + friend.UserStatus}>{friend.UserStatus}</div>
+
+                                                </div>
+
+                                        </li>
+                                ))}
+                        </ul>
+                )
+        }
+
+
+
+        const Friends = () => {
+                const friendReq = [
+                        { name: 'Ross', avatar: 'https://img.freepik.com/vecteurs-premium/panda-mignon-tenant-bambou-pouce-vers-haut-icone-vecteur-dessin-anime-illustration-nature-animale-isolee_138676-4817.jpg?w=360', status: 'Online', id: 1 ,  ReqStatus: 'Pending', UserStatus: 'Online', },
+                        { name: 'Rachel', avatar: 'http://10.1.8.1:4000/user/3/avatar', status: 'Online', id: 2 ,  ReqStatus: 'Pending', UserStatus: 'Online',  },
+                        { name: 'Joey', avatar: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRpamtYxWbURGcTSVFTmsrY16rf3d_I39DhAQ&usqp=CAU', status: 'Online' , id: 3,  ReqStatus: 'Pending', UserStatus: 'Online',  },
+                        { name: 'Phoebe', avatar: 'https://i.pinimg.com/originals/d0/a2/e2/d0a2e243610bde1be54defdca162e47a.jpg', status: 'Online', id: 4 ,  ReqStatus: 'Pending', UserStatus: 'Online',  },
+                        { name: 'Chandler', avatar: 'https://ih1.redbubble.net/image.1343394098.5639/flat,750x,075,f-pad,750x1000,f8f8f8.jpg', status: 'Online', id: 5 ,  ReqStatus: 'Pending', UserStatus: 'Online',  },
+                        { name: 'Monica', avatar: 'https://www.gamosaurus.com/wp-content/uploads/Users/pikavatarsurf.png', status: 'Online', id: 6,  ReqStatus: 'Pending', UserStatus: 'Online', },
+                ];
                 console.log(friendReq)
                 return <FriendsList friends={friendReq} />;
         }
@@ -122,12 +165,12 @@ export function Friends(props: { user: IUser }) {
         return (
                 <div className='FriendHeader'>
 
-                        <FriendsReq />
                         <div className='FriendRequestBlock'>
+                                <FriendsReq />
                         </div>
-
+                        <hr className="separate-line" />
                         <div className='FriendListBlock'>
-
+                                <Friends />
                         </div>
                 </div>
         )

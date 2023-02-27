@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, Req, Request, Res, UploadedFile, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Delete, Get, NotFoundException, Param, Patch, Post, Req, Request, Res, UploadedFile, UseInterceptors } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { Response } from 'express';
 import { diskStorage } from 'multer';
@@ -62,17 +62,22 @@ export class UserController {
 
   @Post('2fa/qrcode')
   async enable2FA(@Body() user: any) {
-    const realUser = await this.userService.getById(user.id);
-    const secret = authenticator.generateSecret();
-    this.userService.enable2FA(realUser, secret);
-    const otpauthURL = authenticator.keyuri('Transcendence', user.email, secret);
-    const qrCode = await this.userService.generateQRCode(otpauthURL);
-    return { qrCode };
+    const realUser = await this.userService.getById(user.user.id);
+    if (!realUser) {
+      throw new NotFoundException(`User with id ${user.id} not found`);
+    }
+      const secret = authenticator.generateSecret();
+      this.userService.enable2FA(realUser, secret);
+      const otpauthURL = authenticator.keyuri('Transcendence', realUser.email, secret);
+      const qrCode = await this.userService.generateQRCode(otpauthURL);
+      return { qrCode };
   }
 
   @Post('2fa/check')
-  async checkCode(@Body() user: { id: number, code: string }) {
-    const result = await this.userService.check2FA(user.id, user.code);
+  async checkCode(@Body() user: any) {
+    console.log("user = ", user);
+    console.log("user id = ", user.user.id);
+    const result = await this.userService.check2FA(user.user.id, user.user.code);
     return { result };
   }
 

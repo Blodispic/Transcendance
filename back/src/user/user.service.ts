@@ -87,6 +87,8 @@ export class UserService {
   }
 
   async check2FA(id: number, userCode: string): Promise<boolean> {
+    console.log("Usercode = ", userCode);
+    
     const user = await this.usersRepository.findOneBy({ id: id });
     if (user) {
       console.log("User code = ", userCode, "twofactorsecret = ", user?.two_factor_secret);
