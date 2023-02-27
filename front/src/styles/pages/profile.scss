@@ -212,6 +212,17 @@
     color: white;
 }
 
+.separate-line {
+    border: none;
+    height: 4px;
+    border-radius: 10px;
+    background-color: #918888;
+    width: 80%;
+    margin: 0 auto;
+    transform: translateY(2px);
+    box-shadow: 0 1px 0 #918888;
+  }
+
 
 .friends-list {
     list-style: none;
