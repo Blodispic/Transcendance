@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, NotFoundException, UnauthorizedException } from "@nestjs/common";
+import { BadRequestException, Injectable, NotFoundException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Results } from "src/results/entities/results.entity";
 import { Repository } from "typeorm";
@@ -87,12 +87,12 @@ export class UserService {
     await this.usersRepository.save(user);
   }
 
-  async check2FA(id: number, userCode: string): Promise<boolean> { 
+  async check2FA(id: number, userCode: string): Promise<boolean> {
     const user = await this.usersRepository.findOneBy({ id: id });
     if (user) {
       return authenticator.check(userCode, user.two_factor_secret);
     }
-    throw new NotFoundException("User not found");
+    return (false);
   }
 
   findAll() {
@@ -119,6 +119,10 @@ export class UserService {
     
     const decoded_access_token: any = await this.jwtService.decode(access_token.token, { json: true });
     const user = await this.usersRepository.findOneBy({ login: decoded_access_token.username });
+    // console.log(decoded_access_token);
+    // console.log("exp = ", decoded_access_token.exp);
+    // console.log((Date.now() / 1000));
+    // console.log(decoded_access_token.exp - (Date.now() / 1000));
     if (decoded_access_token.exp && decoded_access_token.exp < Date.now() / 1000) {
       throw new NotFoundException("Token expired");
     }
@@ -169,15 +173,12 @@ export class UserService {
       }
       if (userUpdate.status)
         user.status = userUpdate.status;
-      if (userUpdate.twoFaEnable != undefined)
-      {
-        user.twoFaEnable = userUpdate.twoFaEnable;
-      }
+      if (userUpdate.twoFaEnable)
+        user.twoFaEnable = userUpdate.twoFaEnable
 
       return await this.usersRepository.save(user);
     }
-    else
-      throw new NotFoundException("User not found")
+    return 'There is no user to update';
   }
 
   async remove(id: number) {
@@ -185,7 +186,7 @@ export class UserService {
       id: id,
     })
     if (!user)
-      throw new NotFoundException("User not found")
+      return ('Cant delete an inexistant user');
     this.usersRepository.delete(id);
     return `This action removes a #${id} user`;
   }
@@ -199,22 +200,13 @@ export class UserService {
       user.username = username;
       return await this.usersRepository.save(user);
     }
-    throw new NotFoundException("User not found")
+    return ('User not found');
   }
 
-  async sendFriendRequest(friendId: number, creatorId: number) {
-    console.log("friendId = ", friendId);
-    console.log("creatorId = ", creatorId);
-    if (friendId == creatorId) {
+  async sendFriendRequest(friendId: number, creator: User) {
+    if (friendId == creator.id) {
       return ({ message: "You can't add yourself" });
     }
-    const creator = await this.usersRepository.findOneBy({
-      id: creatorId,
-    })
-    if (!creator) {
-      throw new NotFoundException("creator doesn't exists");
-    }
-
     const friend: User | null = await this.usersRepository.findOne({
       relations: {
         friends: true,
@@ -232,7 +224,7 @@ export class UserService {
       where: { id: creator.id }
     });
     if (!user) {
-      throw new NotFoundException("User not found")
+      return ({ message: 'User does not exist' });
     }
     const existingRequest = await this.friendRequestRepository.findOne({
       relations: {
@@ -243,7 +235,7 @@ export class UserService {
     });
 
     if (existingRequest) {
-      throw new UnauthorizedException("Friend Request already send")
+      return { message: "Friend request already sent" };
     }
     const friendRequest: FriendRequestDto = {
       creator: creator,
@@ -268,30 +260,17 @@ export class UserService {
     return { message: "Friend request sent" };
   }
 
-  async GetFriendRequestStatus(friendId: number, userId: number) {
-    const creator = await this.usersRepository.findOneBy({
-      id: userId,
-    })
-    if (!creator) {
-      throw new NotFoundException("Creator doesn't exists");
-    }
-
+  async GetFriendRequestStatus(friendId: number, creator: User) {
     const friendRequest = await this.friendRequestRepository.findOne({
       where: [{ creator: creator }, { receiver: { id: friendId } }]
     });
     if (!friendRequest) {
-      throw new NotFoundException( "Friend request does not exist" );
+      return { message: "Friend request does not exist" };
     }
     return { status: friendRequest.status };
   }
 
-  async GetFriendsRequest(userId: number) {
-    const user = await this.usersRepository.findOneBy({
-      id: userId,
-    })
-    if (!user) {
-      throw new NotFoundException("user doesn't exists");
-    }
+  async GetFriendsRequest(user: User) {
     const receiver = await this.usersRepository.findOne({
       relations: ['receiveFriendRequests', 'receiveFriendRequests.creator', 'friends'],
       where: { id: user.id }
@@ -322,10 +301,10 @@ export class UserService {
     });
   }
 
-  async GetMatchRequest(userId: number) {
+  async GetMatchRequest(user: User) {
     const my_user = await this.usersRepository.findOne({
       relations: ['results'],
-      where: { id: userId }
+      where: { id: user.id }
     });
     if (!my_user) {
       return [];
@@ -347,14 +326,7 @@ export class UserService {
     }));
   }
 
-  async updateFriendRequestStatus(friendId: number, receiverId: number, status: FriendRequestStatus) {
-    const receiver = await this.usersRepository.findOneBy({
-      id: receiverId,
-    })
-    if (!receiver) {
-      throw new NotFoundException("receiver doesn't exists");
-    }
-
+  async updateFriendRequestStatus(friendId: number, receiver: User, status: FriendRequestStatus) {
     const friendRequest = await this.friendRequestRepository.findOne({
       where: [{ creator: { id: friendId } }, { receiver: receiver }]
     });
@@ -364,19 +336,17 @@ export class UserService {
       }
       return await this.friendRequestRepository.save(friendRequest);
     }
-    throw new NotFoundException("Friend Request not found");
+    return { message: "Friend Request not found" };
   }
 
-  async addFriend(friendId: number, userId: number): Promise<User | null> {
+  async addFriend(friendId: number, user: User): Promise<User | null> {
 
     const realUser = await this.usersRepository.findOne({
       relations: {
         friends: true,
       },
-      where: { id: userId }
+      where: { id: user.id }
     });
-    if (!realUser)
-      throw new NotFoundException("user doesn't exists");
 
     const friend = await this.usersRepository.findOne({
       relations: {
@@ -384,9 +354,7 @@ export class UserService {
       },
       where: { id: friendId }
     });
-    if (!friend)
-      throw new NotFoundException("friend doesn't exists")
-    if (userId != friendId) {
+    if (realUser && friend && user.id != friendId) {
       if (!realUser.friends) {
         realUser.friends = [];
       }
@@ -406,7 +374,7 @@ export class UserService {
     //   console.log("Friend doesn't exists");
     // if (user.id == friendId)
     //   console.log("user can't be friend with himself");
-    return realUser;
+    return user;
   }
 
   async SetStatus(user: User, status: string): Promise<User | null> {
@@ -415,7 +383,7 @@ export class UserService {
       users.status = status;
       return await this.usersRepository.save(users);
     }
-    throw new NotFoundException("user doesn't exists");
+    return null;
   }
 
   async addFriendById(friendId: number, id: number): Promise<User | null> {

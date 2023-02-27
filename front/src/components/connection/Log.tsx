@@ -28,7 +28,7 @@ export function Log() {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                userId: myStore.user?.id,
+                user: myStore.user,
                 code: code,
             }),
         })

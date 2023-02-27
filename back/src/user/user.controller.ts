@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, NotFoundException, Param, Patch, Post, Req, Request, Res, UploadedFile, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, Req, Request, Res, UploadedFile, UseInterceptors } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { Response } from 'express';
 import { diskStorage } from 'multer';
@@ -61,60 +61,48 @@ export class UserController {
   }
 
   @Post('2fa/qrcode')
-  async enable2FA(@Body() user: { userId: number }) {
-    console.log("userId = ", user.userId);
-    const realUser = await this.userService.getById(user.userId);
-    if (!realUser) {
-      throw new NotFoundException(`User with id ${user.userId} not found`);
-    }
-    if (realUser.twoFaEnable == false)
-    {
-      const secret = authenticator.generateSecret();
-      this.userService.enable2FA(realUser, secret);
-      const otpauthURL = authenticator.keyuri('Transcendence', realUser.email, secret);
-      const qrCode = await this.userService.generateQRCode(otpauthURL);
-      return { qrCode };
-    }
-    else
-      return ("Qr code active");
+  async enable2FA(@Body() user: any) {
+    const realUser = await this.userService.getById(user.id);
+    const secret = authenticator.generateSecret();
+    this.userService.enable2FA(realUser, secret);
+    const otpauthURL = authenticator.keyuri('Transcendence', user.email, secret);
+    const qrCode = await this.userService.generateQRCode(otpauthURL);
+    return { qrCode };
   }
-  
 
   @Post('2fa/check')
-  async checkCode(@Body() user: { userId: number, code: string}) {
-    console.log("user.userId = ", user.userId);
-    console.log("user.code = ", user.code);
-    const result = await this.userService.check2FA(user.userId, user.code);
+  async checkCode(@Body() user: { id: number, code: string }) {
+    const result = await this.userService.check2FA(user.id, user.code);
     return { result };
   }
 
 
   @Post('friend-request/status/:id')
-  async GetFriendRequestStatus(@Param('id') id: number, @Body() user: { userId: number }) {
-    return this.userService.GetFriendRequestStatus(id, user.userId);
+  async GetFriendRequestStatus(@Param('id') id: number, @Body() user: User) {
+    return this.userService.GetFriendRequestStatus(id, user);
   }
 
   @Post('friends')
-  GetFriends(@Body() user: { userId: number }) {
-    return this.userService.GetFriendsRequest(user.userId);
+  GetFriends(@Body() user: User) {
+    return this.userService.GetFriendsRequest(user);
   }
 
   @Post('matches')
-  GetMatches(@Body() user: { userId: number }) {
-    return this.userService.GetMatchRequest(user.userId);
+  GetMatches(@Body() user: User) {
+    return this.userService.GetMatchRequest(user);
   }
 
   @Post("friends/accept")
-  async acceptFriendRequest(@Body() body: { friendId: any, userId: number }) {
-    this.userService.addFriend(body.friendId, body.userId);
-    return await this.userService.updateFriendRequestStatus(body.friendId, body.userId, {
+  async acceptFriendRequest(@Body() body: { friendId: any, user: User }) {
+    this.userService.addFriend(body.friendId, body.user);
+    return await this.userService.updateFriendRequestStatus(body.friendId, body.user, {
       status: "Accepted",
     });
   }
 
   @Post("friends/decline")
-  async declineFriendRequest(@Body() body: { friendId: number, userId: number }) {
-    return await this.userService.updateFriendRequestStatus(body.friendId, body.userId, {
+  async declineFriendRequest(@Body() body: { friendId: number, user: User }) {
+    return await this.userService.updateFriendRequestStatus(body.friendId, body.user, {
       status: "Declined",
     });
   }
@@ -160,8 +148,10 @@ export class UserController {
 
   @Post('friend-request/send/:id')
   sendFriendRequest(
-    @Param('id') id: number, @Body() user: { userId: number }) {
-      return this.userService.sendFriendRequest(id, user.userId)
+    @Param('id') id: number, @Body() user: User) {
+    if (user) {
+      return this.userService.sendFriendRequest(id, user)
+    }
   }
 
   @Delete('deletefriend/:id')

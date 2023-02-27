@@ -26,6 +26,7 @@ export interface Player {
 	name: string;
 	score: number;
 	side: number;
+	avatar: string;
 	id: number;
 }
 
@@ -88,6 +89,7 @@ let gameStateDefault: GameState = {
 		name: "Player1",
 		score: 0,
 		side: 0,
+		avatar: "",
 		id: 0,
 	},
 	player2: {
@@ -100,6 +102,7 @@ let gameStateDefault: GameState = {
 		name: "Player2",
 		score: 0,
 		side: 1,
+		avatar: "",
 		id: 0,
 	},
 	ball: balldefault,
@@ -277,6 +280,8 @@ function convertState(state: GameState) {
 
 	newState.extra = state.extra;
 	newState.scoreMax = state.scoreMax;
+	newState.player1.avatar = state.player1.avatar;
+	newState.player2.avatar = state.player2.avatar;
 	newState.roomId = state.roomId;
 	roomId = state.roomId;
 	newState.player1.id = state.player1.id;
