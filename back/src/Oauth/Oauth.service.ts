@@ -1,8 +1,9 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { CreateUserDto } from 'src/user/dto/create-user.dto';
 import { UserService } from '../user/user.service';
 import { jwtConstants } from './constants';
+import { userList } from '../app.gateway'
 
 @Injectable()
 export class OauthService {
@@ -51,7 +52,17 @@ export class OauthService {
     
     const user = await this.usersService.getByLogin(data.login);
     if (user)
+    {
+      let i : number = 0;
+      while (i < userList.length)
+      {
+        if (userList[i].handshake.auth.user.id === user.id)
+          throw new BadRequestException(); // User already logged in
+        i++;
+      }
+
       return (user);
+    }
     if (data.error)
       return (data.error);
 
