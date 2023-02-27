@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from "@nestjs/common";
+import { BadRequestException, Injectable, NotFoundException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Results } from "src/results/entities/results.entity";
 import { Repository } from "typeorm";
@@ -15,6 +15,7 @@ import { authenticator } from "otplib";
 import * as QRCode from 'qrcode';
 import { CreateResultDto } from "src/results/dto/create-result.dto";
 import { Server } from "http";
+// import { userList } from "src/app.gateway";
 
 @Injectable()
 export class UserService {
@@ -126,7 +127,16 @@ export class UserService {
       throw new NotFoundException("Token expired");
     }
     else if (user)
+    {
+      // let i : number = 0;
+      // while (i < userList.length)
+      // {
+      //   if (userList[i].handshake.auth.user.id === user.id)
+      //     throw new BadRequestException(); // User already logged in
+      //   i++;
+      // }
       return user;
+    }
     throw new NotFoundException("Token user not found");
   }
 

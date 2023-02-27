@@ -21,7 +21,6 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		userList.push(client);
 		this.userService.SetStatus(client.handshake.auth.user, "Online");
 		this.server.emit("UpdateSomeone", { idChange: client.handshake.auth.user.id, idChange2: 0  })
-
 	}
 
 	handleDisconnect(client: any) {
@@ -29,6 +28,4 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		this.userService.SetStatus(client.handshake.auth.user, "Offline");
 		this.server.emit("UpdateSomeone", { idChange: client.handshake.auth.user.id, idChange2: 0  })
 	}
-
-
 }
