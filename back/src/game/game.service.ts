@@ -60,7 +60,6 @@ export class GameService {
 				score: 0,
 				side: 0,
 				socket: socket1.id,
-				avatar: "",
 				id: 0,
 			};
 			let player2: Player = {
@@ -77,14 +76,11 @@ export class GameService {
 				score: 0,
 				side: 1,
 				socket: socket2.id,
-				avatar: "",
 				id: 0,
 			};
 			player1.name = socket1.handshake.auth.user.username;
-			player1.avatar = socket1.handshake.auth.user.avatar;
 			player1.id = socket1.handshake.auth.user.id;
 			player2.name = socket2.handshake.auth.user.username;
-			player2.avatar = socket2.handshake.auth.user.avatar;
 			player2.id = socket2.handshake.auth.user.id;
 
 			this.gameRoom.push(new Game(this, server, player1, player2, true, 3, socket1, socket2, this.gameRoom.length + 1));
@@ -117,7 +113,6 @@ export class GameService {
 			score: 0,
 			side: 0,
 			socket: socket1.id,
-			avatar: "",
 			id: 0,
 		};
 		let player2: Player = {
@@ -134,14 +129,11 @@ export class GameService {
 			score: 0,
 			side: 1,
 			socket: socket2.id,
-			avatar: "",
 			id: 0,
 		};
 		player1.name = socket1.handshake.auth.user.username;
-		player1.avatar = socket1.handshake.auth.user.avatar;
 		player1.id = socket1.handshake.auth.user.id;
 		player2.name = socket2.handshake.auth.user.username;
-		player2.avatar = socket2.handshake.auth.user.avatar;
 		player2.id = socket2.handshake.auth.user.id;
 		this.gameRoom.push(new Game(this, server, player1, player2, extra, scoreMax, socket1, socket2, this.gameRoom.length + 1));
 		this.userService.SetStatus(socket1.handshake.auth.user, "InGame");
@@ -255,7 +247,6 @@ let gameStateDefault: GameState = {
 		score: 0,
 		side: 0,
 		socket: "",
-		avatar: "",
 		id: 0,
 	},
 	player2: {
@@ -269,7 +260,6 @@ let gameStateDefault: GameState = {
 		score: 0,
 		side: 1,
 		socket: "",
-		avatar: "",
 		id: 0,
 	},
 	ball: balldefault,
@@ -299,8 +289,6 @@ class Game {
 		this.gameState.player1 = user1;
 		this.gameState.player2 = user2;
 		this.resetState(this.gameState);
-		this.gameState.player1.avatar = user1.avatar;
-		this.gameState.player2.avatar = user2.avatar;
 		this.gameState.player1.id = user1.id;
 		this.gameState.player2.id = user2.id;
 		this.gameState.player1.score = 0;
@@ -334,7 +322,6 @@ class Game {
 			score: 0,
 			side: 0,
 			socket: "",
-			avatar: "",
 			id: 0,
 		};
 		this.gameState.player2 = {
@@ -348,7 +335,6 @@ class Game {
 			score: 0,
 			side: 1,
 			socket: "",
-			avatar: "",
 			id: 0,
 		};
 		this.gameState.ball = balldefault;
