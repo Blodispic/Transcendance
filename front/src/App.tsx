@@ -6,7 +6,7 @@ import { Cookies } from 'react-cookie';
 import { setUser, set_status } from './redux/user';
 import { useEffect, useState } from "react";
 import { IUser, UserStatus } from "./interface/User";
-import InviteInGame from "./components/utils/InviteGame";
+import InviteGame from "./components/utils/InviteGame";
 
 export let socket: Socket;
 
