@@ -5,7 +5,8 @@ export interface IChannel {
 	name: string;
 	chanType: number;
 	password: string;
-	owner: IUser[];
+	owner: IUser;
+	admin: IUser[]
 	users: IUser[];
 	banned: IUser[];
 	muted: IUser[];

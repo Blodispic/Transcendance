@@ -1,5 +1,9 @@
-export default function Home() {
+import { useState } from "react";
+import { socket } from "../../App";
+import { IUser } from "../../interface/User";
+import InviteInGame from "../utils/InviteGame";
 
+export default function Home() {
 
     return (
         <div className='scroll'>
@@ -62,6 +66,7 @@ export default function Home() {
                     </a>
                 </div>
             </div>
+
         </div>
     )
 }

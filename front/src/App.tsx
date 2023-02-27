@@ -4,8 +4,9 @@ import { io, Socket } from 'socket.io-client';
 import router from './router';
 import { Cookies } from 'react-cookie';
 import { setUser, set_status } from './redux/user';
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { IUser, UserStatus } from "./interface/User";
+import InviteGame from "./components/utils/InviteGame";
 
 export let socket: Socket;
 
@@ -15,16 +16,25 @@ function App() {
   const cookies = new Cookies();
   const token = cookies.get('Token');
 
+  const [trigger, setTrigger] = useState<boolean> (false);
+  const [infoGame, setInfoGame] = useState<any | undefined> (undefined);
+
 
   useEffect(() => {
     if (myStore.isLog == true && token != undefined && myStore.user && myStore.user.username) {
-        socket = io(`${process.env.REACT_APP_BACK}`, {
+      socket = io(`${process.env.REACT_APP_BACK}`, {
         auth: {
           token: token,
           user: myStore.user,
         }
       });
       socket.emit("UpdateSomeone", { idChange: myStore.user?.id, idChange2: 0 })
+      socket.on("invitationInGame", (payload: any) => {
+
+        setInfoGame(payload);
+        setTrigger(true);
+    
+      })
     }
   }, [myStore.isLog])
 
@@ -40,7 +50,7 @@ function App() {
     .then(async response => {
       const data = await response.json();
       // check for error response
-      console.log(data);
+
       if (response.ok && data.username !== "") {
         dispatch(setUser(data))
         dispatch(set_status(UserStatus.ONLINE))
@@ -50,11 +60,6 @@ function App() {
         cookies.remove('Token');
       }
     })
-    .catch( (reponse) => {
-      console.log("token inexistant or expired")
-      cookies.remove('Token');
-    }
-    )
   }
   if (myStore.user === undefined) {
     if (token !== undefined)
@@ -63,8 +68,13 @@ function App() {
 
   return (
 
+    <>
       <RouterProvider router={router} />
-
+      {
+        trigger === true && infoGame !== undefined &&
+        <InviteInGame infoGame={infoGame} setTrigger={setTrigger} />
+      }
+    </>
   );
 }
 

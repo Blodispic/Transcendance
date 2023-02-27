@@ -40,6 +40,7 @@ export class OauthService {
   }
 
   async getInfo(intra_token: string) {
+
     const response = await fetch('https://api.intra.42.fr/v2/me', {
       method: 'GET',
       headers: {
@@ -59,7 +60,7 @@ export class OauthService {
       secret: jwtConstants.secret,
       expiresIn: '900s',
     });
-
+    
     const userDto: CreateUserDto = {
       username: "",
       login: data.login,

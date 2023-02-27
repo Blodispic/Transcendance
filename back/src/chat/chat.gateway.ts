@@ -40,7 +40,7 @@ export class ChatGateway
  
 //  @SubscribeMessage('sendMessage')
 //  async handleSendMessage(@ConnectedSocket() client: Socket, @MessageBody() data: any): Promise<void> {
-// 	console.log(data)
+
 //   // this.server.to(client.id).emit("cc", "bjr")
 //    this.server.emit('recMessage', data);
 //  }
@@ -112,7 +112,7 @@ async handleCreateChannel(@ConnectedSocket() client: Socket, @MessageBody() crea
     chanId: new_channel.id,
   });
   client.join("chan" + new_channel.id);
-  console.log(new_channel);
+
   client.emit("createChannelOk", new_channel.id);
   // this.server.emit("reloadChannels"); // not sure for now
 }
@@ -240,12 +240,12 @@ async handleInvite(@ConnectedSocket() client: Socket, @MessageBody() inviteDto: 
 }
 
  afterInit(server: Server) {
-//    console.log(server);
+
    //Do stuffs
  }
  
 //  handleDisconnect(client: Socket) {
-//    console.log(`Disconnected: ${client.id}`);
+
 //  }
  
 

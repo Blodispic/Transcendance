@@ -133,7 +133,6 @@ export default function GameApp() {
 			});
 
 		socket.on("GameEnd", (result: any) => {
-			console.log("Ending game")
 			if (selfID === 1)
 			{
 				if (result.winner === gameState.player1.name)

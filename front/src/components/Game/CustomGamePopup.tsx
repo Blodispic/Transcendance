@@ -9,7 +9,7 @@ import { useSearchParams } from "react-router-dom";
 import AllPeople from "../utils/Allpeople";
 
 export default function CustomGamePopup(props: {trigger: boolean; setTrigger: Function; friend: IUser | undefined} ) {
-    const [extra, setExtra] = useState(false);
+    const [extra, setExtra] = useState<boolean>(false);
     const [maxScore, setMaxScore] = useState(1);
     const [myVar, setMyvar] = useState<boolean>(false);
 
@@ -33,16 +33,13 @@ export default function CustomGamePopup(props: {trigger: boolean; setTrigger: Fu
     }, [props])
 
     const changeScore = (event: any) => {
-        console.log(event.target.value);
         setMaxScore(event.target.value);
     };
 
     const changeExtra = (event: any) => {
-        console.log(event.target.checked);
         setExtra(event.target.checked);
     };
     function CreateCustomRoom(extra: any, Max: any) {
-        console.log("extra = " + extra + ", Max = " + Max);
         socket.emit("createCustomGame", { user1: myUser.user, user2: friend, extra: extra, scoreMax: Max });
 
         return;

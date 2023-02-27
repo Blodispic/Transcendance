@@ -89,8 +89,6 @@ export class UserService {
   async check2FA(id: number, userCode: string): Promise<boolean> {
     const user = await this.usersRepository.findOneBy({ id: id });
     if (user) {
-      console.log("User code = ", userCode, "twofactorsecret = ", user?.two_factor_secret);
-      console.log("check = ", authenticator.check(userCode, user.two_factor_secret));
       return authenticator.check(userCode, user.two_factor_secret);
     }
     return (false);
@@ -117,6 +115,7 @@ export class UserService {
   }
 
   async GetByAccessToken(access_token: any) {
+    
     const decoded_access_token: any = await this.jwtService.decode(access_token.token, { json: true });
     const user = await this.usersRepository.findOneBy({ login: decoded_access_token.username });
     // console.log(decoded_access_token);
@@ -124,7 +123,6 @@ export class UserService {
     // console.log((Date.now() / 1000));
     // console.log(decoded_access_token.exp - (Date.now() / 1000));
     if (decoded_access_token.exp && decoded_access_token.exp < Date.now() / 1000) {
-      // console.log("expired");
       throw new NotFoundException("Token expired");
     }
     else if (user)
@@ -154,7 +152,6 @@ export class UserService {
           username: userUpdate.username,
         })
         if (checkUsername && checkUsername.id !== user.id) {
-          console.log("il exist dedf dgfgsjsdhgdgfa etdhgf ")
           throw new NotFoundException("Username exists");
         }
         else
@@ -268,11 +265,9 @@ export class UserService {
       relations: ['receiveFriendRequests', 'receiveFriendRequests.creator', 'friends'],
       where: { id: user.id }
     });
-    console.log('receiver', receiver);
     if (!receiver) {
       return [];
     }
-    console.log('receiver.receiveFriendRequests', receiver.receiveFriendRequests);
     return receiver.receiveFriendRequests.map(request => {
       if (request.creator && request.creator.avatar) {
         return {
@@ -352,27 +347,23 @@ export class UserService {
     if (realUser && friend && user.id != friendId) {
       if (!realUser.friends) {
         realUser.friends = [];
-        console.log("No friends");
       }
 
       if (!friend.friends) {
         friend.friends = [];
-        console.log("No friends");
       }
-      console.log("friend", friend);
-      console.log("realUser", realUser);
 
       realUser.friends.push(friend);
       friend.friends.push(realUser);
       await this.usersRepository.save(friend);
       return await this.usersRepository.save(realUser);
     }
-    if (!user)
-      console.log("User doesn't exists");
-    if (!friend)
-      console.log("Friend doesn't exists");
-    if (user.id == friendId)
-      console.log("user can't be friend with himself");
+    // if (!user)
+    //   console.log("User doesn't exists");
+    // if (!friend)
+    //   console.log("Friend doesn't exists");
+    // if (user.id == friendId)
+    //   console.log("user can't be friend with himself");
     return user;
   }
 
@@ -400,12 +391,12 @@ export class UserService {
       user.friends.push(friend);
       return await this.usersRepository.save(user);
     }
-    if (!user)
-      console.log("User doesn't exists");
-    if (!friend)
-      console.log("Friend doesn't exists");
-    if (id == friendId)
-      console.log("user can't be friend with himself");
+    // if (!user)
+    //   console.log("User doesn't exists");
+    // if (!friend)
+    //   console.log("Friend doesn't exists");
+    // if (id == friendId)
+    //   console.log("user can't be friend with himself");
     return user;
   }
 
