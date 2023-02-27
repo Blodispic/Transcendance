@@ -72,7 +72,7 @@ function App() {
       <RouterProvider router={router} />
       {
         trigger === true && infoGame !== undefined &&
-        <InviteInGame infoGame={infoGame} setTrigger={setTrigger} />
+        <InviteGame infoGame={infoGame} setTrigger={setTrigger} />
       }
     </>
   );
