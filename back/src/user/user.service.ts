@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, NotFoundException } from "@nestjs/common";
+import { BadRequestException, Injectable, NotFoundException, UnauthorizedException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Results } from "src/results/entities/results.entity";
 import { Repository } from "typeorm";
@@ -92,7 +92,7 @@ export class UserService {
     if (user) {
       return authenticator.check(userCode, user.two_factor_secret);
     }
-    return (false);
+    throw new NotFoundException("User not found");
   }
 
   findAll() {
@@ -119,10 +119,6 @@ export class UserService {
     
     const decoded_access_token: any = await this.jwtService.decode(access_token.token, { json: true });
     const user = await this.usersRepository.findOneBy({ login: decoded_access_token.username });
-    // console.log(decoded_access_token);
-    // console.log("exp = ", decoded_access_token.exp);
-    // console.log((Date.now() / 1000));
-    // console.log(decoded_access_token.exp - (Date.now() / 1000));
     if (decoded_access_token.exp && decoded_access_token.exp < Date.now() / 1000) {
       throw new NotFoundException("Token expired");
     }
@@ -152,8 +148,6 @@ export class UserService {
   }
 
   async update(id: number, userUpdate: any) {
-    console.log("update = ", userUpdate);
-    
     const user = await this.usersRepository.findOneBy({
       id: id,
     })
@@ -182,7 +176,8 @@ export class UserService {
 
       return await this.usersRepository.save(user);
     }
-    return 'There is no user to update';
+    else
+      throw new NotFoundException("User not found")
   }
 
   async remove(id: number) {
@@ -190,7 +185,7 @@ export class UserService {
       id: id,
     })
     if (!user)
-      return ('Cant delete an inexistant user');
+      throw new NotFoundException("User not found")
     this.usersRepository.delete(id);
     return `This action removes a #${id} user`;
   }
@@ -204,7 +199,7 @@ export class UserService {
       user.username = username;
       return await this.usersRepository.save(user);
     }
-    return ('User not found');
+    throw new NotFoundException("User not found")
   }
 
   async sendFriendRequest(friendId: number, creatorId: number) {
@@ -237,7 +232,7 @@ export class UserService {
       where: { id: creator.id }
     });
     if (!user) {
-      return ({ message: 'User does not exist' });
+      throw new NotFoundException("User not found")
     }
     const existingRequest = await this.friendRequestRepository.findOne({
       relations: {
@@ -248,7 +243,7 @@ export class UserService {
     });
 
     if (existingRequest) {
-      return { message: "Friend request already sent" };
+      throw new UnauthorizedException("Friend Request already send")
     }
     const friendRequest: FriendRequestDto = {
       creator: creator,
@@ -369,7 +364,7 @@ export class UserService {
       }
       return await this.friendRequestRepository.save(friendRequest);
     }
-    return { message: "Friend Request not found" };
+    throw new NotFoundException("Friend Request not found");
   }
 
   async addFriend(friendId: number, userId: number): Promise<User | null> {
@@ -420,7 +415,7 @@ export class UserService {
       users.status = status;
       return await this.usersRepository.save(users);
     }
-    return null;
+    throw new NotFoundException("user doesn't exists");
   }
 
   async addFriendById(friendId: number, id: number): Promise<User | null> {
