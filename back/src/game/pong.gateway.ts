@@ -66,9 +66,9 @@ export class PongGateway implements OnGatewayDisconnect, OnGatewayInit {
 	HandleCustomGame(@MessageBody() payload: any, @ConnectedSocket() client: Socket) {
 		console.log("Add " + payload.user1.username + " to custom game.");
 		console.log("Add " + payload.user2.username + " to custom game.");
-		const sokcet = this.findSocketFromUser(payload.user2);
-		if (sokcet != null)
-			this.server.to(sokcet.id).emit("invitationInGame", payload);
+		const socket = this.findSocketFromUser(payload.user2);
+		if (socket != null)
+			this.server.to(socket.id).emit("invitationInGame", payload);
 		// this.server.to(payload.user2.id).emit("invitationInGame", payload.user1);
 	}
 

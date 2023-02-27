@@ -6,7 +6,7 @@ import { Cookies } from 'react-cookie';
 import { setUser, set_status } from './redux/user';
 import { useEffect, useState } from "react";
 import { IUser, UserStatus } from "./interface/User";
-import InviteInGame from "./components/utils/InviteGame";
+import InviteGame from "./components/utils/InviteGame";
 
 export let socket: Socket;
 
@@ -72,7 +72,7 @@ function App() {
       <RouterProvider router={router} />
       {
         trigger === true && infoGame !== undefined &&
-        <InviteInGame infoGame={infoGame} setTrigger={setTrigger} />
+        <InviteGame infoGame={infoGame} setTrigger={setTrigger} />
       }
     </>
   );
