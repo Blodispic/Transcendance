@@ -4,7 +4,7 @@ import { IChannel } from "../../interface/Channel";
 import { IUser } from "../../interface/User";
 import { useAppSelector } from "../../redux/Hook";
 import CustomGamePopup from "../Game/CustomGamePopup";
-import { BanUser, MuteUser } from "./ChannelUtils";
+import { AddAdmin, BanUser, MuteUser } from "./AdminCommands";
 
 export default function CLickableMenu(props: { user: IUser, chan: IChannel }) {
 
@@ -24,16 +24,6 @@ export default function CLickableMenu(props: { user: IUser, chan: IChannel }) {
                     {
                         user.id !== myUser?.id &&
                         <>
-                            <li>
-                                <a onClick={() => MuteUser(props.chan.id, user.id)}>
-                                    Mute
-                                </a>
-                            </li>
-                            <li>
-                                <a onClick={() => BanUser(props.chan.id, user.id)}>
-                                    Ban
-                                </a>
-                            </li>
                             <li onClick={_ => setMyvar(true)}>
                                 Invite Game
                             </li>
@@ -42,6 +32,35 @@ export default function CLickableMenu(props: { user: IUser, chan: IChannel }) {
                                     DM
                                 </Link>
                             </li>
+                            {/* ---admin menu--- show if  [myUser] === [owner] || ([myuser] === [admin] &&  [currentuser] !== [admin] ) */}
+                            {
+                                <>
+                                    {/* show if [currentUser] !=== admin */}
+                                    {
+
+                                        <li>
+                                            <a onClick={_ => AddAdmin(props.chan.id, props.user.id)}>
+                                                Add to Admin
+                                            </a>
+                                        </li>
+                                    }
+                                    <li>
+                                        <a onClick={() => MuteUser(props.chan.id, user.id)}>
+                                            Mute
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a onClick={() => BanUser(props.chan.id, user.id)}>
+                                            Ban
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a>
+                                            Kick
+                                        </a>
+                                    </li>
+                                </>
+                            }
                         </>
                     }
                 </ul>

@@ -61,53 +61,60 @@ export class UserController {
   }
 
   @Post('2fa/qrcode')
-  async enable2FA(@Body() user: any) {
-    const realUser = await this.userService.getById(user.user.id);
+  async enable2FA(@Body() user: { userId: number }) {
+    console.log("userId = ", user.userId);
+    const realUser = await this.userService.getById(user.userId);
     if (!realUser) {
-      throw new NotFoundException(`User with id ${user.id} not found`);
+      throw new NotFoundException(`User with id ${user.userId} not found`);
     }
+    if (realUser.twoFaEnable == false)
+    {
       const secret = authenticator.generateSecret();
       this.userService.enable2FA(realUser, secret);
       const otpauthURL = authenticator.keyuri('Transcendence', realUser.email, secret);
       const qrCode = await this.userService.generateQRCode(otpauthURL);
       return { qrCode };
+    }
+    else
+      return ("Qr code active");
   }
+  
 
   @Post('2fa/check')
-  async checkCode(@Body() user: any) {
-    console.log("user = ", user);
-    console.log("user id = ", user.user.id);
-    const result = await this.userService.check2FA(user.user.id, user.user.code);
+  async checkCode(@Body() user: { userId: number, code: string}) {
+    console.log("user.userId = ", user.userId);
+    console.log("user.code = ", user.code);
+    const result = await this.userService.check2FA(user.userId, user.code);
     return { result };
   }
 
 
   @Post('friend-request/status/:id')
-  async GetFriendRequestStatus(@Param('id') id: number, @Body() user: User) {
-    return this.userService.GetFriendRequestStatus(id, user);
+  async GetFriendRequestStatus(@Param('id') id: number, @Body() user: { userId: number }) {
+    return this.userService.GetFriendRequestStatus(id, user.userId);
   }
 
   @Post('friends')
-  GetFriends(@Body() user: User) {
-    return this.userService.GetFriendsRequest(user);
+  GetFriends(@Body() user: { userId: number }) {
+    return this.userService.GetFriendsRequest(user.userId);
   }
 
   @Post('matches')
-  GetMatches(@Body() user: User) {
-    return this.userService.GetMatchRequest(user);
+  GetMatches(@Body() user: { userId: number }) {
+    return this.userService.GetMatchRequest(user.userId);
   }
 
   @Post("friends/accept")
-  async acceptFriendRequest(@Body() body: { friendId: any, user: User }) {
-    this.userService.addFriend(body.friendId, body.user);
-    return await this.userService.updateFriendRequestStatus(body.friendId, body.user, {
+  async acceptFriendRequest(@Body() body: { friendId: any, userId: number }) {
+    this.userService.addFriend(body.friendId, body.userId);
+    return await this.userService.updateFriendRequestStatus(body.friendId, body.userId, {
       status: "Accepted",
     });
   }
 
   @Post("friends/decline")
-  async declineFriendRequest(@Body() body: { friendId: number, user: User }) {
-    return await this.userService.updateFriendRequestStatus(body.friendId, body.user, {
+  async declineFriendRequest(@Body() body: { friendId: number, userId: number }) {
+    return await this.userService.updateFriendRequestStatus(body.friendId, body.userId, {
       status: "Declined",
     });
   }
@@ -153,10 +160,8 @@ export class UserController {
 
   @Post('friend-request/send/:id')
   sendFriendRequest(
-    @Param('id') id: number, @Body() user: User) {
-    if (user) {
-      return this.userService.sendFriendRequest(id, user)
-    }
+    @Param('id') id: number, @Body() user: { userId: number }) {
+      return this.userService.sendFriendRequest(id, user.userId)
   }
 
   @Delete('deletefriend/:id')

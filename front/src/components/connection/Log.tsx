@@ -28,7 +28,7 @@ export function Log() {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                user: myStore.user,
+                userId: myStore.user?.id,
                 code: code,
             }),
         })
@@ -37,7 +37,6 @@ export function Log() {
                 setIsValid(data.result);
                 if (data.result === true) {
                     dispatch(set_status(UserStatus.ONLINE));
-                    // socket.emit("UpdateSomeone", { idChange: myStore.user?.id, idChange2: 0 })
                     navigate("/Home");
 
                 }

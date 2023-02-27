@@ -26,7 +26,6 @@ export interface Player {
 	name: string;
 	score: number;
 	side: number;
-	avatar: string;
 	id: number;
 }
 
@@ -89,7 +88,6 @@ let gameStateDefault: GameState = {
 		name: "Player1",
 		score: 0,
 		side: 0,
-		avatar: "",
 		id: 0,
 	},
 	player2: {
@@ -102,7 +100,6 @@ let gameStateDefault: GameState = {
 		name: "Player2",
 		score: 0,
 		side: 1,
-		avatar: "",
 		id: 0,
 	},
 	ball: balldefault,
@@ -133,7 +130,6 @@ export default function GameApp() {
 			});
 
 		socket.on("GameEnd", (result: any) => {
-			console.log("Ending game")
 			if (selfID === 1)
 			{
 				if (result.winner === gameState.player1.name)
@@ -281,8 +277,6 @@ function convertState(state: GameState) {
 
 	newState.extra = state.extra;
 	newState.scoreMax = state.scoreMax;
-	newState.player1.avatar = state.player1.avatar;
-	newState.player2.avatar = state.player2.avatar;
 	newState.roomId = state.roomId;
 	roomId = state.roomId;
 	newState.player1.id = state.player1.id;
@@ -504,38 +498,36 @@ function movePlayer(player: Player, state: GameState) {
 function keyEvent(event: KeyboardEvent) {
 	let key = event.key;
 	let keyState = event.type === "keydown";
-	if (key === "ArrowLeft" && keyState) {
+	if (key === "ArrowLeft" && keyState && selfID === 1) {
 		//move left
 		move1.left = true;
-	} else if (key === "ArrowLeft") {
+	} else if (key === "ArrowLeft" && selfID === 1) {
 		//move left
 		move1.left = false;
-	} else if (key === "ArrowRight" && keyState) {
+	} else if (key === "ArrowRight" && keyState && selfID === 1) {
 		//move left
 		move1.right = true;
-	} else if (key === "ArrowRight") {
+	} else if (key === "ArrowRight" && selfID === 1) {
 		//move left
 		move1.right = false;
 	}
 
-	if ((key === "A" || key === "a") && keyState) {
+	if (key === "ArrowLeft" && keyState && selfID === 2) {
 		//move left
 		move2.left = true;
-	} else if (key === "A" || key === "a") {
+	} else if (key === "ArrowLeft" && selfID === 2) {
 		//move left
 		move2.left = false;
-	} else if ((key === "D" || key === "d") && keyState) {
+	} else if (key === "ArrowRight" && keyState && selfID === 2) {
 		//move left
 		move2.right = true;
-	} else if (key === "D" || key === "d") {
+	} else if (key === "ArrowRight" && selfID === 2) {
 		//move left
 		move2.right = false;
 	}
-	if (key === "ArrowLeft" || key === "ArrowRight")
-		socket.emit("Move1", {input: move1, roomId: roomId});
-	else
-		socket.emit("Move2", {input: move2, roomId: roomId});
-	// socket.removeAllListeners()
-}
 
-// export default GameApp;
+	if ((key === "ArrowLeft" || key === "ArrowRight") && selfID === 1)
+		socket.emit("Move1", {input: move1, roomId: roomId});
+	else if ((key === "ArrowLeft" || key === "ArrowRight") && selfID === 2)
+		socket.emit("Move2", {input: move2, roomId: roomId});
+}

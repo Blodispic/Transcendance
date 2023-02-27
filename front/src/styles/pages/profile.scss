@@ -2,18 +2,19 @@
     width: 100%;
     height: 100%;
 }
-// .avatar {
-//     height: 130px;
-//     width: 130px;
-//     border-radius: 50%;
-//     margin: auto;
-//     align-self: center;
-//     overflow: hidden;
-//     .logo {
-//         width: 140px;
-//         height: auto;
-//     }
-// }
+
+.avatar-manu {
+    height: 130px;
+    width: 130px;
+    border-radius: 50%;
+    margin: auto;
+    align-self: center;
+    overflow: hidden;
+    .logo {
+        width: 100%;
+        height: 100%;
+    }
+}
 
 .profile-header {
     width: 100%;
@@ -46,8 +47,8 @@
                 overflow: hidden;
 
                 .logo {
-                    width: 140px;
-                    height: auto;
+                    width: 100%;
+                    height: 100%;
                 }
             }
         }
@@ -290,10 +291,7 @@
     height: 100%;
 }
 
-li {
-    float: left;
-    display: block;
-}
+
 
 .accept-button,
 .refuse-button {

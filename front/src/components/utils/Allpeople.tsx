@@ -35,7 +35,6 @@ export default function AllPeople(props: { friend: IUser[] | undefined, setFrien
                 },
         })
         const data = await response.json();
-        console.log("data? ", data);
         setAlluser(data.filter((User: { status: string; }) => User.status === "Online"));
         setAlluser(data.filter((User: { username: string; }) => User.username !== myUser.user?.username ));
     }
@@ -48,7 +47,7 @@ export default function AllPeople(props: { friend: IUser[] | undefined, setFrien
 
     return (
         <div className='avatar-inpopup'>
-            <img className='avatar' src={myUser.user?.avatar} />
+            <img className='avatar avatar-manu' src={myUser.user?.avatar} />
             {
                 props.friend !== undefined &&
                 <>
@@ -58,7 +57,7 @@ export default function AllPeople(props: { friend: IUser[] | undefined, setFrien
                     }
                     {allfriend && allfriend.map(user => (
 
-                        <img className='cursor-onsomoene avatar' src={`${process.env.REACT_APP_BACK}user/${user.id}/avatar`} onClick={_ => removeFriend(user) }/>
+                        <img className='cursor-onsomoene avatar avatar-manu' src={`${process.env.REACT_APP_BACK}user/${user.id}/avatar`} onClick={_ => removeFriend(user) }/>
 
                     ))}
                 </>

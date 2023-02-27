@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { HiOutlineMagnifyingGlassCircle } from "react-icons/hi2";
 import { useNavigate } from "react-router-dom";
-import { IUser } from "../../interface/User";
+import { socket } from "../../App";
+import { IUser, UserStatus } from "../../interface/User";
 import { useAppSelector } from "../../redux/Hook";
 import { InviteButton } from "./friend_request";
 
@@ -56,65 +57,29 @@ export function Header(props: { currentUser: IUser, setCurrentUser: Function }) 
 
         const formattedPercentage = winPercentage.toFixed(2) + '%';
 
+        const spectate = () => {
+                socket.emit("spectateGame", currentUser);
+        }
         const rank = () => {
-                if (currentUser.elo >= 1900) {
+                if (currentUser.elo >= 1900)
                         return 'DIAMOND';
-                }
-                else if (currentUser.elo >= 1500) {
+                else if (currentUser.elo >= 1500)
                         return 'PLATINUM';
-                }
-                else if (currentUser.elo >= 1100) {
+                else if (currentUser.elo >= 1100)
                         return 'GOLD';
-                }
-                else if (currentUser.elo >= 700) {
+                else if (currentUser.elo >= 700)
                         return 'SILVER';
-                }
-                else
-                        return 'BRONZE'
+                return 'BRONZE'
         };
         const rank2 = () => {
-                if (currentUser.elo >= 2500) {
-                        return 'MANUTIER';
-                }else if (currentUser.elo >= 2200) {
-                        return 'DIAMOND I';
-                }else if (currentUser.elo >= 2100) {
-                        return 'DIAMOND II';
-                }else if (currentUser.elo >= 2000) {
-                        return 'DIAMOND III';
-                }else if (currentUser.elo >= 1900) {
-                        return 'DIAMOND IV';
-                }else if (currentUser.elo >= 1800) {
-                        return 'PLATINUM I';
-                }else if (currentUser.elo >= 1700) {
-                        return 'PLATINUM II';
-                }else if (currentUser.elo >= 1600) {
-                        return 'PLATINUM III';
-                }else if (currentUser.elo >= 1500) {
-                        return 'PLATINUM IV';
-                }else if (currentUser.elo >= 1400) {
-                        return 'GOLD I';
-                }else if (currentUser.elo >= 1300) {
-                        return 'GOLD II';
-                }else if (currentUser.elo >= 1200) {
-                        return 'GOLD III';
-                }else if (currentUser.elo >= 1100) {
-                        return 'GOLD IV';
-                }else if (currentUser.elo >= 1000) {
-                        return 'SILVER I';
-                }else if (currentUser.elo >= 900) {
-                        return 'SILVER II';
-                }else if (currentUser.elo >= 800) {
-                        return 'SILVER III';
-                }else if (currentUser.elo >= 700) {
-                        return 'SILVER IV';
-                }else if (currentUser.elo >= 600) {
-                        return 'BRONZE I';
-                }else if (currentUser.elo >= 500) {
-                        return 'BRONZE II';
-                }else if (currentUser.elo >= 400) {
-                        return 'BRONZE III';
-                }else
-                        return 'BRONZE IV'
+                const thresholds = [2500, 2200, 2100, 2000, 1900, 1800, 1700, 1600, 1500, 1400, 1300, 1200, 1100, 1000, 900, 800, 700, 600, 500, 400];
+                const rankNames = ['MANUTIER', 'DIAMOND I', 'DIAMOND II', 'DIAMOND III', 'DIAMOND IV', 'PLATINUM I', 'PLATINUM II', 'PLATINUM III', 'PLATINUM IV', 'GOLD I', 'GOLD II', 'GOLD III', 'GOLD IV', 'SILVER I', 'SILVER II', 'SILVER III', 'SILVER IV', 'BRONZE I', 'BRONZE II', 'BRONZE III', 'BRONZE IV'];
+                for (let i = 0; i < thresholds.length; i++) {
+                        if (currentUser.elo >= thresholds[i]) {
+                                return rankNames[i];
+                        }
+                }
+                return rankNames[rankNames.length - 1];
         };
 
         return (
@@ -128,7 +93,21 @@ export function Header(props: { currentUser: IUser, setCurrentUser: Function }) 
                                         </div>
                                         {
                                                 currentUser.username !== myUser.user!.username &&
-                                                <InviteButton user={myUser.user} />
+                                                <>
+                                                        {
+                                                               ( myUser.user!.friends === undefined || myUser.user!.friends.find(allfriend => allfriend.id === currentUser.id) === undefined )&&
+                                                                // myUser.user!.friends !== undefined && myUser.user!.friends.find(allfriend => allfriend.id === currentUser.id) === undefined &&
+                                                                <InviteButton user={myUser.user} />
+                                                        }
+                                                        {
+                                                                currentUser.status === UserStatus.INGAME &&
+                                                                <button className="button-style" onClick={_ => spectate()}> Spectate </button>
+                                                        }
+                                                        {
+                                                                //  comment check si le user est blocked ? on met userblock: IUser[] dans l'interface user ? ou je fetch(/user/id/blockedList) pour avoir la list des user que moi j'ai blocker ?
+                                                                <button className="button-style" style={{ background: '#B33A3A' }} onClick={_ => (_)}> Block </button>
+                                                        }
+                                                </>
                                         }
                                 </div>
 
@@ -163,7 +142,11 @@ export function Header(props: { currentUser: IUser, setCurrentUser: Function }) 
                                                 </div>
 
                                                 <div className=' block'>
+                                                        <>
+
                                                         <span className={"color-status " + currentUser.status}>{currentUser.status}</span>
+                                                        </>
+      
                                                 </div>
                                         </div>
                                 </div>

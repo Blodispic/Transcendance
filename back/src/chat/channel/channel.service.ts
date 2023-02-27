@@ -122,7 +122,7 @@ export class ChannelService {
 			where: { id: muteUserDto.chanid }
 		});
 		const user = await this.userService.getById(muteUserDto.userid);
-		console.log(user);
+
 		if (channel === null || user === null)
 			throw new BadRequestException();
 		channel.muted.push(user);
