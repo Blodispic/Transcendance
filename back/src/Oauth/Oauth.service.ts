@@ -51,26 +51,19 @@ export class OauthService {
     const data = await response.json();
     
     const user = await this.usersService.getByLogin(data.login);
-    if (user)
-    {
-      let i : number = 0;
-      while (i < userList.length)
-      {
-        if (userList[i].handshake.auth.user.id === user.id)
-          throw new BadRequestException(); // User already logged in
-        i++;
-      }
-
-      return (user);
-    }
-    if (data.error)
-      return (data.error);
-
     const payload = { username: data.login, }
     const token = await this.jwtService.signAsync(payload, {
       secret: jwtConstants.secret,
       expiresIn: '900s',
     });
+    if (user)
+    {
+      user.access_token = token
+      await this.usersService.save(user);
+      return (user);
+    }
+    if (data.error)
+      return (data.error);
     
     const userDto: CreateUserDto = {
       username: "",
