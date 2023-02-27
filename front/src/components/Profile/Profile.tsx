@@ -12,6 +12,7 @@ import TwoFa from './setTwoFa';
 import { socket } from '../../App';
 import { UserStatus } from '../../interface/User';
 import Sign from '../connection/Sign';
+import { Player } from '../Game/Game';
 
 
 
@@ -63,6 +64,7 @@ function Onglets(props: { currentUser: IUser, current: page, setOnglets: Functio
 export default function Profile() {
         const [currentUser, setCurrentUser] = useState<IUser | undefined>(undefined);
         let avatar: string = "";
+        const navigate = useNavigate();
         let { id } = useParams();
         const [pages, setPages] = useState<page>(page.PAGE_1);
         const myUser = useAppSelector(state => state.user);
@@ -87,6 +89,10 @@ export default function Profile() {
                 fetchid();
         })
         // }, [currentUser])
+
+        socket.on("SpectateStart", (roomId: number, player: Player) => {
+                navigate("/game/" + roomId, { state: { Id: roomId } });
+        });
 
         useEffect(() => {
                 if (currentUser?.id == myUser.user?.id)
