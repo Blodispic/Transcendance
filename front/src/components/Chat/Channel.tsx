@@ -74,7 +74,7 @@ function PublicChannelList() {
 
 
 	useEffect(() => {
-		const fetchAllList = async () => {
+		const fetchPublic = async () => {
 			const response = await fetch(`${process.env.REACT_APP_BACK}channel/public`, {
 				method: 'GET',
 			})
@@ -82,8 +82,22 @@ function PublicChannelList() {
 			setChanList(data);
 		}
 		// console.log('here');
-		fetchAllList();
+		fetchPublic();
 	}, []);
+
+
+	// useEffect(() => {
+	// 	const fetchProtected = async () => {
+	// 		const response = await fetch(`${process.env.REACT_APP_BACK}channel/protected`, {
+	// 			method: 'GET',
+	// 		})
+	// 		const data = await response.json();
+	// 		setChanList(data);
+	// 	}
+	// 	// console.log('here');
+	// 	fetchProtected();
+	// }, []);
+
 
 	return (
 		<div className="bottom">

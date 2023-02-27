@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { HiOutlineXMark } from "react-icons/hi2";
 import { socket } from "../../App";
 import { IChannel } from "../../interface/Channel";
+import { IUser } from "../../interface/User";
 
 export function CheckPassword(props: {trigger: boolean, setTrigger: Function, channel: IChannel}) {
 	const [password, setPassword] = useState("");
@@ -75,6 +76,31 @@ export function LeaveChannel (props: {currentUser: any, chanid: any}) {
 		<div>
 			<button onClick={handleLeave}>Leave</button>
 		</div>
+	);
+}
+
+export function JoinLeave(props: {currentUser: any, channel: IChannel}) {
+	const [buttonText, setButtonText] = useState("Join");
+	const [isOnChan, setIsOnChannel] = useState(false);
+	
+	// useEffect(() => {
+	// 	const fetchIsOn = async() => {
+	// 	const response = await fetch(`${process.env.REACT_APP_BACK}channel/`, {
+	// 		method: 'GET',
+	// 	})
+	// 	const data = await response.json();
+	// 	console.log(data);
+	// 	setIsOnChannel(data);
+	// 	}
+	// 	fetchIsOn();
+	// }, []);
+	
+	const handleClick = () => {
+		setIsOnChannel(!isOnChan);
+	}
+
+	return (
+		<button onClick={handleClick}>{isOnChan ? "Leave" : "Join"}</button>
 	);
 }
 

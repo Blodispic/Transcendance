@@ -7,7 +7,7 @@ import { IChannel } from "../../interface/Channel";
 import { IMessage } from "../../interface/Message";
 import { useAppSelector } from "../../redux/Hook";
 import { ConfigurePass } from "./AdminCommands";
-import { JoinChannel, LeaveChannel } from "./JoinLeave";
+import { JoinChannel, JoinLeave, LeaveChannel } from "./JoinLeave";
 
 export function ChannelMessages(props: { id: any }) {
 	const [newInput, setNewInput] = useState("");
@@ -57,10 +57,11 @@ export function ChannelMessages(props: { id: any }) {
 				{
 					currentChan !== undefined &&
 					<>
-						<JoinChannel currentUser={currentUser.user} channel={currentChan} />
-
-						<LeaveChannel currentUser={currentUser.user} chanid={currentChan?.id} />
+						<JoinLeave currentUser={currentUser.user} channel={currentChan} />
+						{/* <JoinChannel currentUser={currentUser.user} channel={currentChan} /> */}
+						{/* <LeaveChannel currentUser={currentUser.user} chanid={currentChan?.id} /> */}
 					</>
+
 				}
 				{
 					currentChan?.id &&
