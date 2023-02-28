@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, NotFoundException, Param, ParseIntPipe, Patch, Post, Req, Request, Res, UploadedFile, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Delete, Get, NotFoundException, Param, ParseIntPipe, Patch, Post, Req, Request, Res, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { Response } from 'express';
 import { diskStorage } from 'multer';
@@ -11,12 +11,14 @@ import { FriendRequest } from './entities/friend-request.entity';
 import { authenticator } from 'otplib';
 import { Results } from 'src/results/entities/results.entity';
 import { CreateResultDto } from 'src/results/dto/create-result.dto';
+import { JwtGuard } from 'src/Oauth/jwt-auth.guard';
 
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) { }
 
   @Post()
+  @UseGuards(JwtGuard)
   async create(@Body() createUserDto: CreateUserDto): Promise<User> {
     // try {
     return await this.userService.create(createUserDto);
@@ -26,41 +28,49 @@ export class UserController {
   }
 
   @Get()
+  @UseGuards(JwtGuard)
   findAll() {
     return this.userService.findAll();
   }
 
   @Post()
+  @UseGuards(JwtGuard)
   createUser(@Body() user: CreateUserDto) {
     return this.userService.create(user)
   }
 
   @Post('results')
+  @UseGuards(JwtGuard)
   async createResults(@Body() resultDto: CreateResultDto) {
     return await this.userService.createResult(resultDto);
   }
 
   @Get('username/:username')
+  @UseGuards(JwtGuard)
   GetbyUsername(@Param('username') username: string) {
     return this.userService.getByUsername(username);
   }
 
   @Get('id/:id')
+  @UseGuards(JwtGuard)
   findOne(@Param('id', ParseIntPipe) id: number) {
     return this.userService.getById(id);
   }
 
   @Get('game/:id')
+  @UseGuards(JwtGuard)
   async getResult(@Param('id', ParseIntPipe) id: number) {
     return await this.userService.getResults(id)
   }
 
   @Post('access_token')
+  @UseGuards(JwtGuard)
   GetbyAccessToken(@Body() token: any) {
     return this.userService.GetByAccessToken(token);
   }
 
   @Post('2fa/qrcode')
+  @UseGuards(JwtGuard)
   async enable2FA(@Body() user: { userId: number }) {
     const realUser = await this.userService.getById(user.userId);
     if (!realUser) {
@@ -80,6 +90,7 @@ export class UserController {
   
 
   @Post('2fa/check')
+  @UseGuards(JwtGuard)
   async checkCode(@Body() user: { userId: number, code: string}) {
     const result = await this.userService.check2FA(user.userId, user.code);
     return { result };
@@ -87,26 +98,31 @@ export class UserController {
 
 
   @Post('friend-request/status/:id')
+  @UseGuards(JwtGuard)
   async GetFriendRequestStatus(@Param('id', ParseIntPipe) id: number, @Body() user: { userId: number }) {
     return this.userService.GetFriendRequestStatus(id, user.userId);
   }
 
   @Post('friendsRequest')
+  @UseGuards(JwtGuard)
   GetFriendsRequest(@Body() user: { userId: number }) {
     return this.userService.GetFriendsRequest(user.userId);
   }
 
   @Post('friends')
+  @UseGuards(JwtGuard)
   GetFriends(@Body() user: { userId: number }) {
     return this.userService.GetFriends(user.userId);
   }
 
   @Post('matches')
+  @UseGuards(JwtGuard)
   GetMatches(@Body() user: { userId: number }) {
     return this.userService.GetMatchRequest(user.userId);
   }
 
   @Post("friends/accept")
+  @UseGuards(JwtGuard)
   async acceptFriendRequest(@Body() body: { friendId: any, userId: number }) {
     this.userService.addFriend(body.friendId, body.userId);
     return await this.userService.updateFriendRequestStatus(body.friendId, body.userId, {
@@ -115,6 +131,7 @@ export class UserController {
   }
 
   @Post("friends/decline")
+  @UseGuards(JwtGuard)
   async declineFriendRequest(@Body() body: { friendId: number, userId: number }) {
     return await this.userService.updateFriendRequestStatus(body.friendId, body.userId, {
       status: "Declined",
@@ -122,6 +139,7 @@ export class UserController {
   }
 
   @Get(':id/avatar')
+  @UseGuards(JwtGuard)
   async getAvatar(@Param('id', ParseIntPipe) id: number, @Req() req: Request, @Res() res: Response) {
     const user = await this.userService.getById(id);
     if (user) {
@@ -136,6 +154,7 @@ export class UserController {
   }
 
   @Patch(':id/avatar')
+  @UseGuards(JwtGuard)
   @UseInterceptors(
     FileInterceptor('file', {
       storage: diskStorage({
@@ -151,6 +170,7 @@ export class UserController {
   }
 
   @Patch(':id')
+  @UseGuards(JwtGuard)
   update(@Param('id', ParseIntPipe) id: string, @Body() user: any) {
     return this.userService.update(+id, user);
   }
@@ -161,6 +181,7 @@ export class UserController {
   }
 
   @Post('friend-request/send/:id')
+  @UseGuards(JwtGuard)
   sendFriendRequest(
     @Param('id', ParseIntPipe) id: number, @Body() user: { userId: number }) {
       return this.userService.sendFriendRequest(id, user.userId)

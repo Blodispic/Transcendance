@@ -237,7 +237,7 @@ export class UserService {
         creator: true,
         receiver: true,
       },
-      where: [{ creator: creator }, { receiver: friend }]
+      where: [{ creator: creator, receiver: friend }]
     });
 
     if (existingRequest) {
