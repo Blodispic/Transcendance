@@ -415,7 +415,7 @@ export class UserService {
       users.status = status;
       return await this.usersRepository.save(users);
     }
-    throw new NotFoundException("user doesn't exists");
+    return null;
   }
 
   async addFriendById(friendId: number, id: number): Promise<User | null> {
