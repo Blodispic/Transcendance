@@ -53,7 +53,7 @@ function Onglets(props: { currentUser: IUser, current: page, setOnglets: Functio
                                 <button className={`pointer ${current === page.PAGE_4 ? "" : "not-selected"}`}
                                         onClick={e => setOnglets(page.PAGE_4)} >
                                         <a >
-                                                settings
+                                                Settings
                                         </a>
                                 </button>
                         }

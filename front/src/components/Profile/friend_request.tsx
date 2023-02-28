@@ -45,12 +45,13 @@ export function InviteButton(props: { user: any }) {
 export function Friends(props: { user: IUser }) {
         const { user } = props;
         const [friendReq, setFriendReq] = useState<{ name: string, avatar: string, id: number, ReqStatus: string, UserStatus: string }[]>([]);
+        const [friend, setFriend] = useState<{ name: string, avatar: string, id: number, ReqStatus: string, UserStatus: string }[]>([]);
 
         useEffect(() => {
                 const checkFriendRequest = async () => {
-                        const response = await fetch(`${process.env.REACT_APP_BACK}user/friends`, {
+                        const response = await fetch(`${process.env.REACT_APP_BACK}user/friendsRequest`, {
                                 method: 'POST',
-                                body: JSON.stringify({user: user.id}),
+                                body: JSON.stringify({userId: user.id}),
                                 headers: { 'Content-Type': 'application/json' }
                         });
                         const data = await response.json();
@@ -59,6 +60,21 @@ export function Friends(props: { user: IUser }) {
                 };
 
                 checkFriendRequest();
+        }, []);
+
+        useEffect(() => {
+                const checkFriend = async () => {
+                        const response = await fetch(`${process.env.REACT_APP_BACK}user/friends`, {
+                                method: 'POST',
+                                body: JSON.stringify({userId: user.id}),
+                                headers: { 'Content-Type': 'application/json' }
+                        });
+                        const data = await response.json();
+                        console.log("data = ", data);
+                        setFriend(data);
+                };
+
+                checkFriend();
         }, []);
 
         interface FriendsListProps {
@@ -114,15 +130,6 @@ export function Friends(props: { user: IUser }) {
 
 
         const FriendsReq = () => {
-                // const friendReq = [
-                //         { name: 'Ross', avatar: 'https://img.freepik.com/vecteurs-premium/panda-mignon-tenant-bambou-pouce-vers-haut-icone-vecteur-dessin-anime-illustration-nature-animale-isolee_138676-4817.jpg?w=360', status: 'Online', id: 1 ,  ReqStatus: 'Pending', UserStatus: 'Online', },
-                //         { name: 'Rachel', avatar: 'http://10.1.8.1:4000/user/3/avatar', status: 'Online', id: 2 ,  ReqStatus: 'Pending', UserStatus: 'Online',  },
-                //         { name: 'Joey', avatar: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRpamtYxWbURGcTSVFTmsrY16rf3d_I39DhAQ&usqp=CAU', status: 'Online' , id: 3,  ReqStatus: 'Pending', UserStatus: 'Online',  },
-                //         { name: 'Phoebe', avatar: 'https://i.pinimg.com/originals/d0/a2/e2/d0a2e243610bde1be54defdca162e47a.jpg', status: 'Online', id: 4 ,  ReqStatus: 'Pending', UserStatus: 'Online',  },
-                //         { name: 'Chandler', avatar: 'https://ih1.redbubble.net/image.1343394098.5639/flat,750x,075,f-pad,750x1000,f8f8f8.jpg', status: 'Online', id: 5 ,  ReqStatus: 'Pending', UserStatus: 'Online',  },
-                //         { name: 'Monica', avatar: 'https://www.gamosaurus.com/wp-content/uploads/Users/pikavatarsurf.png', status: 'Online', id: 6,  ReqStatus: 'Pending', UserStatus: 'Online', },
-                // ];
-                console.log(friendReq)
                 return <FriendsReqList friends={friendReq} />;
         }
 
@@ -149,16 +156,7 @@ export function Friends(props: { user: IUser }) {
 
 
         const Friends = () => {
-                const friendReq = [
-                        { name: 'Ross', avatar: 'https://img.freepik.com/vecteurs-premium/panda-mignon-tenant-bambou-pouce-vers-haut-icone-vecteur-dessin-anime-illustration-nature-animale-isolee_138676-4817.jpg?w=360', status: 'Online', id: 1, ReqStatus: 'Pending', UserStatus: 'Online', },
-                        { name: 'Rachel', avatar: 'http://10.1.8.1:4000/user/3/avatar', status: 'Online', id: 2, ReqStatus: 'Pending', UserStatus: 'Online', },
-                        { name: 'Joey', avatar: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRpamtYxWbURGcTSVFTmsrY16rf3d_I39DhAQ&usqp=CAU', status: 'Online', id: 3, ReqStatus: 'Pending', UserStatus: 'Online', },
-                        { name: 'Phoebe', avatar: 'https://i.pinimg.com/originals/d0/a2/e2/d0a2e243610bde1be54defdca162e47a.jpg', status: 'Online', id: 4, ReqStatus: 'Pending', UserStatus: 'Online', },
-                        { name: 'Chandler', avatar: 'https://ih1.redbubble.net/image.1343394098.5639/flat,750x,075,f-pad,750x1000,f8f8f8.jpg', status: 'Online', id: 5, ReqStatus: 'Pending', UserStatus: 'Online', },
-                        { name: 'Monica', avatar: 'https://www.gamosaurus.com/wp-content/uploads/Users/pikavatarsurf.png', status: 'Online', id: 6, ReqStatus: 'Pending', UserStatus: 'Online', },
-                ];
-                console.log(friendReq)
-                return <FriendsList friends={friendReq} />;
+                return <FriendsList friends={friend} />;
         }
 
         return (

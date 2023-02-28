@@ -17,6 +17,7 @@ export function History(props: { user: IUser }) {
                 headers: { 'Content-Type': 'application/json' }
             });
             const data = await response.json();
+            console.log("data = ", data);
             setMatches(data);
         };
 

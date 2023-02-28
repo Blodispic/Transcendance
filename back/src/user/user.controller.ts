@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, NotFoundException, Param, Patch, Post, Req, Request, Res, UploadedFile, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Delete, Get, NotFoundException, Param, ParseIntPipe, Patch, Post, Req, Request, Res, UploadedFile, UseInterceptors } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { Response } from 'express';
 import { diskStorage } from 'multer';
@@ -46,12 +46,12 @@ export class UserController {
   }
 
   @Get('id/:id')
-  findOne(@Param('id') id: number) {
+  findOne(@Param('id', ParseIntPipe) id: number) {
     return this.userService.getById(id);
   }
 
   @Get('game/:id')
-  async getResult(@Param('id') id: number) {
+  async getResult(@Param('id', ParseIntPipe) id: number) {
     return await this.userService.getResults(id)
   }
 
@@ -62,7 +62,6 @@ export class UserController {
 
   @Post('2fa/qrcode')
   async enable2FA(@Body() user: { userId: number }) {
-    console.log("userId = ", user.userId);
     const realUser = await this.userService.getById(user.userId);
     if (!realUser) {
       throw new NotFoundException(`User with id ${user.userId} not found`);
@@ -82,21 +81,24 @@ export class UserController {
 
   @Post('2fa/check')
   async checkCode(@Body() user: { userId: number, code: string}) {
-    console.log("user.userId = ", user.userId);
-    console.log("user.code = ", user.code);
     const result = await this.userService.check2FA(user.userId, user.code);
     return { result };
   }
 
 
   @Post('friend-request/status/:id')
-  async GetFriendRequestStatus(@Param('id') id: number, @Body() user: { userId: number }) {
+  async GetFriendRequestStatus(@Param('id', ParseIntPipe) id: number, @Body() user: { userId: number }) {
     return this.userService.GetFriendRequestStatus(id, user.userId);
+  }
+
+  @Post('friendsRequest')
+  GetFriendsRequest(@Body() user: { userId: number }) {
+    return this.userService.GetFriendsRequest(user.userId);
   }
 
   @Post('friends')
   GetFriends(@Body() user: { userId: number }) {
-    return this.userService.GetFriendsRequest(user.userId);
+    return this.userService.GetFriends(user.userId);
   }
 
   @Post('matches')
@@ -120,7 +122,7 @@ export class UserController {
   }
 
   @Get(':id/avatar')
-  async getAvatar(@Param('id') id: number, @Req() req: Request, @Res() res: Response) {
+  async getAvatar(@Param('id', ParseIntPipe) id: number, @Req() req: Request, @Res() res: Response) {
     const user = await this.userService.getById(id);
     if (user) {
       if (user.avatar) {
@@ -143,29 +145,29 @@ export class UserController {
       fileFilter: imageFilter,
     }),
   )
-  async setAvatar(@Param('id') id: number, @UploadedFile() file: any, @Body('username') username: string) {
+  async setAvatar(@Param('id', ParseIntPipe) id: number, @UploadedFile() file: any, @Body('username') username: string) {
     await this.userService.setAvatar(id, username, file);
     return { message: 'Avatar set successfully' };
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() user: any) {
+  update(@Param('id', ParseIntPipe) id: string, @Body() user: any) {
     return this.userService.update(+id, user);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
+  remove(@Param('id', ParseIntPipe) id: string) {
     return this.userService.remove(+id);
   }
 
   @Post('friend-request/send/:id')
   sendFriendRequest(
-    @Param('id') id: number, @Body() user: { userId: number }) {
+    @Param('id', ParseIntPipe) id: number, @Body() user: { userId: number }) {
       return this.userService.sendFriendRequest(id, user.userId)
   }
 
   @Delete('deletefriend/:id')
-  async deleteFriend(@Param('id') id: number, @Body() friend: User) {
+  async deleteFriend(@Param('id', ParseIntPipe) id: number, @Body() friend: User) {
     return await this.userService.removeFriend(id, friend);
   }
 }
