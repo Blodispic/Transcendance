@@ -46,6 +46,7 @@ export class PongGateway implements OnGatewayDisconnect, OnGatewayInit {
 			if (this.gameService.gameRoom[i].gameState.player1.name === player.username
 				|| this.gameService.gameRoom[i].gameState.player2.name === player.username) {
 				this.gameService.gameRoom[i].addSpectator(client.id);
+				console.log("SpectateStart Emit");
 				const socketLocal = this.findSocketFromUser(client.handshake.auth.user);
 				if (socketLocal != null)
 					this.server.to(socketLocal.id).emit("SpectateStart", i + 1, 0);

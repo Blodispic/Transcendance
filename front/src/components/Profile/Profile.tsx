@@ -91,6 +91,7 @@ export default function Profile() {
         // }, [currentUser])
 
         socket.on("SpectateStart", (roomId: number, player: Player) => {
+                console.log("SpectateStart");
                 navigate("/game/" + roomId, { state: { Id: roomId } });
         });
 
