@@ -15,6 +15,8 @@ import { authenticator } from "otplib";
 import * as QRCode from 'qrcode';
 import { CreateResultDto } from "src/results/dto/create-result.dto";
 import { Server } from "http";
+import { userList } from "src/app.gateway";
+import { Channel } from "src/chat/channel/entities/channel.entity";
 // import { userList } from "src/app.gateway";
 
 @Injectable()
@@ -123,7 +125,7 @@ export class UserService {
       throw new NotFoundException("Token expired");
     }
     else if (user)
-    {
+    {      
       // let i : number = 0;
       // while (i < userList.length)
       // {
@@ -131,6 +133,10 @@ export class UserService {
       //     throw new BadRequestException(); // User already logged in
       //   i++;
       // }
+      for (const iterator of userList) {
+        if (iterator.handshake.auth.user.id === user.id)
+          throw new BadRequestException("t'as deja un tab frero");
+      }
       return user;
     }
     throw new NotFoundException("Token user not found");
@@ -469,6 +475,17 @@ export class UserService {
       where: { id: id }
     });
     return user ? user.results : [];
+  }
+
+  async getChannel(id: number): Promise<Channel[]>
+  {
+    const user = await this.usersRepository.findOne({
+      relations: {
+        results: true,
+      },
+      where: { id: id }
+    });
+    return user ? user.channels: [];
   }
 
 }

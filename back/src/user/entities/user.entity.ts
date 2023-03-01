@@ -20,7 +20,7 @@ export class User {
   @Column()
   access_token: string;
 
-  @Column({ unique: true })
+  @Column({ unique: true, nullable: true })
   username: string;
 
   @Column({ unique: true })

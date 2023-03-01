@@ -174,12 +174,26 @@ export class ChannelService {
 			relations: { users: true, muted: true },
 			where: { id: muteUserDto.chanid }
 		});
-		const user = await this.userService.getById(muteUserDto.userid);
-		if (channel === null || user === null)
+		const user = channel?.muted.find(elem => elem.id == muteUserDto.userid)
+		if (channel === null || user === null || user === undefined)
 			throw new BadRequestException();		
-		const index = channel.muted.indexOf(user, 0);
+		const index = channel.muted.indexOf(user, 0);		
 		if (index != -1)
 			channel.muted.splice(channel.muted.indexOf(user, 0), 1);
+		return this.channelRepository.save(channel);
+	}
+
+	async unbanUser(muteUserDto: MuteUserDto) {
+		const channel: Channel | null = await this.channelRepository.findOne({
+			relations: { users: true, banned: true },
+			where: { id: muteUserDto.chanid }
+		});
+		const user = channel?.banned.find(elem => elem.id == muteUserDto.userid)
+		if (channel === null || user === null || user === undefined)
+			throw new BadRequestException();		
+		const index = channel.banned.indexOf(user, 0);		
+		if (index != -1)
+			channel.banned.splice(channel.banned.indexOf(user, 0), 1);
 		return this.channelRepository.save(channel);
 	}
 
