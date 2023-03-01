@@ -12,9 +12,6 @@ function DMList(props: {currentdm: IUser | undefined; setCurrentDm: Function}) {
 	const [alluser, setAlluser] = useState<IUser[] | undefined>(undefined);
 	const myUser = useAppSelector(state => state.user);
 
-
-
-
 	useEffect(() => {
 		const get_all = async () => {
 			const response = await fetch(`${process.env.REACT_APP_BACK}user`, {
@@ -97,10 +94,10 @@ export function DmMessages(props: { id: any; currentdm: IUser | undefined; setCu
 	const handleSubmitNewMessage = (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
 		if (newInput != "") {
+	
+			const sendtime = new Date().toLocaleString();
 			socket.emit('sendMessageUser', { usertowho: props.currentdm, sender: myUser.user, message: newInput });
-
-
-			const newMessage: IMessage = {sender: myUser!.user, message: newInput, usertowho: props.currentdm };
+			const newMessage: IMessage = {sender: myUser!.user, message: newInput, usertowho: props.currentdm, sendtime: sendtime};
 
 			setMessageList([...messageList, newMessage]);
 		}
@@ -129,7 +126,7 @@ export function DmMessages(props: { id: any; currentdm: IUser | undefined; setCu
 						<div className="message-info">
 							<img className="user-avatar" src={message.sender?.avatar} />
 							{message.sender?.username}
-							<span className="timestamp">0000/00/00  00:00</span>
+							<span className="timestamp">{message.sendtime}</span>
 						</div>
 						{message.message}
 					</div>
