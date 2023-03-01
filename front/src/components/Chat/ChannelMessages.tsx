@@ -15,8 +15,6 @@ export function ChannelMessages(props: { id: any }) {
 	const [currentChan, setCurrentChan] = useState<IChannel | undefined>(undefined);
 	const currentUser = useAppSelector(state => state.user);
 	const [popup, setPopup] = useState(false);
-	const [isOnChannel, setIsOnChannel] = useState(false);
-	let date: string;
 
 	useEffect(() => {
 		const getChannel = async () => {
@@ -24,15 +22,17 @@ export function ChannelMessages(props: { id: any }) {
 				method: 'GET',
 			})
 			const data = await response.json();
-			setCurrentChan(data);
-			setMessageList(messageList => []);
+			if (currentChan?.id !== props.id) {
+				setCurrentChan(data);
+				setMessageList(messageList => []);
+			}
 		}
 		getChannel();
 	}, [props]);
 
 	const handleSubmitNewMessage = (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
-		if (newInput != ""){
+		if (newInput != "") {
 			const sendTime = new Date().toLocaleString();
 			socket.emit('sendMessageChannel', { chanid: currentChan?.id, sender: currentUser.user, message: newInput, sendtime: sendTime });
 		}
@@ -57,12 +57,7 @@ export function ChannelMessages(props: { id: any }) {
 				}
 				{
 					currentChan !== undefined &&
-					<>
-						<JoinLeave currentUser={currentUser.user} channel={currentChan} />
-						{/* <JoinChannel currentUser={currentUser.user} channel={currentChan} /> */}
-						{/* <LeaveChannel currentUser={currentUser.user} chanid={currentChan?.id} /> */}
-					</>
-
+					<JoinLeave currentUser={currentUser.user} channel={currentChan} />
 				}
 				{
 					currentChan?.id &&
@@ -79,31 +74,31 @@ export function ChannelMessages(props: { id: any }) {
 			</div>
 			<div className="chat-messages">
 				<div className="reverse">
-				{messageList && messageList.map(message => (
-					message.chanid == currentChan?.id &&
-					<div key={message.message} className="__wrap">
-						<div className="message-info">
-							<img className="user-avatar" src={message.sender?.avatar} />
-							<p>{message.sender?.username}</p>
-							<p className="timestamp">{message.sendtime}</p>
+					{messageList && messageList.map(message => (
+						message.chanid == currentChan?.id &&
+						<div key={message.message} className="__wrap">
+							<div className="message-info">
+								<img className="user-avatar" src={message.sender?.avatar} />
+								<p>{message.sender?.username}</p>
+								<p className="timestamp">{message.sendtime}</p>
+							</div>
+							{message.message}
 						</div>
-						{message.message}
-					</div>
-				))}
-			</div>
+					))}
+				</div>
 			</div>
 			{
 				currentChan !== undefined &&
 				<>
-				{
-					currentChan?.users.find(elem => elem.id == currentUser.user?.id) !== undefined &&
-					<form id="input_form" onSubmit={(e) => { handleSubmitNewMessage(e); }}>
-					<input type="text" onChange={(e) => { setNewInput(e.target.value) }}
-					placeholder="type message here" value={newInput} />
-					</form>
-				}
+					{
+						currentChan?.users.find(elem => elem.id == currentUser.user?.id) !== undefined &&
+						<form id="input_form" onSubmit={(e) => { handleSubmitNewMessage(e); }}>
+							<input type="text" onChange={(e) => { setNewInput(e.target.value) }}
+								placeholder="type message here" value={newInput} />
+						</form>
+					}
 				</>
-				
+
 			}
 		</div>
 	);

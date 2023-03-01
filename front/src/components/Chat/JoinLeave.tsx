@@ -57,7 +57,7 @@ export function JoinChannel(props: {currentUser: any, channel: IChannel }) {
 			{
 				props.channel.chanType === 2 &&
 				<>
-				<button onClick={() => setPassPopup(true)}>Join</button>
+				<button onClick={() => setPassPopup(true)}>Join Channel</button>
 				<CheckPassword trigger={passPopup} setTrigger={setPassPopup} channel={props.channel} />
 				</>
 			}
@@ -78,7 +78,7 @@ export function LeaveChannel (props: {currentUser: any, chanid: any}) {
 
 	return (
 		<div>
-			<button onClick={handleLeave}>Leave</button>
+			<button onClick={handleLeave}>Leave Channel</button>
 		</div>
 	);
 }
@@ -93,10 +93,6 @@ export function JoinLeave(props: {currentUser: any, channel: IChannel}) {
 	// return (
 	// 	<button onClick={handleClick}>{isOnChan ? "Leave" : "Join"}</button>
 	// );
-
-	// if (props.channel.users.find(elem => elem.id == props.currentUser.id) !== undefined)
-	// 	setIsOnChannel(true);
-	// console.log('onChan 1: ', isOnChan);
 
 	return (
 		<>
