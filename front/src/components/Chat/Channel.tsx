@@ -13,37 +13,29 @@ import { ChannelMessages } from "./ChannelMessages";
 import CLickableMenu from "./clickableMenu";
 import { AddChannel } from "./CreateChannel";
 
-function GetChannelList() {
-	const channels = useAppSelector(state => state.channel);
+function JoinedChannelList() {
+	const [chanList, setChanList] = useState<IChannel[]>([]);
+	const [chanId, setChanId] = useState("");
+	const currentUser = useAppSelector(state => state.user);
 	const navigate = useNavigate();
 
-	// useEffect(() => {
-	// 	const fetchChanList = async () => {
-	// 		const response = await fetch(`${process.env.REACT_APP_BACK}channel/`, {
-	// 			method: 'GET',
-	// 		})
-	// 		const data = await response.json();
-	// 	}
-	// 	fetchChanList();
-	// }, []);
-
-	const fetchChanList = async () => {
-		await fetch(`${process.env.REACT_APP_BACK}channel/`,)
-		.then(async response => {
-			const data = response.json();
-		});
-	};
 
 	useEffect(() => {
-		fetchChanList();
-		if (fetchChanList.length) fetchChanList();
-	}, [fetchChanList]);
-
+		const fetchJoined = async () => {
+			const response = await fetch(`${process.env.REACT_APP_BACK}user/channel/${currentUser.user?.id}`, {
+				method: 'GET',
+			})
+			console.log('joined: ', response);
+			const data = await response.json();
+			setChanList(data);
+		}
+		fetchJoined();
+	}, []);
 
 	return (
 		<div className="title">
-			<header>All Channels <hr /></header>
-			{channels && channels.channels.map(chan => (
+			<header>Joined Channels <hr /></header>
+			{chanList && chanList.map(chan => (
 				<ul key={chan.name}>
 					<li>
 						<div onClick={_ => navigate(`/Chat/channel/${chan.id}`)}>{chan.name}
@@ -62,7 +54,6 @@ function GetChannelList() {
 		</div>
 	);
 }
-
 
 function ChannelList(props: any) {
 	const [chanList, setChanList] = useState<IChannel[]>([]);
@@ -236,7 +227,7 @@ export function Channels(props: any) {
 			<div className="sidebar left-sidebar">
 				{/* <JoinedChannelList /> */}
 				{/* <ChannelList /> */}
-				<GetChannelList />
+				<JoinedChannelList />
 				<PublicChannelList />
 				<AddChannel />
 			</div>

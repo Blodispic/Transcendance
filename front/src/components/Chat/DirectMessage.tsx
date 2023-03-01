@@ -1,3 +1,4 @@
+import { render } from "@testing-library/react";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useParams } from "react-router-dom";
@@ -111,38 +112,38 @@ export function DmMessages(props: { id: any; currentdm: IUser | undefined; setCu
 		if (blockedId == 0 && props.currentdm !== undefined)
 		{
 			setBlockedId(props.currentdm?.id);
+			// emit block to the back
 		}
 		else
 		{
-			setBlockedId(0);	
+			setBlockedId(0);
+			// emit unblock to the back
 		}
 	}
 
 	return (
 		<div className="chat-body">
 			<div className="body-header">
-				<img className="user-avatar" src={props.currentdm?.avatar} onClick={handleBlock} />
+				<img className="user-avatar" src={props.currentdm?.avatar} onClick={_ => handleBlock()} />
 				{props.currentdm?.username}
 			</div>
 			<div className="chat-messages">
 				<div className="reverse">
-
-					{messageList.map(message => (
-						<div key={message.message} className="__wrap">
-							{
-								message.sender?.id !== blockedId &&
-								<>
-									<div className="message-info">
-										<img className="user-avatar" src={message.sender?.avatar} />
-										{message.sender?.username}
-										<span className="timestamp">{message.sendtime}</span>
-									</div>
-									{message.message}
-								</>
-							}
-						</div>
-					)
-					)
+					{props.currentdm?.id == blockedId &&
+						<>
+							{messageList.map(message => (
+								<div key={message.message} className="__wrap">
+									<>
+										<div className="message-info">
+											<img className="user-avatar" src={message.sender?.avatar} />
+											{message.sender?.username}
+											<span className="timestamp">{message.sendtime}</span>
+										</div>
+										{message.message}
+									</>
+								</div>
+							))}
+						</>
 					}
 				</div>
 			</div>
