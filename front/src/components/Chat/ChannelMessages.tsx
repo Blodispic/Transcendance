@@ -9,13 +9,11 @@ import { useAppSelector } from "../../redux/Hook";
 import { ConfigureChannel } from "./AdminCommands";
 import { JoinChannel, JoinLeave, LeaveChannel } from "./JoinLeave";
 
-export function ChannelMessages(props: {id: any, currentChan: IChannel | undefined, setCurrentChan: Function}) {
-// export function ChannelMessages(props: { id: any }) {
+export function ChannelMessages(props: { id: any }) {
 	const [newInput, setNewInput] = useState("");
 	const [messageList, setMessageList] = useState<IMessage[]>([]);
 	const [currentChan, setCurrentChan] = useState<IChannel | undefined>(undefined);
 	const currentUser = useAppSelector(state => state.user);
-	const currentChannel = useAppSelector(state => state.channel);
 	const [popup, setPopup] = useState(false);
 	const [isOnChannel, setIsOnChannel] = useState(false);
 	let date: string;
@@ -61,8 +59,8 @@ export function ChannelMessages(props: {id: any, currentChan: IChannel | undefin
 					currentChan !== undefined &&
 					<>
 						<JoinLeave currentUser={currentUser.user} channel={currentChan} />
-						<JoinChannel currentUser={currentUser.user} channel={currentChan} />
-						<LeaveChannel currentUser={currentUser.user} chanid={currentChan?.id} />
+						{/* <JoinChannel currentUser={currentUser.user} channel={currentChan} /> */}
+						{/* <LeaveChannel currentUser={currentUser.user} chanid={currentChan?.id} /> */}
 					</>
 
 				}

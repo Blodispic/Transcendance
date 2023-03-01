@@ -128,7 +128,6 @@ function PublicChannelList() {
 	// 	fetchProtected();
 	// }, []);
 
-
 	return (
 		<div className="bottom">
 			<header>All Channels <hr /></header>
@@ -213,13 +212,13 @@ export function Channels(props: any) {
 		<div id="chat-container">
 			<div className="sidebar left-sidebar">
 				{/* <JoinedChannelList /> */}
-				{/* <ChannelList /> */}
-				<GetChannelList />
+				<ChannelList />
+				{/* <GetChannelList /> */}
 				<PublicChannelList />
 				<AddChannel />
 			</div>
 	
-					<ChannelMessages id={props.chatId} currentChan={currentChan} setCurrentChan={setCurrentChan}/>
+					<ChannelMessages id={props.chatId} />
 				<div className="sidebar right-sidebar">
 					<ChannelMemberList id={props.chatId} />
 				</div>

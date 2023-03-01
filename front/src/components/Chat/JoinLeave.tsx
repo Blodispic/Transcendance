@@ -49,7 +49,8 @@ export function JoinChannel(props: {currentUser: any, channel: IChannel }) {
 			{
 				props.channel.chanType === 0 &&
 				<button style={{background:'#808080'}} onClick={handleJoin}>Join</button>
-			}			{
+			}			
+			{ //private channel: needs improvement
 				props.channel.chanType === 1 &&
 				<button style={{background:'#808080'}} onClick={handleJoin}>Join</button>
 			}
@@ -84,14 +85,33 @@ export function LeaveChannel (props: {currentUser: any, chanid: any}) {
 
 export function JoinLeave(props: {currentUser: any, channel: IChannel}) {
 	const [buttonText, setButtonText] = useState("Join");
-	const [isOnChan, setIsOnChannel] = useState(false);
+	// const [isOnChan, setIsOnChannel] = useState(false);
 	
-	const handleClick = () => {
-		setIsOnChannel(!isOnChan);
-	}
+	// const handleClick = () => {
+	// 	setIsOnChannel(!isOnChan);
+	// }
+	// return (
+	// 	<button onClick={handleClick}>{isOnChan ? "Leave" : "Join"}</button>
+	// );
+
+	// if (props.channel.users.find(elem => elem.id == props.currentUser.id) !== undefined)
+	// 	setIsOnChannel(true);
+	// console.log('onChan 1: ', isOnChan);
+
+	console.log("members: ", props.channel.users);
+	
 
 	return (
-		<button onClick={handleClick}>{isOnChan ? "Leave" : "Join"}</button>
+		<>
+		{
+			props.channel.users.find(elem => elem.id == props.currentUser.id) &&
+			<LeaveChannel currentUser={props.currentUser} chanid={props.channel.id} />
+		}
+		{
+			props.channel.users.find(elem => elem.id == props.currentUser.id) === undefined &&
+			<JoinChannel currentUser={props.currentUser} channel={props.channel} />
+		}
+		</>
 	);
 }
 
