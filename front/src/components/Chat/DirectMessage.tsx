@@ -83,12 +83,11 @@ function InfoFriend(props: {user: IUser}) {
 	);
 }
 
-
 export function DmMessages(props: { id: any; currentdm: IUser | undefined; setCurrentDm: Function}) {
 
 	const [newInput, setNewInput] = useState("");
-
 	const [messageList, setMessageList] = useState<IMessage[]>([]);
+	const [blockedId, setBlockedId] = useState(0);
 	const myUser = useAppSelector(state => state.user);
 
 	const handleSubmitNewMessage = (e: React.FormEvent<HTMLFormElement>) => {
@@ -96,7 +95,7 @@ export function DmMessages(props: { id: any; currentdm: IUser | undefined; setCu
 		if (newInput != "") {
 	
 			const sendtime = new Date().toLocaleString();
-			socket.emit('sendMessageUser', { usertowho: props.currentdm, sender: myUser.user, message: newInput });
+			socket.emit('sendMessageUser', { usertowho: props.currentdm, sender: myUser.user, message: newInput, sendtime: sendtime });
 			const newMessage: IMessage = {sender: myUser!.user, message: newInput, usertowho: props.currentdm, sendtime: sendtime};
 
 			setMessageList([...messageList, newMessage]);
@@ -108,29 +107,43 @@ export function DmMessages(props: { id: any; currentdm: IUser | undefined; setCu
 		setMessageList([...messageList, messageUserDto]);
 	})
 
-	// if (currentChan?.users !== undefined && currentChan?.users.find(currentUser.user)) {
-	// 	setIsOnChan(true);
-	// }
+	const handleBlock = () => {
+		if (blockedId == 0 && props.currentdm !== undefined)
+		{
+			setBlockedId(props.currentdm?.id);
+		}
+		else
+		{
+			setBlockedId(0);	
+		}
+	}
 
 	return (
 		<div className="chat-body">
-			{/* {
-				currentChan !== undefined && currentUser.user !== undefined &&
-			<ChannelTitle user={currentUser.user} channel={currentChan} />
-			} */}
+			<div className="body-header">
+				<img className="user-avatar" src={props.currentdm?.avatar} onClick={handleBlock} />
+				{props.currentdm?.username}
+			</div>
 			<div className="chat-messages">
 				<div className="reverse">
 
-				{messageList.map(message => (
-					<div key={message.message} className="__wrap">
-						<div className="message-info">
-							<img className="user-avatar" src={message.sender?.avatar} />
-							{message.sender?.username}
-							<span className="timestamp">{message.sendtime}</span>
+					{messageList.map(message => (
+						<div key={message.message} className="__wrap">
+							{
+								message.sender?.id !== blockedId &&
+								<>
+									<div className="message-info">
+										<img className="user-avatar" src={message.sender?.avatar} />
+										{message.sender?.username}
+										<span className="timestamp">{message.sendtime}</span>
+									</div>
+									{message.message}
+								</>
+							}
 						</div>
-						{message.message}
-					</div>
-				))}
+					)
+					)
+					}
 				</div>
 			</div>
 			{

@@ -12,4 +12,7 @@ export class MessageUserDto {
 	@IsNotEmpty()
 	message: string; 
 	// à améliorer
+
+	@IsNotEmpty()
+	sendtime: string;
 }

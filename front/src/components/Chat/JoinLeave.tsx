@@ -48,11 +48,11 @@ export function JoinChannel(props: {currentUser: any, channel: IChannel }) {
 		<div>
 			{
 				props.channel.chanType === 0 &&
-				<button onClick={handleJoin}>Join</button>
+				<button onClick={handleJoin}>Join Channel</button>
 			}			
 			{ //private channel: needs improvement
 				props.channel.chanType === 1 &&
-				<button onClick={handleJoin}>Join</button>
+				<button onClick={handleJoin}>Join Channel</button>
 			}
 			{
 				props.channel.chanType === 2 &&

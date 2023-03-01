@@ -6,6 +6,7 @@ import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { socket } from "../../App";
 import { IChannel } from "../../interface/Channel";
+import { IUser } from "../../interface/User";
 import { addChannel, channelSlice } from "../../redux/channel";
 import { useAppSelector } from "../../redux/Hook";
 import { ChannelMessages } from "./ChannelMessages";
@@ -15,18 +16,30 @@ import { AddChannel } from "./CreateChannel";
 function GetChannelList() {
 	const channels = useAppSelector(state => state.channel);
 	const navigate = useNavigate();
-	
-	useEffect(() => {
-		const fetchChanList = async () => {
-			const response = await fetch(`${process.env.REACT_APP_BACK}channel/`, {
-			method: 'GET',
-		})
-		const data = await response.json();
-	}
-	fetchChanList();
-	}, []);
 
-	console.log('chan redux: ', channels.channels);
+	// useEffect(() => {
+	// 	const fetchChanList = async () => {
+	// 		const response = await fetch(`${process.env.REACT_APP_BACK}channel/`, {
+	// 			method: 'GET',
+	// 		})
+	// 		const data = await response.json();
+	// 	}
+	// 	fetchChanList();
+	// }, []);
+
+	const fetchChanList = async () => {
+		await fetch(`${process.env.REACT_APP_BACK}channel/`,)
+		.then(async response => {
+			const data = response.json();
+		});
+	};
+
+	useEffect(() => {
+		fetchChanList();
+		if (fetchChanList.length) fetchChanList();
+	}, [fetchChanList]);
+
+
 	return (
 		<div className="title">
 			<header>All Channels <hr /></header>
@@ -39,15 +52,16 @@ function GetChannelList() {
 								<HiLockClosed style={{ float: 'right' }} />
 							}
 							{
-								chan.chanType == 2 && 
-								<BsFillKeyFill style={{ float: 'right'}} />
+								chan.chanType == 2 &&
+								<BsFillKeyFill style={{ float: 'right' }} />
 							}
 						</div>
 					</li>
 				</ul>
 			))}
 		</div>
-	);}
+	);
+}
 
 
 function ChannelList(props: any) {
@@ -86,8 +100,8 @@ function ChannelList(props: any) {
 								<HiLockClosed style={{ float: 'right' }} />
 							}
 							{
-								chan.chanType == 2 && 
-								<BsFillKeyFill style={{ float: 'right'}} />
+								chan.chanType == 2 &&
+								<BsFillKeyFill style={{ float: 'right' }} />
 							}
 						</div>
 					</li>
@@ -140,8 +154,8 @@ function PublicChannelList() {
 								<HiLockClosed style={{ float: 'right' }} />
 							}
 							{
-								chan.chanType == 2 && 
-								<BsFillKeyFill style={{ float: 'right'}} />
+								chan.chanType == 2 &&
+								<BsFillKeyFill style={{ float: 'right' }} />
 							}
 						</div>
 					</li>
@@ -155,6 +169,7 @@ function ChannelMemberList(props: { id: any }) {
 	const [currentChan, setCurrentChan] = useState<IChannel | undefined>(undefined)
 	// const currentChan = useAppSelector(state => state.channel);
 	const [currentId, setCurrentId] = useState<number | undefined>(undefined);
+	const [members, setMembers] = useState<IUser[]>([]);
 
 	const changeId = (id: number) => {
 		if (id == currentId)
@@ -173,7 +188,15 @@ function ChannelMemberList(props: { id: any }) {
 		}
 		getChannel();
 	}, [props]);
-	
+
+	if (currentChan !== undefined && members == undefined)
+		setMembers(currentChan?.users);
+
+	// socket.on("joinChannel", (newUser) => {
+	// 	console.log(newUser);
+	// 	setMembers([...members, newUser]);
+	// })
+
 	if (currentChan?.users === undefined) {
 		return (
 			<div className="title"> Members <hr />
@@ -195,8 +218,8 @@ function ChannelMemberList(props: { id: any }) {
 						</li>
 					</ul>
 					{
-						 currentId == user.id && 
-							<CLickableMenu user={user} chan={currentChan}/>
+						currentId == user.id &&
+						<CLickableMenu user={user} chan={currentChan} />
 					}
 				</div>
 			))
@@ -212,16 +235,16 @@ export function Channels(props: any) {
 		<div id="chat-container">
 			<div className="sidebar left-sidebar">
 				{/* <JoinedChannelList /> */}
-				<ChannelList />
-				{/* <GetChannelList /> */}
+				{/* <ChannelList /> */}
+				<GetChannelList />
 				<PublicChannelList />
 				<AddChannel />
 			</div>
-	
-					<ChannelMessages id={props.chatId} />
-				<div className="sidebar right-sidebar">
-					<ChannelMemberList id={props.chatId} />
-				</div>
+
+			<ChannelMessages id={props.chatId} />
+			<div className="sidebar right-sidebar">
+				<ChannelMemberList id={props.chatId} />
+			</div>
 
 		</div>
 	);
