@@ -229,6 +229,7 @@ $tab-color: rgba(var(--primary-color), 0.5); //rgb(121, 121, 121);
 }
 
 .chat-form-popup {
+	z-index: 2;
 	position: fixed;
 	top: 0;
 	left: 0;

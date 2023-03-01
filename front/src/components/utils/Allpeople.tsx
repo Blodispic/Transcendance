@@ -3,23 +3,26 @@ import { AiFillPlusCircle } from "react-icons/ai";
 import { IUser, UserStatus } from "../../interface/User";
 import { useAppSelector } from "../../redux/Hook";
 
-export default function AllPeople(props: { friend: IUser[] | undefined, setFriend: Function, myVar: boolean, setMyvar: Function }) {
+export default function AllPeople(props: { friend: IUser[], setFriend: Function, myVar: boolean, setMyvar: Function }) {
     const myUser = useAppSelector(state => state.user);
-    const [alluser, setAlluser] = useState<IUser[] | undefined>(undefined);
+    const [alluser, setAlluser] = useState<IUser[] >([]);
     const [allfriend, setAllFriend] = useState<IUser[]> ([]);
 
     const addfriend = (myfriend: IUser) => {
 
         if (allfriend.find(allfriend => allfriend.id === myfriend.id) === undefined )
-        setAllFriend([...allfriend, myfriend])
-
+        {
+            setAllFriend([...allfriend, myfriend])
+            props.setFriend([...allfriend, myfriend]);
+        }
     }
 
     const removeFriend = (myfriend: IUser) => {
 
-        if (allfriend.find(allfriend => allfriend.id === myfriend.id) !== undefined )
-        setAllFriend(allfriend.filter(allfriend => allfriend.id !== myfriend.id ))
-
+        if (allfriend.find(allfriend => allfriend.id === myfriend.id) !== undefined) {
+            setAllFriend(allfriend.filter(allfriend => allfriend.id !== myfriend.id))
+            props.setFriend(allfriend.filter(allfriend => allfriend.id !== myfriend.id))
+        }
     }
 
     useEffect(() => { 
@@ -38,7 +41,7 @@ export default function AllPeople(props: { friend: IUser[] | undefined, setFrien
         // setAlluser(data.filter((User: { }) => ));
         setAlluser(data.filter((User: { username: string; status: string;  }) => User.status === "Online" && User.username !== myUser.user?.username ));
     }
-    if (props.friend === undefined)
+    if (props.friend?.length  === undefined || props.friend.length === 0 )
         get_all();
     else
         props.setFriend(props.friend);
@@ -70,6 +73,7 @@ export default function AllPeople(props: { friend: IUser[] | undefined, setFrien
                 props.myVar === true &&
                 <div className="dropdown-container">
                     <div className=" dropdown people-list hover-style">
+                        
                     {alluser && alluser!.map(user => (
                             <ul key={user.username} >
                                 <li onClick={_ => { props.setFriend(user); props.setMyvar(!props.myVar); addfriend(user) }}>

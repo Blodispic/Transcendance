@@ -95,6 +95,7 @@ async handleJoinChannel(@ConnectedSocket() client: Socket, @MessageBody() joinCh
 @SubscribeMessage('createChannel')
 async handleCreateChannel(@ConnectedSocket() client: Socket, @MessageBody() createChannelDto: CreateChannelDto) {    
   const channel = await this.channelService.getByName(createChannelDto.chanName);
+  console.log("user list", createChannelDto.users );
   
   if (channel != null)
     throw new BadRequestException("An existing channel already have this name"); //channame already exist, possible ? if private/protected possible ?
@@ -104,6 +105,7 @@ async handleCreateChannel(@ConnectedSocket() client: Socket, @MessageBody() crea
     throw new BadRequestException("No such user");
   const new_channel = await this.channelService.create(createChannelDto, user);
   client.join("chan" + new_channel.id);
+  console.log("le chane en entier", new_channel);
   if (new_channel.chanType == 1 && createChannelDto.users)
     this.inviteToChan(createChannelDto.users, new_channel.id);
   client.emit("createChannelOk", new_channel.id);
@@ -184,7 +186,7 @@ async handleBanUser(@ConnectedSocket() client: Socket, @MessageBody() banUserDto
   if (banUserDto.timeout)
     timer = banUserDto.timeout;
   setTimeout(() => {
-    this.channelService.unbanUser(user)
+    this.channelService.unbanUser(banUserDto);
   }, timer);
   client.emit("banUserOK", user.id, channel.id);
 }
@@ -239,7 +241,9 @@ async handleInvite(@ConnectedSocket() client: Socket, @MessageBody() inviteDto: 
 
 async inviteToChan(users: User[], chanid: number)
 {
+  
   users.forEach(user => {
+    
     let socketIdToWho = this.findSocketFromUser(user);
     if (socketIdToWho)
       this.server.to(socketIdToWho.id).emit("invited", chanid);

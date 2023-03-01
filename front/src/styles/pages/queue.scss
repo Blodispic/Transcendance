@@ -32,6 +32,8 @@
 }
 
 .custom-popup{
+	z-index: 2;
+
     position: fixed;
         top: 0;
         left: 0;
@@ -45,6 +47,8 @@
     
     }
     .avatar-inpopup {
+	z-index: 2;
+
         height: 50px;
         padding: 10px 0 10px 0;
 
@@ -59,6 +63,8 @@
         }
     }
 .custom-popup-inner {
+	z-index: 2;
+
     font-family: 'Fredoka One', cursive;
     border-radius: 5px;
     font-size: 35px;
