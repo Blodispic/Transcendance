@@ -2,14 +2,53 @@ import { useEffect, useState } from "react";
 import { BsFillKeyFill } from "react-icons/bs";
 import { FaCrown } from "react-icons/fa";
 import { HiLockClosed } from "react-icons/hi2";
+import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { socket } from "../../App";
 import { IChannel } from "../../interface/Channel";
-import { IUser } from "../../interface/User";
+import { addChannel, channelSlice } from "../../redux/channel";
 import { useAppSelector } from "../../redux/Hook";
 import { ChannelMessages } from "./ChannelMessages";
 import CLickableMenu from "./clickableMenu";
 import { AddChannel } from "./CreateChannel";
+
+function GetChannelList() {
+	const channels = useAppSelector(state => state.channel);
+	const navigate = useNavigate();
+	
+	useEffect(() => {
+		const fetchChanList = async () => {
+			const response = await fetch(`${process.env.REACT_APP_BACK}channel/`, {
+			method: 'GET',
+		})
+		const data = await response.json();
+	}
+	fetchChanList();
+	}, []);
+
+	console.log('chan redux: ', channels.channels);
+	return (
+		<div className="title">
+			<header>All Channels <hr /></header>
+			{channels && channels.channels.map(chan => (
+				<ul key={chan.name}>
+					<li>
+						<div onClick={_ => navigate(`/Chat/channel/${chan.id}`)}>{chan.name}
+							{
+								chan.chanType == 1 &&
+								<HiLockClosed style={{ float: 'right' }} />
+							}
+							{
+								chan.chanType == 2 && 
+								<BsFillKeyFill style={{ float: 'right'}} />
+							}
+						</div>
+					</li>
+				</ul>
+			))}
+		</div>
+	);}
+
 
 function ChannelList(props: any) {
 	const [chanList, setChanList] = useState<IChannel[]>([]);
@@ -58,15 +97,6 @@ function ChannelList(props: any) {
 	);
 }
 
-// function JoinedChannelList(props: {user: IUser}) {
-// 	return (
-// 		<div className="title"> Joined Channels <hr />
-
-// 		</div>
-// 	);
-
-// }
-
 function PublicChannelList() {
 	const [chanList, setChanList] = useState<IChannel[]>([]);
 	const [chanId, setChanId] = useState("");
@@ -101,7 +131,7 @@ function PublicChannelList() {
 
 	return (
 		<div className="bottom">
-			<header>All Public Channels <hr /></header>
+			<header>All Channels <hr /></header>
 			{chanList && chanList.map(chan => (
 				<ul key={chan.name}>
 					<li>
@@ -124,6 +154,7 @@ function PublicChannelList() {
 
 function ChannelMemberList(props: { id: any }) {
 	const [currentChan, setCurrentChan] = useState<IChannel | undefined>(undefined)
+	// const currentChan = useAppSelector(state => state.channel);
 	const [currentId, setCurrentId] = useState<number | undefined>(undefined);
 
 	const changeId = (id: number) => {
@@ -155,7 +186,7 @@ function ChannelMemberList(props: { id: any }) {
 		<div className="title"> Members <hr />
 			{currentChan && currentChan.users.map(user => (
 				<div className="user-list">
-					<ul key={user.username} onClick={e => { changeId(user.id) }}>
+					<ul key={user.id} onClick={e => { changeId(user.id) }}>
 						<li>
 							{user.username}
 							{
@@ -166,7 +197,7 @@ function ChannelMemberList(props: { id: any }) {
 					</ul>
 					{
 						 currentId == user.id && 
-									<CLickableMenu user={user} chan={currentChan}/>
+							<CLickableMenu user={user} chan={currentChan}/>
 					}
 				</div>
 			))
@@ -176,21 +207,22 @@ function ChannelMemberList(props: { id: any }) {
 }
 
 export function Channels(props: any) {
-
-	const currentUser = useAppSelector(state => state.user);
+	const [currentChan, setCurrentChan] = useState<IChannel | undefined>(undefined);
 
 	return (
 		<div id="chat-container">
 			<div className="sidebar left-sidebar">
 				{/* <JoinedChannelList /> */}
-				<ChannelList />
+				{/* <ChannelList /> */}
+				<GetChannelList />
 				<PublicChannelList />
 				<AddChannel />
 			</div>
-			<ChannelMessages id={props.chatId} />
-			<div className="sidebar right-sidebar">
-				<ChannelMemberList id={props.chatId} />
-			</div>
+	
+					<ChannelMessages id={props.chatId} currentChan={currentChan} setCurrentChan={setCurrentChan}/>
+				<div className="sidebar right-sidebar">
+					<ChannelMemberList id={props.chatId} />
+				</div>
 
 		</div>
 	);

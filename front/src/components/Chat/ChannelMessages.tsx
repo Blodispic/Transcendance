@@ -9,7 +9,8 @@ import { useAppSelector } from "../../redux/Hook";
 import { ConfigureChannel } from "./AdminCommands";
 import { JoinChannel, JoinLeave, LeaveChannel } from "./JoinLeave";
 
-export function ChannelMessages(props: { id: any }) {
+export function ChannelMessages(props: {id: any, currentChan: IChannel | undefined, setCurrentChan: Function}) {
+// export function ChannelMessages(props: { id: any }) {
 	const [newInput, setNewInput] = useState("");
 	const [messageList, setMessageList] = useState<IMessage[]>([]);
 	const [currentChan, setCurrentChan] = useState<IChannel | undefined>(undefined);
@@ -35,7 +36,6 @@ export function ChannelMessages(props: { id: any }) {
 		e.preventDefault();
 		if (newInput != ""){
 			const sendTime = new Date().toLocaleString();
-			console.log('Time: ', sendTime);
 			socket.emit('sendMessageChannel', { chanid: currentChan?.id, sender: currentUser.user, message: newInput, sendtime: sendTime });
 		}
 		setNewInput("");

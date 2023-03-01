@@ -6,7 +6,7 @@ import { useAppSelector } from "../../redux/Hook";
 import CustomGamePopup from "../Game/CustomGamePopup";
 import { AddAdmin, BanUser, MuteUser } from "./AdminCommands";
 
-export default function CLickableMenu(props: { user: IUser, chan: IChannel }) {
+export default function CLickableMenu(props: { user: IUser, chan: any }) {
 
     const user: IUser = props.user;
     const [myVar, setMyvar] = useState<boolean>(false);
