@@ -48,16 +48,16 @@ export function JoinChannel(props: {currentUser: any, channel: IChannel }) {
 		<div>
 			{
 				props.channel.chanType === 0 &&
-				<button style={{background:'#808080'}} onClick={handleJoin}>Join</button>
+				<button onClick={handleJoin}>Join</button>
 			}			
 			{ //private channel: needs improvement
 				props.channel.chanType === 1 &&
-				<button style={{background:'#808080'}} onClick={handleJoin}>Join</button>
+				<button onClick={handleJoin}>Join</button>
 			}
 			{
 				props.channel.chanType === 2 &&
 				<>
-				<button style={{background:'#808080'}} onClick={() => setPassPopup(true)}>Join</button>
+				<button onClick={() => setPassPopup(true)}>Join</button>
 				<CheckPassword trigger={passPopup} setTrigger={setPassPopup} channel={props.channel} />
 				</>
 			}
@@ -78,7 +78,7 @@ export function LeaveChannel (props: {currentUser: any, chanid: any}) {
 
 	return (
 		<div>
-			<button style={{background:'#808080'}} onClick={handleLeave}>Leave</button>
+			<button onClick={handleLeave}>Leave</button>
 		</div>
 	);
 }
@@ -98,19 +98,22 @@ export function JoinLeave(props: {currentUser: any, channel: IChannel}) {
 	// 	setIsOnChannel(true);
 	// console.log('onChan 1: ', isOnChan);
 
-	console.log("members: ", props.channel.users);
-	
-
 	return (
 		<>
-		{
-			props.channel.users.find(elem => elem.id == props.currentUser.id) &&
-			<LeaveChannel currentUser={props.currentUser} chanid={props.channel.id} />
-		}
-		{
-			props.channel.users.find(elem => elem.id == props.currentUser.id) === undefined &&
-			<JoinChannel currentUser={props.currentUser} channel={props.channel} />
-		}
+			{
+				props.channel.id !== undefined &&
+				<>
+					{
+						props.channel?.users.find(elem => elem.id == props.currentUser.id) &&
+						<LeaveChannel currentUser={props.currentUser} chanid={props.channel.id} />
+					}
+					{
+						props.channel?.users.find(elem => elem.id == props.currentUser.id) === undefined &&
+						<JoinChannel currentUser={props.currentUser} channel={props.channel} />
+					}
+				</>
+			}
+
 		</>
 	);
 }
