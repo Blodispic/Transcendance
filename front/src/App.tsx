@@ -30,7 +30,6 @@ function App() {
       });
       socket.emit("UpdateSomeone", { idChange: myStore.user?.id, idChange2: 0 })
       socket.on("invitationInGame", (payload: any) => {
-
         setInfoGame(payload);
         setTrigger(true);
     

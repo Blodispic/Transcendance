@@ -15,7 +15,9 @@ export function ChannelMessages(props: { id: any }) {
 	const [currentChan, setCurrentChan] = useState<IChannel | undefined>(undefined);
 	const currentUser = useAppSelector(state => state.user);
 	const [popup, setPopup] = useState(false);
+	const [reload, setReload] = useState<boolean>(false);
 
+	const sleep =  () => new Promise(r => setTimeout(r, 2000));
 	useEffect(() => {
 		const getChannel = async () => {
 			const response = await fetch(`${process.env.REACT_APP_BACK}channel/${props.id}`, {
@@ -27,8 +29,30 @@ export function ChannelMessages(props: { id: any }) {
 				setMessageList(messageList => []);
 			}
 		}
-		getChannel();
-	}, [props]);
+		if (props.id)
+			getChannel();
+		}, [props]);
+		
+	useEffect(() => {
+		socket.on('leaveChannelOK', (chanid) => {
+			console.log("leavechanles");
+			setReload(true);
+		})
+		socket.on('joinChannelOK', (chanid) => {
+			console.log("join chanels");
+			setReload(true);
+		})
+		socket.on('sendMessageChannelOK', (messageDto) => {
+			setMessageList([...messageList, messageDto]);
+		})
+		console.log("ca reload");
+		setReload(false);
+		return () => {
+			socket.off('leaveChannelOK');
+			socket.off('joinChannelOK');
+			socket.off('sendMessageChannelOK');
+		}
+	}, [reload]);
 
 	const handleSubmitNewMessage = (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
@@ -39,9 +63,6 @@ export function ChannelMessages(props: { id: any }) {
 		setNewInput("");
 	}
 
-	socket.on('sendMessageChannelOK', (messageDto) => {
-		setMessageList([...messageList, messageDto]);
-	})
 
 	return (
 		<div className="chat-body">

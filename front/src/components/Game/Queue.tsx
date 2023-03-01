@@ -23,10 +23,7 @@ export default function Queue() {
         return;
     }
 
-    socket.on("RoomStart", (roomId: number, player: Player) => {
-        navigate("/game/" + roomId, { state: { Id: roomId } });
-    });
-
+    
     useEffect(() => {
         const fetchuser = async () => {
             if (myUser.user) {
@@ -36,6 +33,12 @@ export default function Queue() {
             }
         }
         fetchuser()
+        socket.on("RoomStart", (roomId: number, player: Player) => {
+            navigate("/game/" + roomId, { state: { Id: roomId } });
+        });
+        return () => {
+            socket.off('RoomStart');
+        };
     }, [])
 
     return (

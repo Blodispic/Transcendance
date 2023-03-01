@@ -55,14 +55,11 @@ function ChannelList(props: any) {
 	const [chanId, setChanId] = useState("");
 	const navigate = useNavigate();
 
-	socket.on('createChannelOk', (newChanId) => {
-		getChanId(newChanId);
-	});
-
+	
 	const getChanId = (data: any) => {
 		setChanId(data);
 	}
-
+	
 	useEffect(() => {
 		const fetchAllList = async () => {
 			const response = await fetch(`${process.env.REACT_APP_BACK}channel/`, {
@@ -72,6 +69,12 @@ function ChannelList(props: any) {
 			setChanList(data);
 		}
 		fetchAllList();
+		socket.on('createChannelOk', (newChanId) => {
+			getChanId(newChanId);
+		});
+		return () => {
+			socket.off('createChannelOk');
+		};
 	}, [chanId]);
 
 	return (
@@ -171,6 +174,7 @@ function ChannelMemberList(props: { id: any }) {
 			const data = await response.json();
 			setCurrentChan(data);
 		}
+		if (props.id)
 		getChannel();
 	}, [props]);
 	
@@ -214,8 +218,8 @@ export function Channels(props: any) {
 				{/* <JoinedChannelList /> */}
 				<ChannelList />
 				{/* <GetChannelList /> */}
-				<PublicChannelList />
 				<AddChannel />
+				<PublicChannelList />
 			</div>
 	
 					<ChannelMessages id={props.chatId} />

@@ -45,7 +45,7 @@ export default function Connection() {
                             dispatch(change_avatar(data.intra_avatar))
                             dispatch(oauth());
                             setCookie('Token', data.access_token, { path: '/' });
-                            if (data.username === "")
+                            if (!data.username)
                                 navigate("./sign")
                             else if (data.twoFaEnable == true)
                                 navigate("./log")

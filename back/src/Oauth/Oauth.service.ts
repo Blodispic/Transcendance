@@ -58,20 +58,22 @@ export class OauthService {
     });
     if (user)
     {
+      for (const iterator of userList) {
+        if (iterator.handshake.auth.user.id === user.id)
+          throw new BadRequestException("t'as deja un tab frero");
+      }
       user.access_token = token
       await this.usersService.save(user);
       return (user);
     }
     if (data.error)
       return (data.error);
-    
+
     const userDto: CreateUserDto = {
-      username: "",
       login: data.login,
       email: data.email,
       intra_avatar: data.image.link,
       access_token: token
-
     }
     return await this.usersService.create(userDto);
   }

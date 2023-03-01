@@ -68,31 +68,36 @@ export default function Profile() {
         let { id } = useParams();
         const [pages, setPages] = useState<page>(page.PAGE_1);
         const myUser = useAppSelector(state => state.user);
-        
-                const fetchid = async () => {
-                        const response = await fetch(`${process.env.REACT_APP_BACK}user/id/${id}`, {
-                                method: 'GET',
-                        })
-                        setCurrentUser(await response.json());
-                }
+
+        const fetchid = async () => {
+                const response = await fetch(`${process.env.REACT_APP_BACK}user/id/${id}`, {
+                        method: 'GET',
+                })
+                setCurrentUser(await response.json());
+        }
         useEffect(() => {
+                console.log("ca rentre dans le use EFFeect ")
                 if (id)
                         fetchid();
                 setPages(page.PAGE_1);
-               if (myUser.user!.friends )
-               console.log ("est ce que c'est mon copain",  myUser.user!.friends.find(allfriend => allfriend.id === currentUser!.id));
+                if (myUser.user!.friends)
+                        console.log("est ce que c'est mon copain", myUser.user!.friends.find(allfriend => allfriend.id === currentUser!.id));
+                socket.on('UpdateSomeone', (idChange, idChange2) => {
+                        // if (idChange2 === id || idChange === id)
+                        fetchid();
+                })
+                socket.on("SpectateStart", (roomId: number, player: Player) => {
+                        navigate("/game/" + roomId, { state: { Id: roomId } });
+                });
+                return () => {
+                        socket.off('UpdateSomeone');
+                        socket.off('SpectateStart');
+                };
         }, [id])
 
         // useEffect(() => {
-        socket.on('UpdateSomeone', (idChange, idChange2) => {
-                // if (idChange2 === id || idChange === id)
-                fetchid();
-        })
         // }, [currentUser])
 
-        socket.on("SpectateStart", (roomId: number, player: Player) => {
-                navigate("/game/" + roomId, { state: { Id: roomId } });
-        });
 
         useEffect(() => {
                 if (currentUser?.id == myUser.user?.id)

@@ -103,10 +103,14 @@ export function DmMessages(props: { id: any; currentdm: IUser | undefined; setCu
 		}
 		setNewInput("");
 	}
-
-	socket.on('sendMessageUserOK', (messageUserDto) => {
-		setMessageList([...messageList, messageUserDto]);
-	})
+	useEffect(() => {
+		socket.on('sendMessageUserOK', (messageUserDto) => {
+			setMessageList([...messageList, messageUserDto]);
+		})
+		return () => {
+			socket.off('sendMessageUserOK');
+		};
+	}, [])
 
 	// if (currentChan?.users !== undefined && currentChan?.users.find(currentUser.user)) {
 	// 	setIsOnChan(true);

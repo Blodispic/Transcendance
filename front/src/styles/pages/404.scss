@@ -28,11 +28,6 @@
 			/* 1. BODY */
 /***********************************/
 
-* {
-  margin: 0;
-  padding: 0;
-  -webkit-text-size-adjust: none;
-}
 
 
 .notFound-container {
@@ -524,7 +519,7 @@
   }
 
   .lamp {
-    zoom: .6;
+    zoom: 1;
   }
 
   .error__content {
