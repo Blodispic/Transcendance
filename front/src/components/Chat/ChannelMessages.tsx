@@ -93,11 +93,17 @@ export function ChannelMessages(props: { id: any }) {
 			</div>
 			</div>
 			{
-				props.id !== undefined &&
-				<form id="input_form" onSubmit={(e) => { handleSubmitNewMessage(e); }}>
+				currentChan !== undefined &&
+				<>
+				{
+					currentChan?.users.find(elem => elem.id == currentUser.user?.id) !== undefined &&
+					<form id="input_form" onSubmit={(e) => { handleSubmitNewMessage(e); }}>
 					<input type="text" onChange={(e) => { setNewInput(e.target.value) }}
-						placeholder="type message here" value={newInput} />
-				</form>
+					placeholder="type message here" value={newInput} />
+					</form>
+				}
+				</>
+				
 			}
 		</div>
 	);
