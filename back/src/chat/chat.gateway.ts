@@ -256,12 +256,12 @@ async inviteToChan(users: User[], chanid: number)
 }
 
  afterInit(server: Server) {
-//    console.log(server);
+
    //Do stuffs
  }
  
 //  handleDisconnect(client: Socket) {
-//    console.log(`Disconnected: ${client.id}`);
+
 //  }
  
 

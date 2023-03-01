@@ -32,27 +32,35 @@ export default function CLickableMenu(props: { user: IUser, chan: IChannel }) {
                                     DM
                                 </Link>
                             </li>
-                            {/* ---admin menu--- show if [user] is [admin]*/}
-                            <li>
-                                <a onClick={_ => AddAdmin(props.chan.id, props.user.id)}>
-                                    Add to Admin
-                                </a>
-                            </li>
-                            <li>
-                                <a onClick={() => MuteUser(props.chan.id, user.id)}>
-                                    Mute
-                                </a>
-                            </li>
-                            <li>
-                                <a onClick={() => BanUser(props.chan.id, user.id)}>
-                                    Ban
-                                </a>
-                            </li>
-                            <li>
-                                <a>
-                                    Kick
-                                </a>
-                            </li>
+                            {/* ---admin menu--- show if  [myUser] === [owner] || ([myuser] === [admin] &&  [currentuser] !== [admin] ) */}
+                            {
+                                <>
+                                    {/* show if [currentUser] !=== admin */}
+                                    {
+
+                                        <li>
+                                            <a onClick={_ => AddAdmin(props.chan.id, props.user.id)}>
+                                                Add to Admin
+                                            </a>
+                                        </li>
+                                    }
+                                    <li>
+                                        <a onClick={() => MuteUser(props.chan.id, user.id)}>
+                                            Mute
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a onClick={() => BanUser(props.chan.id, user.id)}>
+                                            Ban
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a>
+                                            Kick
+                                        </a>
+                                    </li>
+                                </>
+                            }
                         </>
                     }
                 </ul>

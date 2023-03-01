@@ -1,8 +1,9 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { CreateUserDto } from 'src/user/dto/create-user.dto';
 import { UserService } from '../user/user.service';
 import { jwtConstants } from './constants';
+import { userList } from '../app.gateway'
 
 @Injectable()
 export class OauthService {
@@ -40,6 +41,7 @@ export class OauthService {
   }
 
   async getInfo(intra_token: string) {
+
     const response = await fetch('https://api.intra.42.fr/v2/me', {
       method: 'GET',
       headers: {
@@ -49,17 +51,20 @@ export class OauthService {
     const data = await response.json();
     
     const user = await this.usersService.getByLogin(data.login);
-    if (user)
-      return (user);
-    if (data.error)
-      return (data.error);
-
     const payload = { username: data.login, }
     const token = await this.jwtService.signAsync(payload, {
       secret: jwtConstants.secret,
       expiresIn: '900s',
     });
-
+    if (user)
+    {
+      user.access_token = token
+      await this.usersService.save(user);
+      return (user);
+    }
+    if (data.error)
+      return (data.error);
+    
     const userDto: CreateUserDto = {
       username: "",
       login: data.login,

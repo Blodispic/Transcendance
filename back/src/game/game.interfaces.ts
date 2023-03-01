@@ -22,7 +22,6 @@ export interface Player {
 	socket: string;
 	score: number;
 	side: number;
-	avatar: string;
 }
 
 export interface Ball {

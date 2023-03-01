@@ -13,11 +13,10 @@ export function History(props: { user: IUser }) {
         const checkMatchRequest = async () => {
             const response = await fetch(`${process.env.REACT_APP_BACK}user/matches`, {
                 method: 'POST',
-                body: JSON.stringify(user),
+                body: JSON.stringify({user: user.id}),
                 headers: { 'Content-Type': 'application/json' }
             });
             const data = await response.json();
-            console.log(data);
             setMatches(data);
         };
 

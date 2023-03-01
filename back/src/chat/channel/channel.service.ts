@@ -33,7 +33,8 @@ export class ChannelService {
 		const channel: Channel = this.channelRepository.create({
 			name: createChannelDto.chanName,
 			password: createChannelDto.password,
-			owner: [user],
+			owner: user,
+			admin: [user],
 			users: [user],
 			chanType: createChannelDto.chanType,
 		});
@@ -160,9 +161,10 @@ export class ChannelService {
 
 	  getPublic() {		
 		return this.channelRepository.find({
-			where: {
-					chanType: 0,
-				}
+			where: [
+				{chanType: 0},
+				{chanType: 2},
+				]
 			});
 		
 	  }
@@ -218,7 +220,7 @@ export class ChannelService {
 	async addAdmin(giveAdminDto: GiveAdminDto)
 	{
 		const channel: Channel | null = await this.channelRepository.findOne({
-			relations: { users: true, owner: true },
+			relations: { users: true, admin: true },
 			where: {
 				id: giveAdminDto.chanid
 			}
@@ -226,21 +228,21 @@ export class ChannelService {
 		const user = await this.userService.getById(giveAdminDto.userid);
 		if (channel == null || user == null)
 			throw new NotFoundException();
-		channel.owner.push(user);
+		channel.admin.push(user);
 		return this.channelRepository.save(channel);
 	}
 
 	async isUserAdmin(giveAdminDto: GiveAdminDto) {
         const channel: Channel | null = await this.channelRepository.findOne({
-                relations: { users: true, owner: true },
+                relations: { users: true, admin: true },
                 where: { id: giveAdminDto.chanid }
         });
         const user = await this.userService.getById(giveAdminDto.userid);
         if (channel === null || user === null)
                 throw new BadRequestException();
-        if (!channel.owner)
+        if (!channel.admin)
                 return false;
-		for (const iterator of channel.owner) {
+		for (const iterator of channel.admin) {
 			if (iterator.id == user.id)
 				return true;			
 		}

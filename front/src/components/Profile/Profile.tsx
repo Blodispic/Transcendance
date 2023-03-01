@@ -12,6 +12,7 @@ import TwoFa from './setTwoFa';
 import { socket } from '../../App';
 import { UserStatus } from '../../interface/User';
 import Sign from '../connection/Sign';
+import { Player } from '../Game/Game';
 
 
 
@@ -34,7 +35,7 @@ function Onglets(props: { currentUser: IUser, current: page, setOnglets: Functio
                                 <button className={`pointer ${current === page.PAGE_2 ? "" : "not-selected"}`}
                                         onClick={e => setOnglets(page.PAGE_2)} >
                                         <a >
-                                                Friend Request
+                                                Friends
                                         </a>
                                 </button>
                         }
@@ -63,12 +64,12 @@ function Onglets(props: { currentUser: IUser, current: page, setOnglets: Functio
 export default function Profile() {
         const [currentUser, setCurrentUser] = useState<IUser | undefined>(undefined);
         let avatar: string = "";
+        const navigate = useNavigate();
         let { id } = useParams();
         const [pages, setPages] = useState<page>(page.PAGE_1);
         const myUser = useAppSelector(state => state.user);
         
                 const fetchid = async () => {
-                        console.log(id);
                         const response = await fetch(`${process.env.REACT_APP_BACK}user/id/${id}`, {
                                 method: 'GET',
                         })
@@ -78,18 +79,22 @@ export default function Profile() {
                 if (id)
                         fetchid();
                 setPages(page.PAGE_1);
+               if (myUser.user!.friends )
+               console.log ("est ce que c'est mon copain",  myUser.user!.friends.find(allfriend => allfriend.id === currentUser!.id));
         }, [id])
 
         // useEffect(() => {
         socket.on('UpdateSomeone', (idChange, idChange2) => {
-                console.log("ca dis quoi", idChange, currentUser?.id)
                 // if (idChange2 === id || idChange === id)
                 fetchid();
         })
         // }, [currentUser])
 
+        socket.on("SpectateStart", (roomId: number, player: Player) => {
+                navigate("/game/" + roomId, { state: { Id: roomId } });
+        });
+
         useEffect(() => {
-                console.log("ca recharge");
                 if (currentUser?.id == myUser.user?.id)
                 {
                         setCurrentUser(myUser.user);

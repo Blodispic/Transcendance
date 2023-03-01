@@ -11,8 +11,8 @@
     align-self: center;
     overflow: hidden;
     .logo {
-        width: 140px;
-        height: auto;
+        width: 100%;
+        height: 100%;
     }
 }
 
@@ -47,8 +47,8 @@
                 overflow: hidden;
 
                 .logo {
-                    width: 140px;
-                    height: auto;
+                    width: 100%;
+                    height: 100%;
                 }
             }
         }
@@ -211,6 +211,17 @@
 .white {
     color: white;
 }
+
+.separate-line {
+    border: none;
+    height: 4px;
+    border-radius: 10px;
+    background-color: #918888;
+    width: 80%;
+    margin: 0 auto;
+    transform: translateY(2px);
+    box-shadow: 0 1px 0 #918888;
+  }
 
 
 .friends-list {

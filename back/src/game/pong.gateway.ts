@@ -46,15 +46,34 @@ export class PongGateway implements OnGatewayDisconnect, OnGatewayInit {
 			if (this.gameService.gameRoom[i].gameState.player1.name === player.username
 				|| this.gameService.gameRoom[i].gameState.player2.name === player.username) {
 				this.gameService.gameRoom[i].addSpectator(client.id);
-				this.server.to(client.id).emit("Spectate", i);
+				const socketLocal = this.findSocketFromUser(client.handshake.auth.user);
+				if (socketLocal != null)
+					this.server.to(socketLocal.id).emit("SpectateStart", i + 1, 0);
 				return;
 			}
 			i++;
 		}
 	}
 
+	findSocketFromUser(user: User) {
+		for (const iterator of userList) {
+			if (iterator.handshake.auth.user.id === user.id)
+				return iterator;
+		}
+		return null;
+	}
+
 	@SubscribeMessage("createCustomGame")
 	HandleCustomGame(@MessageBody() payload: any, @ConnectedSocket() client: Socket) {
+		console.log("Add " + payload.user1.username + " to custom game.");
+		console.log("Add " + payload.user2.username + " to custom game.");
+		const socket = this.findSocketFromUser(payload.user2);
+		if (socket != null)
+			this.server.to(socket.id).emit("invitationInGame", payload);
+	}
+
+	@SubscribeMessage("acceptCustomGame")
+	AcceptCustomGame(@MessageBody() payload: any, @ConnectedSocket() client: Socket) {
 		console.log("Add " + payload.user1.username + " to custom game.");
 		console.log("Add " + payload.user2.username + " to custom game.");
 		let userSocket1: any = userList[0]; //By default both user are the first user of the list

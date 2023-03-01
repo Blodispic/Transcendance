@@ -31,6 +31,7 @@ export default function TwoFa() {
     }
 
     const fetchCodeForQr = async (e: any) => {
+        console.log("user id = ", myStore.user?.id);
         e.preventDefault();
         await fetch(`${process.env.REACT_APP_BACK}user/2fa/check`, {
             method: 'POST',
@@ -38,7 +39,7 @@ export default function TwoFa() {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                user: myStore.user,
+                userId: myStore.user?.id,
                 code: code,
             }),
         })
@@ -67,7 +68,7 @@ export default function TwoFa() {
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ user: myStore.user }),
+            body: JSON.stringify({ userId: myStore.user?.id }),
         })
             .then(async response => {
                 if (response.ok) {
