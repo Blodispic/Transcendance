@@ -1,3 +1,4 @@
+import { forwardRef, Inject } from "@nestjs/common";
 import { ConnectedSocket, MessageBody, OnGatewayConnection, OnGatewayDisconnect, OnGatewayInit, SubscribeMessage, WebSocketGateway, WebSocketServer } from "@nestjs/websockets";
 import { Server, Socket } from "socket.io";
 import { User } from "src/user/entities/user.entity";
@@ -12,7 +13,10 @@ export let userList: Socket[] = [];
 })
 
 export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
-	constructor(private readonly userService: UserService) { }
+	constructor(
+
+	@Inject(forwardRef(() => UserService))	
+	private readonly userService: UserService) {}
 
 	@WebSocketServer()
 	server: Server;

@@ -15,6 +15,7 @@ import { ChannelModule } from './chat/channel/channel.module';
 import { ResultModule } from './results/results.module';
 import { Channel } from './chat/channel/entities/channel.entity';
 import { FriendRequest } from './user/entities/friend-request.entity';
+import { UserService } from './user/user.service';
 
 @Module({
   imports: [
@@ -26,7 +27,7 @@ import { FriendRequest } from './user/entities/friend-request.entity';
       password: 'admin',
       entities: [User, Results, Channel, FriendRequest],
       synchronize: true,
-      // dropSchema: true,    //A ENLEVER QUAND PLUS BESOIN (ça reset la db a chaque changement)
+      dropSchema: true,    //A ENLEVER QUAND PLUS BESOIN (ça reset la db a chaque changement)
     }),
     MulterModule.register({
       dest: './storage/images',
@@ -37,7 +38,6 @@ import { FriendRequest } from './user/entities/friend-request.entity';
     OauthModule,
     ChannelModule,
     ResultModule,
-    UserModule,
   ],
   controllers: [AppController],
   providers: [AppService, ChatGateway, AppGateway],
