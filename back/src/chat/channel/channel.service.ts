@@ -148,10 +148,10 @@ export class ChannelService {
 	  getPublic() {		
 		return this.channelRepository.find({
 			where: {
-					chanType: 0,
+					chanType: 0 && 2,
 				}
 			});
-		
+
 	  }
 
 	  async unmuteUser(muteUserDto: MuteUserDto) {
