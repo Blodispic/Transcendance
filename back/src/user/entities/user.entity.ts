@@ -20,7 +20,7 @@ export class User {
   @Column()
   access_token: string;
 
-  @Column({ unique: true })
+  @Column({ unique: true, nullable: true })
   username: string;
 
   @Column({ unique: true })
@@ -59,8 +59,7 @@ export class User {
   @Column({ default: 0 })
   lose: number;
 
-  @ManyToMany(() => Results, result => result.user)
-  @JoinTable()
+  @OneToMany(() => Results, result => result.user)
   results: Results[];
 
   @OneToMany(() => FriendRequest, friendRequest => friendRequest.creator)
