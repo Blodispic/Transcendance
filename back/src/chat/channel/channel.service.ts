@@ -176,7 +176,7 @@ export class ChannelService {
 			throw new BadRequestException();		
 		const index = channel.muted.indexOf(user, 0);		
 		if (index != -1)
-			channel.muted.splice(channel.muted.indexOf(user, 0), 1);
+			channel.muted.splice(index, 1);
 		return this.channelRepository.save(channel);
 	}
 
@@ -187,10 +187,10 @@ export class ChannelService {
 		});
 		const user = channel?.banned.find(elem => elem.id == muteUserDto.userid)
 		if (channel === null || user === null || user === undefined)
-			throw new BadRequestException();		
+			throw new BadRequestException("No such Channel or User");		
 		const index = channel.banned.indexOf(user, 0);		
 		if (index != -1)
-			channel.banned.splice(channel.banned.indexOf(user, 0), 1);
+			channel.banned.splice(index, 1);
 		return this.channelRepository.save(channel);
 	}
 

@@ -171,13 +171,14 @@ async handleChangePassword(@ConnectedSocket() client: Socket, @MessageBody() cha
 @SubscribeMessage('BanUser')
 async handleBanUser(@ConnectedSocket() client: Socket, @MessageBody() banUserDto: BanUserDto) {
   const channel = await this.channelService.getById(banUserDto.chanid);
-  const user = client.handshake.auth.user;
-  if (channel === null || user === null)
+  const user = await this.userService.getById(client.handshake.auth.user.id);
+  const userBan = await this.userService.getById(banUserDto.userid);
+  if (channel === null || user === null || userBan === null)
     throw new BadRequestException("No such Channel or User"); // no such channel or user
-  if (!(await this.channelService.isUserAdmin(user)))
+  if (!(await this.channelService.isUserAdmin({chanid: channel.id, userid: user.id})))
     throw new BadRequestException("You are not Admin on this Channel");
   this.channelService.banUser(banUserDto);
-  this.channelService.rm({user: user, chanid: channel.id});
+  this.channelService.rm({user: userBan, chanid: channel.id});
   client.leave("chan" + channel.id);  
   let timer = 60000;
   if (banUserDto.timeout)
