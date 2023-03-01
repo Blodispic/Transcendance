@@ -42,16 +42,19 @@ export class ChannelService {
 
 	async add(addUserDto: AddUserDto) {
 		const channel: Channel | null = await this.channelRepository.findOne({
-			relations: { users: true },
+			relations: { users: true, banned: true, muted: true },
 			where: {
 				id: addUserDto.chanId
 			}
 			});
 		// const user: User | null = await this.userRepository.findOneBy({ id: addUserDto.userid})
 		const user = addUserDto.user;
+		// console.log("user in add : ", user);
+		
 		if (channel == null || user == null)
-			throw new NotFoundException();
+		throw new NotFoundException();
 		channel.users.push(user);
+		console.log("user in add : ", channel.users[1]);
 		return this.channelRepository.save(channel);
 	}	
 
@@ -102,7 +105,11 @@ export class ChannelService {
 
 	getById(id: number) {
 		return this.channelRepository.findOne({
-			relations: { users: true },
+			relations: {
+				users: true,
+				muted: true,
+				banned: true,
+			},
 			where: {
 				id: id
 			}
@@ -111,7 +118,11 @@ export class ChannelService {
 
 	  getByName(name: string) {
 		return this.channelRepository.findOne({
-			relations: { users: true },
+			relations: {
+				users: true,
+				muted: true,
+				banned: true,
+			},
 			where: {
 				name: name
 			}
@@ -124,10 +135,10 @@ export class ChannelService {
 			where: { id: muteUserDto.chanid }
 		});
 		const user = await this.userService.getById(muteUserDto.userid);
-		// console.log(user);
 		if (channel === null || user === null)
 			throw new BadRequestException();
 		channel.muted.push(user);
+		
 		return this.channelRepository.save(channel);
 	}
 	
@@ -163,14 +174,16 @@ export class ChannelService {
 		});
 		const user = await this.userService.getById(muteUserDto.userid);
 		if (channel === null || user === null)
-			throw new BadRequestException();
-		channel.muted.splice(channel.muted.indexOf(user, 0), 1);
+			throw new BadRequestException();		
+		const index = channel.muted.indexOf(user, 0);
+		if (index != -1)
+			channel.muted.splice(channel.muted.indexOf(user, 0), 1);
 		return this.channelRepository.save(channel);
 	}
 
 	async isUserMuted(muteUserDto: MuteUserDto) {
 		const channel: Channel | null = await this.channelRepository.findOne({
-			relations: { users: true, muted: true, },
+			relations: { users: true, muted: true },
 			where: { id: muteUserDto.chanid }
 		});
 		const user = await this.userService.getById(muteUserDto.userid);
