@@ -49,13 +49,10 @@ export class ChannelService {
 			}
 			});
 		// const user: User | null = await this.userRepository.findOneBy({ id: addUserDto.userid})
-		const user = addUserDto.user;
-		// console.log("user in add : ", user);
-		
+		const user = addUserDto.user;		
 		if (channel == null || user == null)
-		throw new NotFoundException();
+		throw new NotFoundException("No such Channel or User");
 		channel.users.push(user);
-		console.log("user in add : ", channel.users[1]);
 		return this.channelRepository.save(channel);
 	}	
 
@@ -70,7 +67,7 @@ export class ChannelService {
 		// const user: User | null = await this.userService.getById(rmUserDto.userid);
 		const user = rmUserDto.user;
 		if (channel == null || user == null)
-			throw new NotFoundException();
+			throw new NotFoundException("No such Channel or User");
 		channel.users.splice(channel.users.indexOf(user, 0) ,1);
 		return this.channelRepository.save(channel);
 	}
@@ -137,7 +134,7 @@ export class ChannelService {
 		});
 		const user = await this.userService.getById(muteUserDto.userid);
 		if (channel === null || user === null)
-			throw new BadRequestException();
+			throw new BadRequestException("No such Channel or User");
 		channel.muted.push(user);
 		
 		return this.channelRepository.save(channel);
@@ -150,7 +147,7 @@ export class ChannelService {
 		});
 		const user = await this.userService.getById(muteUserDto.userid);
 		if (channel === null || user === null)
-			throw new BadRequestException();
+			throw new BadRequestException("No such Channel or User");
 		channel.banned.push(user);
 		return this.channelRepository.save(channel);
 	  }
@@ -204,7 +201,7 @@ export class ChannelService {
 		});
 		const user = await this.userService.getById(muteUserDto.userid);
 		if (channel === null || user === null)
-			throw new BadRequestException();
+			throw new BadRequestException("No such Channel or User");
 		if (!channel.muted)
 			return false;		
 		for (const iterator of channel.muted) {
@@ -221,7 +218,7 @@ export class ChannelService {
 		});
 		const user = await this.userService.getById(muteUserDto.userid);
 		if (channel === null || user === null)
-			throw new BadRequestException();
+			throw new BadRequestException("No such Channel or User");
 		if (!channel.banned)
 			return false;
 		for (const iterator of channel.banned) {
@@ -241,7 +238,7 @@ export class ChannelService {
 			});
 		const user = await this.userService.getById(giveAdminDto.userid);
 		if (channel == null || user == null)
-			throw new NotFoundException();
+			throw new NotFoundException("No such Channel or User");
 		channel.admin.push(user);
 		return this.channelRepository.save(channel);
 	}
@@ -253,7 +250,7 @@ export class ChannelService {
         });
         const user = await this.userService.getById(giveAdminDto.userid);
         if (channel === null || user === null)
-                throw new BadRequestException();
+                throw new BadRequestException("No such Channel or User");
         if (!channel.admin)
                 return false;
 		for (const iterator of channel.admin) {
