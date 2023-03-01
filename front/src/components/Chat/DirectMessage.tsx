@@ -126,7 +126,7 @@ export function DmMessages(props: { id: any; currentdm: IUser | undefined; setCu
 			<div className="chat-messages">
 				<div className="reverse">
 
-				{messageList.map(message => (
+				{messageList && messageList.map(message => (
 					<div key={message.message} className="__wrap">
 						<div className="message-info">
 							<img className="user-avatar" src={message.sender?.avatar} />

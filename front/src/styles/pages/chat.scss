@@ -48,6 +48,7 @@ $tab-color: rgba(var(--primary-color), 0.5); //rgb(121, 121, 121);
 	}
 
 	.right-sidebar {
+		z-index: 1;
 		float: right;
 		border-top-right-radius: 0 !important;
 	}
@@ -109,6 +110,8 @@ $tab-color: rgba(var(--primary-color), 0.5); //rgb(121, 121, 121);
 		// background-color: var(--secondary-color);
 
 		form input {
+			position: absolute;
+			bottom: 0;
 			font-family: 'Fredoka One', cursive;
 			font-size: 20px;
 			color: white;
@@ -118,6 +121,7 @@ $tab-color: rgba(var(--primary-color), 0.5); //rgb(121, 121, 121);
 			bottom: 0;
 			width: 100%;
 			height: 50px;
+			margin: 0 !important;
 		}
 	}
 

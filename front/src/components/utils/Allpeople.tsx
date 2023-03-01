@@ -35,8 +35,8 @@ export default function AllPeople(props: { friend: IUser[] | undefined, setFrien
                 },
         })
         const data = await response.json();
-        setAlluser(data.filter((User: { status: string; }) => User.status === "Online"));
-        setAlluser(data.filter((User: { username: string; }) => User.username !== myUser.user?.username ));
+        // setAlluser(data.filter((User: { }) => ));
+        setAlluser(data.filter((User: { username: string; status: string;  }) => User.status === "Online" && User.username !== myUser.user?.username ));
     }
     if (props.friend === undefined)
         get_all();

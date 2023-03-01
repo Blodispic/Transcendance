@@ -90,7 +90,7 @@ export function Friends(props: { user: IUser }) {
         const FriendsReqList = (props: FriendsListProps) => {
                 return (
                         <ul className="friends-list">
-                                {props.friends.map(friend => (
+                                {props.friends && props.friends.map(friend => (
                                         <li className="friend-block" key={friend.name}>
                                                 <div className="friend-img">
                                                         <img src={friend.avatar} alt={friend.name} />
@@ -129,7 +129,7 @@ export function Friends(props: { user: IUser }) {
         const FriendsList = (props: FriendsListProps) => {
                 return (
                         <ul className="friends-list">
-                                {props.friends.map(friend => (
+                                {props.friends && props.friends.map(friend => (
                                         <li className="friend-block" key={friend.name}>
                                                 <div className="friend-img">
                                                         <img src={friend.avatar} alt={friend.name} />

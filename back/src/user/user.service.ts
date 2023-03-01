@@ -144,7 +144,10 @@ export class UserService {
       },
       where: { username: username }
     });
-    return userfindName;
+    if (userfindName)
+      return userfindName;
+    else 
+      throw new NotFoundException("Username dont exist");
   }
 
   async update(id: number, userUpdate: any) {

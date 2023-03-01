@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 
 export function History(props: { user: IUser }) {
     const { user } = props;
-    const [matchReq, setMatches] = useState<Result[]>([]);
+    const [matchReq, setMatches] = useState<Result[] | undefined>(undefined);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -26,7 +26,7 @@ export function History(props: { user: IUser }) {
     const MatchesReq = () => {
       return (
         <div className="match-list">
-          {matchReq.map((match) => (
+          {matchReq && matchReq.map((match) => (
             <div className="match-block" key={match.id + match.winner.username + match.loser.username}>
               <div className="winner">
                 <div className="winner-img pointer" onClick={_ =>  navigate(`../Profile/${match.winner.id}`)  } >
