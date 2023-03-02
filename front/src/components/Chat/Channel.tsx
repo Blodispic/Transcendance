@@ -155,8 +155,71 @@ function PublicChannelList() {
 	);
 }
 
-function ChannelMemberList(props: { chanId: any }) {
-	const [currentChan, setCurrentChan] = useState<IChannel | undefined>(undefined)
+// function ChannelMemberList(props: { chanId: any }) {
+// 	const [currentChan, setCurrentChan] = useState<IChannel | undefined>(undefined)
+// 	// const currentChan = useAppSelector(state => state.channel);
+// 	const [currentId, setCurrentId] = useState<number | undefined>(undefined);
+// 	const [members, setMembers] = useState<IUser[]>([]);
+
+// 	const changeId = (id: number) => {
+// 		if (id == currentId)
+// 			setCurrentId(undefined);
+// 		else
+// 			setCurrentId(id);
+// 	}
+
+// 	useEffect(() => {
+// 		const getChannel = async () => {
+// 			const response = await fetch(`${process.env.REACT_APP_BACK}channel/${props.chanId}`, {
+// 				method: 'GET',
+// 			})
+// 			const data = await response.json();
+// 			setCurrentChan(data);
+// 		}
+// 		getChannel();
+// 	}, [props]);
+
+// 	if (currentChan !== undefined && members == undefined)
+// 		setMembers(currentChan?.users);
+
+// 	// socket.on("joinChannel", (newUser) => {
+// 	// 	console.log(newUser);
+// 	// 	setMembers([...members, newUser]);
+// 	// })
+
+// 	if (currentChan?.users === undefined) {
+// 		return (
+// 			<div className="title"> Members <hr />
+// 			</div>
+// 		)
+// 	}
+
+// 	return (
+// 		<div className="title"> Members <hr />
+// 			{currentChan && currentChan.users?.map(user => (
+// 				<div className="user-list">
+// 					<ul key={user.id} onClick={e => { changeId(user.id) }}>
+// 						<li>
+// 							{user.username}
+// 							{
+// 								currentChan.admin?.find(obj => obj === user) &&
+// 								<FaCrown />
+// 							}
+// 						</li>
+// 					</ul>
+// 					{
+// 						currentId == user.id &&
+// 						<CLickableMenu user={user} chan={currentChan} />
+// 					}
+// 				</div>
+// 			))
+// 			}
+// 		</div>
+// 	);
+// }
+
+function ChannelMemberList(props: { channel: IChannel }) {
+	// const [currentChan, setCurrentChan] = useState<IChannel | undefined>(undefined)
 	// const currentChan = useAppSelector(state => state.channel);
 	const [currentId, setCurrentId] = useState<number | undefined>(undefined);
 	const [members, setMembers] = useState<IUser[]>([]);
@@ -167,6 +230,59 @@ function ChannelMemberList(props: { chanId: any }) {
 		else
 			setCurrentId(id);
 	}
+
+	// useEffect(() => {
+	// 	const getChannel = async () => {
+	// 		const response = await fetch(`${process.env.REACT_APP_BACK}channel/${props.chanId}`, {
+	// 			method: 'GET',
+	// 		})
+	// 		const data = await response.json();
+	// 		setCurrentChan(data);
+	// 	}
+	// 	getChannel();
+	// }, [props]);
+
+	if (props.channel !== undefined && members == undefined)
+		setMembers(props.channel?.users);
+
+	// socket.on("joinChannel", (newUser) => {
+	// 	console.log(newUser);
+	// 	setMembers([...members, newUser]);
+	// })
+
+	if (props.channel?.users === undefined) {
+		return (
+			<div className="title"> Members <hr />
+			</div>
+		)
+	}
+
+	return (
+		<div className="title"> Members <hr />
+			{props.channel && props.channel.users?.map(user => (
+				<div className="user-list">
+					<ul key={user.id} onClick={e => { changeId(user.id) }}>
+						<li>
+							{user.username}
+							{
+								props.channel.admin?.find(obj => obj === user) &&
+								<FaCrown />
+							}
+						</li>
+					</ul>
+					{
+						currentId == user.id &&
+						<CLickableMenu user={user} chan={props.channel} />
+					}
+				</div>
+			))
+			}
+		</div>
+	);
+}
+
+export function Channels(props: any) {
+	const [currentChan, setCurrentChan] = useState<IChannel | undefined>(undefined);
 
 	useEffect(() => {
 		const getChannel = async () => {
@@ -179,62 +295,25 @@ function ChannelMemberList(props: { chanId: any }) {
 		getChannel();
 	}, [props]);
 
-	if (currentChan !== undefined && members == undefined)
-		setMembers(currentChan?.users);
-
-	// socket.on("joinChannel", (newUser) => {
-	// 	console.log(newUser);
-	// 	setMembers([...members, newUser]);
-	// })
-
-	if (currentChan?.users === undefined) {
-		return (
-			<div className="title"> Members <hr />
-			</div>
-		)
-	}
-
-	return (
-		<div className="title"> Members <hr />
-			{currentChan && currentChan.users.map(user => (
-				<div className="user-list">
-					<ul key={user.id} onClick={e => { changeId(user.id) }}>
-						<li>
-							{user.username}
-							{
-								currentChan.admin?.find(obj => obj === user) &&
-								<FaCrown />
-							}
-						</li>
-					</ul>
-					{
-						currentId == user.id &&
-						<CLickableMenu user={user} chan={currentChan} />
-					}
-				</div>
-			))
-			}
-		</div>
-	);
-}
-
-export function Channels(props: any) {
-
 	return (
 		<div id="chat-container">
 			<div className="sidebar left-sidebar">
-				{/* <JoinedChannelList /> */}
 				{/* <ChannelList /> */}
 				<JoinedChannelList />
 				<PublicChannelList />
 				<AddChannel />
 			</div>
-
-			<ChannelMessages chanId={props.chanId} />
-			<div className="sidebar right-sidebar">
-				<ChannelMemberList chanId={props.chanId} />
-			</div>
-
+			{
+				currentChan !== undefined &&
+				<>
+					{/* <ChannelMessages chanId={props.chanId} /> */}
+					<ChannelMessages channel={currentChan} />
+					<div className="sidebar right-sidebar">
+						{/* <ChannelMemberList chanId={props.chanId} /> */}
+						<ChannelMemberList channel={currentChan} />
+					</div>
+				</>
+			}
 		</div>
 	);
 }
