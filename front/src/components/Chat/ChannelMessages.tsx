@@ -9,7 +9,7 @@ import { useAppSelector } from "../../redux/Hook";
 import { ConfigureChannel } from "./AdminCommands";
 import { JoinChannel, JoinLeave, LeaveChannel } from "./JoinLeave";
 
-export function ChannelMessages(props: { id: any }) {
+export function ChannelMessages(props: { chanId: any }) {
 	const [newInput, setNewInput] = useState("");
 	const [messageList, setMessageList] = useState<IMessage[]>([]);
 	const [currentChan, setCurrentChan] = useState<IChannel | undefined>(undefined);
@@ -18,11 +18,11 @@ export function ChannelMessages(props: { id: any }) {
 
 	useEffect(() => {
 		const getChannel = async () => {
-			const response = await fetch(`${process.env.REACT_APP_BACK}channel/${props.id}`, {
+			const response = await fetch(`${process.env.REACT_APP_BACK}channel/${props.chanId}`, {
 				method: 'GET',
 			})
 			const data = await response.json();
-			if (currentChan?.id !== props.id) {
+			if (currentChan?.id !== props.chanId) {
 				setCurrentChan(data);
 				setMessageList(messageList => []);
 			}

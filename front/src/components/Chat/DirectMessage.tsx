@@ -72,6 +72,9 @@ function InfoFriend(props: {user: IUser}) {
                             <li onClick={_ => setMyvar(true)}>
                                 Invite Game
                             </li>
+							<li>
+								Block
+							</li>
                         </>
                     
                 </ul>
@@ -108,17 +111,17 @@ export function DmMessages(props: { id: any; currentdm: IUser | undefined; setCu
 		setMessageList([...messageList, messageUserDto]);
 	})
 
-	const handleBlock = () => {
-		if (blockedId == 0 && props.currentdm !== undefined)
-		{
-			setBlockedId(props.currentdm?.id);
-			// emit block to the back
-		}
-		else
-		{
-			setBlockedId(0);
-			// emit unblock to the back
-		}
+	const handleBlock = () => { // to be improved
+		// if (blockedId == 0 && props.currentdm !== undefined)
+		// {
+		// 	setBlockedId(props.currentdm?.id);
+		// 	// emit block to the back
+		// }
+		// else
+		// {
+		// 	setBlockedId(0);
+		// 	// emit unblock to the back
+		// }
 	}
 
 	return (
@@ -129,8 +132,8 @@ export function DmMessages(props: { id: any; currentdm: IUser | undefined; setCu
 			</div>
 			<div className="chat-messages">
 				<div className="reverse">
-					{props.currentdm?.id == blockedId &&
-						<>
+					{/* {props.currentdm?.id == blockedId &&
+						<> */}
 							{messageList.map(message => (
 								<div key={message.message} className="__wrap">
 									<>
@@ -143,8 +146,8 @@ export function DmMessages(props: { id: any; currentdm: IUser | undefined; setCu
 									</>
 								</div>
 							))}
-						</>
-					}
+						{/* </>
+					} */}
 				</div>
 			</div>
 			{

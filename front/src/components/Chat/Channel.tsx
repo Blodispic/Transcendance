@@ -156,7 +156,7 @@ function PublicChannelList() {
 	);
 }
 
-function ChannelMemberList(props: { id: any }) {
+function ChannelMemberList(props: { chanId: any }) {
 	const [currentChan, setCurrentChan] = useState<IChannel | undefined>(undefined)
 	// const currentChan = useAppSelector(state => state.channel);
 	const [currentId, setCurrentId] = useState<number | undefined>(undefined);
@@ -171,7 +171,7 @@ function ChannelMemberList(props: { id: any }) {
 
 	useEffect(() => {
 		const getChannel = async () => {
-			const response = await fetch(`${process.env.REACT_APP_BACK}channel/${props.id}`, {
+			const response = await fetch(`${process.env.REACT_APP_BACK}channel/${props.chanId}`, {
 				method: 'GET',
 			})
 			const data = await response.json();
@@ -220,7 +220,6 @@ function ChannelMemberList(props: { id: any }) {
 }
 
 export function Channels(props: any) {
-	const [currentChan, setCurrentChan] = useState<IChannel | undefined>(undefined);
 
 	return (
 		<div id="chat-container">
@@ -232,9 +231,9 @@ export function Channels(props: any) {
 				<AddChannel />
 			</div>
 
-			<ChannelMessages id={props.chatId} />
+			<ChannelMessages chanId={props.chanId} />
 			<div className="sidebar right-sidebar">
-				<ChannelMemberList id={props.chatId} />
+				<ChannelMemberList chanId={props.chanId} />
 			</div>
 
 		</div>
