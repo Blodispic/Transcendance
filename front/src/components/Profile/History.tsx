@@ -18,7 +18,6 @@ export function History(props: { user: IUser }) {
                 credentials: 'include',
             });
             const data = await response.json();
-            console.log("data = ", data);
             setMatches(data);
         };
 
