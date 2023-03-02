@@ -72,6 +72,7 @@ export default function Profile() {
                 const fetchid = async () => {
                         const response = await fetch(`${process.env.REACT_APP_BACK}user/id/${id}`, {
                                 method: 'GET',
+                                credentials: 'include',
                         })
                         setCurrentUser(await response.json());
                 }

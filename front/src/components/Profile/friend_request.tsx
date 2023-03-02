@@ -14,7 +14,8 @@ export function InviteButton(props: { user: any }) {
                 await fetch(`${process.env.REACT_APP_BACK}user/friend-request/send/${friendId}`, {
                         method: 'POST',
                         body: JSON.stringify({ userId: user.id }),
-                        headers: { 'Content-Type': 'application/json' }
+                        headers: { 'Content-Type': 'application/json' },
+                        credentials: 'include',
                 });
                 setStatus('Pending');
         }
@@ -24,7 +25,8 @@ export function InviteButton(props: { user: any }) {
                         const response = await fetch(`${process.env.REACT_APP_BACK}user/friend-request/status/${friendId}`, {
                                 method: 'POST',
                                 body: JSON.stringify({ userId: user.id }),
-                                headers: { 'Content-Type': 'application/json' }
+                                headers: { 'Content-Type': 'application/json' },
+                                credentials: 'include',
                         });
                         const data = await response.json()
                         if (data.ReqStatus)
@@ -52,7 +54,8 @@ export function Friends(props: { user: IUser }) {
                         const response = await fetch(`${process.env.REACT_APP_BACK}user/friendsRequest`, {
                                 method: 'POST',
                                 body: JSON.stringify({userId: user.id}),
-                                headers: { 'Content-Type': 'application/json' }
+                                headers: { 'Content-Type': 'application/json' },
+                                credentials: 'include',
                         });
                         const data = await response.json();
                         const pendingFriendRequests = data.filter((friendRequest: { ReqStatus: string; }) => friendRequest.ReqStatus === "Pending");
@@ -67,7 +70,8 @@ export function Friends(props: { user: IUser }) {
                         const response = await fetch(`${process.env.REACT_APP_BACK}user/friends`, {
                                 method: 'POST',
                                 body: JSON.stringify({userId: user.id}),
-                                headers: { 'Content-Type': 'application/json' }
+                                headers: { 'Content-Type': 'application/json' },
+                                credentials: 'include',
                         });
                         const data = await response.json();
                         console.log("data = ", data);
@@ -77,6 +81,7 @@ export function Friends(props: { user: IUser }) {
                 checkFriend();
         }, []);
 
+        useEffect(() => {}, [friend, friendReq]);
         interface FriendsListProps {
                 friends: { name: string, avatar: string, id: number, ReqStatus: string, UserStatus: string }[];
         }
@@ -85,7 +90,8 @@ export function Friends(props: { user: IUser }) {
                 const response = await fetch(`${process.env.REACT_APP_BACK}user/friends/accept`, {
                         method: 'POST',
                         body: JSON.stringify({ friendId, userId: user.id }),
-                        headers: { 'Content-Type': 'application/json' }
+                        headers: { 'Content-Type': 'application/json' },
+                        credentials: 'include',
                 });
                 const data = await response.json();
                 setFriendReq((prevFriendReq) => prevFriendReq.filter((req) => req.id !== friendId));
@@ -95,7 +101,8 @@ export function Friends(props: { user: IUser }) {
                 const response = await fetch(`${process.env.REACT_APP_BACK}user/friends/decline`, {
                         method: 'POST',
                         body: JSON.stringify({ friend: friendId, userId: user.id }),
-                        headers: { 'Content-Type': 'application/json' }
+                        headers: { 'Content-Type': 'application/json' },
+                        credentials: 'include',
                 });
                 const data = await response.json();
                 setFriendReq(prevState => prevState.filter(declined => declined.id !== friendId));
@@ -105,27 +112,34 @@ export function Friends(props: { user: IUser }) {
 
         const FriendsReqList = (props: FriendsListProps) => {
                 return (
-                        <ul className="friends-list">
-                                {props.friends.map(friend => (
-                                        <li className="friend-block" key={friend.name}>
-                                                <div className="friend-img">
-                                                        <img src={friend.avatar} alt={friend.name} />
-                                                </div>
-                                                <div className="friend-info">
-                                                        <div className="friend-name">{friend.name}</div>
-                                                        <div className={"color-status " + friend.UserStatus}>{friend.UserStatus}</div>
-
-                                                </div>
-                                                <div className="friend-actions">
-                                                        <button className="accept-button" onClick={() => acceptFriendRequest(friend.id)} ><ImCheckmark /></button>
-                                                        <button className="refuse-button" onClick={() => declineFriendRequest(friend.id)} ><ImCross /></button>
-                                                </div>
-
-                                        </li>
-                                ))}
-                        </ul>
-                )
-        }
+                  <ul className="friends-list">
+                    {props.friends && props.friends.length > 0 ? (
+                      props.friends.map((friend) => (
+                        <li className="friend-block" key={friend.name}>
+                          <div className="friend-img">
+                            <img src={`${process.env.REACT_APP_BACK}user/${friend.id}/avatar`} alt={friend.name} />
+                          </div>
+                          <div className="friend-info">
+                            <div className="friend-name">{friend.name}</div>
+                            <div className={"color-status " + friend.UserStatus}>{friend.UserStatus}</div>
+                          </div>
+                          <div className="friend-actions">
+                            <button className="accept-button" onClick={() => acceptFriendRequest(friend.id)}>
+                              <ImCheckmark />
+                            </button>
+                            <button className="refuse-button" onClick={() => declineFriendRequest(friend.id)}>
+                              <ImCross />
+                            </button>
+                          </div>
+                        </li>
+                      ))
+                    ) : (
+                      <></>
+                    )}
+                  </ul>
+                );
+              };
+              
 
 
 
@@ -135,23 +149,26 @@ export function Friends(props: { user: IUser }) {
 
         const FriendsList = (props: FriendsListProps) => {
                 return (
-                        <ul className="friends-list">
-                                {props.friends.map(friend => (
-                                        <li className="friend-block" key={friend.name}>
-                                                <div className="friend-img">
-                                                        <img src={friend.avatar} alt={friend.name} />
-                                                </div>
-                                                <div className="friend-info">
-                                                        <div className="friend-name">{friend.name}</div>
-                                                        <div className={"color-status " + friend.UserStatus}>{friend.UserStatus}</div>
-
-                                                </div>
-
-                                        </li>
-                                ))}
-                        </ul>
-                )
-        }
+                  <ul className="friends-list">
+                    {props.friends && props.friends.length > 0 ? (
+                      props.friends.map((friend) => (
+                        <li className="friend-block" key={friend.name}>
+                          <div className="friend-img">
+                            <img src={`${process.env.REACT_APP_BACK}user/${friend.id}/avatar`} alt={friend.name} />
+                          </div>
+                          <div className="friend-info">
+                            <div className="friend-name">{friend.name}</div>
+                            <div className={"color-status " + friend.UserStatus}>{friend.UserStatus}</div>
+                          </div>
+                        </li>
+                      ))
+                    ) : (
+                      <></>
+                    )}
+                  </ul>
+                );
+              };
+              
 
 
 

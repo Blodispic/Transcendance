@@ -31,6 +31,7 @@ export function Log() {
                 userId: myStore.user?.id,
                 code: code,
             }),
+            credentials: 'include',
         })
             .then(async response => {
                 const data = await response.json();

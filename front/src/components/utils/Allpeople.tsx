@@ -32,6 +32,7 @@ export default function AllPeople(props: { friend: IUser[] | undefined, setFrien
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
+                    credentials: 'include',
                 },
         })
         const data = await response.json();

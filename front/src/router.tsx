@@ -5,7 +5,7 @@ import Profile from './components/Profile/Profile'
 import Connection from './components/connection/Connection';
 import Header from './components/Header/Header';
 import Chat from './components/Chat/Chat';
-import { createBrowserRouter, Outlet } from "react-router-dom";
+import { createBrowserRouter, Outlet, useRouteError } from "react-router-dom";
 import Queue from './components/Game/Queue';
 import { Navigate } from "react-router-dom";
 import { useAppSelector } from './redux/Hook';
@@ -23,6 +23,12 @@ const Layout = () => (
   </>
 );
 
+function ErrorBoundary() {
+  let error = useRouteError();
+  console.error(error);
+  // Uncaught ReferenceError: path is not defined
+  return <div>Dang!</div>;
+}
 
 
 const ProtectedRoute = (props: { children: any }) => {
@@ -62,7 +68,8 @@ const router = createBrowserRouter([
     element:
       <PublicRoute>
         <Connection />
-      </PublicRoute>
+      </PublicRoute>,
+      errorElement: <ErrorBoundary />,
   },
   {
     path: "/sign",
@@ -136,6 +143,7 @@ const router = createBrowserRouter([
           <ProtectedRoute>
             <Profile />
           </ProtectedRoute>,
+          errorElement: <ErrorBoundary />,
       },
       {
         path: "/Game",
