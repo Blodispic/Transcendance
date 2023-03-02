@@ -113,9 +113,9 @@ function PublicChannelList() {
 				method: 'GET',
 			})
 			const data = await response.json();
+			// console.log('data: ', data);
 			setChanList(data);
 		}
-		// console.log('here');
 		fetchPublic();
 	}, []);
 
@@ -219,8 +219,6 @@ function PublicChannelList() {
 // }
 
 function ChannelMemberList(props: { channel: IChannel }) {
-	// const [currentChan, setCurrentChan] = useState<IChannel | undefined>(undefined)
-	// const currentChan = useAppSelector(state => state.channel);
 	const [currentId, setCurrentId] = useState<number | undefined>(undefined);
 	const [members, setMembers] = useState<IUser[]>([]);
 
@@ -230,17 +228,6 @@ function ChannelMemberList(props: { channel: IChannel }) {
 		else
 			setCurrentId(id);
 	}
-
-	// useEffect(() => {
-	// 	const getChannel = async () => {
-	// 		const response = await fetch(`${process.env.REACT_APP_BACK}channel/${props.chanId}`, {
-	// 			method: 'GET',
-	// 		})
-	// 		const data = await response.json();
-	// 		setCurrentChan(data);
-	// 	}
-	// 	getChannel();
-	// }, [props]);
 
 	if (props.channel !== undefined && members == undefined)
 		setMembers(props.channel?.users);
@@ -265,7 +252,7 @@ function ChannelMemberList(props: { channel: IChannel }) {
 						<li>
 							{user.username}
 							{
-								props.channel.admin?.find(obj => obj === user) &&
+								props.channel.admin?.find(obj => obj.id === user.id) &&
 								<FaCrown />
 							}
 						</li>
@@ -290,10 +277,13 @@ export function Channels(props: any) {
 				method: 'GET',
 			})
 			const data = await response.json();
+			// console.log('data: ', data);
 			setCurrentChan(data);
 		}
 		getChannel();
 	}, [props]);
+
+	console.log('channel: ', currentChan);
 
 	return (
 		<div id="chat-container">

@@ -104,6 +104,7 @@ export class ChannelService {
 	getById(id: number) {
 		return this.channelRepository.findOne({
 			relations: {
+				admin: true,
 				users: true,
 				muted: true,
 				banned: true,
