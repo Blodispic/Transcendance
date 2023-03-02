@@ -21,6 +21,7 @@ import { MuteUserDto } from "./dto/mute-user.dto";
 import { Channel } from "./channel/entities/channel.entity";
 import { GiveAdminDto } from "./dto/give-admin.dto";
 import { InviteDto } from "./dto/invite-user.dto";
+import { Any } from "typeorm";
 var bcrypt = require('bcryptjs');
 
 @WebSocketGateway({

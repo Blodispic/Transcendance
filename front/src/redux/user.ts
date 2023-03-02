@@ -53,6 +53,7 @@ export const userSlice = createSlice({
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify( {status: payload }),
+                credentials: 'include',
             })
             .then(response => { return response.json()} )
         },
