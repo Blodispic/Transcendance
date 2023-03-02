@@ -63,6 +63,11 @@ export class UserController {
     return await this.userService.getResults(id)
   }
 
+  @Get('channel/:id')
+  async getChannel(@Param('id') id: number) {
+    return await this.userService.getChannel(id)
+  }
+
   @Post('access_token')
   @UseGuards(JwtGuard)
   GetbyAccessToken(@Body() token: any) {
