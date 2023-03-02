@@ -13,7 +13,7 @@ export default function AllPeople(props: { friend: IUser[], setFriend: Function,
         if (allfriend.find(allfriend => allfriend.id === myfriend.id) === undefined )
         {
             setAllFriend([...allfriend, myfriend])
-            props.setFriend([...allfriend, myfriend]);
+            props.setFriend([...allfriend, myfriend]);s
         }
     }
 
