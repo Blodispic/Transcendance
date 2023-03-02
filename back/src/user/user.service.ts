@@ -257,7 +257,7 @@ export class UserService {
 
     await this.friendRequestRepository.save(friendRequest);
     const frienRequestPush: FriendRequest | null = await this.friendRequestRepository.findOne({
-      where: [{ creator: creator }, { receiver: friend }]
+      where: [{ creator: creator, receiver: friend }]
     });
     if (frienRequestPush) {
       if (!friend.receiveFriendRequests)
@@ -281,7 +281,7 @@ export class UserService {
     }
 
     const friendRequest = await this.friendRequestRepository.findOne({
-      where: [{ creator: creator }, { receiver: { id: friendId } }]
+      where: [{ creator: creator, receiver: { id: friendId } }]
     });
     if (!friendRequest) {
       throw new NotFoundException( "Friend request does not exist" );
