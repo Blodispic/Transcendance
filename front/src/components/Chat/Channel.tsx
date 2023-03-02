@@ -25,7 +25,6 @@ function JoinedChannelList() {
 			const response = await fetch(`${process.env.REACT_APP_BACK}user/channel/${currentUser.user?.id}`, {
 				method: 'GET',
 			})
-			console.log('joined: ', response);
 			const data = await response.json();
 			setChanList(data);
 		}

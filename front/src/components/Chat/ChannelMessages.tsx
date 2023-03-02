@@ -15,6 +15,7 @@ export function ChannelMessages(props: { chanId: any }) {
 	const [currentChan, setCurrentChan] = useState<IChannel | undefined>(undefined);
 	const currentUser = useAppSelector(state => state.user);
 	const [popup, setPopup] = useState(false);
+	const [announce, setAnnounce] = useState<string[]>([]);
 
 	useEffect(() => {
 		const getChannel = async () => {
@@ -25,6 +26,7 @@ export function ChannelMessages(props: { chanId: any }) {
 			if (currentChan?.id !== props.chanId) {
 				setCurrentChan(data);
 				setMessageList(messageList => []);
+				setAnnounce(announce => []);
 			}
 		}
 		getChannel();
@@ -41,6 +43,16 @@ export function ChannelMessages(props: { chanId: any }) {
 
 	socket.on('sendMessageChannelOK', (messageDto) => {
 		setMessageList([...messageList, messageDto]);
+	})
+
+	socket.on("joinChannel", (data) => {
+		let text = data.username + " has joined";
+		setAnnounce([...announce, text]);
+	})
+
+	socket.on("leaveChannel", (data) => {
+		let text = data.username + " has left";
+		setAnnounce([...announce, text]);
 	})
 
 	return (
@@ -85,6 +97,12 @@ export function ChannelMessages(props: { chanId: any }) {
 							{message.message}
 						</div>
 					))}
+					{announce && announce.map(announce => (
+						<div key={announce} className="announce-text">
+							{announce}
+						</div>
+					))
+				}
 				</div>
 			</div>
 			{
