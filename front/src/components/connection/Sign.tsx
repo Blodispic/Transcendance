@@ -25,6 +25,7 @@ export default function Sign() {
             await fetch(`${process.env.REACT_APP_BACK}user/${myUser.user.id}/avatar`, {
                 method: 'PATCH',
                 body: formData,
+                credentials: 'include',
             })
             formData.delete('file');
             dispatch(change_avatar(avatar));
@@ -37,6 +38,7 @@ export default function Sign() {
                         'Content-Type': 'application/json',
                     },
                     body: JSON.stringify({ username: newname }),
+                    credentials: 'include',
                 })
                     .then(async response => {
                         if (!response.ok)

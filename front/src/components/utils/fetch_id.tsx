@@ -13,6 +13,7 @@ export default function Fetchid(id: number) {
                 method: 'Get',
                 headers: {
                     'Content-Type': 'application/json',
+                    credentials: 'include',
                 },
             })
 

@@ -16,6 +16,7 @@ function Search(props: { currentUser: IUser, setcurrentUser: Function }) {
                 e.preventDefault();
                 const response = await fetch(`${process.env.REACT_APP_BACK}user/username/${username}`, {
                         method: 'GET',
+                        credentials: 'include',
                 })
                 const data = await response.json()
 
