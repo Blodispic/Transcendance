@@ -58,7 +58,7 @@ export function Header(props: { currentUser: IUser, setCurrentUser: Function }) 
         const formattedPercentage = winPercentage.toFixed(2) + '%';
 
         const spectate = () => {
-                socket.emit("spectateGame", currentUser);
+                socket.emit("spectateGame", currentUser.id);
         }
         const rank = () => {
                 if (currentUser.elo >= 1900)

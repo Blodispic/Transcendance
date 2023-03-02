@@ -183,9 +183,9 @@ async handleBanUser(@ConnectedSocket() client: Socket, @MessageBody() banUserDto
   let timer = 60000;
   if (banUserDto.timeout)
     timer = banUserDto.timeout;
-  setTimeout(() => {
-    this.channelService.unbanUser(user)
-  }, timer);
+  // setTimeout(() => {
+    // this.channelService.unbanUser(user)
+  // }, timer);
   client.emit("banUserOK", user.id, channel.id);
 }
 
