@@ -77,6 +77,10 @@ export default function Profile() {
                         setCurrentUser(await response.json());
                 }
         useEffect(() => {
+                socket.on("RoomStart", (roomId: number, player: Player) => {
+                        navigate("/game/" + roomId, { state: { Id: roomId } });
+                });
+
                 if (id)
                         fetchid();
                 setPages(page.PAGE_1);

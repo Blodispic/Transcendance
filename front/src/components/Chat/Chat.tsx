@@ -6,10 +6,12 @@ import { DirectMessage } from "./DirectMessage";
 import 'react-tabs/style/react-tabs.css';
 import { useNavigate, useParams } from "react-router-dom";
 import { page } from "../../interface/enum";
+import { Player } from "../Game/Game";
 
 export function ChatBody(props: any) {
 
 	const [newInput, setNewInput] = useState("");
+    const navigate = useNavigate();
 	const [messageList, setMessageList] = useState<any[]>([]);
 	let { id } = useParams();
 
@@ -59,6 +61,12 @@ export default function Chat() {
 	const navigate = useNavigate();
 	const [current, setOnglet] = useState<page>(page.PAGE_1);
 	const { id } = useParams();
+
+	useEffect(() => {
+		socket.on("RoomStart", (roomId: number, player: Player) => {
+            navigate("/game/" + roomId, { state: { Id: roomId } });
+        });
+	})
 
 	return (
 		<div className="chat-tab">
