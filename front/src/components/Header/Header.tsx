@@ -6,7 +6,6 @@ import { BsChevronRight, BsChevronLeft } from "react-icons/bs";
 import { Cookies } from 'react-cookie';
 import { delete_user } from '../../redux/user';
 import { socket } from '../../App';
-import { Player } from '../Game/Game';
 
 export default function Header() {
 
