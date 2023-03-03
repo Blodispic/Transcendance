@@ -19,7 +19,7 @@ export default function Queue() {
     
 
     function addToWaitingRoom() {
-        socket.emit("addToWaitingRoom", myUser.user);
+        socket.emit("addToWaitingRoom");
         return;
     }
 

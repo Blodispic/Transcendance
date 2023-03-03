@@ -45,18 +45,19 @@ export class PongGateway implements OnGatewayDisconnect, OnGatewayInit {
 	}
 
 	@SubscribeMessage("addToWaitingRoom")
-	HandleAddToWaitingRoom(@MessageBody() user: User, @ConnectedSocket() client: Socket) {
-		this.gameService.addToWaitingRoom(userList[userList.indexOf(client)]);
+	HandleAddToWaitingRoom(@ConnectedSocket() client: Socket) {
+		// this.gameService.addToWaitingRoom(userList[userList.indexOf(client)]);
+		this.gameService.addToWaitingRoom(client);
 		this.gameService.startGame(this.server);
 	}
 
 	@SubscribeMessage("spectateGame")
 	async HandleSpectator(@MessageBody() playerId: number, @ConnectedSocket() client: Socket) {
 		let i: number = 0;
-		// let player: User | null = await this.userService.getById(playerId);
-		// let player = userList[userList.indexOf(playerId)].handshake.auth.user;
-		let player = this.findByID(playerId);
-		console.log(player.username);
+		let player: User | null = await this.userService.getById(playerId);
+		// let player = this.findByID(playerId);
+		if (player === null)
+			throw new BadRequestException("UserToSpectate not found");
 		while (i < this.gameService.gameRoom.length && player) {
 			if (this.gameService.gameRoom[i].gameState.player1.name === player.username
 				|| this.gameService.gameRoom[i].gameState.player2.name === player.username) {
@@ -79,10 +80,10 @@ export class PongGateway implements OnGatewayDisconnect, OnGatewayInit {
 	}
 
 	@SubscribeMessage("createCustomGame")
-	HandleCustomGame(@MessageBody() payload: any, @ConnectedSocket() client: Socket) {
-		// let user2: User = this.findByID(payload.user2);
+	async HandleCustomGame(@MessageBody() payload: any, @ConnectedSocket() client: Socket) {
+		// let user2: User | null = await this.userService.getById(payload.user2);
 		// if (user2 === null)
-		// 	throw new BadRequestException("User2 doesn't exist");
+		// 	throw new BadRequestException("UserToSpectate not found");
 		const socket = this.findSocketFromUser(payload.user2);
 		if (socket != null)
 			this.server.to(socket.id).emit("invitationInGame", payload);
