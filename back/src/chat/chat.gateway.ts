@@ -96,7 +96,7 @@ async handleJoinChannel(@ConnectedSocket() client: Socket, @MessageBody() joinCh
 @SubscribeMessage('createChannel')
 async handleCreateChannel(@ConnectedSocket() client: Socket, @MessageBody() createChannelDto: CreateChannelDto) {    
   const channel = await this.channelService.getByName(createChannelDto.chanName);
-  console.log("user list", createChannelDto.users );
+  console.log("user lists", createChannelDto.users );
   
   if (channel != null)
     throw new BadRequestException("An existing channel already have this name"); //channame already exist, possible ? if private/protected possible ?
@@ -105,11 +105,13 @@ async handleCreateChannel(@ConnectedSocket() client: Socket, @MessageBody() crea
   if (user === null)
     throw new BadRequestException("No such user");
   const new_channel = await this.channelService.create(createChannelDto, user);
-  client.join("chan" + new_channel.id);
-  console.log("le chane en entier", new_channel);
-  if (new_channel.chanType == 1 && createChannelDto.users)
+  if (new_channel.chanType == 1 && createChannelDto.users && createChannelDto.users.length > 0)
+  {
+    console.log("length = ", createChannelDto.users.length);
+    console.log("length = ", createChannelDto.users);
+    
     this.inviteToChan(createChannelDto.users, new_channel.id);
-  client.emit("createChannelOk", new_channel.id);
+  } 
 }
 
 @SubscribeMessage('leaveChannel')
@@ -244,7 +246,7 @@ async inviteToChan(users: User[], chanid: number)
 {
   
   users.forEach(user => {
-    
+    console.log("user,", user);
     let socketIdToWho = this.findSocketFromUser(user);
     if (socketIdToWho)
       this.server.to(socketIdToWho.id).emit("invited", chanid);

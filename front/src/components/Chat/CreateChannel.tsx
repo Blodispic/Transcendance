@@ -9,7 +9,7 @@ export function PopupCreateChannel(props: any) {
 	const [chanName, setChanName] = useState("");
 	const [password, setPassword] = useState("");
 	const [chanMode, setChanMode] = useState(0);
-    const [friend, setFriend] = useState<IUser[] | undefined >([]);
+    const [friend, setFriend] = useState<IUser[] >([]);
 	const [myVar, setMyvar] = useState<boolean> (false);
 
 	const handlePublic = () => {
@@ -55,7 +55,7 @@ export function PopupCreateChannel(props: any) {
 				{
 					chanMode === 1 &&
 					<div className="allpoeple">
-					<AllPeople friend={friend} setFriend={setFriend} myVar={myVar} setMyvar={setMyvar}  />
+					<AllPeople friend={undefined} setFriend={setFriend} myVar={myVar} setMyvar={setMyvar}  />
 					</div>
 				}
 				<button onClick={() => handleCreateNewChan()}>Create Channel</button><span></span>
