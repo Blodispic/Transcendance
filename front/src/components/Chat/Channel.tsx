@@ -247,8 +247,8 @@ function ChannelMemberList(props: { channel: IChannel }) {
 	return (
 		<div className="title"> Members <hr />
 			{props.channel && props.channel.users?.map(user => (
-				<div className="user-list">
-					<ul key={user.id} onClick={e => { changeId(user.id) }}>
+				<div key={user.id} className="user-list">
+					<ul onClick={e => { changeId(user.id) }}>
 						<li>
 							{user.username}
 							{
@@ -277,7 +277,6 @@ export function Channels(props: any) {
 				method: 'GET',
 			})
 			const data = await response.json();
-			// console.log('data: ', data);
 			setCurrentChan(data);
 		}
 		getChannel();

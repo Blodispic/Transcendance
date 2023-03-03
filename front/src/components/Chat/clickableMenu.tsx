@@ -36,15 +36,17 @@ export default function CLickableMenu(props: { user: IUser, chan: IChannel }) {
                             {/* ---admin menu--- show if  [myUser] === [owner] || ([myuser] === [admin] &&  [currentuser] !== [admin] ) */}
                             {
                                 // props.chan.owner == myUser &&
+                                props.chan.admin?.find(obj => obj.id === myUser?.id) &&
                                 <>
-                                    {/* show if [currentUser] !=== admin */}
                                     {
-
+                                        props.chan.admin?.find(obj => obj.id === props.user.id) == undefined &&
+                                        <>
                                         <li>
                                             <a onClick={_ => AddAdmin(props.chan.id, props.user.id)}>
                                                 Add to Admin
                                             </a>
                                         </li>
+                                        </>
                                     }
                                     <li>
                                         <a onClick={() => MuteUser(props.chan.id, user.id)}>
