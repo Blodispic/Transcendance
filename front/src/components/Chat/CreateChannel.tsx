@@ -9,7 +9,7 @@ export function PopupCreateChannel(props: any) {
 	const [chanName, setChanName] = useState("");
 	const [password, setPassword] = useState("");
 	const [chanMode, setChanMode] = useState(0);
-    const [friend, setFriend] = useState<IUser[] >([]);
+    const [friend, setFriend] = useState<IUser[] | undefined >([]);
 	const [myVar, setMyvar] = useState<boolean> (false);
 
 	const handlePublic = () => {
@@ -29,7 +29,7 @@ export function PopupCreateChannel(props: any) {
 	}, [friend] )
 
 	const handleCreateNewChan = () => {
-		console.log("friend", [friend]);
+		console.log("friend", friend);
 		if (chanName != "")
 			socket.emit('createChannel', { chanName: chanName, chanType: chanMode, password: password, users: [friend] });
 		setChanName("");

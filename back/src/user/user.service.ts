@@ -212,8 +212,6 @@ export class UserService {
   }
 
   async sendFriendRequest(friendId: number, creatorId: number) {
-    console.log("friendId = ", friendId);
-    console.log("creatorId = ", creatorId);
     if (friendId == creatorId) {
       return ({ message: "You can't add yourself" });
     }
@@ -248,7 +246,7 @@ export class UserService {
         creator: true,
         receiver: true,
       },
-      where: [{ creator: creator }, { receiver: friend }]
+      where: [{ creator: creator, receiver: friend }]
     });
 
     if (existingRequest) {
@@ -295,15 +293,10 @@ export class UserService {
   }
 
   async GetFriendsRequest(userId: number) {
-    const user = await this.usersRepository.findOneBy({
-      id: userId,
-    })
-    if (!user) {
-      throw new NotFoundException("user doesn't exists");
-    }
+    
     const receiver = await this.usersRepository.findOne({
       relations: ['receiveFriendRequests', 'receiveFriendRequests.creator', 'friends'],
-      where: { id: user.id }
+      where: { id: userId }
     });
     if (!receiver) {
       return [];
@@ -331,6 +324,35 @@ export class UserService {
     });
   }
 
+  async GetFriends(userId: number) {
+    const user = await this.usersRepository.findOne({
+      relations: ['friends'],
+      where: { id: userId }
+    });
+    if (!user) {
+      return [];
+    }
+    return user.friends.map(request => {
+      if (request.avatar) {
+        return {
+          name: request.username,
+          avatar: request.avatar,
+          id: request.id,
+          UserStatus: request.status,
+        };
+      }
+      else {
+        return {
+          name: request.username,
+          avatar: request.intra_avatar,
+          id: request.id,
+          UserStatus: request.status,
+        };
+      }
+      return {};
+    });
+  }
+  
   async GetMatchRequest(userId: number) {
     const my_user = await this.usersRepository.findOne({
       relations: ['results'],
@@ -353,8 +375,9 @@ export class UserService {
         winner_elo: winner ? request.winner_elo : 0,
         loser_elo: loser ? request.loser_elo : 0
       };
-    }));
+    }))
   }
+  
 
   async updateFriendRequestStatus(friendId: number, receiverId: number, status: FriendRequestStatus) {
     const receiver = await this.usersRepository.findOneBy({
@@ -409,12 +432,6 @@ export class UserService {
       await this.usersRepository.save(friend);
       return await this.usersRepository.save(realUser);
     }
-    // if (!user)
-    //   console.log("User doesn't exists");
-    // if (!friend)
-    //   console.log("Friend doesn't exists");
-    // if (user.id == friendId)
-    //   console.log("user can't be friend with himself");
     return realUser;
   }
 
@@ -442,12 +459,6 @@ export class UserService {
       user.friends.push(friend);
       return await this.usersRepository.save(user);
     }
-    // if (!user)
-    //   console.log("User doesn't exists");
-    // if (!friend)
-    //   console.log("Friend doesn't exists");
-    // if (id == friendId)
-    //   console.log("user can't be friend with himself");
     return user;
   }
 

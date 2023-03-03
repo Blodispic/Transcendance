@@ -23,6 +23,12 @@ const Layout = () => (
   </>
 );
 
+function ErrorBoundary() {
+  let error = useRouteError();
+  console.error(error);
+  // Uncaught ReferenceError: path is not defined
+  return <div>Dang!</div>;
+}
 
 
 const ProtectedRoute = (props: { children: any }) => {
@@ -56,12 +62,6 @@ const OauthRoute = (props: { children: any }) => {
 };
 
 
-function ErrorBoundary() {
-  let error = useRouteError();
-  console.error(error);
-  // Uncaught ReferenceError: path is not defined
-  return <div>Dang!</div>;
-}
 
 const router = createBrowserRouter([
   {
@@ -71,7 +71,7 @@ const router = createBrowserRouter([
       <PublicRoute>
         <Connection />
       </PublicRoute>,
-    errorElement: <ErrorBoundary />,
+      errorElement: <ErrorBoundary />,
   },
   {
     path: "/sign",
@@ -150,8 +150,7 @@ const router = createBrowserRouter([
           <ProtectedRoute>
             <Profile />
           </ProtectedRoute>,
-        errorElement: <ErrorBoundary />,
-
+          errorElement: <ErrorBoundary />,
       },
       {
         path: "/Game",

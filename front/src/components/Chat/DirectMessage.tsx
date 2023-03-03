@@ -19,6 +19,7 @@ function DMList(props: {currentdm: IUser | undefined; setCurrentDm: Function}) {
 				headers: {
 					'Content-Type': 'application/json',
 				},
+				credentials: 'include',
 			})
 			const data = await response.json();
 			setAlluser(data.filter((User: { status: string; }) => User.status === "Online"));

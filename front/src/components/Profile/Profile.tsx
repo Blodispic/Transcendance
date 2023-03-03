@@ -53,7 +53,7 @@ function Onglets(props: { currentUser: IUser, current: page, setOnglets: Functio
                                 <button className={`pointer ${current === page.PAGE_4 ? "" : "not-selected"}`}
                                         onClick={e => setOnglets(page.PAGE_4)} >
                                         <a >
-                                                settings
+                                                Settings
                                         </a>
                                 </button>
                         }
@@ -68,13 +68,14 @@ export default function Profile() {
         let { id } = useParams();
         const [pages, setPages] = useState<page>(page.PAGE_1);
         const myUser = useAppSelector(state => state.user);
-
-        const fetchid = async () => {
-                const response = await fetch(`${process.env.REACT_APP_BACK}user/id/${id}`, {
-                        method: 'GET',
-                })
-                setCurrentUser(await response.json());
-        }
+        
+                const fetchid = async () => {
+                        const response = await fetch(`${process.env.REACT_APP_BACK}user/id/${id}`, {
+                                method: 'GET',
+                                credentials: 'include',
+                        })
+                        setCurrentUser(await response.json());
+                }
         useEffect(() => {
                 console.log("ca rentre dans le use EFFeect ")
                 if (id)

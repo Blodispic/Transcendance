@@ -29,6 +29,7 @@ export default function Queue() {
             if (myUser.user) {
                 await fetch(`${process.env.REACT_APP_BACK}game/${myUser.user.id}}`, {
                     method: 'POST',
+                    credentials: 'include'
                 })
             }
         }

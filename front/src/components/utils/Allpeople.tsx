@@ -3,49 +3,51 @@ import { AiFillPlusCircle } from "react-icons/ai";
 import { IUser, UserStatus } from "../../interface/User";
 import { useAppSelector } from "../../redux/Hook";
 
-export default function AllPeople(props: { friend: IUser[], setFriend: Function, myVar: boolean, setMyvar: Function }) {
+export default function AllPeople(props: { friend: IUser[] | undefined, setFriend: Function, myVar: boolean, setMyvar: Function }) {
     const myUser = useAppSelector(state => state.user);
-    const [alluser, setAlluser] = useState<IUser[] >([]);
-    const [allfriend, setAllFriend] = useState<IUser[]> ([]);
+    const [alluser, setAlluser] = useState<IUser[]>([]);
+    // const [allfriend, setAllFriend] = useState<IUser[]> ([]);
 
     const addfriend = (myfriend: IUser) => {
 
-        if (allfriend.find(allfriend => allfriend.id === myfriend.id) === undefined )
-        {
-            setAllFriend([...allfriend, myfriend])
-            props.setFriend([...allfriend, myfriend]);s
+        if (props.friend && props.friend.find(friend => friend.id === myfriend.id) === undefined) {
+            // setAllFriend([...allfriend, myfriend])
+            // console.log("mes amis", allfriend);
+            props.setFriend([...props.friend, myfriend]);
         }
     }
+
 
     const removeFriend = (myfriend: IUser) => {
-
-        if (allfriend.find(allfriend => allfriend.id === myfriend.id) !== undefined) {
-            setAllFriend(allfriend.filter(allfriend => allfriend.id !== myfriend.id))
-            props.setFriend(allfriend.filter(allfriend => allfriend.id !== myfriend.id))
+        if (props.friend && props.friend.find(friend => friend.id === myfriend.id) === undefined) {
+            // setAllFriend(allfriend.filter(allfriend => allfriend.id !== myfriend.id))
+            props.setFriend(props.friend.filter(friend => friend.id !== myfriend.id))
         }
     }
 
-    useEffect(() => { 
-        props.setFriend(...allfriend);
-    }, [allfriend])
+
+    // useEffect(() => {
+    //     props.setFriend(...allfriend);
+    // }, [allfriend])
 
     useEffect(() => {
-    const get_all = async () => {
-        const response = await fetch(`${process.env.REACT_APP_BACK}user`, {
+        const get_all = async () => {
+            const response = await fetch(`${process.env.REACT_APP_BACK}user`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-        })
-        const data = await response.json();
-        // setAlluser(data.filter((User: { }) => ));
-        setAlluser(data.filter((User: { username: string; status: string;  }) => User.status === "Online" && User.username !== myUser.user?.username ));
-    }
-    if (props.friend?.length  === undefined || props.friend.length === 0 )
-        get_all();
-    else
-        props.setFriend(props.friend);
-}, [] )
+                credentials: 'include',
+            })
+            const data = await response.json();
+            // setAlluser(data.filter((User: { }) => ));
+            setAlluser(data.filter((User: { username: string; status: string; }) => User.status === "Online" && User.username !== myUser.user?.username));
+        }
+        if (props.friend?.length === undefined || props.friend.length === 0)
+            get_all();
+        // else
+            // props.setFriend(props.friend);
+    }, [])
 
 
     return (
@@ -58,10 +60,9 @@ export default function AllPeople(props: { friend: IUser[], setFriend: Function,
                         window.location.href.search('Game') !== -1 &&
                         <a> Vs </a>
                     }
-                    {allfriend && allfriend.map(user => (
+                    {props.friend && props.friend.map(user => (
 
                         <img className='cursor-onsomoene avatar avatar-manu' src={`${process.env.REACT_APP_BACK}user/${user.id}/avatar`} onClick={_ => removeFriend(user) }/>
-
                     ))}
                 </>
             }
