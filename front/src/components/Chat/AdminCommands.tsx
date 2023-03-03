@@ -4,19 +4,20 @@ import { socket } from "../../App";
 import { IChannel } from "../../interface/Channel";
 
 export function BanUser(chanid: any, userid: any) {
-	console.log('ban');
 	socket.emit('BanUser', {chanid: chanid, userid: userid});
 }
 
 export function MuteUser(chanid: any, userid: any) {
-	console.log('mute');
 	socket.emit('MuteUser', {chanid: chanid, userid: userid});
 	// socket.on('muteUserOK', (userId, chanId) => {});
 }
 
 export function AddAdmin(chanid: any, userid: any) {
-	console.log('add admin');
 	socket.emit('GiveAdmin', {chanid: chanid, userid: userid});
+}
+
+export function KickUser(chanid: any, userid: any) {
+	//socket.emit('KickUser')
 }
 
 function RemoveChannel() {
