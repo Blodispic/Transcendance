@@ -1,17 +1,20 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../redux/Hook';
 import { FaUserAlt } from "react-icons/fa";
 import { BsChevronRight, BsChevronLeft } from "react-icons/bs";
 import { Cookies } from 'react-cookie';
 import { delete_user } from '../../redux/user';
 import { socket } from '../../App';
+import { Player } from '../Game/Game';
 
 export default function Header() {
 
   const [dropdown, setDropdown] = useState<boolean>(false);
   const [peopleBool, setPeopleBool] = useState<boolean>(false);
   const cookies = new Cookies();
+
+  const navigate = useNavigate();
 
   const dispatch = useAppDispatch();
 
@@ -36,6 +39,12 @@ export default function Header() {
     socket.emit("UpdateSomeone", { idChange: myUser.user?.id, idChange2: 0 });
     socket.disconnect();
   }
+
+  useEffect(() => {
+    socket.on("RoomStart", (roomId: number, player: Player) => {
+      navigate("/game/" + roomId, { state: { Id: roomId } });
+  });
+  })
 
   const myUser = useAppSelector(state => state.user);
 

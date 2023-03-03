@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, NotFoundException, Param, Patch, Post, Req, Request, Res, UploadedFile, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Delete, Get, NotFoundException, Param, ParseIntPipe, Patch, Post, Req, Request, Res, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { Response } from 'express';
 import { diskStorage } from 'multer';
@@ -11,12 +11,14 @@ import { FriendRequest } from './entities/friend-request.entity';
 import { authenticator } from 'otplib';
 import { Results } from 'src/results/entities/results.entity';
 import { CreateResultDto } from 'src/results/dto/create-result.dto';
+import { JwtGuard } from 'src/Oauth/jwt-auth.guard';
 
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) { }
 
   @Post()
+  @UseGuards(JwtGuard)
   async create(@Body() createUserDto: CreateUserDto): Promise<User> {
     // try {
     return await this.userService.create(createUserDto);
@@ -26,32 +28,38 @@ export class UserController {
   }
 
   @Get()
+  @UseGuards(JwtGuard)
   findAll() {
     return this.userService.findAll();
   }
 
   @Post()
+  @UseGuards(JwtGuard)
   createUser(@Body() user: CreateUserDto) {
     return this.userService.create(user)
   }
 
   @Post('results')
+  @UseGuards(JwtGuard)
   async createResults(@Body() resultDto: CreateResultDto) {
     return await this.userService.createResult(resultDto);
   }
 
   @Get('username/:username')
+  @UseGuards(JwtGuard)
   GetbyUsername(@Param('username') username: string) {
     return this.userService.getByUsername(username);
   }
 
   @Get('id/:id')
-  findOne(@Param('id') id: number) {
+  @UseGuards(JwtGuard)
+  findOne(@Param('id', ParseIntPipe) id: number) {
     return this.userService.getById(id);
   }
 
   @Get('game/:id')
-  async getResult(@Param('id') id: number) {
+  @UseGuards(JwtGuard)
+  async getResult(@Param('id', ParseIntPipe) id: number) {
     return await this.userService.getResults(id)
   }
 
@@ -61,13 +69,14 @@ export class UserController {
   }
 
   @Post('access_token')
+  @UseGuards(JwtGuard)
   GetbyAccessToken(@Body() token: any) {
     return this.userService.GetByAccessToken(token);
   }
 
   @Post('2fa/qrcode')
+  @UseGuards(JwtGuard)
   async enable2FA(@Body() user: { userId: number }) {
-    console.log("userId = ", user.userId);
     const realUser = await this.userService.getById(user.userId);
     if (!realUser) {
       throw new NotFoundException(`User with id ${user.userId} not found`);
@@ -86,30 +95,39 @@ export class UserController {
   
 
   @Post('2fa/check')
+  @UseGuards(JwtGuard)
   async checkCode(@Body() user: { userId: number, code: string}) {
-    console.log("user.userId = ", user.userId);
-    console.log("user.code = ", user.code);
     const result = await this.userService.check2FA(user.userId, user.code);
     return { result };
   }
 
 
   @Post('friend-request/status/:id')
-  async GetFriendRequestStatus(@Param('id') id: number, @Body() user: { userId: number }) {
+  @UseGuards(JwtGuard)
+  async GetFriendRequestStatus(@Param('id', ParseIntPipe) id: number, @Body() user: { userId: number }) {
     return this.userService.GetFriendRequestStatus(id, user.userId);
   }
 
-  @Post('friends')
-  GetFriends(@Body() user: { userId: number }) {
+  @Post('friendsRequest')
+  @UseGuards(JwtGuard)
+  GetFriendsRequest(@Body() user: { userId: number }) {
     return this.userService.GetFriendsRequest(user.userId);
   }
 
+  @Post('friends')
+  @UseGuards(JwtGuard)
+  GetFriends(@Body() user: { userId: number }) {
+    return this.userService.GetFriends(user.userId);
+  }
+
   @Post('matches')
+  @UseGuards(JwtGuard)
   GetMatches(@Body() user: { userId: number }) {
     return this.userService.GetMatchRequest(user.userId);
   }
 
   @Post("friends/accept")
+  @UseGuards(JwtGuard)
   async acceptFriendRequest(@Body() body: { friendId: any, userId: number }) {
     this.userService.addFriend(body.friendId, body.userId);
     return await this.userService.updateFriendRequestStatus(body.friendId, body.userId, {
@@ -118,6 +136,7 @@ export class UserController {
   }
 
   @Post("friends/decline")
+  @UseGuards(JwtGuard)
   async declineFriendRequest(@Body() body: { friendId: number, userId: number }) {
     return await this.userService.updateFriendRequestStatus(body.friendId, body.userId, {
       status: "Declined",
@@ -125,7 +144,8 @@ export class UserController {
   }
 
   @Get(':id/avatar')
-  async getAvatar(@Param('id') id: number, @Req() req: Request, @Res() res: Response) {
+  @UseGuards(JwtGuard)
+  async getAvatar(@Param('id', ParseIntPipe) id: number, @Req() req: Request, @Res() res: Response) {
     const user = await this.userService.getById(id);
     if (user) {
       if (user.avatar) {
@@ -139,6 +159,7 @@ export class UserController {
   }
 
   @Patch(':id/avatar')
+  @UseGuards(JwtGuard)
   @UseInterceptors(
     FileInterceptor('file', {
       storage: diskStorage({
@@ -148,29 +169,31 @@ export class UserController {
       fileFilter: imageFilter,
     }),
   )
-  async setAvatar(@Param('id') id: number, @UploadedFile() file: any, @Body('username') username: string) {
+  async setAvatar(@Param('id', ParseIntPipe) id: number, @UploadedFile() file: any, @Body('username') username: string) {
     await this.userService.setAvatar(id, username, file);
     return { message: 'Avatar set successfully' };
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() user: any) {
+  @UseGuards(JwtGuard)
+  update(@Param('id', ParseIntPipe) id: string, @Body() user: any) {
     return this.userService.update(+id, user);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
+  remove(@Param('id', ParseIntPipe) id: string) {
     return this.userService.remove(+id);
   }
 
   @Post('friend-request/send/:id')
+  @UseGuards(JwtGuard)
   sendFriendRequest(
-    @Param('id') id: number, @Body() user: { userId: number }) {
+    @Param('id', ParseIntPipe) id: number, @Body() user: { userId: number }) {
       return this.userService.sendFriendRequest(id, user.userId)
   }
 
   @Delete('deletefriend/:id')
-  async deleteFriend(@Param('id') id: number, @Body() friend: User) {
+  async deleteFriend(@Param('id', ParseIntPipe) id: number, @Body() friend: User) {
     return await this.userService.removeFriend(id, friend);
   }
 }

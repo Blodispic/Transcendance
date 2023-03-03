@@ -21,6 +21,7 @@ import { MuteUserDto } from "./dto/mute-user.dto";
 import { Channel } from "./channel/entities/channel.entity";
 import { GiveAdminDto } from "./dto/give-admin.dto";
 import { InviteDto } from "./dto/invite-user.dto";
+import { Any } from "typeorm";
 var bcrypt = require('bcryptjs');
 
 @WebSocketGateway({
@@ -183,9 +184,9 @@ async handleBanUser(@ConnectedSocket() client: Socket, @MessageBody() banUserDto
   let timer = 60000;
   if (banUserDto.timeout)
     timer = banUserDto.timeout;
-  // setTimeout(() => {
-    // this.channelService.unbanUser(user)
-  // }, timer);
+  setTimeout(() => {
+    this.channelService.unbanUser({ userid: user.id, chanid: channel.id })
+  }, timer);
   client.emit("banUserOK", user.id, channel.id);
 }
 

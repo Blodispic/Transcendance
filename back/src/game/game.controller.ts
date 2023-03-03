@@ -1,5 +1,6 @@
-import { Body, Controller, Param, Post } from '@nestjs/common';
+import { Body, Controller, Param, Post, UseGuards } from '@nestjs/common';
 import { GameService } from './game.service';
+import { JwtGuard } from 'src/Oauth/jwt-auth.guard';
 
 export let user = [];
 
@@ -9,6 +10,7 @@ export class GameController {
 
 
     @Post(':id')
+    @UseGuards(JwtGuard)
     GetRoomId(@Param('id') id: number) {
         return (id);
     }

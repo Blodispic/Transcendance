@@ -42,7 +42,7 @@ export default function CustomGamePopup(props: {trigger: boolean; setTrigger: Fu
     function CreateCustomRoom(extra: any, Max: any) {
         if (myUser && friend)
         {
-            socket.emit("createCustomGame", { user1: myUser.user?.id, user2: friend[0].id, extra: extra, scoreMax: Max });
+            socket.emit("createCustomGame", { user1: myUser.user?.id, user2: friend, extra: extra, scoreMax: Max });
         }
 
         return;

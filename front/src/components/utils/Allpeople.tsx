@@ -33,6 +33,7 @@ export default function AllPeople(props: { friend: IUser[] | undefined, setFrien
                 headers: {
                     'Content-Type': 'application/json',
                 },
+                credentials: 'include',
         })
         const data = await response.json();
         setAlluser(data.filter((User: { status: string; }) => User.status === "Online"));

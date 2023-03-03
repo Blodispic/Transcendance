@@ -80,10 +80,10 @@ export class PongGateway implements OnGatewayDisconnect, OnGatewayInit {
 
 	@SubscribeMessage("createCustomGame")
 	HandleCustomGame(@MessageBody() payload: any, @ConnectedSocket() client: Socket) {
-		let user2: User = this.findByID(payload.user2);
-		if (user2 === null)
-			throw new BadRequestException("User2 doesn't exist");
-		const socket = this.findSocketFromUser(user2);
+		// let user2: User = this.findByID(payload.user2);
+		// if (user2 === null)
+		// 	throw new BadRequestException("User2 doesn't exist");
+		const socket = this.findSocketFromUser(payload.user2);
 		if (socket != null)
 			this.server.to(socket.id).emit("invitationInGame", payload);
 	}
@@ -91,10 +91,10 @@ export class PongGateway implements OnGatewayDisconnect, OnGatewayInit {
 	@SubscribeMessage("acceptCustomGame")
 	AcceptCustomGame(@MessageBody() payload: any, @ConnectedSocket() client: Socket) {
 		let user1: User = this.findByID(payload.user1);
-		let user2: User = this.findByID(payload.user2);
+		let user2: User = payload.user2;
 		if (user2 === null)
 			throw new BadRequestException("User2 doesn't exist");
-		console.log("Add " + user1.username + "and " + user2.username + " to custom game.");
+		console.log("Add " + user1.username + " and " + user2.username + " to custom game.");
 		let userSocket1: any = userList[0]; //By default both user are the first user of the list
 		let userSocket2: any = userList[0]; //By default both user are the first user of the list
 		let i: number = 0;

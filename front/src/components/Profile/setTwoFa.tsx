@@ -16,6 +16,7 @@ export default function TwoFa() {
             method: 'PATCH',
             headers: {
                 'Content-Type': 'application/json',
+                credentials: 'include',
             },
             body: JSON.stringify({
                 twoFaEnable: false,
@@ -42,6 +43,7 @@ export default function TwoFa() {
                 userId: myStore.user?.id,
                 code: code,
             }),
+            credentials: 'include',
         })
             .then(async response => {
                 if (response.ok) {
@@ -53,6 +55,7 @@ export default function TwoFa() {
                             method: 'PATCH',
                             headers: {
                                 'Content-Type': 'application/json',
+                                credentials: 'include',
                             },
                             body: JSON.stringify({ twoFaEnable: true }),
                         })
@@ -69,6 +72,7 @@ export default function TwoFa() {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({ userId: myStore.user?.id }),
+            credentials: 'include',
         })
             .then(async response => {
                 if (response.ok) {

@@ -53,7 +53,7 @@ function Onglets(props: { currentUser: IUser, current: page, setOnglets: Functio
                                 <button className={`pointer ${current === page.PAGE_4 ? "" : "not-selected"}`}
                                         onClick={e => setOnglets(page.PAGE_4)} >
                                         <a >
-                                                settings
+                                                Settings
                                         </a>
                                 </button>
                         }
@@ -72,6 +72,7 @@ export default function Profile() {
                 const fetchid = async () => {
                         const response = await fetch(`${process.env.REACT_APP_BACK}user/id/${id}`, {
                                 method: 'GET',
+                                credentials: 'include',
                         })
                         setCurrentUser(await response.json());
                 }
