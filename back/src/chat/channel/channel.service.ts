@@ -69,6 +69,11 @@ export class ChannelService {
 		if (channel == null || user == null)
 			throw new NotFoundException("No such Channel or User");
 		channel.users.splice(channel.users.indexOf(user, 0) ,1);
+		// console.log("admin: ", channel.admin.indexOf(user, 0));
+		console.log("admin: ", channel.admin);
+		// console.log("admin: ", channel.admin[channel.admin.indexOf(user, 0)].username);
+		// channel.admin.splice(channel.admin.indexOf(user, 0) ,1);
+
 		return this.channelRepository.save(channel);
 	}
 

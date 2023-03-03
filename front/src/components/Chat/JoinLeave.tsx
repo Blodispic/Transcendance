@@ -8,9 +8,18 @@ import { useAppSelector } from "../../redux/Hook";
 
 export function CheckPassword(props: {trigger: boolean, setTrigger: Function, channel: IChannel}) {
 	const [password, setPassword] = useState("");
+	const [correctPass, setCorrectPass] = useState(false);
 	
 	const handleJoinWithPass = () => {
 		socket.emit('joinChannel', {chanid: props.channel.id, channame: props.channel.name, password: password})
+		/**
+		 * need to add error for wrong password;
+		 * 
+		 * if (correctPass === false) {
+		 * 		"incorrect password"
+		 * }
+		 * 
+		 */
 		
 		setPassword("");
 		props.setTrigger(false);
@@ -83,34 +92,38 @@ export function LeaveChannel (props: {currentUser: any, chanid: any}) {
 	);
 }
 
-export function JoinLeave(props: {currentUser: any, channel: IChannel}) {
-	const [buttonText, setButtonText] = useState("Join");
-	// const [isOnChan, setIsOnChannel] = useState(false);
+export function JoinLeave(props: {currentUser: any, channel: IChannel, onChan: boolean}) {
+	const [isOnChan, setIsOnChannel] = useState(props.onChan);
+
+	// if (props.channel?.users.find(elem => elem.id == props.currentUser.id))
+	// 	setIsOnChannel(true);
 	
-	// const handleClick = () => {
-	// 	setIsOnChannel(!isOnChan);
-	// }
+	const handleClick = () => {
+		setIsOnChannel(!isOnChan);
+	}
+	return (
+		<div onClick={handleClick}>{isOnChan ? <LeaveChannel currentUser={props.currentUser} chanid={props.channel.id} /> :  <JoinChannel currentUser={props.currentUser} channel={props.channel} />}</div>
+	);
+
+
 	// return (
-	// 	<button onClick={handleClick}>{isOnChan ? "Leave" : "Join"}</button>
+	// 	<>
+	// 		{
+	// 			props.channel.id !== undefined &&
+	// 			<>
+	// 				{
+	// 					props.channel?.users.find(elem => elem.id == props.currentUser.id) &&
+	// 					<LeaveChannel currentUser={props.currentUser} chanid={props.channel.id} />
+	// 				}
+	// 				{
+	// 					props.channel?.users.find(elem => elem.id == props.currentUser.id) === undefined &&
+	// 					<JoinChannel currentUser={props.currentUser} channel={props.channel} />
+	// 				}
+	// 			</>
+	// 		}
+
+	// 	</>
 	// );
 
-	return (
-		<>
-			{
-				props.channel.id !== undefined &&
-				<>
-					{
-						props.channel?.users.find(elem => elem.id == props.currentUser.id) &&
-						<LeaveChannel currentUser={props.currentUser} chanid={props.channel.id} />
-					}
-					{
-						props.channel?.users.find(elem => elem.id == props.currentUser.id) === undefined &&
-						<JoinChannel currentUser={props.currentUser} channel={props.channel} />
-					}
-				</>
-			}
-
-		</>
-	);
 }
 

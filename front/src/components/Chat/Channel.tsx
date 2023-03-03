@@ -19,17 +19,16 @@ function JoinedChannelList() {
 	const currentUser = useAppSelector(state => state.user);
 	const navigate = useNavigate();
 
-
-	useEffect(() => {
-		const fetchJoined = async () => {
-			const response = await fetch(`${process.env.REACT_APP_BACK}user/channel/${currentUser.user?.id}`, {
-				method: 'GET',
-			})
-			const data = await response.json();
-			setChanList(data);
-		}
-		fetchJoined();
-	}, []);
+	// useEffect(() => {
+	// 	const fetchJoined = async () => {
+	// 		const response = await fetch(`${process.env.REACT_APP_BACK}user/channel/${currentUser.user?.id}`, {
+	// 			method: 'GET',
+	// 		})
+	// 		const data = await response.json();
+	// 		setChanList(data);
+	// 	}
+	// 	fetchJoined();
+	// }, []);
 
 	return (
 		<div className="title">
@@ -220,7 +219,6 @@ function PublicChannelList() {
 
 function ChannelMemberList(props: { channel: IChannel }) {
 	const [currentId, setCurrentId] = useState<number | undefined>(undefined);
-	const [members, setMembers] = useState<IUser[]>([]);
 
 	const changeId = (id: number) => {
 		if (id == currentId)
@@ -228,15 +226,7 @@ function ChannelMemberList(props: { channel: IChannel }) {
 		else
 			setCurrentId(id);
 	}
-
-	if (props.channel !== undefined && members == undefined)
-		setMembers(props.channel?.users);
-
-	// socket.on("joinChannel", (newUser) => {
-	// 	console.log(newUser);
-	// 	setMembers([...members, newUser]);
-	// })
-
+		
 	if (props.channel?.users === undefined) {
 		return (
 			<div className="title"> Members <hr />
@@ -266,10 +256,13 @@ function ChannelMemberList(props: { channel: IChannel }) {
 			}
 		</div>
 	);
+
 }
 
 export function Channels(props: any) {
 	const [currentChan, setCurrentChan] = useState<IChannel | undefined>(undefined);
+	const [update, setUpdate] = useState(0);
+	const currentUser = useAppSelector(state => state.user);
 
 	useEffect(() => {
 		const getChannel = async () => {
@@ -279,10 +272,8 @@ export function Channels(props: any) {
 			const data = await response.json();
 			setCurrentChan(data);
 		}
-		getChannel();
-	}, [props]);
-
-	console.log('channel: ', currentChan);
+			getChannel();
+ 	}, [props]);
 
 	return (
 		<div id="chat-container">
@@ -293,14 +284,15 @@ export function Channels(props: any) {
 				<AddChannel />
 			</div>
 			{
-				currentChan !== undefined &&
+				currentChan?.id !== undefined &&
 				<>
-					{/* <ChannelMessages chanId={props.chanId} /> */}
 					<ChannelMessages channel={currentChan} />
-					<div className="sidebar right-sidebar">
-						{/* <ChannelMemberList chanId={props.chanId} /> */}
+					{
+						currentChan.users.find(obj => obj.id === currentUser.user?.id) &&
+						<div className="sidebar right-sidebar">
 						<ChannelMemberList channel={currentChan} />
 					</div>
+					}
 				</>
 			}
 		</div>

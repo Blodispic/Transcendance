@@ -7,11 +7,10 @@ import AllPeople from "../utils/Allpeople";
 
 function NewChannelFailed(props: any) {
 	
-
 	return (props.trigger) ? (
 		<div className="chat-form-popup" onClick={_ => props.setTrigger(false)}>
 			<div className="chat-form-inner" onClick={e => e.stopPropagation()}>
-				Creating a new channeld failed: Channel name already exists
+				Channel name already exists
 			</div>
 		</div>
 	) : <></>;

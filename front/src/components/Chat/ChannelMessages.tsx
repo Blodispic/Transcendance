@@ -128,28 +128,22 @@ export function ChannelMessages(props: { channel: IChannel }) {
 	const currentUser = useAppSelector(state => state.user);
 	const [popup, setPopup] = useState(false);
 	const [announce, setAnnounce] = useState<string[]>([]);
+	let onChannel: boolean = false;
 
 	const handleSubmitNewMessage = (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
 		if (newInput != "") {
-			const sendTime = new Date().toLocaleString();
+			const sendTime = new Date().toLocaleString('en-US');
 			socket.emit('sendMessageChannel', { chanid: props.channel.id, sender: currentUser.user, message: newInput, sendtime: sendTime });
 		}
 		setNewInput("");
 	}
 
+	if (props.channel.users.find(obj => obj.id === currentUser.user?.id))
+		onChannel = true;
+
 	socket.on('sendMessageChannelOK', (messageDto) => {
 		setMessageList([...messageList, messageDto]);
-	})
-
-	socket.on("joinChannel", (data) => {
-		let text = data.username + " has joined";
-		setAnnounce([...announce, text]);
-	})
-
-	socket.on("leaveChannel", (data) => {
-		let text = data.username + " has left";
-		setAnnounce([...announce, text]);
 	})
 
 	return (
@@ -166,7 +160,7 @@ export function ChannelMessages(props: { channel: IChannel }) {
 				}
 				{
 					props.channel !== undefined &&
-					<JoinLeave currentUser={currentUser.user} channel={props.channel} />
+					<JoinLeave currentUser={currentUser.user} channel={props.channel} onChan={onChannel}/>
 				}
 				{
 					props.channel?.id &&
@@ -194,11 +188,6 @@ export function ChannelMessages(props: { channel: IChannel }) {
 							{message.message}
 						</div>
 					))}
-					{/* {announce && announce.map(announce => (
-						<div key={announce} className="announce-text">
-							{announce}
-						</div>
-					))} */}
 				</div>
 			</div>
 			{
