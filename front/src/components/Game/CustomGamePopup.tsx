@@ -39,6 +39,7 @@ export default function CustomGamePopup(props: {trigger: boolean; setTrigger: Fu
     const changeExtra = (event: any) => {
         setExtra(event.target.checked);
     };
+
     function CreateCustomRoom(extra: any, Max: any) {
         if (myUser && friend)
         {
