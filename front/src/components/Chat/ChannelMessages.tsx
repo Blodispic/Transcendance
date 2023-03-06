@@ -99,7 +99,7 @@ export function ChannelMessages(props: { id: any }) {
 						message.chanid == currentChan?.id &&
 						<div key={message.message} className="__wrap">
 							<div className="message-info">
-								<img className="user-avatar" src={message.sender?.avatar} />
+								<img className="user-avatar" src={`${process.env.REACT_APP_BACK}user/${message.sender?.id}/avatar`}/>
 								<p>{message.sender?.username}</p>
 								<p className="timestamp">{message.sendtime}</p>
 							</div>

@@ -188,9 +188,9 @@ function ChannelMemberList(props: { id: any }) {
 	return (
 		<div className="title"> Members <hr />
 			{currentChan && currentChan.users.map(user => (
-				<div className="user-list">
-					<ul key={user.id} onClick={e => { changeId(user.id) }}>
-						<li>
+				<div className="user-list" key={user.id}>
+					<ul onClick={e => { changeId(user.id) }}>
+						<li >
 							{user.username}
 							{
 								currentChan.admin?.find(obj => obj === user) &&
