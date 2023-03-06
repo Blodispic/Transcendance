@@ -32,6 +32,10 @@ function App() {
       socket.on("invitationInGame", (payload: any) => {
         setInfoGame(payload);
         setTrigger(true);
+        setTimeout(() => {
+					console.log("Retardée d'une seconde.");
+					setTrigger(false)
+				  }, 10000)
       })
     }
   }, [myStore.isLog])

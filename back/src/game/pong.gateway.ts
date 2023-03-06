@@ -4,13 +4,15 @@ import { User } from "src/user/entities/user.entity";
 import { GameService } from "./game.service";
 import { userList } from "src/app.gateway";
 import { UserService } from "src/user/user.service";
-import { BadRequestException, UnauthorizedException } from "@nestjs/common";
+import { BadRequestException, UnauthorizedException, UseFilters } from "@nestjs/common";
+import { GatewayExceptionFilter } from "src/app.exceptionFilter";
 
 export interface Move {
 	left: boolean;
 	right: boolean;
 }
 
+@UseFilters(new GatewayExceptionFilter())
 @WebSocketGateway({
 	cors: { //Might remove it after merge since it's already in main.ts
 		origin: '*',
@@ -124,7 +126,7 @@ export class PongGateway implements OnGatewayDisconnect, OnGatewayInit {
 		if (this.isInInvite(payload.user2.id) || this.isInInvite(client.handshake.auth.user.id))
 		{
 			console.log("[CreateCustomGame] One of the two users is currently busy.");
-			// throw new UnauthorizedException("One of the two users is currently busy.");
+			throw new UnauthorizedException("One of the two users is currently busy.");
 
 			return;
 		}
@@ -135,6 +137,12 @@ export class PongGateway implements OnGatewayDisconnect, OnGatewayInit {
 				this.server.to(socket.id).emit("invitationInGame", payload);
 				this.inviteList.push(client.handshake.auth.user.id);
 				this.inviteList.push(payload.user2.id);
+				setTimeout(() => {
+					if (client.handshake.auth.user.id)
+						this.removeInvite(client.handshake.auth.user.id);
+					if (payload.user2.id)
+						this.removeInvite(payload.user2.id);
+				  }, 11000)
 			}
 		}
 	}
