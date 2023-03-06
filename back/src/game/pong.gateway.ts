@@ -166,7 +166,7 @@ export class PongGateway implements OnGatewayDisconnect, OnGatewayInit {
 		let userSocket2: any = userList[0]; //By default both user are the first user of the list
 		let i: number = 0;
 		while (i < userList.length) {
-			if (userList[i].handshake.auth.user.username === user1.username) {
+			if (userList[i].handshake.auth.user.id === user1.id) {
 				userSocket1 = userList[i];
 				break;
 			}
@@ -174,7 +174,7 @@ export class PongGateway implements OnGatewayDisconnect, OnGatewayInit {
 		}
 		i = 0;
 		while (i < userList.length) {
-			if (userList[i].handshake.auth.user.username === user2.username) {
+			if (userList[i].handshake.auth.user.id === user2.id) {
 				userSocket2 = userList[i];
 				break;
 			}
