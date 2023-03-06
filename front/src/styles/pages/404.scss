@@ -483,13 +483,7 @@
     }
   }
 
-  @media (max-width: 750px) {
-
-    body,
-    html,
-    {
-    max-height: 100vh;
-  }
+  @media (max-width: 750px) {}
 
   .error__content {
     position: static;
@@ -503,151 +497,81 @@
     padding-bottom: 100px;
     height: 100vh;
   }
-}
 
-@media (max-width: 650px) {
-  .message__title {
-    font-size: 36px;
-    padding-bottom: 20px;
+  @media (max-width: 650px) {
+    .message__title {
+      font-size: 36px;
+      padding-bottom: 20px;
+    }
+
+    .message__text {
+      font-size: 16px;
+      line-height: 2;
+      padding-right: 20px;
+      padding-left: 20px;
+    }
+
+    .lamp {
+      zoom: 1;
+    }
+
+    .error__content {
+      padding-top: 180px;
+    }
   }
 
-  .message__text {
-    font-size: 16px;
-    line-height: 2;
-    padding-right: 20px;
-    padding-left: 20px;
+  @media (max-width: 480px) {
+
+    .message__title {
+      font-size: 30px;
+    }
+
+    .message__text {
+      padding-left: 10px;
+      padding-right: 10px;
+      font-size: 15px;
+    }
+
+    .error__nav {
+      margin-top: 20px;
+    }
   }
 
-  .lamp {
-    zoom: 1;
+
+
+  html,
+  body {
+    height: 100%;
+    overflow: hidden;
   }
 
-  .error__content {
-    padding-top: 180px;
-  }
-}
-
-@media (max-width: 480px) {
-
-  .message__title {
-    font-size: 30px;
+  body {
+    padding: 0;
+    margin: 0;
+    background: #181828;
+    font-size: 14px;
+    line-height: 1;
   }
 
-  .message__text {
-    padding-left: 10px;
-    padding-right: 10px;
-    font-size: 15px;
+  label {
+    cursor: pointer;
   }
 
-  .error__nav {
-    margin-top: 20px;
+  a {
+    margin: 0;
+    padding: 0;
+    vertical-align: baseline;
+    background: transparent;
+    text-decoration: none;
+    color: #000;
   }
-}
 
-
-
-html,
-body {
-  height: 100%;
-  overflow: hidden;
-}
-
-body {
-  padding: 0;
-  margin: 0;
-  background: #181828;
-  font-size: 14px;
-  line-height: 1;
-}
-
-label {
-  cursor: pointer;
-}
-
-a {
-  margin: 0;
-  padding: 0;
-  vertical-align: baseline;
-  background: transparent;
-  text-decoration: none;
-  color: #000;
-}
-
-input,
-select,
-button,
-textarea {
-  margin: 0;
-  font-size: 100%;
-}
-
-html,
-div,
-span,
-applet,
-object,
-iframe,
-h1,
-h2,
-h3,
-h4,
-h5,
-h6,
-p,
-blockquote,
-pre,
-a,
-abbr,
-acronym,
-address,
-big,
-cite,
-code,
-del,
-dfn,
-em,
-font,
-img,
-ins,
-kbd,
-q,
-s,
-samp,
-small,
-strike,
-strong,
-sub,
-sup,
-tt,
-var,
-b,
-u,
-i,
-center,
-dl,
-dt,
-dd,
-ol,
-ul,
-li,
-fieldset,
-form,
-label,
-legend,
-table,
-caption,
-tbody,
-tfoot,
-thead,
-tr,
-th,
-td,
-input {
-  border: 0;
-  outline: 0;
-  font-size: 100%;
-  vertical-align: baseline;
-  background: transparent;
-}
+  input,
+  select,
+  button,
+  textarea {
+    margin: 0;
+    font-size: 100%;
+  }
 
 }

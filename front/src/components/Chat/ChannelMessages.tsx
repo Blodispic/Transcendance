@@ -45,7 +45,6 @@ export function ChannelMessages(props: { id: any }) {
 		socket.on('sendMessageChannelOK', (messageDto) => {
 			setMessageList([...messageList, messageDto]);
 		})
-		console.log("ca reload");
 		setReload(false);
 		return () => {
 			socket.off('leaveChannelOK');

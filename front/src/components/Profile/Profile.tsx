@@ -77,16 +77,14 @@ export default function Profile() {
                         setCurrentUser(await response.json());
                 }
         useEffect(() => {
-                console.log("ca rentre dans le use EFFeect ")
                 if (id)
                         fetchid();
                 setPages(page.PAGE_1);
                 if (myUser.user!.friends)
-                        console.log("est ce que c'est mon copain", myUser.user!.friends.find(allfriend => allfriend.id === currentUser!.id));
-                socket.on('UpdateSomeone', (idChange, idChange2) => {
-                        // if (idChange2 === id || idChange === id)
-                        fetchid();
-                })
+                        socket.on('UpdateSomeone', (idChange, idChange2) => {
+                                // if (idChange2 === id || idChange === id)
+                                        fetchid();
+                        })
                 socket.on("SpectateStart", (roomId: number, player: Player) => {
                         navigate("/game/" + roomId, { state: { Id: roomId } });
                 });
