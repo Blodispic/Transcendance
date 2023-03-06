@@ -70,10 +70,11 @@ function ChannelList(props: any) {
 		getChanId(newChanId);
 	});
 
+	
 	const getChanId = (data: any) => {
 		setChanId(data);
 	}
-
+	
 	useEffect(() => {
 		const fetchAllList = async () => {
 			const response = await fetch(`${process.env.REACT_APP_BACK}channel/`, {
@@ -83,6 +84,12 @@ function ChannelList(props: any) {
 			setChanList(data);
 		}
 		fetchAllList();
+		socket.on('createChannelOk', (newChanId) => {
+			getChanId(newChanId);
+		});
+		return () => {
+			socket.off('createChannelOk');
+		};
 	}, [chanId]);
 
 	return (
@@ -267,9 +274,12 @@ function ChannelMemberList(props: { channel: IChannel }) {
 	// 	fetchPublic();
 	// }, []);
 
-
-
-	if (props.channel?.users === undefined) {
+	// if (props.channel?.users === undefined) {
+	// 	if (props.id)
+	// 	getChannel();
+	// }, [props]);
+	
+	if (currentChan?.users === undefined) {
 		return (
 			<div className="title"> Members <hr />
 			</div>
@@ -324,11 +334,13 @@ export function Channels(props: any) {
 				<JoinedChannelList />
 				<PublicChannelList />
 				<AddChannel />
+				<PublicChannelList />
 			</div>
 			{
 				currentChan?.id !== undefined &&
 				<>
 					<ChannelMessages channel={currentChan} />
+					{/* <ChannelMessages id={props.id} /> */}
 					{
 						currentChan.users.find(obj => obj.id === currentUser.user?.id) &&
 						<div className="sidebar right-sidebar">

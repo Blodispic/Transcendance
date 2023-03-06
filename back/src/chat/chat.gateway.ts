@@ -104,8 +104,7 @@ async handleCreateChannel(@ConnectedSocket() client: Socket, @MessageBody() crea
   if (user === null)
     throw new BadRequestException("No such user");
   const new_channel = await this.channelService.create(createChannelDto, user);
-  client.join("chan" + new_channel.id);
-  if (new_channel.chanType == 1 && createChannelDto.users)
+  if (new_channel.chanType == 1 && createChannelDto.users && createChannelDto.users.length > 0)
     this.inviteToChan(createChannelDto.users, new_channel.id);
   // client.emit("createChannelOk", new_channel.id);
   this.server.emit("createChannelOk", new_channel.id);
@@ -241,6 +240,7 @@ async handleInvite(@ConnectedSocket() client: Socket, @MessageBody() inviteDto: 
 
 async inviteToChan(users: User[], chanid: number)
 {
+  
   users.forEach(user => {
     let socketIdToWho = this.findSocketFromUser(user);
     if (socketIdToWho)

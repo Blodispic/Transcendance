@@ -107,10 +107,14 @@ export function DmMessages(props: { id: any; currentdm: IUser | undefined; setCu
 		}
 		setNewInput("");
 	}
-
-	socket.on('sendMessageUserOK', (messageUserDto) => {
-		setMessageList([...messageList, messageUserDto]);
-	})
+	useEffect(() => {
+		socket.on('sendMessageUserOK', (messageUserDto) => {
+			setMessageList([...messageList, messageUserDto]);
+		})
+		return () => {
+			socket.off('sendMessageUserOK');
+		};
+	}, [])
 
 	const handleBlock = () => { // to be improved
 		// if (blockedId == 0 && props.currentdm !== undefined)
@@ -133,22 +137,17 @@ export function DmMessages(props: { id: any; currentdm: IUser | undefined; setCu
 			</div>
 			<div className="chat-messages">
 				<div className="reverse">
-					{/* {props.currentdm?.id == blockedId &&
-						<> */}
-							{messageList.map(message => (
-								<div key={message.message} className="__wrap">
-									<>
-										<div className="message-info">
-											<img className="user-avatar" src={message.sender?.avatar} />
-											{message.sender?.username}
-											<span className="timestamp">{message.sendtime}</span>
-										</div>
-										{message.message}
-									</>
-								</div>
-							))}
-						{/* </>
-					} */}
+
+				{messageList && messageList.map(message => (
+					<div key={message.message} className="__wrap">
+						<div className="message-info">
+							<img className="user-avatar" src={message.sender?.avatar} />
+							{message.sender?.username}
+							<span className="timestamp">{message.sendtime}</span>
+						</div>
+						{message.message}
+					</div>
+				))}
 				</div>
 			</div>
 			{

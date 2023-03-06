@@ -14,13 +14,13 @@ export default function CustomGamePopup(props: {trigger: boolean; setTrigger: Fu
     const [myVar, setMyvar] = useState<boolean>(false);
 
     const myUser = useAppSelector(state => state.user);
-    const [friend, setFriend] = useState<IUser[] | undefined>(undefined);
+    const [friend, setFriend] = useState<IUser[]  >([]);
     const [inpage, setInpage] = useState<boolean>(false);
 
 
     const canErase = () => {
         if (inpage === false)
-            setFriend(undefined);
+            setFriend([]);
     }
 
     useEffect(() => {
