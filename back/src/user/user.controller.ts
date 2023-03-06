@@ -54,6 +54,7 @@ export class UserController {
   @Get('id/:id')
   @UseGuards(JwtGuard)
   findOne(@Param('id', ParseIntPipe) id: number) {
+    console.log(id);
     return this.userService.getById(id);
   }
 
@@ -156,6 +157,17 @@ export class UserController {
     } else {
       return null;
     }
+  }
+
+  @Post('friend/check')
+  @UseGuards(JwtGuard)
+  async checkFriends(@Body() body: { myId: number, friendId: number}) {
+    console.log(body);
+    console.log("myid = ", body.myId);
+    console.log("friendId = ", body.friendId);
+    
+    
+    return (await this.userService.checkFriends(body.myId, body.friendId));
   }
 
   @Patch(':id/avatar')

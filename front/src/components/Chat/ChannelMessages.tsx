@@ -17,7 +17,7 @@ export function ChannelMessages(props: { id: any }) {
 	const [popup, setPopup] = useState(false);
 	const [reload, setReload] = useState<boolean>(false);
 
-	const sleep =  () => new Promise(r => setTimeout(r, 2000));
+	
 	useEffect(() => {
 		const getChannel = async () => {
 			const response = await fetch(`${process.env.REACT_APP_BACK}channel/${props.id}`, {
