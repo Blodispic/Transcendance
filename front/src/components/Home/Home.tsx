@@ -6,13 +6,13 @@ import { useNavigate } from "react-router-dom";
 import { Player } from "../Game/Game";
 
 export default function Home() {
-    // const navigate = useNavigate();
+    const navigate = useNavigate();
 
-    // useEffect(() => {
-	// 	socket.on("RoomStart", (roomId: number, player: Player) => {
-    //         navigate("/game/" + roomId, { state: { Id: roomId } });
-    //     });
-	// })
+    useEffect(() => {
+		socket.on("RoomStart", (roomId: number, player: Player) => {
+            navigate("/game/" + roomId, { state: { Id: roomId } });
+        });
+	})
 
     return (
         <div className='scroll'>
