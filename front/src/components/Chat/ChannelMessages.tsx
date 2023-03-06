@@ -8,17 +8,10 @@ import { IMessage } from "../../interface/Message";
 import { IUser } from "../../interface/User";
 import { useAppSelector } from "../../redux/Hook";
 import { ConfigureChannel } from "./AdminCommands";
-import { JoinChannel, JoinLeave, LeaveChannel } from "./JoinLeave";
-
+import { JoinLeave } from "./JoinLeave";
 
 function ChannelHeader(props: { user: any, channel: IChannel}) {
 	const [popup, setPopup] = useState(false);
-	let onChannel: boolean = false;
-
-
-	if (props.channel.users.find(obj => obj.id === props.user?.id))
-		onChannel = true;
-
 
 	return (
 		<div className="body-header" >
@@ -33,7 +26,7 @@ function ChannelHeader(props: { user: any, channel: IChannel}) {
 		}
 		{
 			props.channel !== undefined &&
-			<JoinLeave currentUser={props.user} channel={props.channel} onChan={onChannel} />
+			<JoinLeave currentUser={props.user} channel={props.channel} />
 		}
 		{
 			props.channel?.id &&
@@ -62,7 +55,6 @@ export function ChannelMessages(props: { channel: IChannel }) {
 	const [newInput, setNewInput] = useState("");
 	const [messageList, setMessageList] = useState<IMessage[]>([]);
 	const [announce, setAnnounce] = useState<string[]>([]);
-	let onChannel: boolean = false;
 
 	const handleSubmitNewMessage = (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
@@ -73,9 +65,6 @@ export function ChannelMessages(props: { channel: IChannel }) {
 		setNewInput("");
 	}
 
-	if (props.channel.users.find(obj => obj.id === currentUser.user?.id))
-		onChannel = true;
-
 	socket.on('sendMessageChannelOK', (messageDto) => {
 		setMessageList([...messageList, messageDto]);
 	})
@@ -83,62 +72,31 @@ export function ChannelMessages(props: { channel: IChannel }) {
 	return (
 		<div className="chat-body">
 			<ChannelHeader user={currentUser.user} channel={props.channel} />
-			{/* <div className="body-header" >
-				{props.channel.name}
-				{
-					props.channel?.chanType == 1 &&
-					<HiLockClosed />
-				}
-				{
-					props.channel?.chanType == 2 &&
-					<BsKeyFill />
-				}
-				{
-					props.channel !== undefined &&
-					<JoinLeave currentUser={currentUser.user} channel={props.channel} onChan={onChannel} />
-				}
-				{
-					props.channel?.id &&
-					<>
+			{props.channel.users?.find(obj => obj.id == currentUser.user?.id) !== undefined &&
+				<>
+					<div className="chat-messages">
 						{
-							props.channel?.chanType !== 1 &&
-							<>
-								{
-									props.channel.admin.find(obj => obj.id == currentUser.user?.id) &&
-									<>
-										<ImCog className="config-icon" onClick={() => setPopup(true)} />
-										<ConfigureChannel trigger={popup} setTrigger={setPopup} channel={props.channel} />
-									</>
-								}
-							</>
-						}
-					</>
-				}
-
-			</div> */}
-			<div className="chat-messages">
-				{
-					<div className="reverse">
-						{messageList && messageList.map(message => (
-							message.chanid == props.channel.id &&
-							<div key={message.message} className="__wrap">
-								<div className="message-info">
-									<img className="user-avatar" src={`${process.env.REACT_APP_BACK}user/${message.sender?.id}/avatar`} />
-									<p>{message.sender?.username}</p>
-									<p className="timestamp">{message.sendtime}</p>
-								</div>
-								{message.message}
+							<div className="reverse">
+								{messageList && messageList.map(message => (
+									message.chanid == props.channel.id &&
+									<div key={message.message} className="__wrap">
+										<div className="message-info">
+											<img className="user-avatar" src={`${process.env.REACT_APP_BACK}user/${message.sender?.id}/avatar`} />
+											<p>{message.sender?.username}</p>
+											<p className="timestamp">{message.sendtime}</p>
+										</div>
+										{message.message}
+									</div>
+								))}
 							</div>
-						))}
+						}
 					</div>
-				}
-			</div>
-			{
-				props.channel.users?.find(elem => elem.id == currentUser.user?.id) !== undefined &&
-				<form id="input_form" onSubmit={(e) => { handleSubmitNewMessage(e); }}>
-					<input type="text" onChange={(e) => { setNewInput(e.target.value) }}
-						placeholder="type message here" value={newInput} />
-				</form>
+					<form id="input_form" onSubmit={(e) => { handleSubmitNewMessage(e); }}>
+						<input type="text" onChange={(e) => { setNewInput(e.target.value) }}
+							placeholder="type message here" value={newInput} />
+					</form>
+				</>
+
 			}
 		</div>
 	);

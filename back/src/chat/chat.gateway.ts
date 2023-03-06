@@ -89,7 +89,8 @@ async handleJoinChannel(@ConnectedSocket() client: Socket, @MessageBody() joinCh
     chanId: channel.id,
   });
   client.join("chan" + joinChannelDto.chanid);
-  client.emit("joinChannelOK", channel);
+  // client.emit("joinChannelOK", channel);
+  client.emit("joinChannel", channel);
   this.server.to("chan" + channel.id).emit("joinChannel", client.handshake.auth.user);
 }
 
@@ -113,12 +114,14 @@ async handleCreateChannel(@ConnectedSocket() client: Socket, @MessageBody() crea
 @SubscribeMessage('leaveChannel')
 async handleLeaveChannel(@ConnectedSocket() client: Socket, @MessageBody() leaveChannelDto: LeaveChannelDto) {
   const channel = await this.channelService.getById(leaveChannelDto.chanid);
-  const user = client.handshake.auth.user;
+  // const user = client.handshake.auth.user;
+  const user = client.handshake.auth.user.id;
   if (channel === null || user === null)
     throw new BadRequestException("No such Channel or User"); // no such channel/user, shouldn't happened
   this.channelService.rm( { user, chanid: leaveChannelDto.chanid});
   client.leave("chan" + leaveChannelDto.chanid);
-  client.emit("leaveChannelOK", channel.id);
+  // client.emit("leaveChannelOK", channel.id);
+  client.emit("leaveChannel", channel.id);
   this.server.to("chan" + channel.id).emit("leaveChannel", user);
 }
 

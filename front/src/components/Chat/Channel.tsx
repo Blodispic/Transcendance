@@ -244,27 +244,27 @@ function ChannelMemberList(props: { channel: IChannel }) {
 			setCurrentId(id);
 	}
 	
-	socket.on('joinChannel', (data) => {
-		const fetchMemberList = async () => {
-			const response = await fetch(`${process.env.REACT_APP_BACK}channel/${props.channel.id}`, {
-				method: 'GET',
-			})
-			const data = await response.json();
-			setCurrentChan(data);
-		}
-		fetchMemberList();
-	});
+	// socket.on('joinChannel', (data) => {
+	// 	const fetchMemberList = async () => {
+	// 		const response = await fetch(`${process.env.REACT_APP_BACK}channel/${props.channel.id}`, {
+	// 			method: 'GET',
+	// 		})
+	// 		const data = await response.json();
+	// 		setCurrentChan(data);
+	// 	}
+	// 	fetchMemberList();
+	// });
 
-	socket.on('leaveChannel', (data) => {
-		const fetchMemberList = async () => {
-			const response = await fetch(`${process.env.REACT_APP_BACK}channel/${props.channel.id}`, {
-				method: 'GET',
-			})
-			const data = await response.json();
-			setCurrentChan(data);
-		}
-		fetchMemberList();
-	});
+	// socket.on('leaveChannel', (data) => {
+	// 	const fetchMemberList = async () => {
+	// 		const response = await fetch(`${process.env.REACT_APP_BACK}channel/${props.channel.id}`, {
+	// 			method: 'GET',
+	// 		})
+	// 		const data = await response.json();
+	// 		setCurrentChan(data);
+	// 	}
+	// 	fetchMemberList();
+	// });
 
 	if (currentChan?.users === undefined) {
 		return (
@@ -313,28 +313,27 @@ export function Channels(props: any) {
 			getChannel();
  	}, [props]);
 
-	// socket.on('joinChannel', (data) => {
-	// 	const fetchMemberList = async () => {
-	// 		const response = await fetch(`${process.env.REACT_APP_BACK}channel/${props.chanId}`, {
-	// 			method: 'GET',
-	// 		})
-	// 		const data = await response.json();
-	// 		setCurrentChan(data);
-	// 	}
-	// 	fetchMemberList();
-	// });
+	socket.on('joinChannel', (data) => {
+		const fetchMemberList = async () => {
+			const response = await fetch(`${process.env.REACT_APP_BACK}channel/${props.chanId}`, {
+				method: 'GET',
+			})
+			const data = await response.json();
+			setCurrentChan(data);
+		}	
+		fetchMemberList();
+	});
 
-	// socket.on('leaveChannel', (data) => {
-	// 	const fetchMemberList = async () => {
-	// 		const response = await fetch(`${process.env.REACT_APP_BACK}channel/${props.chanId}`, {
-	// 			method: 'GET'
-	// 		})
-	// 		const data = await response.json();
-	// 		setCurrentChan(data);
-	// 	}
-	// 	fetchMemberList();
-	// });
-
+	socket.on('leaveChannel', (data) => {
+		const fetchMemberList = async () => {
+			const response = await fetch(`${process.env.REACT_APP_BACK}channel/${props.chanId}`, {
+				method: 'GET'
+			})
+			const data = await response.json();
+			setCurrentChan(data);
+		}
+		fetchMemberList();
+	});
 
 	return (
 		<div id="chat-container">

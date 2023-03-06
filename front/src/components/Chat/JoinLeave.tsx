@@ -20,7 +20,6 @@ export function CheckPassword(props: {trigger: boolean, setTrigger: Function, ch
 		 * }
 		 * 
 		 */
-		
 		setPassword("");
 		props.setTrigger(false);
 	}
@@ -48,7 +47,6 @@ export function JoinChannel(props: {channel: IChannel }) {
 	}
 
 	const handleJoin = () => {
-		console.log("join channel");
 		socket.emit('joinChannel', {chanid: props.channel.id});
 	}
 
@@ -73,14 +71,13 @@ export function JoinChannel(props: {channel: IChannel }) {
 	);
 }
 
-export function LeaveChannel (props: {chanid: any}) {
+export function LeaveChannel (props: {channel: IChannel}) {
 	
 	const handleLeave = () => {
-		console.log("leave channel");
-		socket.emit('leaveChannel', {chanid: props.chanid});
+		socket.emit('leaveChannel', {chanid: props.channel.id});
 	}
 
-	if (props.chanid === undefined)
+	if (props.channel.id === undefined)
 	{
 		return (<></>);
 	}
@@ -92,38 +89,39 @@ export function LeaveChannel (props: {chanid: any}) {
 	);
 }
 
-export function JoinLeave(props: {currentUser: any, channel: IChannel, onChan: boolean}) {
-	const [isOnChan, setIsOnChannel] = useState(props.onChan);
+export function JoinLeave(props: {currentUser: any, channel: IChannel}) {
+	// const [isOnChan, setIsOnChannel] = useState(props.onChan);
 
 	// if (props.channel?.users.find(elem => elem.id == props.currentUser.id))
 	// 	setIsOnChannel(true);
 	
-	const handleClick = () => {
-		setIsOnChannel(!isOnChan);
-	}
-	return (
-		<div onClick={handleClick}>{isOnChan ? <LeaveChannel chanid={props.channel.id} /> :  <JoinChannel channel={props.channel} />}</div>
-	);
-
+	// const handleClick = () => {
+	// 	setIsOnChannel(!isOnChan);
+	// }
 
 	// return (
-	// 	<>
-	// 		{
-	// 			props.channel.id !== undefined &&
-	// 			<>
-	// 				{
-	// 					props.channel?.users.find(elem => elem.id == props.currentUser.id) &&
-	// 					<LeaveChannel currentUser={props.currentUser} chanid={props.channel.id} />
-	// 				}
-	// 				{
-	// 					props.channel?.users.find(elem => elem.id == props.currentUser.id) === undefined &&
-	// 					<JoinChannel currentUser={props.currentUser} channel={props.channel} />
-	// 				}
-	// 			</>
-	// 		}
-
-	// 	</>
+	// 	<div onClick={handleClick}>{isOnChan ? <LeaveChannel chanid={props.channel.id} /> :  <JoinChannel channel={props.channel} />}</div>
 	// );
+
+
+	return (
+		<>
+			{
+				props.channel.id !== undefined &&
+				<>
+					{
+						props.channel?.users.find(elem => elem.id == props.currentUser.id) &&
+						<LeaveChannel channel={props.channel} />
+					}
+					{
+						props.channel?.users.find(elem => elem.id == props.currentUser.id) === undefined &&
+						<JoinChannel channel={props.channel} />
+					}
+				</>
+			}
+
+		</>
+	);
 
 }
 
