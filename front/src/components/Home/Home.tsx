@@ -9,9 +9,12 @@ export default function Home() {
     const navigate = useNavigate();
 
     useEffect(() => {
-		socket.on("RoomStart", (roomId: number, player: Player) => {
-            navigate("/game/" + roomId, { state: { Id: roomId } });
-        });
+        if (socket)
+        {
+            socket.on("RoomStart", (roomId: number, player: Player) => {
+                navigate("/game/" + roomId, { state: { Id: roomId } });
+            });
+        }
 	})
 
     return (
