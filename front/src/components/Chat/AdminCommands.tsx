@@ -19,9 +19,11 @@ export function AddAdmin(chanid: any, userid: any) {
 	socket.emit('GiveAdmin', {chanid: chanid, userid: userid});
 }
 
+function RemoveChannel() {
+	// remove channel method on the back;
+}
 
-
-export function ConfigurePass(props: {trigger: boolean, setTrigger: Function, channel: IChannel}) {
+export function ConfigureChannel(props: {trigger: boolean, setTrigger: Function, channel: IChannel}) {
 	const [newPassword, setNewPassword] = useState("");
 	
 	const setPassword = () => {
@@ -70,6 +72,8 @@ export function ConfigurePass(props: {trigger: boolean, setTrigger: Function, ch
 					</>
 				}
 				<button onClick={setPassword}> Save Setting </button>
+				<h3> Remove Channel </h3>
+				<button style={{background:'#B33A3A'}} onClick={RemoveChannel}> Remove Channel </button>
 			</div>
 		</div>
 	) : <></>;

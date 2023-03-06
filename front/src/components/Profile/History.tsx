@@ -7,7 +7,7 @@ import { Log } from "../connection/Log";
 
 export function History(props: { user: IUser }) {
     const { user } = props;
-    const [matchReq, setMatches] = useState<Result[]>([]);
+    const [matchReq, setMatches] = useState<Result[] | undefined>(undefined);
     const navigate = useNavigate();
 
     useEffect(() => {

@@ -30,6 +30,7 @@ export default function Sign() {
             formData.delete('file');
             dispatch(change_avatar(avatar));
         }
+
         if (newname !== '' && myUser.user) {
             if (newname) {
                 await fetch(`${process.env.REACT_APP_BACK}user/${myUser.user.id}`, {
@@ -47,7 +48,6 @@ export default function Sign() {
                             SetNameExist(false);
                             dispatch(change_name(newname));
                             dispatch(set_status(UserStatus.ONLINE));
-
                             if (window.location.href.search('Profile') === -1) {
                                 navigate("/Home");
                             }

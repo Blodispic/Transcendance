@@ -29,7 +29,7 @@ import { GatewayExceptionFilter } from './app.exceptionFilter';
       password: 'admin',
       entities: [User, Results, Channel, FriendRequest],
       synchronize: true,
-      // dropSchema: true,    //A ENLEVER QUAND PLUS BESOIN (ça reset la db a chaque changement)
+      //dropSchema: true,    //A ENLEVER QUAND PLUS BESOIN (ça reset la db a chaque changement)
     }),
     MulterModule.register({
       dest: './storage/images',

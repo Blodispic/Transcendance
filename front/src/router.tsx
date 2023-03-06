@@ -61,6 +61,8 @@ const OauthRoute = (props: { children: any }) => {
   return props.children;
 };
 
+
+
 const router = createBrowserRouter([
   {
 
@@ -76,14 +78,16 @@ const router = createBrowserRouter([
     element:
       <OauthRoute>
         <Sign />
-      </OauthRoute>
+      </OauthRoute>,
+    errorElement: <ErrorBoundary />,
   },
   {
     path: "/log",
     element:
       <OauthRoute>
         <Log />
-      </OauthRoute>
+      </OauthRoute>,
+    errorElement: <ErrorBoundary />,
   },
   {
     element: <Layout />,
@@ -94,7 +98,8 @@ const router = createBrowserRouter([
         element:
           <ProtectedRoute>
             <Home />
-          </ProtectedRoute>
+          </ProtectedRoute>,
+        errorElement: <ErrorBoundary />,
       },
       {
         path: "/Chat",
@@ -102,6 +107,7 @@ const router = createBrowserRouter([
           <ProtectedRoute>
             <Chat />
           </ProtectedRoute>,
+        errorElement: <ErrorBoundary />,
         children: [
           {
             path: "/Chat/channel",
@@ -109,6 +115,7 @@ const router = createBrowserRouter([
               <ProtectedRoute>
                 <Chat />
               </ProtectedRoute>,
+            errorElement: <ErrorBoundary />,
             children: [
               {
                 path: "/Chat/channel/:id",
@@ -151,6 +158,7 @@ const router = createBrowserRouter([
           <ProtectedRoute>
             <Queue />
           </ProtectedRoute>,
+        errorElement: <ErrorBoundary />,
       },
       {
         path: "/Game/:id",
@@ -158,11 +166,12 @@ const router = createBrowserRouter([
           <ProtectedRoute>
             <GameApp />
           </ProtectedRoute>,
+        errorElement: <ErrorBoundary />,
       },
       {
         path: "*",
         element:
-            <PageNotfound />
+          <PageNotfound />
       },
     ]
   }

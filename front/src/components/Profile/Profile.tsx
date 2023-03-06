@@ -81,19 +81,22 @@ export default function Profile() {
                         fetchid();
                 setPages(page.PAGE_1);
                 if (myUser.user!.friends)
-                        console.log("est ce que c'est mon copain", myUser.user!.friends.find(allfriend => allfriend.id === currentUser!.id));
+                        socket.on('UpdateSomeone', (idChange, idChange2) => {
+                                // if (idChange2 === id || idChange === id)
+                                        fetchid();
+                        })
+                socket.on("SpectateStart", (roomId: number, player: Player) => {
+                        navigate("/game/" + roomId, { state: { Id: roomId } });
+                });
+                return () => {
+                        socket.off('UpdateSomeone');
+                        socket.off('SpectateStart');
+                };
         }, [id])
 
         // useEffect(() => {
-        socket.on('UpdateSomeone', (idChange, idChange2) => {
-                // if (idChange2 === id || idChange === id)
-                fetchid();
-        })
         // }, [currentUser])
 
-        socket.on("SpectateStart", (roomId: number, player: Player) => {
-                navigate("/game/" + roomId, { state: { Id: roomId } });
-        });
 
         useEffect(() => {
                 if (currentUser?.id == myUser.user?.id) {
