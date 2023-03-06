@@ -9,7 +9,7 @@ export function PopupCreateChannel(props: any) {
 	const [chanName, setChanName] = useState("");
 	const [password, setPassword] = useState("");
 	const [chanMode, setChanMode] = useState(0);
-    const [friend, setFriend] = useState<IUser[] | undefined>(undefined);
+    const [friend, setFriend] = useState<IUser[] >([]);
 	const [myVar, setMyvar] = useState<boolean> (false);
 
 	const handlePublic = () => {
@@ -24,9 +24,15 @@ export function PopupCreateChannel(props: any) {
 		setChanMode(2);
 	}
 
+	useEffect( () => {
+		console.log("list de friend dans funciton create Chanel", friend);
+	}, [friend] )
+
 	const handleCreateNewChan = () => {
+		console.log("list de friend que je fetch a la creatioin du chan", [friend]);
+
 		if (chanName != "")
-			socket.emit('createChannel', { chanName: chanName, chanType: chanMode, password: password, userList: friend });
+			socket.emit('createChannel', { chanName: chanName, chanType: chanMode, password: password, users: [friend] });
 		setChanName("");
 		setPassword("");
 		setChanMode(0);
@@ -34,15 +40,15 @@ export function PopupCreateChannel(props: any) {
 	}
 
 	return (props.trigger) ? (
-		<div className="chat-form-popup" onClick={_ => props.setTrigger(false)}>
+		<div className="chat-form-popup" onClick={_ => (props.setTrigger(false), setChanMode(0))}>
 			<div className="chat-form-inner" onClick={e => e.stopPropagation()}>
-				<HiOutlineXMark className="close-icon" onClick={_ => props.setTrigger(false)} /> <br />
+				<HiOutlineXMark className="close-icon" onClick={_ => (props.setTrigger(false), setChanMode(0)) } /> <br />
 				<h3>Channel Name</h3>
 				<input type="text" id="channel-input" placeholder="Insert channel name" onChange={e => { setChanName(e.target.value) }} onSubmit={() => { handleCreateNewChan(); }} />
 				<h3>Channel Mode</h3>
-				<input type="radio" name="chanMode" value={0} onChange={handlePublic} defaultChecked />Public
-				<input type="radio" name="chanMode" value={1} onChange={handlePrivate} />Private
-				<input type="radio" name="chanMode" value={2} onChange={handleProtected} />Protected <br />
+				<input type="radio" name="chanMode" value={0} onChange={_ => handlePublic()} defaultChecked />Public
+				<input type="radio" name="chanMode" value={1} onChange={_ => handlePrivate()} />Private
+				<input type="radio" name="chanMode" value={2} onChange={_ => handleProtected()} />Protected <br />
 				{
 					chanMode === 2 &&
 					<><input type="password" id="channel-input" placeholder="Insert password" onChange={e => { setPassword(e.target.value); }} /><br /></>
@@ -50,7 +56,7 @@ export function PopupCreateChannel(props: any) {
 				{
 					chanMode === 1 &&
 					<div className="allpoeple">
-					<AllPeople friend={friend} setFriend={setFriend} myVar={myVar} setMyvar={setMyvar}  />
+					<AllPeople friend={undefined} setFriend={setFriend} myVar={myVar} setMyvar={setMyvar}  />
 					</div>
 				}
 				<button onClick={() => handleCreateNewChan()}>Create Channel</button><span></span>

@@ -163,7 +163,7 @@ export class ChannelService {
 				{chanType: 2},
 				]
 			});
-		
+
 	  }
 
 	  async unmuteUser(muteUserDto: MuteUserDto) {

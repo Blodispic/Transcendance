@@ -145,6 +145,10 @@ export default function GameApp() {
 					setResult(true);
 			}
 			socket.emit("GameEnd", null);
+			return () => {
+				socket.off('UpdateState');
+				socket.off('GameEnd');
+			};
 		});
 
 		document.addEventListener("keydown", keyEvent);
