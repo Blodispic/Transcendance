@@ -3,7 +3,6 @@ import { IUser } from "../../interface/User";
 import { GiCrossedSwords } from "react-icons/gi";
 import {Result} from "../../interface/Result"
 import { useNavigate } from "react-router-dom";
-import { Log } from "../connection/Log";
 
 export function History(props: { user: IUser }) {
     const { user } = props;
