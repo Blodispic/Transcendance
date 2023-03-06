@@ -168,8 +168,13 @@ export function ChannelMessages(props: { channel: IChannel }) {
 						{
 							props.channel?.chanType !== 1 &&
 							<>
-								<ImCog className="config-icon" onClick={() => setPopup(true)} />
+								{
+									props.channel.admin.find(obj => obj.id == currentUser.user?.id) &&
+									<>
+									<ImCog className="config-icon" onClick={() => setPopup(true)} />
 								<ConfigureChannel trigger={popup} setTrigger={setPopup} channel={props.channel} />
+									</>
+								}
 							</>
 						}
 					</>

@@ -59,6 +59,14 @@ function ChannelList(props: any) {
 	const navigate = useNavigate();
 
 	socket.on('createChannelOk', (newChanId) => {
+		const fetchAllList = async () => {
+			const response = await fetch(`${process.env.REACT_APP_BACK}channel/`, {
+				method: 'GET',
+			})
+			const data = await response.json();
+			setChanList(data);
+		}
+		fetchAllList();
 		getChanId(newChanId);
 	});
 
@@ -106,6 +114,17 @@ function PublicChannelList() {
 	const navigate = useNavigate();
 
 
+	socket.on('createChannelOk', (newChanId) => {
+		const fetchAllList = async () => {
+			const response = await fetch(`${process.env.REACT_APP_BACK}channel/`, {
+				method: 'GET',
+			})
+			const data = await response.json();
+			setChanList(data);
+		}
+		fetchAllList();
+	});
+
 	useEffect(() => {
 		const fetchPublic = async () => {
 			const response = await fetch(`${process.env.REACT_APP_BACK}channel/public`, {
@@ -117,19 +136,6 @@ function PublicChannelList() {
 		}
 		fetchPublic();
 	}, []);
-
-
-	// useEffect(() => {
-	// 	const fetchProtected = async () => {
-	// 		const response = await fetch(`${process.env.REACT_APP_BACK}channel/protected`, {
-	// 			method: 'GET',
-	// 		})
-	// 		const data = await response.json();
-	// 		setChanList(data);
-	// 	}
-	// 	// console.log('here');
-	// 	fetchProtected();
-	// }, []);
 
 	return (
 		<div className="bottom">
@@ -226,7 +232,8 @@ function ChannelMemberList(props: { channel: IChannel }) {
 		else
 			setCurrentId(id);
 	}
-		
+	
+	
 	if (props.channel?.users === undefined) {
 		return (
 			<div className="title"> Members <hr />
