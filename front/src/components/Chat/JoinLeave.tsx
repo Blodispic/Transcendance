@@ -39,10 +39,8 @@ export function CheckPassword(props: {trigger: boolean, setTrigger: Function, ch
 	) : <></>;
 }
 
-export function JoinChannel(props: {currentUser: any, channel: IChannel }) {
+export function JoinChannel(props: {channel: IChannel }) {
 	const [passPopup, setPassPopup] = useState(false);
-	const currentChan = useAppSelector(state => state.channel);
-	const dispatch = useDispatch();
 
 	if (props.channel === undefined)
 	{	
@@ -50,6 +48,7 @@ export function JoinChannel(props: {currentUser: any, channel: IChannel }) {
 	}
 
 	const handleJoin = () => {
+		console.log("join channel");
 		socket.emit('joinChannel', {chanid: props.channel.id});
 	}
 
@@ -74,9 +73,10 @@ export function JoinChannel(props: {currentUser: any, channel: IChannel }) {
 	);
 }
 
-export function LeaveChannel (props: {currentUser: any, chanid: any}) {
+export function LeaveChannel (props: {chanid: any}) {
 	
 	const handleLeave = () => {
+		console.log("leave channel");
 		socket.emit('leaveChannel', {chanid: props.chanid});
 	}
 
@@ -102,7 +102,7 @@ export function JoinLeave(props: {currentUser: any, channel: IChannel, onChan: b
 		setIsOnChannel(!isOnChan);
 	}
 	return (
-		<div onClick={handleClick}>{isOnChan ? <LeaveChannel currentUser={props.currentUser} chanid={props.channel.id} /> :  <JoinChannel currentUser={props.currentUser} channel={props.channel} />}</div>
+		<div onClick={handleClick}>{isOnChan ? <LeaveChannel chanid={props.channel.id} /> :  <JoinChannel channel={props.channel} />}</div>
 	);
 
 

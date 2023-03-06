@@ -144,8 +144,10 @@ function PublicChannelList() {
 	}, []);
 
 	return (
+		<div className="title">
+
 		<div className="bottom">
-			<header>All Channels <hr /></header>
+			<header>All Public Channels <hr /></header>
 			{chanList && chanList.map(chan => (
 				<ul key={chan.name}>
 					<li>
@@ -162,6 +164,7 @@ function PublicChannelList() {
 					</li>
 				</ul>
 			))}
+			</div>
 		</div>
 	);
 }
@@ -263,22 +266,6 @@ function ChannelMemberList(props: { channel: IChannel }) {
 		fetchMemberList();
 	});
 
-	// useEffect(() => {
-	// 	const fetchPublic = async () => {
-	// 		const response = await fetch(`${process.env.REACT_APP_BACK}channel/public`, {
-	// 			method: 'GET',
-	// 		})
-	// 		const data = await response.json();
-	// 		setChanList(data);
-	// 	}
-	// 	fetchPublic();
-	// }, []);
-
-	// if (props.channel?.users === undefined) {
-	// 	if (props.id)
-	// 	getChannel();
-	// }, [props]);
-	
 	if (currentChan?.users === undefined) {
 		return (
 			<div className="title"> Members <hr />
@@ -313,7 +300,6 @@ function ChannelMemberList(props: { channel: IChannel }) {
 
 export function Channels(props: any) {
 	const [currentChan, setCurrentChan] = useState<IChannel | undefined>(undefined);
-	const [update, setUpdate] = useState(0);
 	const currentUser = useAppSelector(state => state.user);
 
 	useEffect(() => {
@@ -327,11 +313,34 @@ export function Channels(props: any) {
 			getChannel();
  	}, [props]);
 
+	// socket.on('joinChannel', (data) => {
+	// 	const fetchMemberList = async () => {
+	// 		const response = await fetch(`${process.env.REACT_APP_BACK}channel/${props.chanId}`, {
+	// 			method: 'GET',
+	// 		})
+	// 		const data = await response.json();
+	// 		setCurrentChan(data);
+	// 	}
+	// 	fetchMemberList();
+	// });
+
+	// socket.on('leaveChannel', (data) => {
+	// 	const fetchMemberList = async () => {
+	// 		const response = await fetch(`${process.env.REACT_APP_BACK}channel/${props.chanId}`, {
+	// 			method: 'GET'
+	// 		})
+	// 		const data = await response.json();
+	// 		setCurrentChan(data);
+	// 	}
+	// 	fetchMemberList();
+	// });
+
+
 	return (
 		<div id="chat-container">
 			<div className="sidebar left-sidebar">
-				{/* <ChannelList /> */}
-				<JoinedChannelList />
+				<ChannelList />
+				{/* <JoinedChannelList /> */}
 				<PublicChannelList />
 				<AddChannel />
 				<PublicChannelList />
@@ -340,9 +349,8 @@ export function Channels(props: any) {
 				currentChan?.id !== undefined &&
 				<>
 					<ChannelMessages channel={currentChan} />
-					{/* <ChannelMessages id={props.id} /> */}
 					{
-						currentChan.users.find(obj => obj.id === currentUser.user?.id) &&
+						// currentChan.users.find(obj => obj.id === currentUser.user?.id) &&
 						<div className="sidebar right-sidebar">
 						<ChannelMemberList channel={currentChan} />
 					</div>

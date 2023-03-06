@@ -5,7 +5,7 @@ import { IUser } from "../../interface/User";
 import { useAppSelector } from "../../redux/Hook";
 import AllPeople from "../utils/Allpeople";
 
-function NewChannelFailed(props: any) {
+function NewChannelFailed(props: any) { // still in progress
 	
 	return (props.trigger) ? (
 		<div className="chat-form-popup" onClick={_ => props.setTrigger(false)}>
@@ -36,11 +36,11 @@ export function PopupCreateChannel(props: any) {
 	}
 
 	useEffect( () => {
-		console.log("list de friend dans funciton create Chanel", friend);
+		// console.log("list de friend dans funciton create Chanel", friend);
 	}, [friend] )
 
 	const handleCreateNewChan = () => {
-		console.log("list de friend que je fetch a la creatioin du chan", [friend]);
+		// console.log("list de friend que je fetch a la creatioin du chan", [friend]);
 
 		if (chanName != "")
 			socket.emit('createChannel', { chanName: chanName, chanType: chanMode, password: password, users: [friend] });
