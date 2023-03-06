@@ -125,6 +125,7 @@ export class PongGateway implements OnGatewayDisconnect, OnGatewayInit {
 		{
 			console.log("[CreateCustomGame] One of the two users is currently busy.");
 			// throw new UnauthorizedException("One of the two users is currently busy.");
+
 			return;
 		}
 		else {
@@ -148,6 +149,7 @@ export class PongGateway implements OnGatewayDisconnect, OnGatewayInit {
 			this.removeInvite(user1.id);
 		if (user2.id)
 			this.removeInvite(user2.id);
+		this.gameService.removeFromWaitingRoom(client.id);
 
 		if (user2 === null)
 			throw new BadRequestException("User2 doesn't exist");

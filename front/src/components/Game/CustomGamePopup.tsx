@@ -14,13 +14,13 @@ export default function CustomGamePopup(props: {trigger: boolean; setTrigger: Fu
     const [myVar, setMyvar] = useState<boolean>(false);
 
     const myUser = useAppSelector(state => state.user);
-    const [friend, setFriend] = useState<IUser[] | undefined>(undefined);
+    const [friend, setFriend] = useState<IUser[]  >([]);
     const [inpage, setInpage] = useState<boolean>(false);
 
 
     const canErase = () => {
         if (inpage === false)
-            setFriend(undefined);
+            setFriend([]);
     }
 
     useEffect(() => {
@@ -43,9 +43,8 @@ export default function CustomGamePopup(props: {trigger: boolean; setTrigger: Fu
     function CreateCustomRoom(extra: any, Max: any) {
         if (myUser && friend)
         {
-            socket.emit("createCustomGame", { user1: myUser.user?.id, user2: friend, extra: extra, scoreMax: Max });
+            socket.emit("createCustomGame", { user1: myUser.user?.id, user2: friend[0], extra: extra, scoreMax: Max });
         }
-
         return;
     }
 

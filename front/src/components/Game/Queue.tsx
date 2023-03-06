@@ -16,14 +16,10 @@ export default function Queue() {
     const navigate = useNavigate();
     const [customPopup, setCustomPopup] = useState(false);
 
-    
-
     function addToWaitingRoom() {
         socket.emit("addToWaitingRoom");
         return;
     }
-
-
 
     useEffect(() => {
         socket.on("RoomStart", (roomId: number, player: Player) => {

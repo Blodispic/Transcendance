@@ -6,16 +6,11 @@ import { IMessage } from "../../interface/Message";
 import { IUser } from "../../interface/User";
 import { useAppSelector } from "../../redux/Hook";
 import CustomGamePopup from "../Game/CustomGamePopup";
-import { ChatBody } from "./Chat";
-
 
 // make a list of friends that had conversation with
 function DMList(props: {currentdm: IUser | undefined; setCurrentDm: Function}) {
 	const [alluser, setAlluser] = useState<IUser[] | undefined>(undefined);
 	const myUser = useAppSelector(state => state.user);
-
-
-
 
 	useEffect(() => {
 		const get_all = async () => {
@@ -100,19 +95,23 @@ export function DmMessages(props: { id: any; currentdm: IUser | undefined; setCu
 	const handleSubmitNewMessage = (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
 		if (newInput != "") {
+	
+			const sendtime = new Date().toLocaleString();
 			socket.emit('sendMessageUser', { usertowho: props.currentdm, sender: myUser.user, message: newInput });
-
-
-			const newMessage: IMessage = {sender: myUser!.user, message: newInput, usertowho: props.currentdm };
+			const newMessage: IMessage = {sender: myUser!.user, message: newInput, usertowho: props.currentdm, sendtime: sendtime};
 
 			setMessageList([...messageList, newMessage]);
 		}
 		setNewInput("");
 	}
-
-	socket.on('sendMessageUserOK', (messageUserDto) => {
-		setMessageList([...messageList, messageUserDto]);
-	})
+	useEffect(() => {
+		socket.on('sendMessageUserOK', (messageUserDto) => {
+			setMessageList([...messageList, messageUserDto]);
+		})
+		return () => {
+			socket.off('sendMessageUserOK');
+		};
+	}, [])
 
 	// if (currentChan?.users !== undefined && currentChan?.users.find(currentUser.user)) {
 	// 	setIsOnChan(true);
@@ -127,12 +126,12 @@ export function DmMessages(props: { id: any; currentdm: IUser | undefined; setCu
 			<div className="chat-messages">
 				<div className="reverse">
 
-				{messageList.map(message => (
+				{messageList && messageList.map(message => (
 					<div key={message.message} className="__wrap">
 						<div className="message-info">
 							<img className="user-avatar" src={message.sender?.avatar} />
 							{message.sender?.username}
-							<span className="timestamp">0000/00/00  00:00</span>
+							<span className="timestamp">{message.sendtime}</span>
 						</div>
 						{message.message}
 					</div>

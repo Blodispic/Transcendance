@@ -12,6 +12,8 @@ export default function CLickableMenu(props: { user: IUser, chan: IChannel }) {
     const [myVar, setMyvar] = useState<boolean>(false);
     const myUser = useAppSelector(state => state.user.user)
 
+    if (props.chan.owner !== undefined)
+        console.log("owner: ", props.chan.owner.username);
     return (
         <div className="dropdown-container">
             <div className="dropdown clickable-menu hover-style">
@@ -34,6 +36,7 @@ export default function CLickableMenu(props: { user: IUser, chan: IChannel }) {
                             </li>
                             {/* ---admin menu--- show if  [myUser] === [owner] || ([myuser] === [admin] &&  [currentuser] !== [admin] ) */}
                             {
+                                // props.chan.owner == myUser &&
                                 <>
                                     {/* show if [currentUser] !=== admin */}
                                     {

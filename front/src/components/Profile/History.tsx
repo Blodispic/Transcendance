@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 
 export function History(props: { user: IUser }) {
     const { user } = props;
-    const [matchReq, setMatches] = useState<Result[]>([]);
+    const [matchReq, setMatches] = useState<Result[] | undefined>(undefined);
     const navigate = useNavigate();
 
 
