@@ -9,7 +9,6 @@ export function History(props: { user: IUser }) {
     const [matchReq, setMatches] = useState<Result[] | undefined>(undefined);
     const navigate = useNavigate();
 
-
     useEffect(() => {
         const checkMatchRequest = async () => {
             const response = await fetch(`${process.env.REACT_APP_BACK}user/matches`, {

@@ -9,8 +9,8 @@ export class ResultService {
   ) { }
 
   async createResult(resultDto: Results) {
-    const user1 = await this.userService.getByUsername(resultDto.winner);
-    const user2 = await this.userService.getByUsername(resultDto.loser);
+    const user1 = await this.userService.getById(resultDto.winnerId);
+    const user2 = await this.userService.getById(resultDto.loserId);
     if (user1) {
       resultDto.user = user1;
       if (!user1.results)

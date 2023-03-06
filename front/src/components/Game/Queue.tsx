@@ -17,6 +17,9 @@ export default function Queue() {
     const [customPopup, setCustomPopup] = useState(false);
 
     function addToWaitingRoom() {
+        socket.auth = {
+            user: myUser.user,
+        };
         socket.emit("addToWaitingRoom");
         return;
     }
