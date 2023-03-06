@@ -20,7 +20,6 @@ export class ChannelService {
 		private channelRepository: Repository<Channel>,
 		private userService: UserService,
 		// @InjectRepository(User)
-		//testfdhg
 		// private userRepository: Repository<User>,
 
 	) {}
@@ -53,7 +52,6 @@ export class ChannelService {
 		const user = addUserDto.user;		
 		if (channel == null || user == null)
 		throw new NotFoundException("No such Channel or User");
-		console.log("les user de la list qui faut afficher ", user) ;
 		channel.users.push(user);
 		return this.channelRepository.save(channel);
 	}	
