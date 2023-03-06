@@ -107,14 +107,21 @@ export function DmMessages(props: { id: any; currentdm: IUser | undefined; setCu
 		}
 		setNewInput("");
 	}
-	useEffect(() => {
-		socket.on('sendMessageUserOK', (messageUserDto) => {
-			setMessageList([...messageList, messageUserDto]);
-		})
-		return () => {
-			socket.off('sendMessageUserOK');
-		};
-	}, [])
+
+	/** with useEffect, newer messages overwrite older ones */
+	// useEffect(() => {
+	// 	socket.on('sendMessageUserOK', (messageUserDto) => {
+	// 		setMessageList([...messageList, messageUserDto]);
+	// 	})
+	// 	return () => {
+	// 		socket.off('sendMessageUserOK');
+	// 	};
+	// }, [])
+	
+
+	socket.on('sendMessageUserOK', (messageUserDto) => {
+		setMessageList([...messageList, messageUserDto]);
+	})
 
 	const handleBlock = () => { // to be improved
 		// if (blockedId == 0 && props.currentdm !== undefined)
@@ -128,7 +135,6 @@ export function DmMessages(props: { id: any; currentdm: IUser | undefined; setCu
 		// 	// emit unblock to the back
 		// }
 	}
-
 	return (
 		<div className="chat-body">
 			<div className="body-header">
@@ -139,7 +145,7 @@ export function DmMessages(props: { id: any; currentdm: IUser | undefined; setCu
 				<div className="reverse">
 
 				{messageList && messageList.map(message => (
-					<div key={message.message} className="__wrap">
+					<div key={message.sendtime + message.message} className="__wrap">
 						<div className="message-info">
 							<img className="user-avatar" src={message.sender?.avatar} />
 							{message.sender?.username}
