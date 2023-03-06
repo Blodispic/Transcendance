@@ -49,6 +49,7 @@ export class PongGateway implements OnGatewayDisconnect, OnGatewayInit {
 		{
 			if (this.inviteList[i] === id)
 				return true;
+			i++;
 		}
 		return false;
 	}
@@ -117,11 +118,12 @@ export class PongGateway implements OnGatewayDisconnect, OnGatewayInit {
 		// let user2: User | null = await this.userService.getById(payload.user2);
 		// if (user2 === null)
 		// 	throw new BadRequestException("UserToSpectate not found");
-		console.log("a player is invited:" + this.isInInvite(payload.user2.id) || this.isInInvite(client.handshake.auth.user.id))
-		
+		if (!payload.user2 || !client.handshake.auth.user)
+			return;
+		this.gameService.removeFromWaitingRoom(client.id);
 		if (this.isInInvite(payload.user2.id) || this.isInInvite(client.handshake.auth.user.id))
 		{
-			console.log("One of the two users is currently busy.");
+			console.log("[CreateCustomGame] One of the two users is currently busy.");
 			// throw new UnauthorizedException("One of the two users is currently busy.");
 			return;
 		}
@@ -181,7 +183,6 @@ export class PongGateway implements OnGatewayDisconnect, OnGatewayInit {
 			this.removeInvite(user1.id);
 		if (user2.id)
 			this.removeInvite(user2.id);
-		console.log("inviteList length = " + this.inviteList.length)
 	}
 
 	@SubscribeMessage("GameEnd")
