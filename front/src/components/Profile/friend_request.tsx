@@ -1,6 +1,8 @@
 import react, { useEffect, useState } from "react";
 import { ImCheckmark, ImCross } from "react-icons/im";
 import { IUser } from "../../interface/User";
+import { socket } from "../../App";
+import { useNavigate } from "react-router-dom";
 
 export function InviteButton(props: { user: any }) {
         const { user } = props;
@@ -48,6 +50,8 @@ export function Friends(props: { user: IUser }) {
         const { user } = props;
         const [friendReq, setFriendReq] = useState<{ name: string, avatar: string, id: number, ReqStatus: string, UserStatus: string }[]>([]);
         const [friend, setFriend] = useState<{ name: string, avatar: string, id: number, ReqStatus: string, UserStatus: string }[]>([]);
+        const [updateFriend, setUpdateFriend] = useState(false);
+        const navigate = useNavigate();
 
         useEffect(() => {
                 const checkFriendRequest = async () => {
@@ -63,7 +67,7 @@ export function Friends(props: { user: IUser }) {
                 };
 
                 checkFriendRequest();
-        }, []);
+        }, [user]);
 
         useEffect(() => {
                 const checkFriend = async () => {
@@ -78,9 +82,8 @@ export function Friends(props: { user: IUser }) {
                 };
 
                 checkFriend();
-        }, []);
+        }, [user]);
 
-        useEffect(() => {}, [friend, friendReq]);
         interface FriendsListProps {
                 friends: { name: string, avatar: string, id: number, ReqStatus: string, UserStatus: string }[];
         }
@@ -107,6 +110,14 @@ export function Friends(props: { user: IUser }) {
                 setFriendReq(prevState => prevState.filter(declined => declined.id !== friendId));
         };
 
+        useEffect(() => {
+                socket.on('UpdateSomeone', () => {
+                console.log("Update man");
+                  setUpdateFriend(prevFlag => !prevFlag);
+                });
+              }, []);
+            
+
 
 
         const FriendsReqList = (props: FriendsListProps) => {
@@ -115,7 +126,7 @@ export function Friends(props: { user: IUser }) {
                     {props.friends && props.friends.length > 0 ? (
                       props.friends.map((friend) => (
                         <li className="friend-block" key={friend.name}>
-                          <div className="friend-img">
+                          <div className="friend-img pointer" onClick={_ =>  navigate(`../Profile/${friend.id}`) }>
                             <img src={`${process.env.REACT_APP_BACK}user/${friend.id}/avatar`} alt={friend.name} />
                           </div>
                           <div className="friend-info">
@@ -152,7 +163,7 @@ export function Friends(props: { user: IUser }) {
                     {props.friends && props.friends.length > 0 ? (
                       props.friends.map((friend) => (
                         <li className="friend-block" key={friend.name}>
-                          <div className="friend-img">
+                          <div className="friend-img pointer" onClick={_ =>  navigate(`../Profile/${friend.id}`) }>
                             <img src={`${process.env.REACT_APP_BACK}user/${friend.id}/avatar`} alt={friend.name} />
                           </div>
                           <div className="friend-info">

@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { ClassSerializerInterceptor, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -16,6 +16,8 @@ import { ResultModule } from './results/results.module';
 import { Channel } from './chat/channel/entities/channel.entity';
 import { FriendRequest } from './user/entities/friend-request.entity';
 import { UserService } from './user/user.service';
+import { APP_FILTER, APP_INTERCEPTOR } from '@nestjs/core';
+import { GatewayExceptionFilter } from './app.exceptionFilter';
 
 @Module({
   imports: [
@@ -40,6 +42,14 @@ import { UserService } from './user/user.service';
     ResultModule,
   ],
   controllers: [AppController],
-  providers: [AppService, ChatGateway, AppGateway],
+  providers: [AppService, ChatGateway, AppGateway,
+    {
+      provide: APP_FILTER, // use APP_FILTER token to specify the filter
+      useClass: GatewayExceptionFilter, // specify the filter class
+    },
+    {
+      provide: APP_INTERCEPTOR,
+		  useClass: ClassSerializerInterceptor,
+    }],
 })
 export class AppModule { }

@@ -14,6 +14,12 @@ export class Results {
 
   @Column()
   loser: string;
+  
+  @Column({ default: 0 })
+  winnerId: number;
+
+  @Column({ default: 0 })
+  loserId: number;
 
   @Column()
   winner_score: string;
@@ -26,11 +32,5 @@ export class Results {
 
   @Column()
   loser_elo: number;
-
-  // @Column()
-  // winner_avatar: string;
-
-  // @Column()
-  // loser_avatar: string;
 
 }
