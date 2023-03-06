@@ -10,4 +10,7 @@ export interface Result {
     loser_score: number
     winner_elo: number
     loser_elo: number
+    winnerId: number
+    loserId: number
+
 }

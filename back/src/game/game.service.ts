@@ -88,7 +88,7 @@ export class GameService {
 			server.to(player2.socket).emit("RoomStart", this.gameRoom.length, player2);
 			this.userService.SetStatus(socket1.handshake.auth.user, "InGame");
 			this.userService.SetStatus(socket2.handshake.auth.user, "InGame");
-			server.emit("UpdateSomeone", { idChange: socket1.handshake.auth.user.id, idChange2: socket2.handshake.auth.user.id  });
+			server.emit("UpdateSomeone", { idChange: socket1.handshake.auth.user.id, idChange2: socket2.handshake.auth.user.id });
 
 		}
 		else
@@ -182,11 +182,13 @@ export class GameService {
 	}
 
 	async save(results: CreateResultDto, server: Server) {
-		const winner = await this.userService.getByUsername(results.winner);
-		const loser = await this.userService.getByUsername(results.loser);  
+		const winner = await this.userService.getById(results.winnerId);
+		const loser = await this.userService.getById(results.loserId);  
 		const resultReturn = {
 		  winner: results.winner,
+		  winnerId: results.winnerId,
 		  loser: results.loser,
+		  loserId: results.loserId,
 		  winner_score: results.winner_score,
 		  loser_score: results.loser_score,
 		  winner_elo: winner ? winner.elo : 0,
@@ -377,13 +379,13 @@ class Game {
 	async finishGame() {
 		this.gameState.gameFinished = true;
 		if (this.gameState.player1.score === this.gameState.scoreMax) {
-			let result: any = { winner: this.gameState.player1.name, loser: this.gameState.player2.name, winner_score: this.gameState.player1.score.toString(), loser_score: this.gameState.player2.score.toString() };
+			let result: any = { winner: this.gameState.player1.name, winnerId: this.gameState.player1.id, loser: this.gameState.player2.name, loserId: this.gameState.player2.id, winner_score: this.gameState.player1.score.toString(), loser_score: this.gameState.player2.score.toString() };
 			await this.gameService.save(result, this.server);
 			this.server.to(this.gameState.player1.socket).emit("GameEnd", result);
 			this.server.to(this.gameState.player2.socket).emit("GameEnd", result);
 		}
 		else {
-			let result: any = { winner: this.gameState.player2.name, loser: this.gameState.player1.name, winner_score: this.gameState.player2.score.toString(), loser_score: this.gameState.player1.score.toString() };
+			let result: any = { winner: this.gameState.player2.name, winnerId: this.gameState.player2.id, loser: this.gameState.player1.name, loserId: this.gameState.player1.id, winner_score: this.gameState.player2.score.toString(), loser_score: this.gameState.player1.score.toString() };
 			await this.gameService.save(result, this.server);
 			this.server.to(this.gameState.player1.socket).emit("GameEnd", result);
 			this.server.to(this.gameState.player2.socket).emit("GameEnd", result);

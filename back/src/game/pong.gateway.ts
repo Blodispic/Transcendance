@@ -3,6 +3,7 @@ import { Server, Socket } from "socket.io";
 import { User } from "src/user/entities/user.entity";
 import { GameService } from "./game.service";
 import { userList } from "src/app.gateway";
+import { BadRequestException } from "@nestjs/common";
 
 export interface Move {
 	left: boolean;

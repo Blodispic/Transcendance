@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, NotFoundException, UnauthorizedException } from "@nestjs/common";
+import { BadRequestException, HttpException, HttpStatus, Injectable, NotFoundException, UnauthorizedException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Results } from "src/results/entities/results.entity";
 import { Repository } from "typeorm";
@@ -17,6 +17,7 @@ import { CreateResultDto } from "src/results/dto/create-result.dto";
 import { Server } from "http";
 import { userList } from "src/app.gateway";
 import { Channel } from "src/chat/channel/entities/channel.entity";
+import { isNumber } from "class-validator";
 // import { userList } from "src/app.gateway";
 
 @Injectable()
@@ -88,7 +89,7 @@ export class UserService {
     user.two_factor_secret = secret;
     await this.usersRepository.save(user);
   }
-
+  
   async check2FA(id: number, userCode: string): Promise<boolean> { 
     const user = await this.usersRepository.findOneBy({ id: id });
     if (user) {
@@ -363,8 +364,8 @@ export class UserService {
     }
     return Promise.all(my_user.results.map(async request => {
       const [winner, loser] = await Promise.all([
-        this.usersRepository.findOne({ where: { username: request.winner } }),
-        this.usersRepository.findOne({ where: { username: request.loser } })
+        this.usersRepository.findOne({ where: { id: request.winnerId } }),
+        this.usersRepository.findOne({ where: { id: request.loserId } })
       ]);
       return {
         id: request.id,
@@ -373,7 +374,9 @@ export class UserService {
         loser: loser ? loser : "Unknown",
         loser_score: request.loser_score || 0,
         winner_elo: winner ? request.winner_elo : 0,
-        loser_elo: loser ? request.loser_elo : 0
+        loser_elo: loser ? request.loser_elo : 0,
+        winnerId: winner ? request.winnerId : 0,
+        loserId: loser ? request.loserId : 0,
       };
     }))
   }
@@ -436,7 +439,10 @@ export class UserService {
   }
 
   async SetStatus(user: User, status: string): Promise<User | null> {
-    const users = await this.usersRepository.findOneBy({ id: user.id });
+    if (!user)
+      throw new HttpException(`user doesn't exists`, HttpStatus.BAD_REQUEST);
+
+    const users = await this.usersRepository.findOne({where: { id: user.id }});
     if (users) {
       users.status = status;
       return await this.usersRepository.save(users);
