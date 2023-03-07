@@ -10,6 +10,7 @@ export function History(props: { user: IUser }) {
     const navigate = useNavigate();
 
     useEffect(() => {
+      console.log("ca passe pas la ");
         const checkMatchRequest = async () => {
             const response = await fetch(`${process.env.REACT_APP_BACK}user/matches`, {
                 method: 'POST',

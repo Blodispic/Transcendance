@@ -45,7 +45,9 @@ export default function CustomGamePopup(props: {trigger: boolean; setTrigger: Fu
             console.log("Error: User doesn't exists");
             return ;
         }
-        socket.emit("createCustomGame", { user1: myUser.user, user2: friend, extra: extra, scoreMax: Max });
+        console.log("user =", myUser.user);
+        
+        socket.emit("createCustomGame", { user1: myUser.user, user2: friend[0], extra: extra, scoreMax: Max });
         return;
     }
 
