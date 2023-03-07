@@ -16,7 +16,7 @@ import { ResultModule } from './results/results.module';
 import { Channel } from './chat/channel/entities/channel.entity';
 import { FriendRequest } from './user/entities/friend-request.entity';
 import { UserService } from './user/user.service';
-import { APP_FILTER, APP_INTERCEPTOR } from '@nestjs/core';
+import { APP_FILTER, APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
 import { GatewayExceptionFilter } from './app.exceptionFilter';
 
 @Module({
@@ -50,6 +50,7 @@ import { GatewayExceptionFilter } from './app.exceptionFilter';
     {
       provide: APP_INTERCEPTOR,
 		  useClass: ClassSerializerInterceptor,
-    }],
+    },
+  ],
 })
 export class AppModule { }

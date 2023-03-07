@@ -3,6 +3,7 @@ import { ImCheckmark, ImCross } from "react-icons/im";
 import { IUser } from "../../interface/User";
 import { socket } from "../../App";
 import { useNavigate, useParams } from "react-router-dom";
+import { useAppSelector } from '../../redux/Hook';
 
 export function InviteButton(props: { user: any }) {
     const { user } = props;
@@ -13,6 +14,8 @@ export function InviteButton(props: { user: any }) {
     const [ReqStatus, setStatus] = useState<string>('+ Add Friend');
     const [myVar, setMyVar] = useState<boolean>(true);
     let { id } = useParams();
+    const myToken = useAppSelector(state => state.access_token);
+
 
     const ifFriend = async () => {
         console.log("ca rentre ici");
@@ -22,8 +25,10 @@ export function InviteButton(props: { user: any }) {
                 myId: user.id,
                 friendId: id,
             }),
-            headers: { 'Content-Type': 'application/json' },
-            credentials: 'include',
+            headers: { 
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${myToken.token}`,
+            },
         })
         .then ( async response => {
             console.log("truefalse")

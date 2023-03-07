@@ -13,6 +13,7 @@ export default function Sign() {
     const [avatar, setavatar] = useState<string>('');
     const formData = new FormData();
     const myUser = useAppSelector(state => state.user);
+    const myToken = useAppSelector(state => state.access_token);
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
     const [nameExist, SetNameExist] = useState<Boolean>(false);
@@ -24,8 +25,10 @@ export default function Sign() {
             formData.append('file', file);
             await fetch(`${process.env.REACT_APP_BACK}user/${myUser.user.id}/avatar`, {
                 method: 'PATCH',
+                headers: {
+                    'Authorization': `Bearer ${myToken.token}`,
+                },
                 body: formData,
-                credentials: 'include',
             })
             formData.delete('file');
             dispatch(change_avatar(avatar));
@@ -37,9 +40,9 @@ export default function Sign() {
                     method: 'PATCH',
                     headers: {
                         'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${myToken.token}`,
                     },
                     body: JSON.stringify({ username: newname }),
-                    credentials: 'include',
                 })
                     .then(async response => {
                         if (!response.ok)

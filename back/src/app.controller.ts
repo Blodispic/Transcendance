@@ -10,9 +10,5 @@ export class AppController {
     return this.appService.getHello();
   }
 
-  @Get('/test')
-  test() {
-    throw new BadRequestException('This is a test');
-  }
 }
 

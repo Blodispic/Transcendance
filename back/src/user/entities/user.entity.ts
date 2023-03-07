@@ -17,8 +17,8 @@ export class User {
   status: string;
 
 
-  @Column()
-  access_token: string;
+  // @Column()
+  // access_token: string;
 
   @Column({ unique: true, nullable: true })
   username: string;

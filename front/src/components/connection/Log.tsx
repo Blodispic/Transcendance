@@ -18,7 +18,7 @@ export function Log() {
     const dispatch = useAppDispatch();
     const [code, setCode] = useState<string>('');
     const [isValid, setIsValid] = useState<boolean | undefined>(undefined);
-    const myStore = useAppSelector(state => state.user);
+    const myStore = useAppSelector(state => state);
     const navigate = useNavigate();
     const fetchCodeForQr = async (e: any) => {
         e.preventDefault();
@@ -26,12 +26,12 @@ export function Log() {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
+                'Authorization': `Bearer ${myStore.access_token.token}`,
             },
             body: JSON.stringify({
-                userId: myStore.user?.id,
+                userId: myStore.user.user?.id,
                 code: code,
             }),
-            credentials: 'include',
         })
             .then(async response => {
                 const data = await response.json();

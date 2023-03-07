@@ -10,7 +10,7 @@ import CustomGamePopup from "../Game/CustomGamePopup";
 // make a list of friends that had conversation with
 function DMList(props: {currentdm: IUser | undefined; setCurrentDm: Function}) {
 	const [alluser, setAlluser] = useState<IUser[] | undefined>(undefined);
-	const myUser = useAppSelector(state => state.user);
+	const myStore = useAppSelector(state => state);
 
 	useEffect(() => {
 		const get_all = async () => {
@@ -18,12 +18,13 @@ function DMList(props: {currentdm: IUser | undefined; setCurrentDm: Function}) {
 				method: 'GET',
 				headers: {
 					'Content-Type': 'application/json',
+					'Authorization': `Bearer ${myStore.access_token.token}`,
+
 				},
-				credentials: 'include',
 			})
 			const data = await response.json();
 			setAlluser(data.filter((User: { status: string; }) => User.status === "Online"));
-			setAlluser(data.filter((User: { username: string; }) => User.username !== myUser.user?.username));
+			setAlluser(data.filter((User: { username: string; }) => User.username !== myStore.user.user?.username));
 		}
 		get_all();
 	}, [])
