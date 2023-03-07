@@ -98,9 +98,10 @@ async handleJoinChannel(@ConnectedSocket() client: Socket, @MessageBody() joinCh
 async handleCreateChannel(@ConnectedSocket() client: Socket, @MessageBody() createChannelDto: CreateChannelDto) {    
   const channel = await this.channelService.getByName(createChannelDto.chanName);
   
-  if (channel != null)
+  if (channel != null) {
+    client.emit("createChannelFailed", "An existing channel already have this name"); //selee test;
     throw new BadRequestException("An existing channel already have this name"); //channame already exist, possible ? if private/protected possible ?
-
+  }
   const user = await this.userService.getById(client.handshake.auth.user.id);
   if (user === null)
     throw new BadRequestException("No such user");

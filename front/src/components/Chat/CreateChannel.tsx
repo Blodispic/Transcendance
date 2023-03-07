@@ -22,6 +22,7 @@ export function PopupCreateChannel(props: any) {
 	const [chanMode, setChanMode] = useState(0);
     const [friend, setFriend] = useState<IUser[] >([]);
 	const [myVar, setMyvar] = useState<boolean> (false);
+	const [failed, setFailed] = useState<boolean> (false);
 
 	const handlePublic = () => {
 		setChanMode(0);
@@ -41,22 +42,42 @@ export function PopupCreateChannel(props: any) {
 
 	const handleCreateNewChan = () => {
 		// console.log("list de friend que je fetch a la creatioin du chan", [friend]);
+		setFailed(false);
 
 		if (chanName != "")
 			socket.emit('createChannel', { chanName: chanName, chanType: chanMode, password: password, users: [friend] });
 		setChanName("");
 		setPassword("");
 		setChanMode(0);
-		props.setTrigger(false);
 	}
-	
+
+	useEffect(() => {
+		socket.on("createChannelFailed", (error_message) => {
+			setFailed(true);
+		});
+		socket.on("createChannelOk", (new_chanid) => {
+			setFailed(false);
+			props.setTrigger(false);
+		});
+
+		return () => {
+			socket.off("createChannelFailed");
+			socket.off("createChannelOk");
+		}
+	});
 
 	return (props.trigger) ? (
-		<div className="chat-form-popup" onClick={_ => (props.setTrigger(false), setChanMode(0))}>
+		<div className="chat-form-popup" onClick={_ => (props.setTrigger(false), setChanMode(0), setFailed(false))}>
 			<div className="chat-form-inner" onClick={e => e.stopPropagation()}>
-				<HiOutlineXMark className="close-icon" onClick={_ => (props.setTrigger(false), setChanMode(0)) } /> <br />
+				<HiOutlineXMark className="close-icon" onClick={_ => (props.setTrigger(false), setChanMode(0), setFailed(false)) } /> <br />
 				<h3>Channel Name</h3>
 				<input type="text" id="channel-input" placeholder="Insert channel name" onChange={e => { setChanName(e.target.value) }} onSubmit={() => { handleCreateNewChan(); }} />
+				<br />
+				{
+					failed === true &&
+					<a className="create-chan-error">Channel name already exists</a>
+				}
+				
 				<h3>Channel Mode</h3>
 				<input type="radio" name="chanMode" value={0} onChange={_ => handlePublic()} defaultChecked />Public
 				<input type="radio" name="chanMode" value={1} onChange={_ => handlePrivate()} />Private
