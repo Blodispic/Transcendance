@@ -99,7 +99,7 @@ const router = createBrowserRouter([
           <ProtectedRoute>
             <Home />
           </ProtectedRoute>,
-        // errorElement: <ErrorBoundary />,
+         errorElement: <ErrorBoundary />,
       },
       {
         path: "/Chat",
