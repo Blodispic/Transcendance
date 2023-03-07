@@ -42,11 +42,11 @@ export class User {
   @JoinTable()
   friends: User[];
 
-  @ManyToMany(() => Channel)
+  @ManyToMany(() => Channel, channel => channel.users)
   channels: Channel[]
 
-  // @ManyToMany(() => Channel)
-  // banned: Channel[]
+  @ManyToMany(() => User, user => user.blocked)
+  blocked: User[];
 
   //      STATISTIQUES        //
 

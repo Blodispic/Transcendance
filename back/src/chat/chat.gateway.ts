@@ -64,7 +64,7 @@ async handleSendMessageChannel(@ConnectedSocket() client: Socket, @MessageBody()
     throw new BadRequestException("No such channel"); // no such channel
   const user = client.handshake.auth.user;
   if (!(await this.channelService.isUserinChan(channel, user)))
-    throw new BadRequestException();
+    throw new BadRequestException("You are not in this Channel");
   if (await this.channelService.isUserMuted({chanid: channel.id, userid: user.id}) || 
   await this.channelService.isUserBanned({chanid: channel.id, userid: user.id })) // ban to remove soon
     throw new BadRequestException("you are muted for now on this channel"); // user is ban or mute from this channel
@@ -104,6 +104,8 @@ async handleCreateChannel(@ConnectedSocket() client: Socket, @MessageBody() crea
     throw new BadRequestException("No such user");
   const new_channel = await this.channelService.create(createChannelDto, user);
   client.join("chan" + new_channel.id);
+  console.log("is array", Array.isArray(createChannelDto.users));
+  
   if (new_channel.chanType == 1 && createChannelDto.users)
     this.inviteToChan(createChannelDto.users, new_channel.id);
   client.emit("createChannelOk", new_channel.id);
@@ -179,12 +181,14 @@ async handleBanUser(@ConnectedSocket() client: Socket, @MessageBody() banUserDto
     throw new BadRequestException("You are not Admin on this Channel");
   this.channelService.banUser(banUserDto);
   this.channelService.rm({user: userBan, chanid: channel.id});
-  client.leave("chan" + channel.id);  
-  let timer = 60000;
+
+  this.findSocketFromUser(userBan)?.leave("chan" + channel.id);
+  // client.leave("chan" + channel.id);  
+  let timer = 30000;
   if (banUserDto.timeout)
     timer = banUserDto.timeout;
   setTimeout(() => {
-    this.channelService.unbanUser(user)
+    this.channelService.unbanUser(banUserDto)
   }, timer);
   client.emit("banUserOK", user.id, channel.id);
 }
@@ -238,7 +242,7 @@ async handleInvite(@ConnectedSocket() client: Socket, @MessageBody() inviteDto: 
 }
 
 async inviteToChan(users: User[], chanid: number)
-{
+{  
   users.forEach(user => {
     let socketIdToWho = this.findSocketFromUser(user);
     if (socketIdToWho)

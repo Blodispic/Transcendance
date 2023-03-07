@@ -481,10 +481,12 @@ export class UserService {
   {
     const user = await this.usersRepository.findOne({
       relations: {
-        results: true,
+        channels: true,
       },
       where: { id: id }
     });
+    console.log("user : ", user);
+    
     return user ? user.channels: [];
   }
 
