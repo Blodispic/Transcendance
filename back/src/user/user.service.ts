@@ -391,7 +391,7 @@ export class UserService {
     }
 
     const friendRequest = await this.friendRequestRepository.findOne({
-      where: [{ creator: { id: friendId } }, { receiver: receiver }]
+      where: [{ creator: { id: friendId },  receiver: receiver }]
     });
     if (friendRequest) {
       if (status.status) {
@@ -485,6 +485,16 @@ export class UserService {
     const user = await this.usersRepository.findOneBy({ id: id });
     const friend = await this.usersRepository.findOneBy({ id: friendId });
     return user;
+  }
+
+  async checkFriends(myId: number, friendId: number): Promise<Boolean> {
+    const myUser = await this.usersRepository.findOne({
+      relations: ['friends'],
+      where: { id: myId },
+    });
+    if (!myUser)
+      return (false);
+    return (myUser.friends.some(friend => friend.id == friendId));
   }
 
   async getResults(id: number): Promise<Results[]> {
