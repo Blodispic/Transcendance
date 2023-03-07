@@ -70,10 +70,12 @@ export default function Profile() {
         const myUser = useAppSelector(state => state.user);
 
         const fetchid = async () => {
+                console.log("ca fetch id ", id);
                 const response = await fetch(`${process.env.REACT_APP_BACK}user/id/${id}`, {
                         method: 'GET',
                         credentials: 'include',
                 })
+                console.log(response);
                 setCurrentUser(await response.json());
         }
         useEffect(() => {
@@ -99,14 +101,16 @@ export default function Profile() {
         }, [id])
 
         useEffect(() => {
+                console.log("currentuser", currentUser);
                 if (currentUser?.id == myUser.user?.id) {
+                        console.log("In useeffects");
                         setCurrentUser(myUser.user);
 
                 }
-        }, [Onglets, myUser.user?.username])
+        }, [Onglets, currentUser?.id,  myUser.user?.username, id])
 
 
-        if (currentUser === undefined || avatar === undefined) {
+        if (currentUser === undefined) {
                 return (
                         <div className='center'>
                                 <h1>USER DOESN'T EXIST </h1>
