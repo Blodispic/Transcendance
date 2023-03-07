@@ -79,12 +79,12 @@ function InfoFriend(props: {user: IUser}) {
                         </>
                     
                 </ul>
+				
 		</div>
 		{
                 <CustomGamePopup trigger={myVar} setTrigger={setMyvar} friend={user} />
             }
 		</div>
-		
 	);
 }
 
@@ -108,20 +108,19 @@ export function DmMessages(props: { id: any; currentdm: IUser | undefined; setCu
 		setNewInput("");
 	}
 
-	/** with useEffect, newer messages overwrite older ones */
-	// useEffect(() => {
-	// 	socket.on('sendMessageUserOK', (messageUserDto) => {
-	// 		setMessageList([...messageList, messageUserDto]);
-	// 	})
-	// 	return () => {
-	// 		socket.off('sendMessageUserOK');
-	// 	};
-	// }, [])
+	useEffect(() => {
+		socket.on('sendMessageUserOK', (messageUserDto) => {
+			console.log("DM");
+			setMessageList([...messageList, messageUserDto]);
+		})
+		return () => {
+			socket.off('sendMessageUserOK');
+		};
+	});
 	
-
-	socket.on('sendMessageUserOK', (messageUserDto) => {
-		setMessageList([...messageList, messageUserDto]);
-	})
+	// socket.on('sendMessageUserOK', (messageUserDto) => {
+	// 	setMessageList([...messageList, messageUserDto]);
+	// })
 
 	const handleBlock = () => { // to be improved
 		// if (blockedId == 0 && props.currentdm !== undefined)

@@ -64,11 +64,18 @@ export function ChannelMessages(props: { channel: IChannel }) {
 		}
 		setNewInput("");
 	}
+	
+	useEffect(() => {
+		socket.on('sendMessageChannelOK', (messageDto) => {
+			console.log("message ok");
+			setMessageList([...messageList, messageDto]);
+		});
 
-	socket.on('sendMessageChannelOK', (messageDto) => {
-		setMessageList([...messageList, messageDto]);
-	})
-
+		return () => {
+			socket.off('sendMessageChannelOK');
+		}
+	});
+		
 	return (
 		<div className="chat-body">
 			<ChannelHeader user={currentUser.user} channel={props.channel} />
@@ -79,7 +86,7 @@ export function ChannelMessages(props: { channel: IChannel }) {
 							<div className="reverse">
 								{messageList && messageList.map(message => (
 									message.chanid == props.channel.id &&
-									<div key={message.message} className="__wrap">
+									<div key={message.sendtime + message.message} className="__wrap">
 										<div className="message-info">
 											<img className="user-avatar" src={`${process.env.REACT_APP_BACK}user/${message.sender?.id}/avatar`} />
 											<p>{message.sender?.username}</p>

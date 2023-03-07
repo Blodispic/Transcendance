@@ -70,11 +70,11 @@ function ChannelList(props: any) {
 		getChanId(newChanId);
 	});
 
-	
+
 	const getChanId = (data: any) => {
 		setChanId(data);
 	}
-	
+
 	useEffect(() => {
 		const fetchAllList = async () => {
 			const response = await fetch(`${process.env.REACT_APP_BACK}channel/`, {
@@ -146,24 +146,24 @@ function PublicChannelList() {
 	return (
 		<div className="title">
 
-		<div className="bottom">
-			<header>All Public Channels <hr /></header>
-			{chanList && chanList.map(chan => (
-				<ul key={chan.name}>
-					<li>
-						<div onClick={_ => navigate(`/Chat/channel/${chan.id}`)}>{chan.name}
-							{
-								chan.chanType == 1 &&
-								<HiLockClosed style={{ float: 'right' }} />
-							}
-							{
-								chan.chanType == 2 &&
-								<BsFillKeyFill style={{ float: 'right' }} />
-							}
-						</div>
-					</li>
-				</ul>
-			))}
+			<div className="bottom">
+				<header>All Public Channels <hr /></header>
+				{chanList && chanList.map(chan => (
+					<ul key={chan.name}>
+						<li>
+							<div onClick={_ => navigate(`/Chat/channel/${chan.id}`)}>{chan.name}
+								{
+									chan.chanType == 1 &&
+									<HiLockClosed style={{ float: 'right' }} />
+								}
+								{
+									chan.chanType == 2 &&
+									<BsFillKeyFill style={{ float: 'right' }} />
+								}
+							</div>
+						</li>
+					</ul>
+				))}
 			</div>
 		</div>
 	);
@@ -243,28 +243,35 @@ function ChannelMemberList(props: { channel: IChannel }) {
 		else
 			setCurrentId(id);
 	}
-	
-	// socket.on('joinChannel', (data) => {
-	// 	const fetchMemberList = async () => {
-	// 		const response = await fetch(`${process.env.REACT_APP_BACK}channel/${props.channel.id}`, {
-	// 			method: 'GET',
-	// 		})
-	// 		const data = await response.json();
-	// 		setCurrentChan(data);
-	// 	}
-	// 	fetchMemberList();
-	// });
 
-	// socket.on('leaveChannel', (data) => {
-	// 	const fetchMemberList = async () => {
-	// 		const response = await fetch(`${process.env.REACT_APP_BACK}channel/${props.channel.id}`, {
-	// 			method: 'GET',
-	// 		})
-	// 		const data = await response.json();
-	// 		setCurrentChan(data);
+	// useEffect(() => {
+
+	// 	socket.on('joinChannel', (data) => {
+	// 		const fetchMemberList = async () => {
+	// 			const response = await fetch(`${process.env.REACT_APP_BACK}channel/${props.channel.id}`, {
+	// 				method: 'GET',
+	// 			})
+	// 			const data = await response.json();
+	// 			setCurrentChan(data);
+	// 		}
+	// 		fetchMemberList();
+	// 	});
+
+	// 	socket.on('leaveChannel', (data) => {
+	// 		const fetchMemberList = async () => {
+	// 			const response = await fetch(`${process.env.REACT_APP_BACK}channel/${props.channel.id}`, {
+	// 				method: 'GET',
+	// 			})
+	// 			const data = await response.json();
+	// 			setCurrentChan(data);
+	// 		}
+	// 		fetchMemberList();
+	// 	});
+	// 	return () => {
+	// 		socket.off('joinChannel');
+	// 		socket.off('leaveChannel');
 	// 	}
-	// 	fetchMemberList();
-	// });
+	// }, []);
 
 	if (currentChan?.users === undefined) {
 		return (
@@ -310,30 +317,43 @@ export function Channels(props: any) {
 			const data = await response.json();
 			setCurrentChan(data);
 		}
+		getChannel();
+
+	}, [props]);
+
+
+	useEffect(() => {
+		socket.on('joinChannel', (data) => {
+			const getChannel = async () => {
+				const response = await fetch(`${process.env.REACT_APP_BACK}channel/${props.chanId}`, {
+					method: 'GET',
+				})
+				const data = await response.json();
+				setCurrentChan(data);
+			}
 			getChannel();
- 	}, [props]);
+			console.log("join: ", currentChan?.name, " user: ", currentUser.user?.username);
+		});
 
-	socket.on('joinChannel', (data) => {
-		const fetchMemberList = async () => {
-			const response = await fetch(`${process.env.REACT_APP_BACK}channel/${props.chanId}`, {
-				method: 'GET',
-			})
-			const data = await response.json();
-			setCurrentChan(data);
-		}	
-		fetchMemberList();
-	});
+		socket.on('leaveChannel', (data) => {
+			const getChannel = async () => {
+				const response = await fetch(`${process.env.REACT_APP_BACK}channel/${props.chanId}`, {
+					method: 'GET'
+				})
+				const data = await response.json();
+				setCurrentChan(data);
+			}
+			getChannel();
+			console.log("leave: ", currentChan?.name, " user: ", currentUser.user?.username);
+		});
 
-	socket.on('leaveChannel', (data) => {
-		const fetchMemberList = async () => {
-			const response = await fetch(`${process.env.REACT_APP_BACK}channel/${props.chanId}`, {
-				method: 'GET'
-			})
-			const data = await response.json();
-			setCurrentChan(data);
+		return () => {
+			socket.off('joinChannel');
+			socket.off('leaveChannel');
 		}
-		fetchMemberList();
 	});
+
+	console.log("current chan: ", currentChan?.name);
 
 	return (
 		<div id="chat-container">
@@ -349,10 +369,10 @@ export function Channels(props: any) {
 				<>
 					<ChannelMessages channel={currentChan} />
 					{
-						// currentChan.users.find(obj => obj.id === currentUser.user?.id) &&
+						currentChan.users.find(obj => obj.id === currentUser.user?.id) &&
 						<div className="sidebar right-sidebar">
-						<ChannelMemberList channel={currentChan} />
-					</div>
+							<ChannelMemberList channel={currentChan} />
+						</div>
 					}
 				</>
 			}

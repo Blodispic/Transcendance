@@ -122,6 +122,7 @@ async handleLeaveChannel(@ConnectedSocket() client: Socket, @MessageBody() leave
   client.leave("chan" + leaveChannelDto.chanid);
   // client.emit("leaveChannelOK", channel.id);
   client.emit("leaveChannel", channel.id);
+  console.log("leave chan: ", channel.name, " user: ", user);
   this.server.to("chan" + channel.id).emit("leaveChannel", user);
 }
 
