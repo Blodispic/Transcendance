@@ -23,11 +23,8 @@ export default function AllPeople(props: { friend: IUser[] | undefined, setFrien
 
     useEffect(() => {
         if (allfriend !== undefined) {
-            console.log("ca change le props")
             props.setFriend([...allfriend]);
         }
-        console.log("list de friend dans funciton allPeople", allfriend);
-
     }, [allfriend])
     useEffect(() => {
         const get_all = async () => {
