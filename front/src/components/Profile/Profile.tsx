@@ -79,7 +79,10 @@ export default function Profile() {
                 setCurrentUser(await response.json());
         }
         useEffect(() => {
-                console.log("id", id);
+                socket.on("RoomStart", (roomId: number, player: Player) => {
+                        navigate("/game/" + roomId, { state: { Id: roomId } });
+                });
+
                 if (id)
                         fetchid();
                 setPages(page.PAGE_1);
@@ -96,10 +99,6 @@ export default function Profile() {
                         socket.off('SpectateStart');
                 };
         }, [id])
-
-        // useEffect(() => {
-        // }, [currentUser])
-
 
         useEffect(() => {
                 console.log("currentuser", currentUser);
