@@ -73,8 +73,8 @@ export function ConfigureChannel(props: {trigger: boolean, setTrigger: Function,
 					</>
 				}
 				<button onClick={setPassword}> Save Setting </button>
-				<h3> Remove Channel </h3>
-				<button style={{background:'#B33A3A'}} onClick={RemoveChannel}> Remove Channel </button>
+				{/* <h3> Remove Channel </h3> */}
+				{/* <button style={{background:'#B33A3A'}} onClick={RemoveChannel}> Remove Channel </button> */}
 			</div>
 		</div>
 	) : <></>;
