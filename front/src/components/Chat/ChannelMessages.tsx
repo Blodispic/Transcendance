@@ -57,7 +57,7 @@ export function ChannelMessages(props: { id: any }) {
 		e.preventDefault();
 		if (newInput != "") {
 			const sendTime = new Date().toLocaleString();
-			socket.emit('sendMessageChannel', { chanid: currentChan?.id, sender: currentUser.user, message: newInput, sendtime: sendTime });
+			socket.emit('sendMessageChannel', { chanid: currentChan?.id, message: newInput, sendtime: sendTime });
 		}
 		setNewInput("");
 	}

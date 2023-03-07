@@ -107,6 +107,7 @@ export class UserService {
       relations: {
         friends: true,
         results: true,
+        channels: true,
       },
       where: { id: id }
     });

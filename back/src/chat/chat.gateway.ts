@@ -10,7 +10,6 @@ import { UserService } from "src/user/user.service";
 import { Chat } from "./chat.entity";
 import { JoinChannelDto } from "./dto/join-channel.dto";
 import { LeaveChannelDto } from "./dto/leave-channel.dto";
-import { MessageChannelDto } from "./dto/message-channel.dto";
 import { SendDmDto } from "./dto/send-dm.dto";
 import { userList } from "src/app.gateway";
 import { AppGateway } from "src/app.gateway";
@@ -22,6 +21,7 @@ import { Channel } from "./channel/entities/channel.entity";
 import { GiveAdminDto } from "./dto/give-admin.dto";
 import { InviteDto } from "./dto/invite-user.dto";
 import { Any } from "typeorm";
+import { SendMessageChannelDto } from "./dto/send-message-channel.dto";
 var bcrypt = require('bcryptjs');
 
 @WebSocketGateway({
@@ -67,17 +67,26 @@ findSocketFromUser(user: User)
 
 
 @SubscribeMessage('sendMessageChannel')
-async handleSendMessageChannel(@ConnectedSocket() client: Socket, @MessageBody() messageChannelDto: MessageChannelDto)/* : Promise<any> */ {
-  const channel = await this.channelService.getById(messageChannelDto.chanid);
+async handleSendMessageChannel(@ConnectedSocket() client: Socket, @MessageBody() sendmessageChannelDto: SendMessageChannelDto)/* : Promise<any> */ {
+  const channel = await this.channelService.getById(sendmessageChannelDto.chanid);
   if (channel == null)
-    throw new BadRequestException("No such channel"); // no such channel
-  const user = client.handshake.auth.user;
-  if (!(await this.channelService.isUserinChan(channel, user)))
+    throw new BadRequestException("No such channel");
+  const sender = await this.userService.getById(client.handshake.auth.user.id);
+  if (sender == null)
+    throw new BadRequestException("No such user");
+  if (!(await this.channelService.isUserinChan(channel, sender)))
     throw new BadRequestException("You are not in this Channel");
-  if (await this.channelService.isUserMuted({chanid: channel.id, userid: user.id}) || 
-  await this.channelService.isUserBanned({chanid: channel.id, userid: user.id })) // ban to remove soon
+  if (await this.channelService.isUserMuted({chanid: channel.id, userid: sender.id}) || 
+  await this.channelService.isUserBanned({chanid: channel.id, userid: sender.id })) // ban to remove soon
     throw new BadRequestException("you are muted for now on this channel"); // user is ban or mute from this channel
-  this.server.to("chan" + messageChannelDto.chanid).emit("sendMessageChannelOK", messageChannelDto);
+  this.server.to("chan" + sendmessageChannelDto.chanid).emit("sendMessageChannelOK", {
+    chanid: channel.id,
+    sender: sender,
+    message: sendmessageChannelDto.message,
+    sendtime: sendmessageChannelDto.sendtime,
+  });
+  console.log("user.channels : ", await this.channelService.getUserChannel(sender.id));
+  
 }
 
 @SubscribeMessage('joinChannel')
@@ -98,7 +107,7 @@ async handleJoinChannel(@ConnectedSocket() client: Socket, @MessageBody() joinCh
   });
   client.join("chan" + joinChannelDto.chanid);
   client.emit("joinChannelOK", channel);
-  this.server.to("chan" + channel.id).emit("joinChannel", client.handshake.auth.user);
+  this.server.to("chan" + channel.id).emit("joinChannel", user);
 }
 
 @SubscribeMessage('createChannel')
@@ -120,7 +129,7 @@ async handleCreateChannel(@ConnectedSocket() client: Socket, @MessageBody() crea
 @SubscribeMessage('leaveChannel')
 async handleLeaveChannel(@ConnectedSocket() client: Socket, @MessageBody() leaveChannelDto: LeaveChannelDto) {
   const channel = await this.channelService.getById(leaveChannelDto.chanid);
-  const user = client.handshake.auth.user;
+  const user = await this.userService.getById(client.handshake.auth.user.id);
   if (channel === null || user === null)
     throw new BadRequestException("No such Channel or User"); // no such channel/user, shouldn't happened
   this.channelService.rm( { user, chanid: leaveChannelDto.chanid});

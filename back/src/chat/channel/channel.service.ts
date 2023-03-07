@@ -173,6 +173,13 @@ export class ChannelService {
 
 	  }
 
+	  getUserChannel (id: number) {
+		return this.channelRepository.find({
+			where:
+				{ users: { id : id} }
+		})
+	  }
+
 	  async unmuteUser(muteUserDto: MuteUserDto) {
 		const channel: Channel | null = await this.channelRepository.findOne({
 			relations: { users: true, muted: true },
