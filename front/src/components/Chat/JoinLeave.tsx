@@ -8,31 +8,45 @@ import { useAppSelector } from "../../redux/Hook";
 
 export function CheckPassword(props: {trigger: boolean, setTrigger: Function, channel: IChannel}) {
 	const [password, setPassword] = useState("");
-	const [correctPass, setCorrectPass] = useState(false);
+	const [failed, setFailed] = useState<boolean>(false);
+	const [errorMessage, setErrorMessage] = useState("");
+	const [inputValue, setInputValue] = useState("");
 	
 	const handleJoinWithPass = () => {
-		socket.emit('joinChannel', {chanid: props.channel.id, channame: props.channel.name, password: password})
-		/**
-		 * need to add error for wrong password;
-		 * 
-		 * if (correctPass === false) {
-		 * 		"incorrect password"
-		 * }
-		 * 
-		 */
+		socket.emit('joinChannel', {chanid: props.channel.id, channame: props.channel.name, password: password});
 		setPassword("");
-		props.setTrigger(false);
+		setInputValue("");
 	}
 
+	useEffect(() => {
+		socket.on("joinChannelFailed", (error_message) => {
+			setErrorMessage(error_message);
+			setFailed(true);
+		});
+		socket.on("joinChannel", (new_chanid) => {
+			setFailed(false);
+			props.setTrigger(false);
+		});
+
+		return () => {
+			socket.off("joinChannelFailed");
+			socket.off("joinChannel");
+		}
+	});
+
 	return (props.trigger) ? (
-		<div className="chat-form-popup" onClick={_ => props.setTrigger(false)}>
+		<div className="chat-form-popup" onClick={_ => (props.setTrigger(false), setFailed(false))}>
 			<div className="chat-form-inner" onClick={e => e.stopPropagation()}>
 
-			<HiOutlineXMark className="close-icon" onClick={_ => props.setTrigger(false)} /> <br />
+			<HiOutlineXMark className="close-icon" onClick={_ => (props.setTrigger(false), setFailed(false))} /> <br />
 			<h3>Input password for " {props.channel.name} "</h3>
-			<input type="password" id="channel-input" placeholder="Insert password" onChange={e => { setPassword(e.target.value); }} /><br />
-		
-			<button onClick={handleJoinWithPass}>Enter Channel</button>
+			<input type="password" id="channel-input" placeholder="Input password" value={password} onChange={e => { setPassword(e.target.value); }} /><br />
+			{
+				failed === true &&
+				<a className="channel-error">{errorMessage}</a>
+			}
+			<br />
+			<button onClick={_ => handleJoinWithPass()}>Enter Channel</button>
 			</div>
 		</div>
 	) : <></>;

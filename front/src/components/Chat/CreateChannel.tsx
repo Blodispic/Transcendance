@@ -75,7 +75,7 @@ export function PopupCreateChannel(props: any) {
 				<br />
 				{
 					failed === true &&
-					<a className="create-chan-error">Channel name already exists</a>
+					<a className="channel-error">Channel name already exists</a>
 				}
 				
 				<h3>Channel Mode</h3>

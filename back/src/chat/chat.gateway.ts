@@ -81,9 +81,15 @@ async handleJoinChannel(@ConnectedSocket() client: Socket, @MessageBody() joinCh
   if (user === null)
     throw new BadRequestException("No such user");  
   if (channel.password && !(await bcrypt.compare(joinChannelDto.password, channel.password)))
+  {
+    client.emit("joinChannelFailed", "Wrong password"); // *selee test;
     throw new BadRequestException("Bad password"); // wrong password
+  }
   if (await this.channelService.isUserBanned({chanid: channel.id, userid: user.id}))
+  {
+    client.emit("joinChannelFailed", "You are banned from this channel"); // *selee test;
     throw new BadRequestException("You are banned from this channel");
+  }
   this.channelService.add({
     user: user,
     chanId: channel.id,
@@ -99,7 +105,7 @@ async handleCreateChannel(@ConnectedSocket() client: Socket, @MessageBody() crea
   const channel = await this.channelService.getByName(createChannelDto.chanName);
   
   if (channel != null) {
-    client.emit("createChannelFailed", "An existing channel already have this name"); //selee test;
+    client.emit("createChannelFailed", "An existing channel already have this name"); // *selee test;
     throw new BadRequestException("An existing channel already have this name"); //channame already exist, possible ? if private/protected possible ?
   }
   const user = await this.userService.getById(client.handshake.auth.user.id);
