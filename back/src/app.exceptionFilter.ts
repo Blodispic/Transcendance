@@ -4,7 +4,7 @@ import { BaseWsExceptionFilter, WsException } from "@nestjs/websockets";
 @Catch()
 export class GatewayExceptionFilter extends BaseWsExceptionFilter {
   catch(exception: any, host: ArgumentsHost) {
-	console.log("Catching");
+	console.log("Catching", exception);
 	
     if (exception instanceof WsException) {
       super.catch(exception, host);

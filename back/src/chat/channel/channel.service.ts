@@ -54,7 +54,6 @@ export class ChannelService {
 		if (channel == null || user == null)
 		throw new NotFoundException("No such Channel or User");
 		channel.users.push(user);
-		user.channels.push(channel);
 		return this.channelRepository.save(channel);
 	}	
 

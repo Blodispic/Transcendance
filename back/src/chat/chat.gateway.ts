@@ -11,7 +11,7 @@ import { Chat } from "./chat.entity";
 import { JoinChannelDto } from "./dto/join-channel.dto";
 import { LeaveChannelDto } from "./dto/leave-channel.dto";
 import { MessageChannelDto } from "./dto/message-channel.dto";
-import { MessageUserDto } from "./dto/message-user.dto";
+import { SendDmDto } from "./dto/send-dm.dto";
 import { userList } from "src/app.gateway";
 import { AppGateway } from "src/app.gateway";
 import { CreateChannelDto } from "./dto/create-channel.dto";
@@ -39,13 +39,21 @@ export class ChatGateway
  
   @WebSocketServer() server: Server;
   
- @SubscribeMessage('sendMessageUser')
- async handleSendMessageUser(@ConnectedSocket() client: Socket, @MessageBody() messageUserDto: MessageUserDto)/* : Promise<any> */ {
-  //  const user = await this.userService.getById(messageUserDto.useridtowho);
-  const socketIdToWho = this.findSocketFromUser(messageUserDto.usertowho);
-  if (socketIdToWho === null)
-    throw new BadRequestException("No such user"); // no such user
-  this.server.to(socketIdToWho.id).emit("sendMessageUserOK", messageUserDto);
+ @SubscribeMessage('sendDM')
+ async handleSendMessageUser(@ConnectedSocket() client: Socket, @MessageBody() sendDmDto: SendDmDto)/* : Promise<any> */ {
+   console.log("ok", sendDmDto);
+  const receiver = await this.userService.getById(sendDmDto.IdReceiver);
+  
+  const sender = await this.userService.getById(client.handshake.auth.user.id);
+  if (!receiver)
+    throw new BadRequestException("Receiver does not exist");
+  const socketReceiver = this.findSocketFromUser(receiver);
+  if (socketReceiver === null)
+    throw new BadRequestException("Receiver is not connected");
+  this.server.to(socketReceiver.id).emit("ReceiveDM", {
+    sender: sender,
+    message: sendDmDto.message,
+  });
  }
 
 findSocketFromUser(user: User)
@@ -104,7 +112,7 @@ async handleCreateChannel(@ConnectedSocket() client: Socket, @MessageBody() crea
   if (user === null)
     throw new BadRequestException("No such user");
   const new_channel = await this.channelService.create(createChannelDto, user);
-  client.join("chan" + new_channel.id);  
+  client.join("chan" + new_channel.id);
   if (new_channel.chanType == 1 && createChannelDto.users && createChannelDto.users.length > 0)
     this.inviteToChan(createChannelDto.users, new_channel.id);
 }
