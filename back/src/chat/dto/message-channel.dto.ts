@@ -12,4 +12,7 @@ export class MessageChannelDto {
 	@IsNotEmpty()
 	message: string; 
 	// à améliorer
+
+	@IsNotEmpty()
+	sendtime: string;
 }

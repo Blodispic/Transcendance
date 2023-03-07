@@ -19,23 +19,31 @@ export default function Queue() {
     
 
     function addToWaitingRoom() {
+        socket.auth = {
+            user: myUser.user,
+          };
+          
         socket.emit("addToWaitingRoom", myUser.user);
         return;
     }
 
-    socket.on("RoomStart", (roomId: number, player: Player) => {
-        navigate("/game/" + roomId, { state: { Id: roomId } });
-    });
-
+    
     useEffect(() => {
         const fetchuser = async () => {
             if (myUser.user) {
                 await fetch(`${process.env.REACT_APP_BACK}game/${myUser.user.id}}`, {
                     method: 'POST',
+                    credentials: 'include'
                 })
             }
         }
         fetchuser()
+        socket.on("RoomStart", (roomId: number, player: Player) => {
+            navigate("/game/" + roomId, { state: { Id: roomId } });
+        });
+        return () => {
+            socket.off('RoomStart');
+        };
     }, [])
 
     return (

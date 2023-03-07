@@ -48,12 +48,12 @@ function Onglets(props: { currentUser: IUser, current: page, setOnglets: Functio
                                         </a>
                                 </button>
                         }
-                         {
+                        {
                                 currentUser.login === myUser.user?.login &&
                                 <button className={`pointer ${current === page.PAGE_4 ? "" : "not-selected"}`}
                                         onClick={e => setOnglets(page.PAGE_4)} >
                                         <a >
-                                                settings
+                                                Settings
                                         </a>
                                 </button>
                         }
@@ -68,35 +68,38 @@ export default function Profile() {
         let { id } = useParams();
         const [pages, setPages] = useState<page>(page.PAGE_1);
         const myUser = useAppSelector(state => state.user);
-        
-                const fetchid = async () => {
-                        const response = await fetch(`${process.env.REACT_APP_BACK}user/id/${id}`, {
-                                method: 'GET',
-                        })
-                        setCurrentUser(await response.json());
-                }
+
+        const fetchid = async () => {
+                const response = await fetch(`${process.env.REACT_APP_BACK}user/id/${id}`, {
+                        method: 'GET',
+                        credentials: 'include',
+                })
+                setCurrentUser(await response.json());
+        }
         useEffect(() => {
                 if (id)
                         fetchid();
                 setPages(page.PAGE_1);
-               if (myUser.user!.friends )
-               console.log ("est ce que c'est mon copain",  myUser.user!.friends.find(allfriend => allfriend.id === currentUser!.id));
+                if (myUser.user!.friends)
+                        socket.on('UpdateSomeone', (idChange, idChange2) => {
+                                // if (idChange2 === id || idChange === id)
+                                        fetchid();
+                        })
+                socket.on("SpectateStart", (roomId: number, player: Player) => {
+                        navigate("/game/" + roomId, { state: { Id: roomId } });
+                });
+                return () => {
+                        socket.off('UpdateSomeone');
+                        socket.off('SpectateStart');
+                };
         }, [id])
 
         // useEffect(() => {
-        socket.on('UpdateSomeone', (idChange, idChange2) => {
-                // if (idChange2 === id || idChange === id)
-                fetchid();
-        })
         // }, [currentUser])
 
-        socket.on("SpectateStart", (roomId: number, player: Player) => {
-                navigate("/game/" + roomId, { state: { Id: roomId } });
-        });
 
         useEffect(() => {
-                if (currentUser?.id == myUser.user?.id)
-                {
+                if (currentUser?.id == myUser.user?.id) {
                         setCurrentUser(myUser.user);
 
                 }
@@ -130,7 +133,7 @@ export default function Profile() {
                                         pages == page.PAGE_3 &&
                                         <TwoFa />
                                 }
-                                 {
+                                {
                                         pages == page.PAGE_4 &&
                                         <Sign />
                                 }

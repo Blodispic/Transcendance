@@ -21,6 +21,7 @@ import { MuteUserDto } from "./dto/mute-user.dto";
 import { Channel } from "./channel/entities/channel.entity";
 import { GiveAdminDto } from "./dto/give-admin.dto";
 import { InviteDto } from "./dto/invite-user.dto";
+import { Any } from "typeorm";
 var bcrypt = require('bcryptjs');
 
 @WebSocketGateway({
@@ -103,12 +104,9 @@ async handleCreateChannel(@ConnectedSocket() client: Socket, @MessageBody() crea
   if (user === null)
     throw new BadRequestException("No such user");
   const new_channel = await this.channelService.create(createChannelDto, user);
-  client.join("chan" + new_channel.id);
-  console.log("is array", Array.isArray(createChannelDto.users));
-  
-  if (new_channel.chanType == 1 && createChannelDto.users)
+  client.join("chan" + new_channel.id);  
+  if (new_channel.chanType == 1 && createChannelDto.users && createChannelDto.users.length > 0)
     this.inviteToChan(createChannelDto.users, new_channel.id);
-  client.emit("createChannelOk", new_channel.id);
 }
 
 @SubscribeMessage('leaveChannel')
@@ -188,7 +186,7 @@ async handleBanUser(@ConnectedSocket() client: Socket, @MessageBody() banUserDto
   if (banUserDto.timeout)
     timer = banUserDto.timeout;
   setTimeout(() => {
-    this.channelService.unbanUser(banUserDto)
+    this.channelService.unbanUser({ userid: user.id, chanid: channel.id })
   }, timer);
   client.emit("banUserOK", user.id, channel.id);
 }
@@ -242,7 +240,8 @@ async handleInvite(@ConnectedSocket() client: Socket, @MessageBody() inviteDto: 
 }
 
 async inviteToChan(users: User[], chanid: number)
-{  
+{
+  
   users.forEach(user => {
     let socketIdToWho = this.findSocketFromUser(user);
     if (socketIdToWho)

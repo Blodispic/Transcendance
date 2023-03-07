@@ -6,8 +6,8 @@ import { socket } from "../../App";
 import { IChannel } from "../../interface/Channel";
 import { IMessage } from "../../interface/Message";
 import { useAppSelector } from "../../redux/Hook";
-import { ConfigurePass } from "./AdminCommands";
-import { JoinChannel, LeaveChannel } from "./JoinLeave";
+import { ConfigureChannel } from "./AdminCommands";
+import { JoinChannel, JoinLeave, LeaveChannel } from "./JoinLeave";
 
 export function ChannelMessages(props: { id: any }) {
 	const [newInput, setNewInput] = useState("");
@@ -15,32 +15,53 @@ export function ChannelMessages(props: { id: any }) {
 	const [currentChan, setCurrentChan] = useState<IChannel | undefined>(undefined);
 	const currentUser = useAppSelector(state => state.user);
 	const [popup, setPopup] = useState(false);
-	const [isOnChannel, setIsOnChannel] = useState(false);
-	let date: string;
+	const [reload, setReload] = useState<boolean>(false);
 
+	const sleep =  () => new Promise(r => setTimeout(r, 2000));
 	useEffect(() => {
 		const getChannel = async () => {
 			const response = await fetch(`${process.env.REACT_APP_BACK}channel/${props.id}`, {
 				method: 'GET',
 			})
 			const data = await response.json();
-			setCurrentChan(data);
-			setMessageList(messageList => []);
+			if (currentChan?.id !== props.id) {
+				setCurrentChan(data);
+				setMessageList(messageList => []);
+			}
 		}
-		getChannel();
-	}, [props]);
+		if (props.id)
+			getChannel();
+		}, [props]);
+		
+	useEffect(() => {
+		socket.on('leaveChannelOK', (chanid) => {
+			console.log("leavechanles");
+			setReload(true);
+		})
+		socket.on('joinChannelOK', (chanid) => {
+			console.log("join chanels");
+			setReload(true);
+		})
+		socket.on('sendMessageChannelOK', (messageDto) => {
+			setMessageList([...messageList, messageDto]);
+		})
+		setReload(false);
+		return () => {
+			socket.off('leaveChannelOK');
+			socket.off('joinChannelOK');
+			socket.off('sendMessageChannelOK');
+		}
+	}, [reload]);
 
 	const handleSubmitNewMessage = (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
-		if (newInput != "")
-			socket.emit('sendMessageChannel', { chanid: currentChan?.id, sender: currentUser.user, message: newInput });
+		if (newInput != "") {
+			const sendTime = new Date().toLocaleString();
+			socket.emit('sendMessageChannel', { chanid: currentChan?.id, sender: currentUser.user, message: newInput, sendtime: sendTime });
+		}
 		setNewInput("");
 	}
 
-	socket.on('sendMessageChannelOK', (messageDto) => {
-		setMessageList([...messageList, messageDto]);
-	})
-	date = new Date().toLocaleString();
 
 	return (
 		<div className="chat-body">
@@ -56,11 +77,7 @@ export function ChannelMessages(props: { id: any }) {
 				}
 				{
 					currentChan !== undefined &&
-					<>
-						<JoinChannel currentUser={currentUser.user} channel={currentChan} />
-
-						<LeaveChannel currentUser={currentUser.user} chanid={currentChan?.id} />
-					</>
+					<JoinLeave currentUser={currentUser.user} channel={currentChan} />
 				}
 				{
 					currentChan?.id &&
@@ -69,7 +86,7 @@ export function ChannelMessages(props: { id: any }) {
 							currentChan.chanType !== 1 &&
 							<>
 								<ImCog className="config-icon" onClick={() => setPopup(true)} />
-								<ConfigurePass trigger={popup} setTrigger={setPopup} channel={currentChan} />
+								<ConfigureChannel trigger={popup} setTrigger={setPopup} channel={currentChan} />
 							</>
 						}
 					</>
@@ -77,25 +94,31 @@ export function ChannelMessages(props: { id: any }) {
 			</div>
 			<div className="chat-messages">
 				<div className="reverse">
-				{messageList && messageList.map(message => (
-					message.chanid == currentChan?.id &&
-					<div key={message.message} className="__wrap">
-						<div className="message-info">
-							<img className="user-avatar" src={message.sender?.avatar} />
-							<p>{message.sender?.username}</p>
-							<p className="timestamp">{date}</p>
+					{messageList && messageList.map(message => (
+						message.chanid == currentChan?.id &&
+						<div key={message.message} className="__wrap">
+							<div className="message-info">
+								<img className="user-avatar" src={`${process.env.REACT_APP_BACK}user/${message.sender?.id}/avatar`}/>
+								<p>{message.sender?.username}</p>
+								<p className="timestamp">{message.sendtime}</p>
+							</div>
+							{message.message}
 						</div>
-						{message.message}
-					</div>
-				))}
-			</div>
+					))}
+				</div>
 			</div>
 			{
-				props.id !== undefined &&
-				<form id="input_form" onSubmit={(e) => { handleSubmitNewMessage(e); }}>
-					<input type="text" onChange={(e) => { setNewInput(e.target.value) }}
-						placeholder="type message here" value={newInput} />
-				</form>
+				currentChan !== undefined &&
+				<>
+					{
+						currentChan?.users.find(elem => elem.id == currentUser.user?.id) !== undefined &&
+						<form id="input_form" onSubmit={(e) => { handleSubmitNewMessage(e); }}>
+							<input type="text" onChange={(e) => { setNewInput(e.target.value) }}
+								placeholder="type message here" value={newInput} />
+						</form>
+					}
+				</>
+
 			}
 		</div>
 	);

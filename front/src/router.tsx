@@ -5,7 +5,7 @@ import Profile from './components/Profile/Profile'
 import Connection from './components/connection/Connection';
 import Header from './components/Header/Header';
 import Chat from './components/Chat/Chat';
-import { createBrowserRouter, Outlet } from "react-router-dom";
+import { createBrowserRouter, Outlet, useRouteError } from "react-router-dom";
 import Queue from './components/Game/Queue';
 import { Navigate } from "react-router-dom";
 import { useAppSelector } from './redux/Hook';
@@ -23,6 +23,12 @@ const Layout = () => (
   </>
 );
 
+function ErrorBoundary() {
+  let error = useRouteError();
+  console.error(error);
+  // Uncaught ReferenceError: path is not defined
+  return <div>Dang!</div>;
+}
 
 
 const ProtectedRoute = (props: { children: any }) => {
@@ -55,6 +61,8 @@ const OauthRoute = (props: { children: any }) => {
   return props.children;
 };
 
+
+
 const router = createBrowserRouter([
   {
 
@@ -62,21 +70,24 @@ const router = createBrowserRouter([
     element:
       <PublicRoute>
         <Connection />
-      </PublicRoute>
+      </PublicRoute>,
+      errorElement: <ErrorBoundary />,
   },
   {
     path: "/sign",
     element:
       <OauthRoute>
         <Sign />
-      </OauthRoute>
+      </OauthRoute>,
+    errorElement: <ErrorBoundary />,
   },
   {
     path: "/log",
     element:
       <OauthRoute>
         <Log />
-      </OauthRoute>
+      </OauthRoute>,
+    errorElement: <ErrorBoundary />,
   },
   {
     element: <Layout />,
@@ -87,7 +98,8 @@ const router = createBrowserRouter([
         element:
           <ProtectedRoute>
             <Home />
-          </ProtectedRoute>
+          </ProtectedRoute>,
+        errorElement: <ErrorBoundary />,
       },
       {
         path: "/Chat",
@@ -95,6 +107,7 @@ const router = createBrowserRouter([
           <ProtectedRoute>
             <Chat />
           </ProtectedRoute>,
+        errorElement: <ErrorBoundary />,
         children: [
           {
             path: "/Chat/channel",
@@ -102,6 +115,7 @@ const router = createBrowserRouter([
               <ProtectedRoute>
                 <Chat />
               </ProtectedRoute>,
+            errorElement: <ErrorBoundary />,
             children: [
               {
                 path: "/Chat/channel/:id",
@@ -136,6 +150,7 @@ const router = createBrowserRouter([
           <ProtectedRoute>
             <Profile />
           </ProtectedRoute>,
+          errorElement: <ErrorBoundary />,
       },
       {
         path: "/Game",
@@ -143,6 +158,7 @@ const router = createBrowserRouter([
           <ProtectedRoute>
             <Queue />
           </ProtectedRoute>,
+        errorElement: <ErrorBoundary />,
       },
       {
         path: "/Game/:id",
@@ -150,11 +166,12 @@ const router = createBrowserRouter([
           <ProtectedRoute>
             <GameApp />
           </ProtectedRoute>,
+        errorElement: <ErrorBoundary />,
       },
       {
         path: "*",
         element:
-            <PageNotfound />
+          <PageNotfound />
       },
     ]
   }

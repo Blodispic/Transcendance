@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, NotFoundException, UnauthorizedException } from "@nestjs/common";
+import { BadRequestException, HttpException, HttpStatus, Injectable, NotFoundException, UnauthorizedException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Results } from "src/results/entities/results.entity";
 import { Repository } from "typeorm";
@@ -17,6 +17,7 @@ import { CreateResultDto } from "src/results/dto/create-result.dto";
 import { Server } from "http";
 import { userList } from "src/app.gateway";
 import { Channel } from "src/chat/channel/entities/channel.entity";
+import { isNumber } from "class-validator";
 // import { userList } from "src/app.gateway";
 
 @Injectable()
@@ -88,7 +89,7 @@ export class UserService {
     user.two_factor_secret = secret;
     await this.usersRepository.save(user);
   }
-
+  
   async check2FA(id: number, userCode: string): Promise<boolean> { 
     const user = await this.usersRepository.findOneBy({ id: id });
     if (user) {
@@ -150,7 +151,10 @@ export class UserService {
       },
       where: { username: username }
     });
-    return userfindName;
+    if (userfindName)
+      return userfindName;
+    else 
+      throw new NotFoundException("Username dont exist");
   }
 
   async update(id: number, userUpdate: any) {
@@ -158,7 +162,7 @@ export class UserService {
       id: id,
     })
     if (user) {
-      //Si vous voulez plus de chose a update, mettez le dans le body et faites un if
+      //Si vous voulez plus de chose a update, mettez le dans le body et faites un iff
       if (userUpdate.username) {
         const checkUsername = await this.usersRepository.findOneBy({
           username: userUpdate.username,
@@ -209,8 +213,6 @@ export class UserService {
   }
 
   async sendFriendRequest(friendId: number, creatorId: number) {
-    console.log("friendId = ", friendId);
-    console.log("creatorId = ", creatorId);
     if (friendId == creatorId) {
       return ({ message: "You can't add yourself" });
     }
@@ -245,7 +247,7 @@ export class UserService {
         creator: true,
         receiver: true,
       },
-      where: [{ creator: creator }, { receiver: friend }]
+      where: [{ creator: creator, receiver: friend }]
     });
 
     if (existingRequest) {
@@ -259,7 +261,7 @@ export class UserService {
 
     await this.friendRequestRepository.save(friendRequest);
     const frienRequestPush: FriendRequest | null = await this.friendRequestRepository.findOne({
-      where: [{ creator: creator }, { receiver: friend }]
+      where: [{ creator: creator, receiver: friend }]
     });
     if (frienRequestPush) {
       if (!friend.receiveFriendRequests)
@@ -283,7 +285,7 @@ export class UserService {
     }
 
     const friendRequest = await this.friendRequestRepository.findOne({
-      where: [{ creator: creator }, { receiver: { id: friendId } }]
+      where: [{ creator: creator, receiver: { id: friendId } }]
     });
     if (!friendRequest) {
       throw new NotFoundException( "Friend request does not exist" );
@@ -292,15 +294,10 @@ export class UserService {
   }
 
   async GetFriendsRequest(userId: number) {
-    const user = await this.usersRepository.findOneBy({
-      id: userId,
-    })
-    if (!user) {
-      throw new NotFoundException("user doesn't exists");
-    }
+    
     const receiver = await this.usersRepository.findOne({
       relations: ['receiveFriendRequests', 'receiveFriendRequests.creator', 'friends'],
-      where: { id: user.id }
+      where: { id: userId }
     });
     if (!receiver) {
       return [];
@@ -328,6 +325,35 @@ export class UserService {
     });
   }
 
+  async GetFriends(userId: number) {
+    const user = await this.usersRepository.findOne({
+      relations: ['friends'],
+      where: { id: userId }
+    });
+    if (!user) {
+      return [];
+    }
+    return user.friends.map(request => {
+      if (request.avatar) {
+        return {
+          name: request.username,
+          avatar: request.avatar,
+          id: request.id,
+          UserStatus: request.status,
+        };
+      }
+      else {
+        return {
+          name: request.username,
+          avatar: request.intra_avatar,
+          id: request.id,
+          UserStatus: request.status,
+        };
+      }
+      return {};
+    });
+  }
+  
   async GetMatchRequest(userId: number) {
     const my_user = await this.usersRepository.findOne({
       relations: ['results'],
@@ -338,8 +364,8 @@ export class UserService {
     }
     return Promise.all(my_user.results.map(async request => {
       const [winner, loser] = await Promise.all([
-        this.usersRepository.findOne({ where: { username: request.winner } }),
-        this.usersRepository.findOne({ where: { username: request.loser } })
+        this.usersRepository.findOne({ where: { id: request.winnerId } }),
+        this.usersRepository.findOne({ where: { id: request.loserId } })
       ]);
       return {
         id: request.id,
@@ -348,10 +374,13 @@ export class UserService {
         loser: loser ? loser : "Unknown",
         loser_score: request.loser_score || 0,
         winner_elo: winner ? request.winner_elo : 0,
-        loser_elo: loser ? request.loser_elo : 0
+        loser_elo: loser ? request.loser_elo : 0,
+        winnerId: winner ? request.winnerId : 0,
+        loserId: loser ? request.loserId : 0,
       };
-    }));
+    }))
   }
+  
 
   async updateFriendRequestStatus(friendId: number, receiverId: number, status: FriendRequestStatus) {
     const receiver = await this.usersRepository.findOneBy({
@@ -406,17 +435,14 @@ export class UserService {
       await this.usersRepository.save(friend);
       return await this.usersRepository.save(realUser);
     }
-    // if (!user)
-    //   console.log("User doesn't exists");
-    // if (!friend)
-    //   console.log("Friend doesn't exists");
-    // if (user.id == friendId)
-    //   console.log("user can't be friend with himself");
     return realUser;
   }
 
   async SetStatus(user: User, status: string): Promise<User | null> {
-    const users = await this.usersRepository.findOneBy({ id: user.id });
+    if (!user)
+      throw new HttpException(`user doesn't exists`, HttpStatus.BAD_REQUEST);
+
+    const users = await this.usersRepository.findOne({where: { id: user.id }});
     if (users) {
       users.status = status;
       return await this.usersRepository.save(users);
@@ -439,12 +465,6 @@ export class UserService {
       user.friends.push(friend);
       return await this.usersRepository.save(user);
     }
-    // if (!user)
-    //   console.log("User doesn't exists");
-    // if (!friend)
-    //   console.log("Friend doesn't exists");
-    // if (id == friendId)
-    //   console.log("user can't be friend with himself");
     return user;
   }
 

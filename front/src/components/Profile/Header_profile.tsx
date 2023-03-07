@@ -13,15 +13,20 @@ function Search(props: { currentUser: IUser, setcurrentUser: Function }) {
         const [username, setMan] = useState<string | undefined>(undefined)
 
         const search_man = async (e: any) => {
-                e.preventDefault();
-                const response = await fetch(`${process.env.REACT_APP_BACK}user/username/${username}`, {
-                        method: 'GET',
-                })
-                const data = await response.json()
-
-                setcurrentUser(data);
-
-                navigate(`../Profile/${data.id}`);
+                if (username) {
+                        e.preventDefault();
+                        const response = await fetch(`${process.env.REACT_APP_BACK}user/username/${username}`, {
+                                method: 'GET',
+                                credentials: 'include',
+                        })
+                        .then(async response => {
+                                if (response.ok){
+                                        const data = await response.json()
+                                        setcurrentUser(data);       
+                                        navigate(`../Profile/${data.id}`);
+                                }
+                        })
+                }
 
         }
 

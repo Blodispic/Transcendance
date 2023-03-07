@@ -25,10 +25,12 @@ export default function Sign() {
             await fetch(`${process.env.REACT_APP_BACK}user/${myUser.user.id}/avatar`, {
                 method: 'PATCH',
                 body: formData,
+                credentials: 'include',
             })
             formData.delete('file');
             dispatch(change_avatar(avatar));
         }
+
         if (newname !== '' && myUser.user) {
             if (newname) {
                 await fetch(`${process.env.REACT_APP_BACK}user/${myUser.user.id}`, {
@@ -37,6 +39,7 @@ export default function Sign() {
                         'Content-Type': 'application/json',
                     },
                     body: JSON.stringify({ username: newname }),
+                    credentials: 'include',
                 })
                     .then(async response => {
                         if (!response.ok)
@@ -45,7 +48,6 @@ export default function Sign() {
                             SetNameExist(false);
                             dispatch(change_name(newname));
                             dispatch(set_status(UserStatus.ONLINE));
-
                             if (window.location.href.search('Profile') === -1) {
                                 navigate("/Home");
                             }

@@ -12,7 +12,7 @@ describe('ChannelController', () => {
     controller = module.get<ChannelController>(ChannelController);
   });
 
-  it('should be defined', () => {
+  it('should be defined', ()  => {
     expect(controller).toBeDefined();
   });
 });

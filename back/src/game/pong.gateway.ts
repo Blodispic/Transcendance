@@ -3,6 +3,7 @@ import { Server, Socket } from "socket.io";
 import { User } from "src/user/entities/user.entity";
 import { GameService } from "./game.service";
 import { userList } from "src/app.gateway";
+import { BadRequestException } from "@nestjs/common";
 
 export interface Move {
 	left: boolean;
@@ -65,8 +66,6 @@ export class PongGateway implements OnGatewayDisconnect, OnGatewayInit {
 
 	@SubscribeMessage("createCustomGame")
 	HandleCustomGame(@MessageBody() payload: any, @ConnectedSocket() client: Socket) {
-		console.log("Add " + payload.user1.username + " to custom game.");
-		console.log("Add " + payload.user2.username + " to custom game.");
 		const socket = this.findSocketFromUser(payload.user2);
 		if (socket != null)
 			this.server.to(socket.id).emit("invitationInGame", payload);

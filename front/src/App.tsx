@@ -30,7 +30,6 @@ function App() {
       });
       socket.emit("UpdateSomeone", { idChange: myStore.user?.id, idChange2: 0 })
       socket.on("invitationInGame", (payload: any) => {
-
         setInfoGame(payload);
         setTrigger(true);
     
@@ -46,6 +45,7 @@ function App() {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({ token: token }),
+      credentials: 'include',
     })
     .then(async response => {
       const data = await response.json();

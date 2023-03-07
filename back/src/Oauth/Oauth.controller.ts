@@ -8,7 +8,7 @@ export class OauthController {
   constructor(private readonly oauthService: OauthService) { }
 
   @Post('token')
-  async getToken(@Body() body: any) {
+  async getToken(@Body() body: { code: string }) {
     return this.oauthService.getToken(body.code);
   }
 
