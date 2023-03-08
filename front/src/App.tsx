@@ -33,7 +33,6 @@ function App() {
         setInfoGame(payload);
         setTrigger(true);
         setTimeout(() => {
-					console.log("Retardée d'une seconde.");
 					setTrigger(false)
 				  }, 10000)
       })
