@@ -11,6 +11,8 @@ export default function CLickableMenu(props: { user: IUser, chan: IChannel }) {
     const user: IUser = props.user;
     const [myVar, setMyvar] = useState<boolean>(false);
     const myUser = useAppSelector(state => state.user.user)
+    
+    const [timePop, setTimePop] = useState(false);
 
 
     return (
@@ -49,13 +51,15 @@ export default function CLickableMenu(props: { user: IUser, chan: IChannel }) {
                                         </>
                                     }
                                     <li>
-                                        <a onClick={() => MuteUser(props.chan.id, user.id)}>
+                                        <a onClick={() => setTimePop(true)}>
                                             Mute
+                                            <MuteUser chanid={props.chan.id} userid={user.id} trigger={timePop} setTrigger={setTimePop}   />
                                         </a>
                                     </li>
                                     <li>
-                                        <a onClick={() => BanUser(props.chan.id, user.id)}>
+                                        <a onClick={() => setTimePop(true)}>
                                             Ban
+                                            <BanUser chanid={props.chan.id} userid={user.id} trigger={timePop} setTrigger={setTimePop}   />
                                         </a>
                                     </li>
                                     <li>

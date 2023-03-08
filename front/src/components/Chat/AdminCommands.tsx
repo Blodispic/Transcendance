@@ -1,16 +1,80 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { HiOutlineXMark } from "react-icons/hi2";
 import { socket } from "../../App";
 import { IChannel } from "../../interface/Channel";
 
-export function BanUser(chanid: any, userid: any) {
-	socket.emit('BanUser', {chanid: chanid, userid: userid});
+export function BanUser(props: { chanid: any, userid: any, trigger: boolean, setTrigger: Function }) {
+	const [timeout, setTimeout] = useState<string>("");
+
+	const handleBan = () => {
+		if (timeout === "")
+			socket.emit('BanUser', { chanid: props.chanid, userid: props.userid });
+		else
+			socket.emit('BanUser', { chanid: props.chanid, userid: props.userid, timeout: parseInt(timeout) * 1000 });
+	}
+
+	useEffect(() => {
+		socket.on("banUserOK", (data) => {
+			props.setTrigger(false);
+			console.log("banuserOK");
+		});
+		return () => {
+			socket.off("banUserOK");
+		}
+	})
+
+	return (props.trigger) ? (
+		<div className="chat-form-popup" onClick={_ => (props.setTrigger(false))}>
+			<div className="chat-form-inner" onClick={e => e.stopPropagation()}>
+				<HiOutlineXMark className="close-icon" onClick={_ => (props.setTrigger(false))} /> <br />
+				<h2>Ban User</h2>
+				<h4>Set time(optional)</h4>
+				<input placeholder="Timeout in seconds" onChange={e => { setTimeout(e.target.value) }}></input>
+				<br />
+				<button onClick={_ => handleBan()}>Ban User</button>
+			</div>
+		</div>
+	) : <></>;
 }
 
-export function MuteUser(chanid: any, userid: any) {
-	socket.emit('MuteUser', {chanid: chanid, userid: userid});
-	// socket.on('muteUserOK', (userId, chanId) => {});
+export function MuteUser(props: { chanid: any, userid: any, trigger: boolean, setTrigger: Function }) {
+	const [timeout, setTimeout] = useState<string>("");
+
+	const handleBan = () => {
+		if (timeout === "")
+			socket.emit('MuteUser', { chanid: props.chanid, userid: props.userid });
+		else
+			socket.emit('MuteUser', { chanid: props.chanid, userid: props.userid, timeout: parseInt(timeout) * 1000 });
+	}
+
+	useEffect(() => {
+		socket.on("muteUserOK", (data) => {
+			props.setTrigger(false);
+			console.log("muteUserOK");
+		});
+		return () => {
+			socket.off("muteUserOK");
+		}
+	})
+
+	return (props.trigger) ? (
+		<div className="chat-form-popup" onClick={_ => (props.setTrigger(false))}>
+			<div className="chat-form-inner" onClick={e => e.stopPropagation()}>
+				<HiOutlineXMark className="close-icon" onClick={_ => (props.setTrigger(false))} /> <br />
+				<h2>Mute User</h2>
+				<h4>Set time(optional)</h4>
+				<input placeholder="Timeout in seconds" onChange={e => { setTimeout(e.target.value) }}></input>
+				<br />
+				<button onClick={_ => handleBan()}>Ban User</button>
+			</div>
+		</div>
+	) : <></>;
 }
+
+// export function MuteUser(chanid: any, userid: any) {
+// 	socket.emit('MuteUser', {chanid: chanid, userid: userid});
+// 	// socket.on('muteUserOK', (userId, chanId) => {});
+// }
 
 export function AddAdmin(chanid: any, userid: any) {
 	socket.emit('GiveAdmin', {chanid: chanid, userid: userid});
