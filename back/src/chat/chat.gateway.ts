@@ -72,7 +72,7 @@ async handleSendMessageChannel(@ConnectedSocket() client: Socket, @MessageBody()
     
   /// test log for debug //
   var roster = this.server.sockets.adapter.rooms.get("chan" + messageChannelDto.chanid);
-  console.log("rooms: ", this.server.sockets.adapter.rooms);
+  // console.log("rooms: ", this.server.sockets.adapter.rooms);
   if (roster) {
     console.log("size: ", roster.size);
     roster.forEach(function(client) {
@@ -158,10 +158,10 @@ async handleLeaveChannel(@ConnectedSocket() client: Socket, @MessageBody() leave
   this.channelService.rm( { user, chanid: leaveChannelDto.chanid});
   client.leave("chan" + leaveChannelDto.chanid);
   // client.emit("leaveChannelOK", channel.id);
-  client.emit("leaveChannel", channel.id);
+  client.emit("leaveChannelOK", channel.id);
   
   /// test log for debug //
-      console.log("leave chan: ", channel.name, " user: ", user.name);
+      console.log("leave chan: ", channel.name, " user: ", user);
       var roster = this.server.sockets.adapter.rooms.get("chan" + leaveChannelDto.chanid);
       if (roster) {
         roster.forEach(function(client) {

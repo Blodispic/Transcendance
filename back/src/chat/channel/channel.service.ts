@@ -63,17 +63,13 @@ export class ChannelService {
 				id: rmUserDto.chanid
 			}
 			});
-		// const user: User | null = await this.userRepository.findOneBy({ id: rmUserDto.userid})
-		// const user: User | null = await this.userService.getById(rmUserDto.userid);
+			// const user: User | null = await this.userRepository.findOneBy({ id: rmUserDto.userid})
+			// const user: User | null = await this.userService.getById(rmUserDto.userid);
 		const user = rmUserDto.user;
+		console.log("rm: ", rmUserDto.chanid, " | user: " , user);
 		if (channel == null || user == null)
 			throw new NotFoundException("No such Channel or User");
-		channel.users.splice(channel.users.indexOf(user, 0) ,1);
-		// console.log("admin: ", channel.admin.indexOf(user, 0));
-		console.log("admin: ", channel.admin);
-		// console.log("admin: ", channel.admin[channel.admin.indexOf(user, 0)].username);
-		// channel.admin.splice(channel.admin.indexOf(user, 0) ,1);
-
+		channel.users.splice(channel.users.indexOf(user, 0) - 1, 1); // added "-1" to fix leave channel error; not sure if it's right way to do it;
 		return this.channelRepository.save(channel);
 	}
 

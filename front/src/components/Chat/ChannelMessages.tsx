@@ -35,10 +35,13 @@ function ChannelHeader(props: { user: any, channel: IChannel}) {
 					props.channel?.chanType !== 1 &&
 					<>
 						{
-							props.channel.admin.find(obj => obj.id == props.user?.id) &&
+							props.channel.users.find(obj => obj.id == props.user?.id) &&
+							<>
+							{props.channel.admin.find(obj => obj.id == props.user?.id) &&
 							<>
 								<ImCog className="config-icon" onClick={() => setPopup(true)} />
 								<ConfigureChannel trigger={popup} setTrigger={setPopup} channel={props.channel} />
+							</>}
 							</>
 						}
 					</>
