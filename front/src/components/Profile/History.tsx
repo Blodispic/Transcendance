@@ -67,7 +67,7 @@ export function History(props: { user: IUser }) {
     
 
     return (
-        <div>
+        <div className="scrollWesh">
             <div className='MatchHeader'>
                 <MatchesReq />
                 <div className='MatchRequestBlock'>
