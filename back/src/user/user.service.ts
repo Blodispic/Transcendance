@@ -164,10 +164,13 @@ export class UserService {
     if (user) {
       //Si vous voulez plus de chose a update, mettez le dans le body et faites un iff
       if (userUpdate.username) {
+        console.log("username");
+
         const checkUsername = await this.usersRepository.findOneBy({
           username: userUpdate.username,
         })
         if (checkUsername && checkUsername.id !== user.id) {
+          console.log("username exist"); // ca erntre jusque ici 
           throw new NotFoundException("Username exists");
         }
         else

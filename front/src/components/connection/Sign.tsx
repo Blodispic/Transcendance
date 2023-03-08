@@ -39,11 +39,14 @@ export default function Sign() {
                         'Content-Type': 'application/json',
                     },
                     body: JSON.stringify({ username: newname }),
-                    credentials: 'include',
                 })
                     .then(async response => {
+                        console.log("response ?")
                         if (!response.ok)
+                        {
+                            console.log("ca rentre ? ");
                             SetNameExist(true);
+                        }
                         else {
                             SetNameExist(false);
                             dispatch(change_name(newname));
@@ -53,6 +56,9 @@ export default function Sign() {
                             }
                         }
 
+                    })
+                    .catch( () => {
+                        console.log("response ????")
                     })
             }
         }
