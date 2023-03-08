@@ -142,6 +142,7 @@ export class PongGateway implements OnGatewayDisconnect, OnGatewayInit {
 						this.removeInvite(client.handshake.auth.user.id);
 					if (payload.user2.id)
 						this.removeInvite(payload.user2.id);
+					// this.server.to(client.id).emit("GameDeclined", payload.user2.username);
 				  }, 11000)
 			}
 		}

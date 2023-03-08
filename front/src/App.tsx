@@ -1,4 +1,4 @@
-import { RouterProvider } from "react-router-dom";
+import { RouterProvider, useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from './redux/Hook';
 import { io, Socket } from 'socket.io-client';
 import router from './router';
@@ -7,6 +7,7 @@ import { setUser, set_status } from './redux/user';
 import { useEffect, useState } from "react";
 import { IUser, UserStatus } from "./interface/User";
 import InviteGame from "./components/utils/InviteGame";
+import { Player } from "./components/Game/Game";
 
 export let socket: Socket;
 
@@ -15,12 +16,14 @@ function App() {
   const dispatch = useAppDispatch();
   const cookies = new Cookies();
   const token = cookies.get('Token');
+  let timeOutId: any;
 
   const [trigger, setTrigger] = useState<boolean> (false);
   const [infoGame, setInfoGame] = useState<any | undefined> (undefined);
 
 
   useEffect(() => {
+    
     if (myStore.isLog == true && token != undefined && myStore.user && myStore.user.username) {
       socket = io(`${process.env.REACT_APP_BACK}`, {
         auth: {
@@ -29,11 +32,21 @@ function App() {
         }
       });
       socket.emit("UpdateSomeone", { idChange: myStore.user?.id, idChange2: 0 })
+
+      if (socket)
+      {
+          socket.on("RoomStart", (roomId: number, player: Player) => {
+              if (timeOutId)
+                clearTimeout(timeOutId);
+          });
+      }
+
       socket.on("invitationInGame", (payload: any) => {
         setInfoGame(payload);
         setTrigger(true);
-        setTimeout(() => {
+        timeOutId = setTimeout(() => {
 					setTrigger(false)
+          socket.emit("declineCustomGame", payload);
 				  }, 10000)
       })
     }

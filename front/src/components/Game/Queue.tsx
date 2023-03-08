@@ -25,9 +25,12 @@ export default function Queue() {
     }
 
     useEffect(() => {
-        socket.on("RoomStart", (roomId: number, player: Player) => {
-            navigate("/game/" + roomId, { state: { Id: roomId } });
-        });
+        if (socket)
+        {
+          socket.on("RoomStart", (roomId: number, player: Player) => {
+              navigate("/game/" + roomId, { state: { Id: roomId } });
+          });
+        }
 
         const fetchuser = async () => {
             if (myUser.user) {

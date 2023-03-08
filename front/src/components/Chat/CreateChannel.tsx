@@ -25,7 +25,6 @@ export function PopupCreateChannel(props: any) {
 	}
 
 	useEffect( () => {
-		console.log("list de friend dans funciton create Chanel", friend);
 	}, [friend] )
 
 	const handleCreateNewChan = () => {
