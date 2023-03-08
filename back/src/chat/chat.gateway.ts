@@ -69,6 +69,17 @@ async handleSendMessageChannel(@ConnectedSocket() client: Socket, @MessageBody()
   if (await this.channelService.isUserMuted({chanid: channel.id, userid: user.id}) || 
   await this.channelService.isUserBanned({chanid: channel.id, userid: user.id })) // ban to remove soon
     throw new BadRequestException("you are muted for now on this channel"); // user is ban or mute from this channel
+    
+  /// test log for debug //
+  var roster = this.server.sockets.adapter.rooms.get("chan" + messageChannelDto.chanid);
+  console.log("rooms: ", this.server.sockets.adapter.rooms);
+  if (roster) {
+    console.log("size: ", roster.size);
+    roster.forEach(function(client) {
+      console.log('messageChannel: ', client);
+    }); }
+  /////////////////////////
+
   this.server.to("chan" + messageChannelDto.chanid).emit("sendMessageChannelOK", messageChannelDto);
 }
 
@@ -96,6 +107,15 @@ async handleJoinChannel(@ConnectedSocket() client: Socket, @MessageBody() joinCh
   });
   client.join("chan" + joinChannelDto.chanid);
   // client.emit("joinChannelOK", channel);
+  
+    /// test log for debug //
+    var roster = this.server.sockets.adapter.rooms.get("chan" + joinChannelDto.chanid);
+    if (roster) {
+      roster.forEach(function(client) {
+        console.log('joinChannel: ', client);
+      }); }
+    /////////////////////////
+
   client.emit("joinChannel", channel);
   this.server.to("chan" + channel.id).emit("joinChannel", client.handshake.auth.user);
 }
@@ -114,8 +134,18 @@ async handleCreateChannel(@ConnectedSocket() client: Socket, @MessageBody() crea
   const new_channel = await this.channelService.create(createChannelDto, user);
   if (new_channel.chanType == 1 && createChannelDto.users && createChannelDto.users.length > 0)
     this.inviteToChan(createChannelDto.users, new_channel.id);
-  // client.emit("createChannelOk", new_channel.id);
-  this.server.emit("createChannelOk", new_channel.id);
+  client.join("chan" + new_channel.id); // added by selee
+  client.emit("createChannelOk", new_channel.id);
+
+    /// test log for debug //
+    var roster = this.server.sockets.adapter.rooms.get("chan" + new_channel.id);
+    if (roster) {
+      roster.forEach(function(client) {
+        console.log('createChan: ', client);
+      }); }
+    /////////////////////////
+
+  this.server.emit("createChannelOk", new_channel.id); // do we need it twice?
 }
 
 @SubscribeMessage('leaveChannel')
@@ -129,7 +159,16 @@ async handleLeaveChannel(@ConnectedSocket() client: Socket, @MessageBody() leave
   client.leave("chan" + leaveChannelDto.chanid);
   // client.emit("leaveChannelOK", channel.id);
   client.emit("leaveChannel", channel.id);
-  console.log("leave chan: ", channel.name, " user: ", user);
+  
+  /// test log for debug //
+      console.log("leave chan: ", channel.name, " user: ", user.name);
+      var roster = this.server.sockets.adapter.rooms.get("chan" + leaveChannelDto.chanid);
+      if (roster) {
+        roster.forEach(function(client) {
+          console.log('leaveChan: ', client);
+        }); }
+  /////////////////////////
+
   this.server.to("chan" + channel.id).emit("leaveChannel", user);
 }
 

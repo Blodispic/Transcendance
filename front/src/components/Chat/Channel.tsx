@@ -58,17 +58,17 @@ function ChannelList(props: any) {
 	const [chanId, setChanId] = useState("");
 	const navigate = useNavigate();
 
-	socket.on('createChannelOk', (newChanId) => {
-		const fetchAllList = async () => {
-			const response = await fetch(`${process.env.REACT_APP_BACK}channel/`, {
-				method: 'GET',
-			})
-			const data = await response.json();
-			setChanList(data);
-		}
-		fetchAllList();
-		getChanId(newChanId);
-	});
+	// socket.on('createChannelOk', (newChanId) => {
+	// 	const fetchAllList = async () => {
+	// 		const response = await fetch(`${process.env.REACT_APP_BACK}channel/`, {
+	// 			method: 'GET',
+	// 		})
+	// 		const data = await response.json();
+	// 		setChanList(data);
+	// 	}
+	// 	fetchAllList();
+	// 	getChanId(newChanId);
+	// });
 
 
 	const getChanId = (data: any) => {
@@ -84,13 +84,24 @@ function ChannelList(props: any) {
 			setChanList(data);
 		}
 		fetchAllList();
+	}, [chanId]);
+
+	useEffect(() => {
 		socket.on('createChannelOk', (newChanId) => {
-			getChanId(newChanId);
+			const fetchAllList = async () => {
+
+				const response = await fetch(`${process.env.REACT_APP_BACK}channel/`, {
+					method: 'GET',
+				})
+				const data = await response.json();
+				setChanList(data);	
+			}
+			fetchAllList();
 		});
 		return () => {
 			socket.off('createChannelOk');
 		};
-	}, [chanId]);
+	});
 
 	return (
 		<div className="title">
@@ -117,20 +128,7 @@ function ChannelList(props: any) {
 
 function PublicChannelList() {
 	const [chanList, setChanList] = useState<IChannel[]>([]);
-	const [chanId, setChanId] = useState("");
 	const navigate = useNavigate();
-
-
-	socket.on('createChannelOk', (newChanId) => {
-		const fetchAllList = async () => {
-			const response = await fetch(`${process.env.REACT_APP_BACK}channel/`, {
-				method: 'GET',
-			})
-			const data = await response.json();
-			setChanList(data);
-		}
-		fetchAllList();
-	});
 
 	useEffect(() => {
 		const fetchPublic = async () => {
@@ -169,72 +167,8 @@ function PublicChannelList() {
 	);
 }
 
-// function ChannelMemberList(props: { chanId: any }) {
-// 	const [currentChan, setCurrentChan] = useState<IChannel | undefined>(undefined)
-// 	// const currentChan = useAppSelector(state => state.channel);
-// 	const [currentId, setCurrentId] = useState<number | undefined>(undefined);
-// 	const [members, setMembers] = useState<IUser[]>([]);
-
-// 	const changeId = (id: number) => {
-// 		if (id == currentId)
-// 			setCurrentId(undefined);
-// 		else
-// 			setCurrentId(id);
-// 	}
-
-// 	useEffect(() => {
-// 		const getChannel = async () => {
-// 			const response = await fetch(`${process.env.REACT_APP_BACK}channel/${props.chanId}`, {
-// 				method: 'GET',
-// 			})
-// 			const data = await response.json();
-// 			setCurrentChan(data);
-// 		}
-// 		getChannel();
-// 	}, [props]);
-
-// 	if (currentChan !== undefined && members == undefined)
-// 		setMembers(currentChan?.users);
-
-// 	// socket.on("joinChannel", (newUser) => {
-// 	// 	console.log(newUser);
-// 	// 	setMembers([...members, newUser]);
-// 	// })
-
-// 	if (currentChan?.users === undefined) {
-// 		return (
-// 			<div className="title"> Members <hr />
-// 			</div>
-// 		)
-// 	}
-
-// 	return (
-// 		<div className="title"> Members <hr />
-// 			{currentChan && currentChan.users?.map(user => (
-// 				<div className="user-list">
-// 					<ul key={user.id} onClick={e => { changeId(user.id) }}>
-// 						<li>
-// 							{user.username}
-// 							{
-// 								currentChan.admin?.find(obj => obj === user) &&
-// 								<FaCrown />
-// 							}
-// 						</li>
-// 					</ul>
-// 					{
-// 						currentId == user.id &&
-// 						<CLickableMenu user={user} chan={currentChan} />
-// 					}
-// 				</div>
-// 			))
-// 			}
-// 		</div>
-// 	);
-// }
-
 function ChannelMemberList(props: { channel: IChannel }) {
 	const [currentId, setCurrentId] = useState<number | undefined>(undefined);
-	const [currentChan, setCurrentChan] = useState(props.channel);
 
 
 	const changeId = (id: number) => {
@@ -245,7 +179,6 @@ function ChannelMemberList(props: { channel: IChannel }) {
 	}
 
 	// useEffect(() => {
-
 	// 	socket.on('joinChannel', (data) => {
 	// 		const fetchMemberList = async () => {
 	// 			const response = await fetch(`${process.env.REACT_APP_BACK}channel/${props.channel.id}`, {
@@ -273,7 +206,7 @@ function ChannelMemberList(props: { channel: IChannel }) {
 	// 	}
 	// }, []);
 
-	if (currentChan?.users === undefined) {
+	if (props.channel?.users === undefined) {
 		return (
 			<div className="title"> Members <hr />
 			</div>
@@ -302,47 +235,46 @@ function ChannelMemberList(props: { channel: IChannel }) {
 			}
 		</div>
 	);
-
 }
 
 export function Channels(props: any) {
 	const [currentChan, setCurrentChan] = useState<IChannel | undefined>(undefined);
 	const currentUser = useAppSelector(state => state.user);
 
+	const getChannel = async () => {
+		const response = await fetch(`${process.env.REACT_APP_BACK}channel/${props.chanId}`, {
+			method: 'GET',
+		})
+		const data = await response.json();
+		setCurrentChan(data);
+	}
+	
 	useEffect(() => {
-		const getChannel = async () => {
-			const response = await fetch(`${process.env.REACT_APP_BACK}channel/${props.chanId}`, {
-				method: 'GET',
-			})
-			const data = await response.json();
-			setCurrentChan(data);
-		}
 		getChannel();
-
 	}, [props]);
 
 
 	useEffect(() => {
 		socket.on('joinChannel', (data) => {
-			const getChannel = async () => {
-				const response = await fetch(`${process.env.REACT_APP_BACK}channel/${props.chanId}`, {
-					method: 'GET',
-				})
-				const data = await response.json();
-				setCurrentChan(data);
-			}
+			// const getChannel = async () => {
+			// 	const response = await fetch(`${process.env.REACT_APP_BACK}channel/${props.chanId}`, {
+			// 		method: 'GET',
+			// 	})
+			// 	const data = await response.json();
+			// 	setCurrentChan(data);
+			// }
 			getChannel();
 			console.log("join: ", currentChan?.name, " user: ", currentUser.user?.username);
 		});
 
 		socket.on('leaveChannel', (data) => {
-			const getChannel = async () => {
-				const response = await fetch(`${process.env.REACT_APP_BACK}channel/${props.chanId}`, {
-					method: 'GET'
-				})
-				const data = await response.json();
-				setCurrentChan(data);
-			}
+			// const getChannel = async () => {
+			// 	const response = await fetch(`${process.env.REACT_APP_BACK}channel/${props.chanId}`, {
+			// 		method: 'GET'
+			// 	})
+			// 	const data = await response.json();
+			// 	setCurrentChan(data);
+			// }
 			getChannel();
 			console.log("leave: ", currentChan?.name, " user: ", currentUser.user?.username);
 		});
