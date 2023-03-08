@@ -16,15 +16,19 @@ export default function Queue() {
     const navigate = useNavigate();
     const [customPopup, setCustomPopup] = useState(false);
 
-    
-
     function addToWaitingRoom() {
-        socket.emit("addToWaitingRoom", myUser.user);
+        socket.auth = {
+            user: myUser.user,
+        };
+        socket.emit("addToWaitingRoom");
         return;
     }
 
-    
     useEffect(() => {
+        socket.on("RoomStart", (roomId: number, player: Player) => {
+            navigate("/game/" + roomId, { state: { Id: roomId } });
+        });
+
         const fetchuser = async () => {
             if (myUser.user) {
                 await fetch(`${process.env.REACT_APP_BACK}game/${myUser.user.id}}`, {
@@ -34,12 +38,6 @@ export default function Queue() {
             }
         }
         fetchuser()
-        socket.on("RoomStart", (roomId: number, player: Player) => {
-            navigate("/game/" + roomId, { state: { Id: roomId } });
-        });
-        return () => {
-            socket.off('RoomStart');
-        };
     }, [])
 
     return (

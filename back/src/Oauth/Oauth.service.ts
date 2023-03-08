@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { CreateUserDto } from 'src/user/dto/create-user.dto';
 import { UserService } from '../user/user.service';
@@ -31,25 +31,31 @@ export class OauthService {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(body)
+      
     });
-
-    // if (!response.ok) {
-    //   throw new Error(`AuthService getToken failed, HTTP status ${response.status}`);
-    // }
     const data = await response.json();
-    return this.getInfo(data.access_token);
+    console.log("data = ", data);
+    
+
+
+    if (!data.access_token) {
+      console.log("No access Token");
+      throw new HttpException(`AuthService getToken failed, HTTP status ${response.status}`, HttpStatus.BAD_REQUEST);
+    } else
+      return this.getInfo(data.access_token);
   }
 
   async getInfo(intra_token: string) {
 
+    
     const response = await fetch('https://api.intra.42.fr/v2/me', {
       method: 'GET',
       headers: {
         'Authorization': `Bearer ${intra_token}`,
       },
     });
-    const data = await response.json();
     
+    const data = await response.json();
     const user = await this.usersService.getByLogin(data.login);
     const payload = { username: data.login, }
     const token = await this.jwtService.signAsync(payload, {
@@ -68,7 +74,6 @@ export class OauthService {
     }
     if (data.error)
       return (data.error);
-
     const userDto: CreateUserDto = {
       login: data.login,
       email: data.email,

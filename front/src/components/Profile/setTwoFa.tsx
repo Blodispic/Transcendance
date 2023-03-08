@@ -32,7 +32,6 @@ export default function TwoFa() {
     }
 
     const fetchCodeForQr = async (e: any) => {
-        console.log("user id = ", myStore.user?.id);
         e.preventDefault();
         await fetch(`${process.env.REACT_APP_BACK}user/2fa/check`, {
             method: 'POST',

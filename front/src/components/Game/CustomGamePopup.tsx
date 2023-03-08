@@ -39,9 +39,14 @@ export default function CustomGamePopup(props: {trigger: boolean; setTrigger: Fu
     const changeExtra = (event: any) => {
         setExtra(event.target.checked);
     };
-    function CreateCustomRoom(extra: any, Max: any) {
-        socket.emit("createCustomGame", { user1: myUser.user, user2: friend, extra: extra, scoreMax: Max });
 
+    function CreateCustomRoom(extra: any, Max: any) {         
+        if (!myUser.user || !friend)
+        {
+            console.log("Error: User doesn't exists");
+            return ;
+        }
+        socket.emit("createCustomGame", { user1: myUser.user?.id, user2: friend[0], extra: extra, scoreMax: Max });
         return;
     }
 

@@ -48,7 +48,7 @@ function Onglets(props: { currentUser: IUser, current: page, setOnglets: Functio
                                         </a>
                                 </button>
                         }
-                         {
+                        {
                                 currentUser.login === myUser.user?.login &&
                                 <button className={`pointer ${current === page.PAGE_4 ? "" : "not-selected"}`}
                                         onClick={e => setOnglets(page.PAGE_4)} >
@@ -68,15 +68,21 @@ export default function Profile() {
         let { id } = useParams();
         const [pages, setPages] = useState<page>(page.PAGE_1);
         const myUser = useAppSelector(state => state.user);
-        
-                const fetchid = async () => {
-                        const response = await fetch(`${process.env.REACT_APP_BACK}user/id/${id}`, {
-                                method: 'GET',
-                                credentials: 'include',
-                        })
-                        setCurrentUser(await response.json());
-                }
+
+        const fetchid = async () => {
+                console.log("ca fetch id ", id);
+                const response = await fetch(`${process.env.REACT_APP_BACK}user/id/${id}`, {
+                        method: 'GET',
+                        credentials: 'include',
+                })
+                console.log(response);
+                setCurrentUser(await response.json());
+        }
         useEffect(() => {
+                socket.on("RoomStart", (roomId: number, player: Player) => {
+                        navigate("/game/" + roomId, { state: { Id: roomId } });
+                });
+
                 if (id)
                         fetchid();
                 setPages(page.PAGE_1);
@@ -94,20 +100,17 @@ export default function Profile() {
                 };
         }, [id])
 
-        // useEffect(() => {
-        // }, [currentUser])
-
-
         useEffect(() => {
-                if (currentUser?.id == myUser.user?.id)
-                {
+                console.log("currentuser", currentUser);
+                if (currentUser?.id == myUser.user?.id) {
+                        console.log("In useeffects");
                         setCurrentUser(myUser.user);
 
                 }
-        }, [Onglets, myUser.user?.username])
+        }, [Onglets, currentUser?.id,  myUser.user?.username, id])
 
 
-        if (currentUser === undefined || avatar === undefined) {
+        if (currentUser === undefined) {
                 return (
                         <div className='center'>
                                 <h1>USER DOESN'T EXIST </h1>
@@ -134,7 +137,7 @@ export default function Profile() {
                                         pages == page.PAGE_3 &&
                                         <TwoFa />
                                 }
-                                 {
+                                {
                                         pages == page.PAGE_4 &&
                                         <Sign />
                                 }
