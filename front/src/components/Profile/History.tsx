@@ -3,11 +3,13 @@ import { IUser } from "../../interface/User";
 import { GiCrossedSwords } from "react-icons/gi";
 import {Result} from "../../interface/Result"
 import { useNavigate } from "react-router-dom";
+import { useAppSelector } from "../../redux/Hook";
 
 export function History(props: { user: IUser }) {
     const { user } = props;
     const [matchReq, setMatches] = useState<Result[] | undefined>(undefined);
     const navigate = useNavigate();
+    const myToken = useAppSelector(state => state.user.myToken);
 
     useEffect(() => {
       console.log("ca passe pas la ");
@@ -15,8 +17,10 @@ export function History(props: { user: IUser }) {
             const response = await fetch(`${process.env.REACT_APP_BACK}user/matches`, {
                 method: 'POST',
                 body: JSON.stringify({userId: user.id}),
-                headers: { 'Content-Type': 'application/json' },
-                credentials: 'include',
+                headers: {
+                  'Content-Type': 'application/json',
+                'Authorization': `Bearer ${myToken}`,
+              },
             });
             const data = await response.json();
             setMatches(data);

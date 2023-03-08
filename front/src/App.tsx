@@ -11,24 +11,25 @@ import InviteGame from "./components/utils/InviteGame";
 export let socket: Socket;
 
 function App() {
-  const myStore = useAppSelector(state => state.user);
+  const myUser = useAppSelector(state => state.user);
+  const myToken = useAppSelector(state => state.user.myToken);
+
   const dispatch = useAppDispatch();
   const cookies = new Cookies();
   const token = cookies.get('Token');
-
   const [trigger, setTrigger] = useState<boolean> (false);
   const [infoGame, setInfoGame] = useState<any | undefined> (undefined);
 
 
   useEffect(() => {
-    if (myStore.isLog == true && token != undefined && myStore.user && myStore.user.username) {
+    if (myUser.isLog == true && token != undefined && myUser.user && myUser.user.username) {
       socket = io(`${process.env.REACT_APP_BACK}`, {
         auth: {
           token: token,
-          user: myStore.user,
+          user: myUser.user,
         }
       });
-      socket.emit("UpdateSomeone", { idChange: myStore.user?.id, idChange2: 0 })
+      socket.emit("UpdateSomeone", { idChange: myUser.user?.id, idChange2: 0 })
       socket.on("invitationInGame", (payload: any) => {
         setInfoGame(payload);
         setTrigger(true);
@@ -38,7 +39,7 @@ function App() {
 				  }, 10000)
       })
     }
-  }, [myStore.isLog])
+  }, [myUser.isLog])
 
 
   const get_user = async () => {
@@ -46,11 +47,9 @@ function App() {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-
-
+        'Authorization': `Bearer ${myToken}`,
       },
       body: JSON.stringify({ token: token }),
-
     })
     .then(async response => {
       const data = await response.json();
@@ -59,14 +58,14 @@ function App() {
       if (response.ok && data.username !== "") {
         dispatch(setUser(data))
         dispatch(set_status(UserStatus.ONLINE))
-        // socket.emit("UpdateSomeone", { idChange: myStore.user?.id, idChange2: 0 })
+        // socket.emit("UpdateSomeone", { idChange: myUser.user?.id, idChange2: 0 })
       }
       else {
         cookies.remove('Token');
       }
     })
   }
-  if (myStore.user === undefined) {
+  if (myUser.user === undefined) {
     if (token !== undefined)
       get_user();
   }

@@ -32,8 +32,8 @@ export default function AllPeople(props: { friend: IUser[] | undefined, setFrien
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${myUser.myToken}`,
                 },
-                credentials: 'include',
             })
             const data = await response.json();
             setAlluser(data.filter((User: { username: string, status: string }) => User.username !== myUser.user?.username && User.status === "Online"));

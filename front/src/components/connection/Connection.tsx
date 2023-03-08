@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { Navigate, useNavigate, useSearchParams } from "react-router-dom";
 import NameForm from "./Sign"
 import { useAppDispatch, useAppSelector } from "../../redux/Hook";
-import { oauth, setUser, set_status, change_avatar } from "../../redux/user";
+import { oauth, setUser, set_status, change_avatar, setToken } from "../../redux/user";
 import { useCookies } from "react-cookie";
 import { IUser, UserStatus } from '../../interface/User';
 import { socket } from '../../App';
@@ -41,10 +41,11 @@ export default function Connection() {
                         const data = await response.json();
                         // check for error response
                         if (response.ok) {
-                            dispatch(setUser(data));
-                            dispatch(change_avatar(data.intra_avatar))
+                            dispatch(setUser(data.user));
+                            dispatch(change_avatar(data.user.intra_avatar))
                             dispatch(oauth());
                             setCookie('Token', data.access_token, { path: '/' });
+                            dispatch(setToken(data.access_token));
                             if (!data.username)
                                 navigate("./sign")
                             else if (data.twoFaEnable == true)
