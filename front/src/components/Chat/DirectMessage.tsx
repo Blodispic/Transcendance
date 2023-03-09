@@ -46,6 +46,44 @@ function DMList(props: {currentdm: IUser | undefined; setCurrentDm: Function}) {
 	);
 }
 
+function BlockUser(userid: number) {
+
+	useEffect(() => {
+
+		const blockUser = async () => {
+            const response = await fetch(`${process.env.REACT_APP_BACK}user/block/`, {
+				method: 'POST',
+				body: JSON.stringify({ id: userid}),
+
+			// 	method: 'POST',
+			// 	body: JSON.stringify({ userId: user.id }),
+			// 	headers: { 'Content-Type': 'application/json' },
+			// 	credentials: 'include',
+		});
+			const data = await response.json();
+		}
+		blockUser();
+		
+	}, []);
+
+}
+
+
+function UnblockUser(userid: number) {
+		
+	useEffect(() => {
+
+		const unblockUser = async() => {
+            const response = await fetch(`${process.env.REACT_APP_BACK}user/unblock/`, {
+				method: 'DELETE',
+				body: JSON.stringify({ id: userid}),
+
+			});
+			const data = await response.json();
+		}
+		unblockUser();
+	})
+}
 
 function InfoFriend(props: {user: IUser}) {
 
@@ -73,17 +111,15 @@ function InfoFriend(props: {user: IUser}) {
                             <li onClick={_ => setMyvar(true)}>
                                 Invite Game
                             </li>
-							<li>
+							<li onClick={_ => BlockUser(user.id)}>
 								Block
 							</li>
                         </>
-                    
                 </ul>
-				
 		</div>
 		{
                 <CustomGamePopup trigger={myVar} setTrigger={setMyvar} friend={user} />
-            }
+        }
 		</div>
 	);
 }
@@ -116,6 +152,10 @@ export function DmMessages(props: { id: any; currentdm: IUser | undefined; setCu
 			socket.off('sendMessageUserOK');
 		};
 	});
+
+	useEffect(() => {
+		setMessageList([]);
+	}, [props.currentdm]);
 
 	const handleBlock = () => { // to be improved
 		// if (blockedId == 0 && props.currentdm !== undefined)

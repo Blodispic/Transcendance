@@ -237,7 +237,7 @@ export function Channels(props: any) {
 			socket.off('joinChannel');
 			socket.off('leaveChannel');
 		}
-	});
+	}, []);
 
 	return (
 		<div id="chat-container">

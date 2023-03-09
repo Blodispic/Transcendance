@@ -35,7 +35,6 @@ export default function CLickableMenu(props: { user: IUser, chan: IChannel }) {
                                     DM
                                 </Link>
                             </li>
-                            {/* ---admin menu--- show if  [myUser] === [owner] || ([myuser] === [admin] &&  [currentuser] !== [admin] ) */}
                             {
                                 // props.chan.owner == myUser &&
                                 props.chan.admin?.find(obj => obj.id === myUser?.id) &&
@@ -43,32 +42,39 @@ export default function CLickableMenu(props: { user: IUser, chan: IChannel }) {
                                     {
                                         props.chan.admin?.find(obj => obj.id === props.user.id) == undefined &&
                                         <>
-                                        <li>
-                                            <a onClick={_ => AddAdmin(props.chan.id, props.user.id)}>
-                                                Add to Admin
-                                            </a>
-                                        </li>
+                                            <li>
+                                                <a onClick={_ => AddAdmin(props.chan.id, props.user.id)}>
+                                                    Add to Admin
+                                                </a>
+                                            </li>
                                         </>
                                     }
-                                    <li>
-                                        <a onClick={() => setTimeMute(true)}>
-                                            Mute
-                                            <MuteUser chanid={props.chan.id} userid={user.id} trigger={timeMute} setTrigger={setTimeMute}   />
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a onClick={() => setTimeBan(true)}>
-                                            Ban
-                                            <BanUser chanid={props.chan.id} userid={user.id} trigger={timeBan} setTrigger={setTimeBan}   />
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a>
-                                            {/* onClick={() => KickUser(props.chan.id, user.id)} */}
-                                            Kick
-                                        </a>
-                                    </li>
+                                    {
+                                        props.chan.owner?.id !== props.user.id &&
+                                        <>
+
+                                            <li>
+                                                <a onClick={() => setTimeMute(true)}>
+                                                    Mute
+                                                    <MuteUser chanid={props.chan.id} userid={user.id} trigger={timeMute} setTrigger={setTimeMute} />
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a onClick={() => setTimeBan(true)}>
+                                                    Ban
+                                                    <BanUser chanid={props.chan.id} userid={user.id} trigger={timeBan} setTrigger={setTimeBan} />
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a>
+                                                    {/* onClick={() => KickUser(props.chan.id, user.id)} */}
+                                                    Kick
+                                                </a>
+                                            </li>
+                                        </>
+                                    }
                                 </>
+
                             }
                         </>
                     }

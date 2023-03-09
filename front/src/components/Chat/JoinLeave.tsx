@@ -117,7 +117,6 @@ export function JoinLeave(props: {currentUser: any, channel: IChannel}) {
 	// 	<div onClick={handleClick}>{isOnChan ? <LeaveChannel chanid={props.channel.id} /> :  <JoinChannel channel={props.channel} />}</div>
 	// );
 
-
 	return (
 		<>
 			{
