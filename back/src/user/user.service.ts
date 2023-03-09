@@ -522,6 +522,7 @@ export class UserService {
   }
 
   async addBlock(id: number, blockedid: number) {
+    console.log("ca block un peu ici ", id, blockedid);
     const user = await this.usersRepository.findOne({
       relations: {
         blocked: true,

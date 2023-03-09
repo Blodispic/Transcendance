@@ -115,7 +115,7 @@ export function Header(props: { currentUser: IUser, setCurrentUser: Function }) 
                 await fetch(`${process.env.REACT_APP_BACK}user/block/${myUser.user?.id}`, {
                         method: 'POST',
                         body: JSON.stringify({
-                                friendId: currentUser.id,
+                                blockedId: currentUser.id,
                         }),
                         headers: {
                                 'Authorization': `Bearer ${myUser.myToken}`,
@@ -123,6 +123,7 @@ export function Header(props: { currentUser: IUser, setCurrentUser: Function }) 
                 })
                         .then(async response => {
                                 if (response.ok) {
+                                        console.log("ok je peux block");
                                         dispatch(addBlockedUser(currentUser.id));
                                 }
                         })

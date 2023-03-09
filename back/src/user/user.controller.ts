@@ -199,6 +199,8 @@ export class UserController {
 
   @Post('block/:id')
   async addBlock(@Param('id') id: number, @Body() blockedId: number) {
+    console.log(id);
+    console.log(blockedId);
     return await this.userService.addBlock(id, blockedId);
   }
 
