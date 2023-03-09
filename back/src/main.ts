@@ -12,7 +12,6 @@ async function bootstrap() {
     origin: process.env.FRONT_URL,
     credentials: true,
   });
-  app.useGlobalFilters(new GatewayExceptionFilter());
   app.use(cookieParser());
   await app.listen(4000);
 }

@@ -5,7 +5,7 @@ import { useAppSelector } from "../../redux/Hook";
 
 
 export default function AllPeople(props: { friend: IUser[] | undefined, setFriend: Function, myVar: boolean, setMyvar: Function }) {
-    const myUser = useAppSelector(state => state.user);
+    const myUser = useAppSelector(state => state);
     const [alluser, setAlluser] = useState<IUser[] | undefined>(undefined);
     const [allfriend, setAllFriend] = useState<IUser[] | undefined>(undefined);
 
@@ -23,11 +23,8 @@ export default function AllPeople(props: { friend: IUser[] | undefined, setFrien
 
     useEffect(() => {
         if (allfriend !== undefined) {
-            console.log("ca change le props")
             props.setFriend([...allfriend]);
         }
-        console.log("list de friend dans funciton allPeople", allfriend);
-
     }, [allfriend])
     useEffect(() => {
         const get_all = async () => {
@@ -35,11 +32,11 @@ export default function AllPeople(props: { friend: IUser[] | undefined, setFrien
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${myUser.user.myToken}`,
                 },
-                credentials: 'include',
             })
             const data = await response.json();
-            setAlluser(data.filter((User: { username: string, status: string }) => User.username !== myUser.user?.username && User.status === "Online"));
+            setAlluser(data.filter((User: { username: string, status: string }) => User.username !== myUser.user.user?.username && User.status === "Online"));
 
         }
         get_all();
@@ -50,7 +47,7 @@ export default function AllPeople(props: { friend: IUser[] | undefined, setFrien
     return (
         <div>
             <div className='avatar-inpopup'>
-                <img className='avatar avatar-manu' src={`${process.env.REACT_APP_BACK}user/${myUser.user!.id}/avatar`} />
+                <img className='avatar avatar-manu' src={`${process.env.REACT_APP_BACK}user/${myUser.user.user!.id}/avatar`} />
                 {
                     <>
 

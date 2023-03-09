@@ -39,13 +39,9 @@ export function PopupCreateChannel(props: any) {
 	}
 
 	useEffect( () => {
-		// console.log("list de friend dans funciton create Chanel", friend);
 	}, [friend] )
 
 	const handleCreateNewChan = () => {
-		// console.log("list de friend que je fetch a la creatioin du chan", [friend]);
-		setFailed(false);
-
 		if (chanName != "")
 			socket.emit('createChannel', { chanName: chanName, chanType: chanMode, password: password, users: friend });
 		setChanName("");

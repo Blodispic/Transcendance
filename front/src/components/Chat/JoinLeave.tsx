@@ -68,12 +68,8 @@ export function JoinChannel(props: {channel: IChannel }) {
 		<div>
 			{
 				props.channel.chanType === 0 &&
-				<button onClick={handleJoin}>Join Channel</button>
+				<button onClick={_ => handleJoin()}>Join Channel</button>
 			}			
-			{/* { //private channel: needs improvement // we cant join a private chanels no need this { }
-				props.channel.chanType === 1 &&
-				<button onClick={handleJoin}>Join</button>
-			} */}
 			{
 				props.channel.chanType === 2 &&
 				<>
@@ -98,7 +94,7 @@ export function LeaveChannel (props: {channel: IChannel}) {
 
 	return (
 		<div>
-			<button onClick={handleLeave}>Leave Channel</button>
+			<button onClick={_ => handleLeave()}>Leave Channel</button>
 		</div>
 	);
 }
