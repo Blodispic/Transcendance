@@ -137,9 +137,9 @@ async handleJoinChannel(@ConnectedSocket() client: Socket, @MessageBody() joinCh
 }
 
 @SubscribeMessage('createChannel')
-async handleCreateChannel(@ConnectedSocket() client: Socket, @MessageBody() createChannelDto: CreateChannelDto) {    
+async handleCreateChannel(@ConnectedSocket() client: Socket, @MessageBody() createChannelDto: CreateChannelDto) {
   const channel = await this.channelService.getByName(createChannelDto.chanName);
-  
+
   if (channel != null) {
     client.emit("createChannelFailed", "An existing channel already have this name"); // *selee test;
     throw new BadRequestException("An existing channel already have this name"); //channame already exist, possible ? if private/protected possible ?
@@ -147,11 +147,14 @@ async handleCreateChannel(@ConnectedSocket() client: Socket, @MessageBody() crea
   const user = await this.userService.getById(client.handshake.auth.user.id);
   if (user === null)
     throw new BadRequestException("No such user");
-    
-    const new_channel = await this.channelService.create(createChannelDto, user);
-    client.join("chan" + new_channel.id);
-    if (new_channel.chanType == 1 && createChannelDto.users && createChannelDto.users.length > 0)
-      this.inviteToChan(createChannelDto.users, new_channel.id);
+
+  const new_channel = await this.channelService.create(createChannelDto, user);
+  client.join("chan" + new_channel.id);
+  if (new_channel.chanType == 1 && createChannelDto.users && createChannelDto.users.length > 0)
+    this.inviteToChan(createChannelDto.users, new_channel.id);
+
+  client.emit("createChannelOk", new_channel.id);
+  this.server.emit("createChannelOk", new_channel.id); // do we need it twice?
 }
 
 @SubscribeMessage('leaveChannel')

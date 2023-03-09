@@ -18,75 +18,21 @@ function JoinedChannelList() {
 	const navigate = useNavigate();
 
 	// ---- kept for later ---- //
-	// useEffect(() => {
-	// 	const fetchJoined = async () => {
-	// 		const response = await fetch(`${process.env.REACT_APP_BACK}user/channel/${currentUser.user?.id}`, {
-	// 			method: 'GET',
-	// 		})
-	// 		const data = await response.json();
-	// 		setChanList(data);
-	// 	}
-	// 	fetchJoined();
-	// }, []);
-
-	return (
-		<div className="title">
-			<header>Joined Channels <hr /></header>
-			{chanList && chanList.map(chan => (
-				<ul key={chan.name}>
-					<li>
-						<div onClick={_ => navigate(`/Chat/channel/${chan.id}`)}>{chan.name}
-							{
-								chan.chanType == 1 &&
-								<HiLockClosed style={{ float: 'right' }} />
-							}
-							{
-								chan.chanType == 2 &&
-								<BsFillKeyFill style={{ float: 'right' }} />
-							}
-						</div>
-					</li>
-				</ul>
-			))}
-		</div>
-	);
-}
-
-function ChannelList(props: any) {
-	const [chanList, setChanList] = useState<IChannel[]>([]);
-	const [chanId, setChanId] = useState("");
-	const navigate = useNavigate();
-
 	useEffect(() => {
-		const fetchAllList = async () => {
-			const response = await fetch(`${process.env.REACT_APP_BACK}channel/`, {
+		const fetchJoined = async () => {
+			const response = await fetch(`${process.env.REACT_APP_BACK}channel/user/${currentUser.user?.id}`, {
 				method: 'GET',
 			})
 			const data = await response.json();
 			setChanList(data);
+			console.log("joined chan: " , chanList);
 		}
-		fetchAllList();
-	}, [chanId]);
-
-	useEffect(() => {
-		socket.on('createChannelOk', (newChanId) => {
-			const fetchAllList = async () => {
-				const response = await fetch(`${process.env.REACT_APP_BACK}channel/`, {
-					method: 'GET',
-				})
-				const data = await response.json();
-				setChanList(data);	
-			}
-			fetchAllList();
-		});
-		return () => {
-			socket.off('createChannelOk');
-		};
-	});
+		fetchJoined();
+	}, []);
 
 	return (
 		<div className="title">
-			<header>All Channels <hr /></header>
+			<header>Joined Channels <hr /></header>
 			{chanList && chanList.map(chan => (
 				<ul key={chan.name}>
 					<li>
@@ -121,7 +67,6 @@ function PublicChannelList() {
 		}
 		fetchPublic();
 	}, []);
-
 
 	useEffect(() => {
 		socket.on('createChannelOk', (newChanId) => {
@@ -237,14 +182,12 @@ export function Channels(props: any) {
 			socket.off('joinChannel');
 			socket.off('leaveChannel');
 		}
-	}, []);
+	});
 
 	return (
 		<div id="chat-container">
 			<div className="sidebar left-sidebar">
-				<ChannelList />
-				{/* <JoinedChannelList /> -- to be switched to this later once back is ready -- */} 
-				<PublicChannelList />
+				<JoinedChannelList />
 				<AddChannel />
 				<PublicChannelList />
 			</div>

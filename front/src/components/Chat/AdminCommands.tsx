@@ -65,7 +65,7 @@ export function MuteUser(props: { chanid: any, userid: any, trigger: boolean, se
 				<br />
 				<h3>Mute User</h3>
 				<h4>Set time (optional)</h4>
-				<input type="text" placeholder="Timeout in seconds" onChange={e => { setTimeout(e.target.value) }}></input>
+				<input placeholder="Timeout in seconds" onChange={e => { setTimeout(e.target.value) }}></input>
 				<br /><br />
 				<button onClick={_ => handleMute()}>Ban User</button>
 			</div>
