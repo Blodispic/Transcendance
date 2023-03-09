@@ -63,8 +63,10 @@ export class User {
   results: Results[];
 
   @OneToMany(() => FriendRequest, friendRequest => friendRequest.creator, { onDelete: 'CASCADE' })
+  @JoinTable()
   sendFriendRequests: FriendRequest[];
 
   @OneToMany(() => FriendRequest, friendRequest => friendRequest.receiver, { onDelete: 'CASCADE' })
+  @JoinTable()
   receiveFriendRequests: FriendRequest[];
 }

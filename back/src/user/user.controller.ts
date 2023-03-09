@@ -123,7 +123,8 @@ export class UserController {
 
   @Post("friends/accept")
   @UseGuards(JwtGuard)
-  async acceptFriendRequest(@Body() body: { friendId: any, userId: number }) {
+  async acceptFriendRequest(@Body() body: { friendId: number, userId: number }) {
+    console.log(body);
     this.userService.addFriend(body.friendId, body.userId);
     return await this.userService.updateFriendRequestStatus(body.friendId, body.userId, {
       status: "Accepted",
@@ -139,7 +140,6 @@ export class UserController {
   }
 
   @Get(':id/avatar')
-  @UseGuards(JwtGuard)
   async getAvatar(@Param('id', ParseIntPipe) id: number, @Req() req: Request, @Res() res: Response) {
     const user = await this.userService.getById(id);
     if (user) {

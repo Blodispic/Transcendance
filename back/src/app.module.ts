@@ -44,10 +44,6 @@ import { GatewayExceptionFilter } from './app.exceptionFilter';
   controllers: [AppController],
   providers: [AppService, ChatGateway, AppGateway,
     {
-      provide: APP_FILTER, // use APP_FILTER token to specify the filter
-      useClass: GatewayExceptionFilter, // specify the filter class
-    },
-    {
       provide: APP_INTERCEPTOR,
 		  useClass: ClassSerializerInterceptor,
     },
