@@ -120,10 +120,11 @@ async handleCreateChannel(@ConnectedSocket() client: Socket, @MessageBody() crea
   const user = await this.userService.getById(client.handshake.auth.user.id);
   if (user === null)
     throw new BadRequestException("No such user");
-  const new_channel = await this.channelService.create(createChannelDto, user);
-  client.join("chan" + new_channel.id);
-  if (new_channel.chanType == 1 && createChannelDto.users && createChannelDto.users.length > 0)
-    this.inviteToChan(createChannelDto.users, new_channel.id);
+    
+    const new_channel = await this.channelService.create(createChannelDto, user);
+    client.join("chan" + new_channel.id);
+    if (new_channel.chanType == 1 && createChannelDto.users && createChannelDto.users.length > 0)
+      this.inviteToChan(createChannelDto.users, new_channel.id);
 }
 
 @SubscribeMessage('leaveChannel')
@@ -265,7 +266,7 @@ async inviteToChan(users: User[], chanid: number)
       this.server.to(socketIdToWho.id).emit("invited", chanid);
     socketIdToWho?.join("chan" + chanid);
     this.channelService.add({user: user, chanId: chanid});
-  });
+  });  
 }
 
  afterInit(server: Server) {
