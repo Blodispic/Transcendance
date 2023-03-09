@@ -61,9 +61,10 @@ export function ChannelMessages(props: { channel: IChannel }) {
 	const handleSubmitNewMessage = (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
 		if (newInput != "") {
-			const sendTime = new Date().toLocaleString('en-US');
 			console.log("channel message sent");
-			socket.emit('sendMessageChannel', { chanid: props.channel.id, sender: currentUser.user, message: newInput, sendtime: sendTime });
+			
+			const sendTime = new Date().toLocaleString('en-US');
+			socket.emit('sendMessageChannel', { chanid: props.channel?.id, message: newInput, sendtime: sendTime });
 		}
 		setNewInput("");
 	}

@@ -47,7 +47,7 @@ export function PopupCreateChannel(props: any) {
 		setFailed(false);
 
 		if (chanName != "")
-			socket.emit('createChannel', { chanName: chanName, chanType: chanMode, password: password, users: [friend] });
+			socket.emit('createChannel', { chanName: chanName, chanType: chanMode, password: password, users: friend });
 		setChanName("");
 		setPassword("");
 		setChanMode(0);

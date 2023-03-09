@@ -11,6 +11,7 @@ import { RmUserDto } from './dto/rm-user.dto';
 import { MuteUserDto } from '../dto/mute-user.dto';
 import { CreateChannelDto } from '../dto/create-channel.dto';
 import { GiveAdminDto } from '../dto/give-admin.dto';
+import { BanUserDto } from '../dto/ban-user.dto';
 var bcrypt = require('bcryptjs');
 
 @Injectable()
@@ -48,7 +49,6 @@ export class ChannelService {
 				id: addUserDto.chanId
 			}
 			});
-		// const user: User | null = await this.userRepository.findOneBy({ id: addUserDto.userid})
 		const user = addUserDto.user;		
 		if (channel == null || user == null)
 		throw new NotFoundException("No such Channel or User");
@@ -58,18 +58,17 @@ export class ChannelService {
 
 	async rm(rmUserDto: RmUserDto) {
 		const channel: Channel | null = await this.channelRepository.findOne({
-			relations: { users: true },
+			relations: { users: true, banned: true, muted: true, admin: true, owner: true},
 			where: {
 				id: rmUserDto.chanid
 			}
 			});
-			// const user: User | null = await this.userRepository.findOneBy({ id: rmUserDto.userid})
-			// const user: User | null = await this.userService.getById(rmUserDto.userid);
-		const user = rmUserDto.user;
-		console.log("rm: ", rmUserDto.chanid, " | user: " , user);
+		const user = channel?.users.find(elem => elem.id == rmUserDto.user.id)
 		if (channel == null || user == null)
 			throw new NotFoundException("No such Channel or User");
-		channel.users.splice(channel.users.indexOf(user, 0) - 1, 1); // added "-1" to fix leave channel error; not sure if it's right way to do it;
+		const index = channel.users.indexOf(user, 0);		
+		if (index != -1)
+			channel.users.splice(index, 1);
 		return this.channelRepository.save(channel);
 	}
 
@@ -109,6 +108,7 @@ export class ChannelService {
 				users: true,
 				muted: true,
 				banned: true,
+				owner: true,
 			},
 			where: {
 				id: id
@@ -142,12 +142,12 @@ export class ChannelService {
 		return this.channelRepository.save(channel);
 	}
 	
-	  async banUser(muteUserDto: MuteUserDto) {
+	  async banUser(banUserDto: BanUserDto) {
 		const channel: Channel | null = await this.channelRepository.findOne({
 			relations: { users: true, banned: true },
-			where: { id: muteUserDto.chanid }
+			where: { id: banUserDto.chanid }
 		});
-		const user = await this.userService.getById(muteUserDto.userid);
+		const user = await this.userService.getById(banUserDto.userid);
 		if (channel === null || user === null)
 			throw new BadRequestException("No such Channel or User");
 		channel.banned.push(user);
@@ -168,6 +168,13 @@ export class ChannelService {
 
 	  }
 
+	  getUserChannel (id: number) {
+		return this.channelRepository.find({
+			where:
+				{ users: { id : id} }
+		})
+	  }
+
 	  async unmuteUser(muteUserDto: MuteUserDto) {
 		const channel: Channel | null = await this.channelRepository.findOne({
 			relations: { users: true, muted: true },
@@ -179,7 +186,7 @@ export class ChannelService {
 		const index = channel.muted.indexOf(user, 0);		
 		if (index != -1)
 			channel.muted.splice(index, 1);
-		return this.channelRepository.save(channel);
+		return await this.channelRepository.save(channel);
 	}
 
 	async unbanUser(muteUserDto: MuteUserDto) {

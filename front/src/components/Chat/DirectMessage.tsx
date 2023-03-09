@@ -135,8 +135,9 @@ export function DmMessages(props: { id: any; currentdm: IUser | undefined; setCu
 		e.preventDefault();
 		if (newInput != "") {
 	
-			const sendtime = new Date().toLocaleString();
-			socket.emit('sendMessageUser', { usertowho: props.currentdm, sender: myUser.user, message: newInput, sendtime: sendtime });
+			const sendtime = new Date().toLocaleString('en-US');
+			socket.emit('sendDM', { IdReceiver: props.currentdm?.id, message: newInput, sendtime: sendtime });
+
 			const newMessage: IMessage = {sender: myUser!.user, message: newInput, usertowho: props.currentdm, sendtime: sendtime};
 
 			setMessageList([...messageList, newMessage]);
@@ -145,11 +146,11 @@ export function DmMessages(props: { id: any; currentdm: IUser | undefined; setCu
 	}
 
 	useEffect(() => {
-		socket.on('sendMessageUserOK', (messageUserDto) => {
-			setMessageList([...messageList, messageUserDto]);
+		socket.on('ReceiveDM', (receiveDmDto) => {
+			setMessageList([...messageList, receiveDmDto]);
 		})
 		return () => {
-			socket.off('sendMessageUserOK');
+			socket.off('ReceiveDM');
 		};
 	});
 
