@@ -93,7 +93,7 @@ export function Header(props: { currentUser: IUser, setCurrentUser: Function }) 
         return (
                 <div className='profile-header'>
 
-
+ch
                         <div className='info-container'>
                                 <div className="left-part">
                                         <div className='avatar'>

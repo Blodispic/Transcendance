@@ -144,7 +144,6 @@ export class UserController {
   }
 
   @Get(':id/avatar')
-  @UseGuards(JwtGuard)
   async getAvatar(@Param('id', ParseIntPipe) id: number, @Req() req: Request, @Res() res: Response) {
     const user = await this.userService.getById(id);
     if (user) {
