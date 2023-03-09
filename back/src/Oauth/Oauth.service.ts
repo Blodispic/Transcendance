@@ -79,6 +79,7 @@ export class OauthService {
       intra_avatar: data.image.link,
     }
     const realUser = await this.usersService.create(userDto);
-    return ( {realUser, access_token});
+    console.log(realUser);
+    return ( {user: realUser, access_token});
   }
 }

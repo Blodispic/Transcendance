@@ -39,6 +39,7 @@ export default function Connection() {
                 })
                     .then(async response => {
                         const data = await response.json();
+                        console.log(data);
                         // check for error response
                         if (response.ok) {
                             dispatch(setUser(data.user));
@@ -46,9 +47,9 @@ export default function Connection() {
                             dispatch(oauth());
                             setCookie('Token', data.access_token, { path: '/' });
                             dispatch(setToken(data.access_token));
-                            if (!data.username)
+                            if (!data.user.username)
                                 navigate("./sign")
-                            else if (data.twoFaEnable == true)
+                            else if (data.user.twoFaEnable == true)
                                 navigate("./log")
                             else {
                                 dispatch(set_status(UserStatus.ONLINE));
