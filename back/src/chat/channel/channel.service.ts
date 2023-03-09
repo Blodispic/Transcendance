@@ -192,7 +192,7 @@ export class ChannelService {
 		const index = channel.muted.indexOf(user, 0);		
 		if (index != -1)
 			channel.muted.splice(index, 1);
-		return this.channelRepository.save(channel);
+		return await this.channelRepository.save(channel);
 	}
 
 	async unbanUser(muteUserDto: MuteUserDto) {

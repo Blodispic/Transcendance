@@ -22,6 +22,7 @@ import { GiveAdminDto } from "./dto/give-admin.dto";
 import { InviteDto } from "./dto/invite-user.dto";
 import { Any } from "typeorm";
 import { SendMessageChannelDto } from "./dto/send-message-channel.dto";
+import { BlockDto } from "./dto/block-user.dto";
 var bcrypt = require('bcryptjs');
 
 @WebSocketGateway({

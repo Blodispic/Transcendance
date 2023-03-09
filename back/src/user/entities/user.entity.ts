@@ -49,6 +49,7 @@ export class User {
   owned: Channel[]
 
   @ManyToMany(() => User, user => user.blocked)
+  @JoinTable()
   blocked: User[];
 
   //      STATISTIQUES        //
