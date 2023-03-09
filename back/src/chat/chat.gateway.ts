@@ -165,18 +165,17 @@ async handleLeaveChannel(@ConnectedSocket() client: Socket, @MessageBody() leave
     throw new BadRequestException("No such Channel or User"); // no such channel/user, shouldn't happened
   this.channelService.rm( { user, chanid: leaveChannelDto.chanid});
   client.leave("chan" + leaveChannelDto.chanid);
-  // client.emit("leaveChannelOK", channel.id);
-  client.emit("leaveChannelOK", channel.id);
   
   /// test log for debug //
-      console.log("leave chan: ", channel.name, " user: ", user);
-      var roster = this.server.sockets.adapter.rooms.get("chan" + leaveChannelDto.chanid);
-      if (roster) {
-        roster.forEach(function(client) {
-          console.log('leaveChan: ', client);
-        }); }
-  /////////////////////////
-
+  console.log("leave chan: ", channel.name, " user: ", user);
+  var roster = this.server.sockets.adapter.rooms.get("chan" + leaveChannelDto.chanid);
+  if (roster) {
+    roster.forEach(function(client) {
+      console.log('leaveChan: ', client);
+    }); }
+    /////////////////////////
+    
+  client.emit("leaveChannelOK", channel.id);
   this.server.to("chan" + channel.id).emit("leaveChannel", user);
 }
 
