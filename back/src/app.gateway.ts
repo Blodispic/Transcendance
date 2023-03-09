@@ -4,6 +4,7 @@ import { Server, Socket } from "socket.io";
 import { User } from "src/user/entities/user.entity";
 import { UserService } from "./user/user.service";
 import { GatewayExceptionFilter } from "./app.exceptionFilter";
+import { ChannelService } from "./chat/channel/channel.service";
 
 export let userList: Socket[] = [];
 
@@ -16,8 +17,12 @@ export let userList: Socket[] = [];
 })
 export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
 	constructor(
-		@Inject(forwardRef(() => UserService))	
-		private readonly userService: UserService) {}
+		@Inject(forwardRef(() => UserService))
+		private readonly userService: UserService,
+
+		@Inject(forwardRef(() => ChannelService))
+		private readonly channelService: ChannelService,
+	) { }
 
 	@WebSocketServer()
 	server: Server;
@@ -25,20 +30,25 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
 	async handleConnection(client: Socket, ...args: any[]) {
 		try {
 			await this.userService.SetStatus(client.handshake.auth.user, 'Online');
-		  } catch (error) {
-		  console.log(error);
+		} catch (error) {
+			console.log(error);
 		}
 		userList.push(client);
-		this.server.emit("UpdateSomeone", { idChange: client.handshake.auth.user.id, idChange2: 0  })
+		const channels = await this.channelService.getUserChannel(client.handshake.auth.user.id);
+		channels.forEach(channel => {
+			client.join("chan" + channel.id);
+		});
+
+		this.server.emit("UpdateSomeone", { idChange: client.handshake.auth.user.id, idChange2: 0 })
 	}
 
 	async handleDisconnect(client: any) {
 		try {
 			await this.userService.SetStatus(client.handshake.auth.user, 'Offline');
-		  } catch (error) {
-		  console.log(error);
+		} catch (error) {
+			console.log(error);
 		}
 		userList.splice(userList.indexOf(client), 1);
-		this.server.emit("UpdateSomeone", { idChange: client.handshake.auth.user.id, idChange2: 0  })
+		this.server.emit("UpdateSomeone", { idChange: client.handshake.auth.user.id, idChange2: 0 })
 	}
 }
