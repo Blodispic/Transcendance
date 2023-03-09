@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, forwardRef, Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateUserDto } from 'src/user/dto/create-user.dto';
 import { User } from 'src/user/entities/user.entity';
@@ -19,6 +19,7 @@ export class ChannelService {
 	constructor(
 		@InjectRepository(Channel)
 		private channelRepository: Repository<Channel>,
+		@Inject(forwardRef(() => UserService))
 		private userService: UserService,
 		// @InjectRepository(User)
 		// private userRepository: Repository<User>,
