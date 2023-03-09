@@ -58,7 +58,7 @@ export class ChannelService {
 
 	async rm(rmUserDto: RmUserDto) {
 		const channel: Channel | null = await this.channelRepository.findOne({
-			relations: { users: true, banned: true, muted: true },
+			relations: { users: true, banned: true, muted: true, admin: true, owner: true},
 			where: {
 				id: rmUserDto.chanid
 			}
