@@ -49,7 +49,6 @@ export class ChannelService {
 				id: addUserDto.chanId
 			}
 			});
-		// const user: User | null = await this.userRepository.findOneBy({ id: addUserDto.userid})
 		const user = addUserDto.user;		
 		if (channel == null || user == null)
 		throw new NotFoundException("No such Channel or User");
@@ -64,18 +63,12 @@ export class ChannelService {
 				id: rmUserDto.chanid
 			}
 			});
-		// const user: User | null = await this.userRepository.findOneBy({ id: rmUserDto.userid})
-		// const user: User | null = await this.userService.getById(rmUserDto.userid);
-		// const user = await this.userService.getById(rmUserDto.user.id);
 		const user = channel?.users.find(elem => elem.id == rmUserDto.user.id)
 		if (channel == null || user == null)
 			throw new NotFoundException("No such Channel or User");
-		const index = channel.users.indexOf(user, 0);
-		console.log("index : ", index);
-		
+		const index = channel.users.indexOf(user, 0);		
 		if (index != -1)
 			channel.users.splice(index, 1);
-		// user.channels.splice
 		return this.channelRepository.save(channel);
 	}
 
