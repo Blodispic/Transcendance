@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import { IChannel } from "../../interface/Channel";
 import { IUser } from "../../interface/User";
@@ -11,8 +11,8 @@ export default function CLickableMenu(props: { user: IUser, chan: IChannel }) {
     const user: IUser = props.user;
     const [myVar, setMyvar] = useState<boolean>(false);
     const myUser = useAppSelector(state => state.user.user)
-    
-    const [timePop, setTimePop] = useState(false);
+    const [timeMute, setTimeMute] = useState(false);
+    const [timeBan, setTimeBan] = useState(false);
 
 
     return (
@@ -51,15 +51,15 @@ export default function CLickableMenu(props: { user: IUser, chan: IChannel }) {
                                         </>
                                     }
                                     <li>
-                                        <a onClick={() => setTimePop(true)}>
+                                        <a onClick={() => setTimeMute(true)}>
                                             Mute
-                                            <MuteUser chanid={props.chan.id} userid={user.id} trigger={timePop} setTrigger={setTimePop}   />
+                                            <MuteUser chanid={props.chan.id} userid={user.id} trigger={timeMute} setTrigger={setTimeMute}   />
                                         </a>
                                     </li>
                                     <li>
-                                        <a onClick={() => setTimePop(true)}>
+                                        <a onClick={() => setTimeBan(true)}>
                                             Ban
-                                            <BanUser chanid={props.chan.id} userid={user.id} trigger={timePop} setTrigger={setTimePop}   />
+                                            <BanUser chanid={props.chan.id} userid={user.id} trigger={timeBan} setTrigger={setTimeBan}   />
                                         </a>
                                     </li>
                                     <li>

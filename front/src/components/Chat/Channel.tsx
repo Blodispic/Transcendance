@@ -7,7 +7,6 @@ import { useNavigate } from "react-router-dom";
 import { socket } from "../../App";
 import { IChannel } from "../../interface/Channel";
 import { IUser } from "../../interface/User";
-import { addChannel, channelSlice } from "../../redux/channel";
 import { useAppSelector } from "../../redux/Hook";
 import { ChannelMessages } from "./ChannelMessages";
 import CLickableMenu from "./clickableMenu";
@@ -15,10 +14,10 @@ import { AddChannel } from "./CreateChannel";
 
 function JoinedChannelList() {
 	const [chanList, setChanList] = useState<IChannel[]>([]);
-	const [chanId, setChanId] = useState("");
 	const currentUser = useAppSelector(state => state.user);
 	const navigate = useNavigate();
 
+	// ---- kept for later ---- //
 	// useEffect(() => {
 	// 	const fetchJoined = async () => {
 	// 		const response = await fetch(`${process.env.REACT_APP_BACK}user/channel/${currentUser.user?.id}`, {
@@ -58,18 +57,6 @@ function ChannelList(props: any) {
 	const [chanId, setChanId] = useState("");
 	const navigate = useNavigate();
 
-	// socket.on('createChannelOk', (newChanId) => {
-	// 	const fetchAllList = async () => {
-	// 		const response = await fetch(`${process.env.REACT_APP_BACK}channel/`, {
-	// 			method: 'GET',
-	// 		})
-	// 		const data = await response.json();
-	// 		setChanList(data);
-	// 	}
-	// 	fetchAllList();
-	// 	getChanId(newChanId);
-	// });
-
 	useEffect(() => {
 		const fetchAllList = async () => {
 			const response = await fetch(`${process.env.REACT_APP_BACK}channel/`, {
@@ -90,7 +77,6 @@ function ChannelList(props: any) {
 				const data = await response.json();
 				setChanList(data);	
 			}
-			console.log("chan list : create channel ");
 			fetchAllList();
 		});
 		return () => {
@@ -146,7 +132,6 @@ function PublicChannelList() {
 				const data = await response.json();
 				setChanList(data);	
 			}
-			console.log("public chan list : create channel ");
 			fetchPublic();
 		});
 		return () => {
@@ -191,36 +176,6 @@ function ChannelMemberList(props: { channel: IChannel }) {
 			setCurrentId(id);
 	}
 
-	// useEffect(() => {
-	// 	socket.on('joinChannel', (data) => {
-	// 		const fetchMemberList = async () => {
-	// 			const response = await fetch(`${process.env.REACT_APP_BACK}channel/${props.channel.id}`, {
-	// 				method: 'GET',
-	// 			})
-	// 			const data = await response.json();
-	// 			setCurrentChan(data);
-	// 			console.log("memberlist - join");
-	// 		}
-	// 		fetchMemberList();
-	// 	});
-
-	// 	socket.on('leaveChannel', (data) => {
-	// 		const fetchMemberList = async () => {
-	// 			const response = await fetch(`${process.env.REACT_APP_BACK}channel/${props.channel.id}`, {
-	// 				method: 'GET',
-	// 			})
-	// 			const data = await response.json();
-	// 			setCurrentChan(data);
-	// 			console.log("memberlist - leave");
-	// 		}
-	// 		fetchMemberList();
-	// 	});
-	// 	return () => {
-	// 		socket.off('joinChannel');
-	// 		socket.off('leaveChannel');
-	// 	}
-	// });
-
 	if (props.channel?.users === undefined) {
 		return (
 			<div className="title"> Members <hr />
@@ -228,28 +183,6 @@ function ChannelMemberList(props: { channel: IChannel }) {
 		)
 	}
 
-	// return (
-	// 	<div className="title"> Members <hr />
-	// 		{currentChan && currentChan.users?.map(user => (
-	// 			<div key={user.id} className="user-list">
-	// 				<ul onClick={e => { changeId(user.id) }}>
-	// 					<li>
-	// 						{user.username}
-	// 						{
-	// 							currentChan.admin?.find(obj => obj.id === user.id) &&
-	// 							<FaCrown />
-	// 						}
-	// 					</li>
-	// 				</ul>
-	// 				{
-	// 					currentId == user.id &&
-	// 					<CLickableMenu user={user} chan={currentChan} />
-	// 				}
-	// 			</div>
-	// 		))
-	// 		}
-	// 	</div>
-	// );
 	return (
 		<div className="title"> Members <hr />
 			{props.channel && props.channel.users?.map(user => (
@@ -294,12 +227,10 @@ export function Channels(props: any) {
 	useEffect(() => {
 		socket.on('joinChannel', (data) => {
 			getChannel();
-			console.log("join: ", currentChan?.name, " user: ", currentUser.user?.username);
 		});
 
 		socket.on('leaveChannel', (data) => {
 			getChannel();
-			console.log("leave: ", currentChan?.name, " user: ", currentUser.user?.username);
 		});
 
 		return () => {
@@ -308,13 +239,11 @@ export function Channels(props: any) {
 		}
 	});
 
-	console.log("current chan: ", currentChan?.name);
-
 	return (
 		<div id="chat-container">
 			<div className="sidebar left-sidebar">
 				<ChannelList />
-				{/* <JoinedChannelList /> */}
+				{/* <JoinedChannelList /> -- to be switched to this later once back is ready -- */} 
 				<PublicChannelList />
 				<AddChannel />
 				<PublicChannelList />

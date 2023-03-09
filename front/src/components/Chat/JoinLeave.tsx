@@ -6,14 +6,14 @@ import { IChannel } from "../../interface/Channel";
 import { IUser } from "../../interface/User";
 import { useAppSelector } from "../../redux/Hook";
 
-export function CheckPassword(props: {trigger: boolean, setTrigger: Function, channel: IChannel}) {
+export function CheckPassword(props: { trigger: boolean, setTrigger: Function, channel: IChannel }) {
 	const [password, setPassword] = useState("");
 	const [failed, setFailed] = useState<boolean>(false);
 	const [errorMessage, setErrorMessage] = useState("");
 	const [inputValue, setInputValue] = useState("");
-	
+
 	const handleJoinWithPass = () => {
-		socket.emit('joinChannel', {chanid: props.channel.id, channame: props.channel.name, password: password});
+		socket.emit('joinChannel', { chanid: props.channel.id, channame: props.channel.name, password: password });
 		setPassword("");
 		setInputValue("");
 	}
@@ -38,15 +38,15 @@ export function CheckPassword(props: {trigger: boolean, setTrigger: Function, ch
 		<div className="chat-form-popup" onClick={_ => (props.setTrigger(false), setFailed(false))}>
 			<div className="chat-form-inner" onClick={e => e.stopPropagation()}>
 
-			<HiOutlineXMark className="close-icon" onClick={_ => (props.setTrigger(false), setFailed(false))} /> <br />
-			<h3>Input password for " {props.channel.name} "</h3>
-			<input type="password" id="channel-input" placeholder="Input password" value={password} onChange={e => { setPassword(e.target.value); }} /><br />
-			{
-				failed === true &&
-				<a className="channel-error">{errorMessage}</a>
-			}
-			<br />
-			<button onClick={_ => handleJoinWithPass()}>Enter Channel</button>
+				<HiOutlineXMark className="close-icon" onClick={_ => (props.setTrigger(false), setFailed(false))} /> <br />
+				<h3>Input password for " {props.channel.name} "</h3>
+				<input type="password" id="channel-input" placeholder="Input password" value={password} onChange={e => { setPassword(e.target.value); }} /><br />
+				{
+					failed === true &&
+					<a className="channel-error">{errorMessage}</a>
+				}
+				<br />
+				<button onClick={_ => handleJoinWithPass()}>Enter Channel</button>
 			</div>
 		</div>
 	) : <></>;

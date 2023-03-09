@@ -110,17 +110,12 @@ export function DmMessages(props: { id: any; currentdm: IUser | undefined; setCu
 
 	useEffect(() => {
 		socket.on('sendMessageUserOK', (messageUserDto) => {
-			console.log("DM");
 			setMessageList([...messageList, messageUserDto]);
 		})
 		return () => {
 			socket.off('sendMessageUserOK');
 		};
 	});
-	
-	// socket.on('sendMessageUserOK', (messageUserDto) => {
-	// 	setMessageList([...messageList, messageUserDto]);
-	// })
 
 	const handleBlock = () => { // to be improved
 		// if (blockedId == 0 && props.currentdm !== undefined)

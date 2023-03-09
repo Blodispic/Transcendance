@@ -255,6 +255,7 @@ $tab-color: rgba(var(--primary-color), 0.5); //rgb(121, 121, 121);
 	text-align: center;
 	position: relative;
 	z-index: 1;
+	-webkit-text-fill-color: black !important; 
 
 	#channel-input {
 		font-family: 'Fredoka One', cursive;

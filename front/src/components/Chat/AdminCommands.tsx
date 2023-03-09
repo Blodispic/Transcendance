@@ -16,7 +16,7 @@ export function BanUser(props: { chanid: any, userid: any, trigger: boolean, set
 	useEffect(() => {
 		socket.on("banUserOK", (data) => {
 			props.setTrigger(false);
-			console.log("banuserOK");
+			console.log("banUserOK", data);
 		});
 		return () => {
 			socket.off("banUserOK");
@@ -26,9 +26,10 @@ export function BanUser(props: { chanid: any, userid: any, trigger: boolean, set
 	return (props.trigger) ? (
 		<div className="chat-form-popup" onClick={_ => (props.setTrigger(false))}>
 			<div className="chat-form-inner" onClick={e => e.stopPropagation()}>
-				<HiOutlineXMark className="close-icon" onClick={_ => (props.setTrigger(false))} /> <br />
-				<h2>Ban User</h2>
-				<h4>Set time(optional)</h4>
+				<HiOutlineXMark className="close-icon" onClick={_ => (props.setTrigger(false))} /> 
+				<br />
+				<h3>Ban User</h3>
+				<h4>Set time (optional)</h4>
 				<input placeholder="Timeout in seconds" onChange={e => { setTimeout(e.target.value) }}></input>
 				<br />
 				<button onClick={_ => handleBan()}>Ban User</button>
@@ -40,7 +41,7 @@ export function BanUser(props: { chanid: any, userid: any, trigger: boolean, set
 export function MuteUser(props: { chanid: any, userid: any, trigger: boolean, setTrigger: Function }) {
 	const [timeout, setTimeout] = useState<string>("");
 
-	const handleBan = () => {
+	const handleMute = () => {
 		if (timeout === "")
 			socket.emit('MuteUser', { chanid: props.chanid, userid: props.userid });
 		else
@@ -50,7 +51,7 @@ export function MuteUser(props: { chanid: any, userid: any, trigger: boolean, se
 	useEffect(() => {
 		socket.on("muteUserOK", (data) => {
 			props.setTrigger(false);
-			console.log("muteUserOK");
+			console.log("muteUserOK: ", data);
 		});
 		return () => {
 			socket.off("muteUserOK");
@@ -60,21 +61,17 @@ export function MuteUser(props: { chanid: any, userid: any, trigger: boolean, se
 	return (props.trigger) ? (
 		<div className="chat-form-popup" onClick={_ => (props.setTrigger(false))}>
 			<div className="chat-form-inner" onClick={e => e.stopPropagation()}>
-				<HiOutlineXMark className="close-icon" onClick={_ => (props.setTrigger(false))} /> <br />
-				<h2>Mute User</h2>
-				<h4>Set time(optional)</h4>
+				<HiOutlineXMark className="close-icon" onClick={_ => (props.setTrigger(false))} /> 
+				<br />
+				<h3>Mute User</h3>
+				<h4>Set time (optional)</h4>
 				<input placeholder="Timeout in seconds" onChange={e => { setTimeout(e.target.value) }}></input>
 				<br />
-				<button onClick={_ => handleBan()}>Ban User</button>
+				<button onClick={_ => handleMute()}>Ban User</button>
 			</div>
 		</div>
 	) : <></>;
 }
-
-// export function MuteUser(chanid: any, userid: any) {
-// 	socket.emit('MuteUser', {chanid: chanid, userid: userid});
-// 	// socket.on('muteUserOK', (userId, chanId) => {});
-// }
 
 export function AddAdmin(chanid: any, userid: any) {
 	socket.emit('GiveAdmin', {chanid: chanid, userid: userid});
@@ -82,10 +79,6 @@ export function AddAdmin(chanid: any, userid: any) {
 
 export function KickUser(chanid: any, userid: any) {
 	//socket.emit('KickUser')
-}
-
-function RemoveChannel() {
-	// remove channel method on the back;
 }
 
 export function ConfigureChannel(props: {trigger: boolean, setTrigger: Function, channel: IChannel}) {
@@ -137,8 +130,6 @@ export function ConfigureChannel(props: {trigger: boolean, setTrigger: Function,
 					</>
 				}
 				<button onClick={setPassword}> Save Setting </button>
-				{/* <h3> Remove Channel </h3> */}
-				{/* <button style={{background:'#B33A3A'}} onClick={RemoveChannel}> Remove Channel </button> */}
 			</div>
 		</div>
 	) : <></>;
