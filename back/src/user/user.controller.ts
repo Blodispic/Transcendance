@@ -158,6 +158,12 @@ export class UserController {
     }
   }
 
+  @Post('friend/check')
+  @UseGuards(JwtGuard)
+  async checkFriends(@Body() body: { myId: number, friendId: number}) {
+    return (await this.userService.checkFriends(body.myId, body.friendId));
+  }
+
   @Patch(':id/avatar')
   @UseGuards(JwtGuard)
   @UseInterceptors(

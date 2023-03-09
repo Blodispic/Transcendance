@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../redux/Hook';
 import { FaUserAlt } from "react-icons/fa";
@@ -12,6 +12,7 @@ export default function Header() {
   const [dropdown, setDropdown] = useState<boolean>(false);
   const [peopleBool, setPeopleBool] = useState<boolean>(false);
   const cookies = new Cookies();
+
 
   const dispatch = useAppDispatch();
 

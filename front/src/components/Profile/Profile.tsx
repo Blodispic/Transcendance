@@ -70,13 +70,19 @@ export default function Profile() {
         const myUser = useAppSelector(state => state.user);
 
         const fetchid = async () => {
+                console.log("ca fetch id ", id);
                 const response = await fetch(`${process.env.REACT_APP_BACK}user/id/${id}`, {
                         method: 'GET',
                         credentials: 'include',
                 })
+                console.log(response);
                 setCurrentUser(await response.json());
         }
         useEffect(() => {
+                socket.on("RoomStart", (roomId: number, player: Player) => {
+                        navigate("/game/" + roomId, { state: { Id: roomId } });
+                });
+
                 if (id)
                         fetchid();
                 setPages(page.PAGE_1);
@@ -94,19 +100,17 @@ export default function Profile() {
                 };
         }, [id])
 
-        // useEffect(() => {
-        // }, [currentUser])
-
-
         useEffect(() => {
+                console.log("currentuser", currentUser);
                 if (currentUser?.id == myUser.user?.id) {
+                        console.log("In useeffects");
                         setCurrentUser(myUser.user);
 
                 }
-        }, [Onglets, myUser.user?.username])
+        }, [Onglets, currentUser?.id,  myUser.user?.username, id])
 
 
-        if (currentUser === undefined || avatar === undefined) {
+        if (currentUser === undefined) {
                 return (
                         <div className='center'>
                                 <h1>USER DOESN'T EXIST </h1>
