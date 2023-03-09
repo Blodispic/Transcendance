@@ -154,6 +154,7 @@ async handleCreateChannel(@ConnectedSocket() client: Socket, @MessageBody() crea
     this.inviteToChan(createChannelDto.users, new_channel.id);
 
   client.emit("createChannelOk", new_channel.id);
+  client.emit("joinChannelOK", new_channel.id);
   this.server.emit("createChannelOk", new_channel.id); // do we need it twice?
 }
 
@@ -174,7 +175,7 @@ async handleLeaveChannel(@ConnectedSocket() client: Socket, @MessageBody() leave
       console.log('leaveChan: ', client);
     }); }
     /////////////////////////
-    
+
   client.emit("leaveChannelOK", channel.id);
   this.server.to("chan" + channel.id).emit("leaveChannel", user);
 }

@@ -12,6 +12,12 @@ import { JoinLeave } from "./JoinLeave";
 
 function ChannelHeader(props: { user: any, channel: IChannel}) {
 	const [popup, setPopup] = useState(false);
+	let isMember: boolean;
+
+	if (props.channel?.users.find(obj => obj.id === props.user.id))
+		isMember = true;
+	else
+		isMember = false;
 
 	return (
 		<div className="body-header" >
@@ -128,7 +134,7 @@ export function ChannelMessages(props: { chanId: any }) {
 			setCurrentChan(data);
 		}
 		getChannel();
-	}, [props.chanId]);
+	}, [props]);
 
 	console.log("chan message - current chan: ", currentChan?.name);
 

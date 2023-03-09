@@ -1,8 +1,7 @@
 import { useEffect, useState } from "react";
 import { BsFillKeyFill, BsFillPersonFill } from "react-icons/bs";
 import { FaCrown } from "react-icons/fa";
-import { HiLockClosed } from "react-icons/hi2";
-import { useDispatch } from "react-redux";
+import { HiLockClosed, HiPlusCircle } from "react-icons/hi2";
 import { useNavigate, useParams } from "react-router-dom";
 import { socket } from "../../App";
 import { IChannel } from "../../interface/Channel";
@@ -73,6 +72,7 @@ function JoinedChannelList() {
 
 function PublicChannelList() {
 	const [chanList, setChanList] = useState<IChannel[]>([]);
+	const currentUser = useAppSelector(state => state.user);
 	const navigate = useNavigate();
 
 	const fetchPublic = async () => {
@@ -89,13 +89,13 @@ function PublicChannelList() {
 
 	useEffect(() => {
 		socket.on('createChannelOk', (newChanId) => {
-			// const fetchPublic = async () => {
-			// 	const response = await fetch(`${process.env.REACT_APP_BACK}channel/public`, {
-			// 		method: 'GET',
-			// 	})
-			// 	const data = await response.json();
-			// 	setChanList(data);	
-			// }
+			const fetchPublic = async () => {
+				const response = await fetch(`${process.env.REACT_APP_BACK}channel/public`, {
+					method: 'GET',
+				})
+				const data = await response.json();
+				setChanList(data);	
+			}
 			fetchPublic();
 			console.log("pubChan create: ", chanList);
 		});
@@ -110,7 +110,7 @@ function PublicChannelList() {
 			<div className="bottom">
 				<header>All Joinable Channels <hr /></header>
 				{chanList && chanList.map(chan => (
-					<ul key={chan.name}>
+					<ul key={chan.name} onClick={e => {  }}>
 						<li>
 							<div onClick={_ => navigate(`/Chat/channel/${chan.id}`)}>{chan.name}
 								{
@@ -119,7 +119,7 @@ function PublicChannelList() {
 								}
 								{
 									chan.chanType == 2 &&
-									<BsFillKeyFill style={{ float: 'right' }} />
+									<BsFillKeyFill style={{ paddingLeft: '10px' }} />
 								}
 							</div>
 						</li>
@@ -141,21 +141,28 @@ function ChannelMemberList(props: { chanId: any }) {
 			setCurrentId(id);
 	}
 
-	const getChannel = async () => {
-		const response = await fetch(`${process.env.REACT_APP_BACK}channel/${props.chanId}`, {
-			method: 'GET',
-		})
-		const data = await response.json();
-		setCurrentChan(data);
-	}
 	
 	useEffect(() => {
+		const getChannel = async () => {
+			const response = await fetch(`${process.env.REACT_APP_BACK}channel/${props.chanId}`, {
+				method: 'GET',
+			})
+			const data = await response.json();
+			setCurrentChan(data);
+		}
 		getChannel();
 		console.log("chanMem fetch1: ", currentChan?.users.length);
-	}, [props.chanId]);
+	}, []);
 
 
 	useEffect(() => {
+		const getChannel = async () => {
+			const response = await fetch(`${process.env.REACT_APP_BACK}channel/${props.chanId}`, {
+				method: 'GET',
+			})
+			const data = await response.json();
+			setCurrentChan(data);
+		}
 		socket.on('joinChannel', (data) => {
 			getChannel();
 			console.log("chanMem join: ", currentChan?.users.length);
@@ -198,10 +205,10 @@ function ChannelMemberList(props: { chanId: any }) {
 							}
 						</li>
 					</ul>
-					{/* {
+					{
 						currentId == user.id &&
-						<CLickableMenu user={user} chan={props.channel} />
-					} */}
+						<CLickableMenu user={user} chan={currentChan} />
+					}
 				</div>
 			))
 			}
