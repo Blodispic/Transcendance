@@ -114,8 +114,11 @@ export class UserService {
   }
 
   getByLogin(login: string): Promise<User | null> {
-    return this.usersRepository.findOneBy({
-      login: login
+    return this.usersRepository.findOne({
+      relations: { blocked: true },
+      where: {
+        login: login,
+      }
     })
   }
 
@@ -539,12 +542,11 @@ export class UserService {
     });
     if (blocked === null)
       throw new BadRequestException("No such User to block");
-    if (user.blocked.find(elem => elem.id = blocked.id))
+    if (user.blocked.find(elem => elem.id === blocked.id) !== undefined)
       throw new BadRequestException("User already blocked");
     user.blocked.push(blocked);
     return await this.usersRepository.save(user);
   }
-
   async RmBlock(id: number, blockedid: number) {
     const user = await this.usersRepository.findOne({
       relations: {

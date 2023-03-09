@@ -198,14 +198,14 @@ export class UserController {
   }
 
   @Post('block/:id')
-  async addBlock(@Param('id') id: number, @Body() blockedId: number) {
+  async addBlock(@Param('id') id: number, @Body() blockedId: { blockedId: number}) {
     console.log(id);
     console.log(blockedId);
-    return await this.userService.addBlock(id, blockedId);
+    return await this.userService.addBlock(id, blockedId.blockedId);
   }
 
   @Delete('unblock/:id')
-  async RmBlock(@Param('id') id: number, @Body() blockedId: number) {
-    return await this.userService.addBlock(id, blockedId);
+  async RmBlock(@Param('id') id: number, @Body()  blockedId: { blockedId: number}) {
+    return await this.userService.addBlock(id, blockedId.blockedId);
   }
 }

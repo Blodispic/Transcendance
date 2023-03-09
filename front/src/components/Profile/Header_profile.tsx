@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { socket } from "../../App";
 import { IUser, UserStatus } from "../../interface/User";
 import { useAppDispatch, useAppSelector } from "../../redux/Hook";
-import { addBlockedUser } from "../../redux/user";
+import { addBlockedUser, unBlockUser } from "../../redux/user";
 import { InviteButton } from "./friend_request";
 
 function Search(props: { currentUser: IUser, setcurrentUser: Function }) {
@@ -63,6 +63,11 @@ export function Header(props: { currentUser: IUser, setCurrentUser: Function }) 
 
         let winPercentage = 0;
 
+        useEffect( () => {
+                console.log("blocked", myUser.user?.blocked, currentUser.id);
+                if ((myUser.user!.blocked!.find(block => block.id === currentUser.id) === undefined))
+                        console.log("ca rentre dans le if")
+        })
         if (totalGames > 0)
                 winPercentage = (currentUser.win / totalGames) * 100
 
@@ -118,13 +123,32 @@ export function Header(props: { currentUser: IUser, setCurrentUser: Function }) 
                                 blockedId: currentUser.id,
                         }),
                         headers: {
+                                'Content-Type': 'application/json',
                                 'Authorization': `Bearer ${myUser.myToken}`,
                         }
                 })
                         .then(async response => {
                                 if (response.ok) {
                                         console.log("ok je peux block");
-                                        dispatch(addBlockedUser(currentUser.id));
+                                        dispatch(addBlockedUser(currentUser));
+                                }
+                        })
+        }
+        const UnBlock = async () => {
+                await fetch(`${process.env.REACT_APP_BACK}user/unblock/${myUser.user?.id}`, {
+                        method: 'POST',
+                        body: JSON.stringify({
+                                blockedId: currentUser.id,
+                        }),
+                        headers: {
+                                'Content-Type': 'application/json',
+                                'Authorization': `Bearer ${myUser.myToken}`,
+                        }
+                })
+                        .then(async response => {
+                                if (response.ok) {
+                                        console.log("ok je peux block");
+                                        dispatch(unBlockUser(currentUser));
                                 }
                         })
         }
@@ -138,7 +162,7 @@ ch
                                                 <img className='logo' src={`${process.env.REACT_APP_BACK}user/${currentUser.id}/avatar`} />
                                         </div>
                                         {
-                                                currentUser.username !== myUser.user!.username &&
+                                                                ((myUser.user && (myUser.user.blocked === undefined || myUser.user.blocked.find(block => block.id === currentUser.id) === undefined)) && currentUser.username !== myUser.user!.username )&& 
                                                 <>
                                                         {
                                                                (myUser.user!.friends === undefined || myUser.user!.friends.find(allfriend => allfriend.id === currentUser.id) === undefined) &&
@@ -150,11 +174,17 @@ ch
                                                                 <button className="button-style" onClick={_ => spectate()}> Spectate </button>
                                                         }
                                                         {
-                                                                (myUser.user && (myUser.user.blocked === undefined || myUser.user.blocked.find(block => block === currentUser.id) === undefined)) &&
+                                                                (myUser.user && (myUser.user.blocked === undefined || myUser.user.blocked.find(block => block.id === currentUser.id) === undefined)) &&
                                                                 //  comment check si le user est blocked ? on met userblock: IUser[] dans l'interface user ? ou je fetch(/user/id/blockedList) pour avoir la list des user que moi j'ai blocker ?
                                                                 <button className="button-style" style={{ background: '#B33A3A' }} onClick={_ => Block()}> Block </button>
                                                         }
+                                                        
                                                 </>
+                                        }
+                                        {
+                                                                ((myUser.user && (myUser.user.blocked !== undefined && myUser.user.blocked.find(block => block.id === currentUser.id) !== undefined)) && currentUser.username !== myUser.user!.username )&& 
+                                                                <button className="button-style" style={{ background: '#B33A3A' }} onClick={_ => UnBlock()}> unblock </button>
+
                                         }
                                 </div>
 

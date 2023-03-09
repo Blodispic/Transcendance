@@ -22,6 +22,8 @@ export const userSlice = createSlice({
     reducers: {
         setUser: (state, { payload }: PayloadAction<IUser>) => {
             state.user = payload;
+            console.log(payload);
+            console.log(state.user);
         },
         setToken: (state, { payload }: PayloadAction<string>) => {
             state.myToken = payload;
@@ -75,16 +77,23 @@ export const userSlice = createSlice({
             else 
             state.user!.twoFaEnable = false;
         },
-        addBlockedUser: (state, { payload }: PayloadAction<number>) => {
+        addBlockedUser: (state, { payload }: PayloadAction<IUser>) => {
             if (state.user) {
-                if (state.user.blocked && state.user.blocked.find(block => block === payload) === undefined)
+                if (state.user.blocked && state.user.blocked.find(block => block.id === payload.id) === undefined)
                     state.user.blocked = ([...state.user.blocked, payload]);
                 else
                     state.user.blocked = ([payload]);
             }
         },
+        unBlockUser: (state, { payload }: PayloadAction<IUser>) => {
+            if (state.user) {
+                if (state.user.blocked && state.user.blocked.find(block => block.id === payload.id) !== undefined)
+                    state.user.blocked = state.user.blocked.filter(block => block.id !== payload.id);
+            }
+        },
+        
     },
 })
 
-export const { addBlockedUser, setUser, setToken, change_status, enableTwoFa, change_name, change_avatar, set_status, delete_user, oauth} = userSlice.actions
+export const { addBlockedUser, unBlockUser, setUser, setToken, change_status, enableTwoFa, change_name, change_avatar, set_status, delete_user, oauth} = userSlice.actions
 export default userSlice.reducer
