@@ -78,7 +78,7 @@ export function AddAdmin(chanid: any, userid: any) {
 }
 
 export function KickUser(chanid: any, userid: any) {
-	//socket.emit('KickUser')
+	socket.emit('BanUser', { chanid: chanid, userid: userid });
 }
 
 export function ConfigureChannel(props: {trigger: boolean, setTrigger: Function, channel: IChannel}) {

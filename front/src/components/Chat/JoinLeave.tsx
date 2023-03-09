@@ -64,6 +64,8 @@ export function JoinChannel(props: {channel: IChannel }) {
 		socket.emit('joinChannel', {chanid: props.channel.id});
 	}
 
+	
+
 	return (
 		<div>
 			{
