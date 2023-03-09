@@ -1,11 +1,13 @@
 import * as React from 'react';
 import { IUser } from '../../interface/User';
 import { useState, useEffect } from 'react';
+import { useAppSelector } from '../../redux/Hook';
 
 
 export default function Fetchid(id: number) {
 
     let [user, setUser] = useState<IUser>();
+    const myToken = useAppSelector(state => state.access_token);
 
     useEffect(() => {
         const fetchid = async () => {
@@ -13,7 +15,8 @@ export default function Fetchid(id: number) {
                 method: 'Get',
                 headers: {
                     'Content-Type': 'application/json',
-                    credentials: 'include',
+                'Authorization': `Bearer ${myToken.token}`,
+
                 },
             })
 

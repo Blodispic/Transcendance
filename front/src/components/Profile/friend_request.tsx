@@ -48,8 +48,10 @@ export function InviteButton(props: { user: any }) {
         await fetch(`${process.env.REACT_APP_BACK}user/friend-request/send/${id}`, {
             method: 'POST',
             body: JSON.stringify({ userId: user.id }),
-            headers: { 'Content-Type': 'application/json' },
-            credentials: 'include',
+            headers: {
+            'Content-Type': 'application/json' ,
+            'Authorization': `Bearer ${myToken.token}`,
+        },
         });
         setStatus('Pending');
     }
@@ -60,8 +62,10 @@ export function InviteButton(props: { user: any }) {
             const response = await fetch(`${process.env.REACT_APP_BACK}user/friend-request/status/${id}`, {
                 method: 'POST',
                 body: JSON.stringify({ userId: user.id }),
-                headers: { 'Content-Type': 'application/json' },
-                credentials: 'include',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${myToken.token}`,
+                },
             });
             const data = await response.json()
             if (data.ReqStatus)
@@ -93,14 +97,18 @@ export function Friends(props: { user: IUser }) {
     const [friend, setFriend] = useState<{ name: string, avatar: string, id: number, ReqStatus: string, UserStatus: string }[]>([]);
     const [updateFriend, setUpdateFriend] = useState(false);
     const navigate = useNavigate();
+    const myToken = useAppSelector(state => state.access_token);
+
 
     useEffect(() => {
         const checkFriendRequest = async () => {
             const response = await fetch(`${process.env.REACT_APP_BACK}user/friendsRequest`, {
                 method: 'POST',
                 body: JSON.stringify({ userId: user.id }),
-                headers: { 'Content-Type': 'application/json' },
-                credentials: 'include',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${myToken.token}`,
+                },
             });
             const data = await response.json();
             const pendingFriendRequests = data.filter((friendRequest: { ReqStatus: string; }) => friendRequest.ReqStatus === "Pending");
@@ -115,8 +123,10 @@ export function Friends(props: { user: IUser }) {
             const response = await fetch(`${process.env.REACT_APP_BACK}user/friends`, {
                 method: 'POST',
                 body: JSON.stringify({ userId: user.id }),
-                headers: { 'Content-Type': 'application/json' },
-                credentials: 'include',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${myToken.token}`,
+                },
             });
             const data = await response.json();
             setFriend(data);
@@ -133,8 +143,10 @@ export function Friends(props: { user: IUser }) {
         const response = await fetch(`${process.env.REACT_APP_BACK}user/friends/accept`, {
             method: 'POST',
             body: JSON.stringify({ id, userId: user.id }),
-            headers: { 'Content-Type': 'application/json' },
-            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${myToken.token}`,
+            },
         });
         const data = await response.json();
         setFriendReq((prevFriendReq) => prevFriendReq.filter((req) => req.id !== id));
@@ -144,8 +156,10 @@ export function Friends(props: { user: IUser }) {
         const response = await fetch(`${process.env.REACT_APP_BACK}user/friends/decline`, {
             method: 'POST',
             body: JSON.stringify({ friend: id, userId: user.id }),
-            headers: { 'Content-Type': 'application/json' },
-            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${myToken.token}`,
+            },
         });
         const data = await response.json();
         setFriendReq(prevState => prevState.filter(declined => declined.id !== id));

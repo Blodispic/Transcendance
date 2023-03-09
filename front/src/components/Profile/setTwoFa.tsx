@@ -9,6 +9,7 @@ export default function TwoFa() {
     const [code, setCode] = useState<string>('');
     const [isValid, setIsValid] = useState<boolean | undefined>(undefined);
     const myStore = useAppSelector(state => state.user);
+    const myToken = useAppSelector(state => state.access_token);
 
     const disable2fa = async (e: any) => {
         e.preventDefault();
@@ -16,7 +17,7 @@ export default function TwoFa() {
             method: 'PATCH',
             headers: {
                 'Content-Type': 'application/json',
-                credentials: 'include',
+                'Authorization': `Bearer ${myToken.token}`,
             },
             body: JSON.stringify({
                 twoFaEnable: false,
@@ -37,12 +38,13 @@ export default function TwoFa() {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
+                'Authorization': `Bearer ${myToken.token}`,
+
             },
             body: JSON.stringify({
                 userId: myStore.user?.id,
                 code: code,
             }),
-            credentials: 'include',
         })
             .then(async response => {
                 if (response.ok) {
@@ -54,7 +56,7 @@ export default function TwoFa() {
                             method: 'PATCH',
                             headers: {
                                 'Content-Type': 'application/json',
-                                credentials: 'include',
+                                'Authorization': `Bearer ${myToken.token}`,
                             },
                             body: JSON.stringify({ twoFaEnable: true }),
                         })
@@ -69,9 +71,10 @@ export default function TwoFa() {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
+                'Authorization': `Bearer ${myToken.token}`,
+
             },
             body: JSON.stringify({ userId: myStore.user?.id }),
-            credentials: 'include',
         })
             .then(async response => {
                 if (response.ok) {

@@ -11,13 +11,16 @@ function Search(props: { currentUser: IUser, setcurrentUser: Function }) {
         const { currentUser, setcurrentUser } = props;
         const navigate = useNavigate();
         const [username, setMan] = useState<string | undefined>(undefined)
+        const myToken = useAppSelector(state => state.access_token);
 
         const search_man = async (e: any) => {
                 if (username) {
                         e.preventDefault();
                         const response = await fetch(`${process.env.REACT_APP_BACK}user/username/${username}`, {
                                 method: 'GET',
-                                credentials: 'include',
+                                headers: {
+                                        'Authorization': `Bearer ${myToken.token}`,
+                                    },
                         })
                         .then(async response => {
                                 if (response.ok){

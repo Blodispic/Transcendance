@@ -51,9 +51,10 @@ export const userSlice = createSlice({
                 method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json',
+                'Authorization': `Bearer ${myToken.token}`,
+
                 },
                 body: JSON.stringify( {status: payload }),
-                credentials: 'include',
             })
             .then(response => { return response.json()} )
         },
