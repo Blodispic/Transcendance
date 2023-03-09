@@ -17,7 +17,7 @@ function JoinedChannelList() {
 	const currentUser = useAppSelector(state => state.user);
 	const navigate = useNavigate();
 
-	// ---- kept for later ---- //
+	
 	useEffect(() => {
 		const fetchJoined = async () => {
 			const response = await fetch(`${process.env.REACT_APP_BACK}channel/user/${currentUser.user?.id}`, {
@@ -30,6 +30,9 @@ function JoinedChannelList() {
 		fetchJoined();
 	}, []);
 
+
+
+	
 	return (
 		<div className="title">
 			<header>Joined Channels <hr /></header>
