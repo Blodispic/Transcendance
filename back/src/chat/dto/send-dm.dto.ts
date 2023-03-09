@@ -1,15 +1,11 @@
 import { IsNotEmpty, IsString } from "class-validator";
 import { User } from "src/user/entities/user.entity";
 
-export class MessageUserDto {
+export class SendDmDto {
 	@IsNotEmpty()
-	usertowho: User;
-
-	@IsNotEmpty()
-	sender: User;
+	IdReceiver: number;
 
 	@IsString()
 	@IsNotEmpty()
 	message: string; 
-	// à améliorer
 }

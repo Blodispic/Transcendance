@@ -63,11 +63,6 @@ export class UserController {
     return await this.userService.getResults(id)
   }
 
-  @Get('channel/:id')
-  async getChannel(@Param('id') id: number) {
-    return await this.userService.getChannel(id)
-  }
-
   @Post('access_token')
   @UseGuards(JwtGuard)
   GetbyAccessToken(@Body() token: any) {
@@ -200,5 +195,15 @@ export class UserController {
   @Delete('deletefriend/:id')
   async deleteFriend(@Param('id', ParseIntPipe) id: number, @Body() friend: User) {
     return await this.userService.removeFriend(id, friend);
+  }
+
+  @Post('block/:id')
+  async addBlock(@Param('id') id: number, @Body() blockedId: number) {
+    return await this.userService.addBlock(id, blockedId);
+  }
+
+  @Delete('unblock/:id')
+  async RmBlock(@Param('id') id: number, @Body() blockedId: number) {
+    return await this.userService.addBlock(id, blockedId);
   }
 }

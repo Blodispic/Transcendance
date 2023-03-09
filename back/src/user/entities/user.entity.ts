@@ -37,8 +37,17 @@ export class User {
   @JoinTable()
   friends: User[];
 
-  @ManyToMany(() => Channel)
+  @ManyToMany(() => Channel, channel => channel.users)
   channels: Channel[]
+
+  @OneToMany(() => Channel, channel => channel.owner)
+  owned: Channel[]
+
+  @ManyToMany(() => User, user => user.blocked)
+  @JoinTable()
+  blocked: User[];
+
+  //      STATISTIQUES        //
 
   @Column({ default: 1000 })
   elo: number;
