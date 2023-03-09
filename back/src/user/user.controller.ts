@@ -12,7 +12,6 @@ import { authenticator } from 'otplib';
 import { Results } from 'src/results/entities/results.entity';
 import { CreateResultDto } from 'src/results/dto/create-result.dto';
 import { JwtGuard } from 'src/Oauth/jwt-auth.guard';
-import { SkipThrottle } from '@nestjs/throttler';
 
 @Controller('user')
 export class UserController {

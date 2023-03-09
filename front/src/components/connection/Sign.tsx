@@ -35,6 +35,7 @@ export default function Sign() {
         }
 
         if (newname !== '' && myUser.user) {
+            console.log("token", myToken)
             if (newname) {
                 await fetch(`${process.env.REACT_APP_BACK}user/${myUser.user.id}`, {
                     method: 'PATCH',
