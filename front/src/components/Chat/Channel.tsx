@@ -90,6 +90,7 @@ function ChannelList(props: any) {
 				const data = await response.json();
 				setChanList(data);	
 			}
+			console.log("chan list : create channel ");
 			fetchAllList();
 		});
 		return () => {
@@ -135,6 +136,24 @@ function PublicChannelList() {
 		fetchPublic();
 	}, []);
 
+
+	useEffect(() => {
+		socket.on('createChannelOk', (newChanId) => {
+			const fetchPublic = async () => {
+				const response = await fetch(`${process.env.REACT_APP_BACK}channel/public`, {
+					method: 'GET',
+				})
+				const data = await response.json();
+				setChanList(data);	
+			}
+			console.log("public chan list : create channel ");
+			fetchPublic();
+		});
+		return () => {
+			socket.off('createChannelOk');
+		};
+	});
+
 	return (
 		<div className="title">
 
@@ -172,35 +191,35 @@ function ChannelMemberList(props: { channel: IChannel }) {
 			setCurrentId(id);
 	}
 
-	useEffect(() => {
-		socket.on('joinChannel', (data) => {
-			const fetchMemberList = async () => {
-				const response = await fetch(`${process.env.REACT_APP_BACK}channel/${props.channel.id}`, {
-					method: 'GET',
-				})
-				const data = await response.json();
-				setCurrentChan(data);
-				console.log("memberlist - join");
-			}
-			fetchMemberList();
-		});
+	// useEffect(() => {
+	// 	socket.on('joinChannel', (data) => {
+	// 		const fetchMemberList = async () => {
+	// 			const response = await fetch(`${process.env.REACT_APP_BACK}channel/${props.channel.id}`, {
+	// 				method: 'GET',
+	// 			})
+	// 			const data = await response.json();
+	// 			setCurrentChan(data);
+	// 			console.log("memberlist - join");
+	// 		}
+	// 		fetchMemberList();
+	// 	});
 
-		socket.on('leaveChannel', (data) => {
-			const fetchMemberList = async () => {
-				const response = await fetch(`${process.env.REACT_APP_BACK}channel/${props.channel.id}`, {
-					method: 'GET',
-				})
-				const data = await response.json();
-				setCurrentChan(data);
-				console.log("memberlist - leave");
-			}
-			fetchMemberList();
-		});
-		return () => {
-			socket.off('joinChannel');
-			socket.off('leaveChannel');
-		}
-	});
+	// 	socket.on('leaveChannel', (data) => {
+	// 		const fetchMemberList = async () => {
+	// 			const response = await fetch(`${process.env.REACT_APP_BACK}channel/${props.channel.id}`, {
+	// 				method: 'GET',
+	// 			})
+	// 			const data = await response.json();
+	// 			setCurrentChan(data);
+	// 			console.log("memberlist - leave");
+	// 		}
+	// 		fetchMemberList();
+	// 	});
+	// 	return () => {
+	// 		socket.off('joinChannel');
+	// 		socket.off('leaveChannel');
+	// 	}
+	// });
 
 	if (props.channel?.users === undefined) {
 		return (
@@ -209,50 +228,50 @@ function ChannelMemberList(props: { channel: IChannel }) {
 		)
 	}
 
-	return (
-		<div className="title"> Members <hr />
-			{currentChan && currentChan.users?.map(user => (
-				<div key={user.id} className="user-list">
-					<ul onClick={e => { changeId(user.id) }}>
-						<li>
-							{user.username}
-							{
-								currentChan.admin?.find(obj => obj.id === user.id) &&
-								<FaCrown />
-							}
-						</li>
-					</ul>
-					{
-						currentId == user.id &&
-						<CLickableMenu user={user} chan={currentChan} />
-					}
-				</div>
-			))
-			}
-		</div>
-	);
 	// return (
 	// 	<div className="title"> Members <hr />
-	// 		{props.channel && props.channel.users?.map(user => (
+	// 		{currentChan && currentChan.users?.map(user => (
 	// 			<div key={user.id} className="user-list">
 	// 				<ul onClick={e => { changeId(user.id) }}>
 	// 					<li>
 	// 						{user.username}
 	// 						{
-	// 							props.channel.admin?.find(obj => obj.id === user.id) &&
+	// 							currentChan.admin?.find(obj => obj.id === user.id) &&
 	// 							<FaCrown />
 	// 						}
 	// 					</li>
 	// 				</ul>
 	// 				{
 	// 					currentId == user.id &&
-	// 					<CLickableMenu user={user} chan={props.channel} />
+	// 					<CLickableMenu user={user} chan={currentChan} />
 	// 				}
 	// 			</div>
 	// 		))
 	// 		}
 	// 	</div>
 	// );
+	return (
+		<div className="title"> Members <hr />
+			{props.channel && props.channel.users?.map(user => (
+				<div key={user.id} className="user-list">
+					<ul onClick={e => { changeId(user.id) }}>
+						<li>
+							{user.username}
+							{
+								props.channel.admin?.find(obj => obj.id === user.id) &&
+								<FaCrown />
+							}
+						</li>
+					</ul>
+					{
+						currentId == user.id &&
+						<CLickableMenu user={user} chan={props.channel} />
+					}
+				</div>
+			))
+			}
+		</div>
+	);
 }
 
 export function Channels(props: any) {

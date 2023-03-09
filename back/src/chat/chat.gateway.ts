@@ -135,16 +135,16 @@ async handleCreateChannel(@ConnectedSocket() client: Socket, @MessageBody() crea
   if (new_channel.chanType == 1 && createChannelDto.users && createChannelDto.users.length > 0)
     this.inviteToChan(createChannelDto.users, new_channel.id);
   client.join("chan" + new_channel.id); // added by selee
-  client.emit("createChannelOk", new_channel.id);
-
-    /// test log for debug //
-    var roster = this.server.sockets.adapter.rooms.get("chan" + new_channel.id);
-    if (roster) {
-      roster.forEach(function(client) {
-        console.log('createChan: ', client);
-      }); }
+  
+  /// test log for debug //
+  var roster = this.server.sockets.adapter.rooms.get("chan" + new_channel.id);
+  if (roster) {
+    roster.forEach(function(client) {
+      console.log('createChan: ', client);
+    }); }
     /////////////////////////
-
+    
+  client.emit("createChannelOk", new_channel.id);
   this.server.emit("createChannelOk", new_channel.id); // do we need it twice?
 }
 
