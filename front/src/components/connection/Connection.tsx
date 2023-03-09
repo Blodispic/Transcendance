@@ -2,8 +2,7 @@ import { useState, useEffect } from 'react';
 import { Navigate, useNavigate, useSearchParams } from "react-router-dom";
 import NameForm from "./Sign"
 import { useAppDispatch, useAppSelector } from "../../redux/Hook";
-import { oauth, setUser, set_status, change_avatar } from "../../redux/user";
-import { setToken } from "../../redux/access_token";
+import { oauth, setUser, set_status, change_avatar, setToken } from "../../redux/user";
 import { useCookies } from "react-cookie";
 import { IUser, UserStatus } from '../../interface/User';
 import { socket } from '../../App';

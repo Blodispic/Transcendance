@@ -14,7 +14,7 @@ export function InviteButton(props: { user: any }) {
     const [ReqStatus, setStatus] = useState<string>('+ Add Friend');
     const [myVar, setMyVar] = useState<boolean>(true);
     let { id } = useParams();
-    const myToken = useAppSelector(state => state.access_token);
+    const myToken = useAppSelector(state => state.user.myToken);
 
 
     const ifFriend = async () => {
@@ -25,21 +25,21 @@ export function InviteButton(props: { user: any }) {
                 myId: user.id,
                 friendId: id,
             }),
-            headers: { 
+            headers: {
                 'Content-Type': 'application/json',
-                'Authorization': `Bearer ${myToken.token}`,
+                'Authorization': `Bearer ${myToken}`,
             },
         })
-        .then ( async response => {
-            console.log("truefalse")
-            const data = await response.json();
-            console.log(data);
-            // check for error response
-            if (response.ok) {
-                setMyVar(!data);
-            }
+            .then(async response => {
+                console.log("truefalse")
+                const data = await response.json();
+                console.log(data);
+                // check for error response
+                if (response.ok) {
+                    setMyVar(!data);
+                }
 
-        })
+            })
     }
 
     const sendFriendRequest = async () => {
@@ -49,9 +49,10 @@ export function InviteButton(props: { user: any }) {
             method: 'POST',
             body: JSON.stringify({ userId: user.id }),
             headers: {
-            'Content-Type': 'application/json' ,
-            'Authorization': `Bearer ${myToken.token}`,
-        },
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${myToken}`,
+
+            },
         });
         setStatus('Pending');
     }
@@ -64,8 +65,8 @@ export function InviteButton(props: { user: any }) {
                 body: JSON.stringify({ userId: user.id }),
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${myToken.token}`,
-                },
+                    'Authorization': `Bearer ${myToken}`,
+             },
             });
             const data = await response.json()
             if (data.ReqStatus)
@@ -74,9 +75,8 @@ export function InviteButton(props: { user: any }) {
                 setStatus("+ Add Friend");
         }
         console.log("friend id", id);
-        if (id) 
-        {
-            ifFriend();    
+        if (id) {
+            ifFriend();
             checkFriendRequest();
         }
     }, [id, user]);
@@ -97,8 +97,7 @@ export function Friends(props: { user: IUser }) {
     const [friend, setFriend] = useState<{ name: string, avatar: string, id: number, ReqStatus: string, UserStatus: string }[]>([]);
     const [updateFriend, setUpdateFriend] = useState(false);
     const navigate = useNavigate();
-    const myToken = useAppSelector(state => state.access_token);
-
+    const myToken = useAppSelector(state => state.user.myToken);
 
     useEffect(() => {
         const checkFriendRequest = async () => {
@@ -107,8 +106,8 @@ export function Friends(props: { user: IUser }) {
                 body: JSON.stringify({ userId: user.id }),
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${myToken.token}`,
-                },
+                    'Authorization': `Bearer ${myToken}`,
+            },
             });
             const data = await response.json();
             const pendingFriendRequests = data.filter((friendRequest: { ReqStatus: string; }) => friendRequest.ReqStatus === "Pending");
@@ -125,7 +124,7 @@ export function Friends(props: { user: IUser }) {
                 body: JSON.stringify({ userId: user.id }),
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${myToken.token}`,
+                    'Authorization': `Bearer ${myToken}`,
                 },
             });
             const data = await response.json();
@@ -145,7 +144,7 @@ export function Friends(props: { user: IUser }) {
             body: JSON.stringify({ id, userId: user.id }),
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': `Bearer ${myToken.token}`,
+                'Authorization': `Bearer ${myToken}`,
             },
         });
         const data = await response.json();
@@ -158,7 +157,7 @@ export function Friends(props: { user: IUser }) {
             body: JSON.stringify({ friend: id, userId: user.id }),
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': `Bearer ${myToken.token}`,
+                'Authorization': `Bearer ${myToken}`,
             },
         });
         const data = await response.json();

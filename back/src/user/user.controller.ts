@@ -182,7 +182,6 @@ export class UserController {
   }
 
   @Patch(':id')
-  @UseGuards(JwtGuard)
   update(@Param('id', ParseIntPipe) id: string, @Body() user: any) {
     return this.userService.update(+id, user);
   }

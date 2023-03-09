@@ -34,7 +34,7 @@ export default function Queue() {
                 await fetch(`${process.env.REACT_APP_BACK}game/${myStore.user.user.id}}`, {
                     method: 'POST',
                     headers: {
-                        'Authorization': `Bearer ${myStore.access_token.token}`,
+                        'Authorization': `Bearer ${myStore.user.myToken}`,
                     },
                 })
             }

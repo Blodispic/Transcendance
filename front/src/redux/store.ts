@@ -1,13 +1,11 @@
 import { configureStore } from '@reduxjs/toolkit';
 import userReducer from './user';
-import tokenReducer from './access_token';
 import channelReducer from './channel'
 
 export const store = configureStore({
   reducer: {
     user: userReducer,
     channel: channelReducer,
-    access_token: tokenReducer,
   },
 });
 

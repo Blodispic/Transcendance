@@ -74,7 +74,7 @@ export default function Profile() {
                 const response = await fetch(`${process.env.REACT_APP_BACK}user/id/${id}`, {
                         method: 'GET',
                         headers: {
-                                'Authorization': `Bearer ${myUser.access_token.token}`,
+                                'Authorization': `Bearer ${myUser.user.myToken}`,
                         }
                 })
                 console.log(response);

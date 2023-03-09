@@ -26,7 +26,7 @@ export function Log() {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': `Bearer ${myStore.access_token.token}`,
+                'Authorization': `Bearer ${myStore.user.myToken}`,
             },
             body: JSON.stringify({
                 userId: myStore.user.user?.id,

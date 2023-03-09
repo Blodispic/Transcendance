@@ -12,7 +12,7 @@ export let socket: Socket;
 
 function App() {
   const myUser = useAppSelector(state => state.user);
-  const myToken = useAppSelector(state => state.access_token);
+  const myToken = useAppSelector(state => state.user.myToken);
 
   const dispatch = useAppDispatch();
   const cookies = new Cookies();
@@ -47,7 +47,7 @@ function App() {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${myToken.token}`,
+        'Authorization': `Bearer ${myToken}`,
       },
       body: JSON.stringify({ token: token }),
     })

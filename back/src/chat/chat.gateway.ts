@@ -60,15 +60,29 @@ findSocketFromUser(user: User)
 
 @SubscribeMessage('sendMessageChannel')
 async handleSendMessageChannel(@ConnectedSocket() client: Socket, @MessageBody() messageChannelDto: MessageChannelDto)/* : Promise<any> */ {
+ console.log("bah alors");
   const channel = await this.channelService.getById(messageChannelDto.chanid);
   if (channel == null)
+  {
+console.log("1");
     throw new BadRequestException("No such channel"); // no such channel
+  }
   const user = client.handshake.auth.user;
   if (!(await this.channelService.isUserinChan(channel, user)))
+  {
+    console.log("2");
+
     throw new BadRequestException();
+  } 
   if (await this.channelService.isUserMuted({chanid: channel.id, userid: user.id}) || 
   await this.channelService.isUserBanned({chanid: channel.id, userid: user.id })) // ban to remove soon
+  {
+  console.log("3");
+
     throw new BadRequestException("you are muted for now on this channel"); // user is ban or mute from this channel
+  } 
+  console.log("4");
+
   this.server.to("chan" + messageChannelDto.chanid).emit("sendMessageChannelOK", messageChannelDto);
 }
 

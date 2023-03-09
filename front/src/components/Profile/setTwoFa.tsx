@@ -9,7 +9,7 @@ export default function TwoFa() {
     const [code, setCode] = useState<string>('');
     const [isValid, setIsValid] = useState<boolean | undefined>(undefined);
     const myStore = useAppSelector(state => state.user);
-    const myToken = useAppSelector(state => state.access_token);
+    const myToken = useAppSelector(state => state.user.myToken);
 
     const disable2fa = async (e: any) => {
         e.preventDefault();
@@ -17,7 +17,7 @@ export default function TwoFa() {
             method: 'PATCH',
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': `Bearer ${myToken.token}`,
+                'Authorization': `Bearer ${myToken}`,
             },
             body: JSON.stringify({
                 twoFaEnable: false,
@@ -38,8 +38,7 @@ export default function TwoFa() {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': `Bearer ${myToken.token}`,
-
+                'Authorization': `Bearer ${myToken}`,
             },
             body: JSON.stringify({
                 userId: myStore.user?.id,
@@ -56,7 +55,7 @@ export default function TwoFa() {
                             method: 'PATCH',
                             headers: {
                                 'Content-Type': 'application/json',
-                                'Authorization': `Bearer ${myToken.token}`,
+                                'Authorization': `Bearer ${myToken}`,
                             },
                             body: JSON.stringify({ twoFaEnable: true }),
                         })
@@ -71,8 +70,7 @@ export default function TwoFa() {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': `Bearer ${myToken.token}`,
-
+                'Authorization': `Bearer ${myToken}`,
             },
             body: JSON.stringify({ userId: myStore.user?.id }),
         })

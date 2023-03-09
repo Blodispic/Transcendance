@@ -18,8 +18,7 @@ function DMList(props: {currentdm: IUser | undefined; setCurrentDm: Function}) {
 				method: 'GET',
 				headers: {
 					'Content-Type': 'application/json',
-					'Authorization': `Bearer ${myStore.access_token.token}`,
-
+					'Authorization': `Bearer ${myStore.user.myToken}`,
 				},
 			})
 			const data = await response.json();
