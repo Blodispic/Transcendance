@@ -45,6 +45,9 @@ export class User {
   @ManyToMany(() => Channel, channel => channel.users)
   channels: Channel[]
 
+  @OneToMany(() => Channel, channel => channel.owner)
+  owned: Channel[]
+
   @ManyToMany(() => User, user => user.blocked)
   blocked: User[];
 

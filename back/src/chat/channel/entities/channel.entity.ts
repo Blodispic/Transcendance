@@ -22,7 +22,7 @@ export class Channel {
 	@Column({ nullable: true })
 	password: string;
 
-	@OneToMany(() => User, user => user.channels)
+	@ManyToOne(() => User, user => user.channels)
 	owner: User
 	
 	@ManyToMany(() => User, user => user.channels, { cascade: true })

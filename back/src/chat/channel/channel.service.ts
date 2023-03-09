@@ -114,6 +114,7 @@ export class ChannelService {
 				users: true,
 				muted: true,
 				banned: true,
+				owner: true,
 			},
 			where: {
 				id: id

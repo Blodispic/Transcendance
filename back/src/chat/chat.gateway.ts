@@ -84,9 +84,7 @@ async handleSendMessageChannel(@ConnectedSocket() client: Socket, @MessageBody()
     sender: sender,
     message: sendmessageChannelDto.message,
     sendtime: sendmessageChannelDto.sendtime,
-  });
-  console.log("user.channels : ", await this.channelService.getUserChannel(sender.id));
-  
+  });  
 }
 
 @SubscribeMessage('joinChannel')
