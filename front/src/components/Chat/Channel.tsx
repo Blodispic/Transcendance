@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { BsFillKeyFill } from "react-icons/bs";
+import { BsFillKeyFill, BsFillPersonFill } from "react-icons/bs";
 import { FaCrown } from "react-icons/fa";
 import { HiLockClosed } from "react-icons/hi2";
 import { useDispatch } from "react-redux";
@@ -136,8 +136,13 @@ function ChannelMemberList(props: { channel: IChannel }) {
 						<li>
 							{user.username}
 							{
-								props.channel.admin?.find(obj => obj.id === user.id) &&
+								props.channel.owner.id === user.id &&
 								<FaCrown />
+							}
+							{
+								props.channel.owner.id !== user.id &&
+									props.channel.admin?.find(obj => obj.id === user.id) &&
+									<BsFillPersonFill />
 							}
 						</li>
 					</ul>
