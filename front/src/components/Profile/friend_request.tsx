@@ -128,6 +128,7 @@ export function Friends(props: { user: IUser }) {
                 },
             });
             const data = await response.json();
+            console.log("data = ", data);
             setFriend(data);
         };
 
@@ -141,7 +142,7 @@ export function Friends(props: { user: IUser }) {
     const acceptFriendRequest = async (id: number) => {
         const response = await fetch(`${process.env.REACT_APP_BACK}user/friends/accept`, {
             method: 'POST',
-            body: JSON.stringify({ id, userId: user.id }),
+            body: JSON.stringify({ friendId: id, userId: user.id }),
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${myToken}`,

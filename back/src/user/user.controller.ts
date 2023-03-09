@@ -128,7 +128,8 @@ export class UserController {
 
   @Post("friends/accept")
   @UseGuards(JwtGuard)
-  async acceptFriendRequest(@Body() body: { friendId: any, userId: number }) {
+  async acceptFriendRequest(@Body() body: { friendId: number, userId: number }) {
+    console.log(body);
     this.userService.addFriend(body.friendId, body.userId);
     return await this.userService.updateFriendRequestStatus(body.friendId, body.userId, {
       status: "Accepted",
