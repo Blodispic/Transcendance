@@ -48,7 +48,7 @@ export function JoinChannel(props: {currentUser: any, channel: IChannel }) {
 		<div>
 			{
 				props.channel.chanType === 0 &&
-				<button onClick={handleJoin}>Join</button>
+				<button onClick={_ => handleJoin()}>Join</button>
 			}			
 			{/* { //private channel: needs improvement // we cant join a private chanels no need this { }
 				props.channel.chanType === 1 &&
@@ -68,6 +68,7 @@ export function JoinChannel(props: {currentUser: any, channel: IChannel }) {
 export function LeaveChannel (props: {currentUser: any, chanid: any}) {
 	
 	const handleLeave = () => {
+		
 		socket.emit('leaveChannel', {chanid: props.chanid});
 	}
 
@@ -78,7 +79,7 @@ export function LeaveChannel (props: {currentUser: any, chanid: any}) {
 
 	return (
 		<div>
-			<button onClick={handleLeave}>Leave Channel</button>
+			<button onClick={_ => handleLeave()}>Leave Channel</button>
 		</div>
 	);
 }

@@ -31,31 +31,34 @@ export function ChannelMessages(props: { id: any }) {
 		}
 		if (props.id)
 			getChannel();
-		}, [props]);
-		
+	}, [props]);
+
+
+	// useEffect(() => {
+	// 	console.log("et je set a false")
+	// 	setReload(false);
+	// }, [reload]);
+
 	useEffect(() => {
-		socket.on('leaveChannelOK', (chanid) => {
-			console.log("leavechanles");
-			setReload(true);
-		})
-		socket.on('joinChannelOK', (chanid) => {
-			console.log("join chanels");
-			setReload(true);
-		})
+	// 	socket.on('leaveChannelOK', (chanid) => {
+	// 		console.log("leavechanles");
+	// 		setReload(true);
+	// 	})
+	// 	socket.on('joinChannelOK', (chanid) => {
+	// 		console.log("join chanels ok");
+	// 		setReload(true);
+	// 	})
 		socket.on('sendMessageChannelOK', (messageDto) => {
+			console.log("message", messageList);
 			setMessageList([...messageList, messageDto]);
 		})
-		setReload(false);
-		return () => {
-			socket.off('leaveChannelOK');
-			socket.off('joinChannelOK');
-			socket.off('sendMessageChannelOK');
-		}
-	}, [reload]);
+
+	}, []);
 
 	const handleSubmitNewMessage = (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
 		if (newInput != "") {
+
 			const sendTime = new Date().toLocaleString();
 			socket.emit('sendMessageChannel', { chanid: currentChan?.id, message: newInput, sendtime: sendTime });
 		}

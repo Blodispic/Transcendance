@@ -16,7 +16,7 @@ import { ResultModule } from './results/results.module';
 import { Channel } from './chat/channel/entities/channel.entity';
 import { FriendRequest } from './user/entities/friend-request.entity';
 import { UserService } from './user/user.service';
-import { APP_FILTER, APP_INTERCEPTOR } from '@nestjs/core';
+import { APP_FILTER, APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
 import { GatewayExceptionFilter } from './app.exceptionFilter';
 
 @Module({
@@ -29,7 +29,7 @@ import { GatewayExceptionFilter } from './app.exceptionFilter';
       password: 'admin',
       entities: [User, Results, Channel, FriendRequest],
       synchronize: true,
-      dropSchema: true,    //A ENLEVER QUAND PLUS BESOIN (ça reset la db a chaque changement)
+      // dropSchema: true,    //A ENLEVER QUAND PLUS BESOIN (ça reset la db a chaque changement)
     }),
     MulterModule.register({
       dest: './storage/images',
@@ -44,12 +44,9 @@ import { GatewayExceptionFilter } from './app.exceptionFilter';
   controllers: [AppController],
   providers: [AppService, ChatGateway, AppGateway,
     {
-      provide: APP_FILTER, // use APP_FILTER token to specify the filter
-      useClass: GatewayExceptionFilter, // specify the filter class
-    },
-    {
       provide: APP_INTERCEPTOR,
 		  useClass: ClassSerializerInterceptor,
-    }],
+    },
+  ],
 })
 export class AppModule { }

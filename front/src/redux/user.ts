@@ -6,12 +6,14 @@ interface StateTest {
     user: IUser | undefined,
     isLog: boolean,
     isOauth: boolean,
+    myToken: string,
 }
 
 const initialUser: StateTest = {
     user: undefined,
     isOauth: false,
     isLog: false,
+    myToken: '',
 }
 
 export const userSlice = createSlice({
@@ -20,6 +22,9 @@ export const userSlice = createSlice({
     reducers: {
         setUser: (state, { payload }: PayloadAction<IUser>) => {
             state.user = payload;
+        },
+        setToken: (state, { payload }: PayloadAction<string>) => {
+            state.myToken = payload;
         },
         change_name: (state, { payload }: PayloadAction<string>) => {
             state.user!.username = payload;
@@ -51,9 +56,9 @@ export const userSlice = createSlice({
                 method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${state.myToken}`,
                 },
                 body: JSON.stringify( {status: payload }),
-                credentials: 'include',
             })
             .then(response => { return response.json()} )
         },
@@ -73,5 +78,5 @@ export const userSlice = createSlice({
     },
 })
 
-export const { setUser, change_status, enableTwoFa, change_name, change_avatar, set_status, delete_user, oauth} = userSlice.actions
+export const { setUser, setToken, change_status, enableTwoFa, change_name, change_avatar, set_status, delete_user, oauth} = userSlice.actions
 export default userSlice.reducer
