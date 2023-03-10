@@ -8,7 +8,6 @@ import { IUser } from "../../interface/User";
 import { useAppSelector } from "../../redux/Hook";
 import CustomGamePopup from "../Game/CustomGamePopup";
 
-// make a list of friends that had conversation with
 function DMList(props: {currentdm: IUser | undefined; setCurrentDm: Function}) {
 	const [alluser, setAlluser] = useState<IUser[] | undefined>(undefined);
 	const myStore = useAppSelector(state => state);
@@ -46,43 +45,38 @@ function DMList(props: {currentdm: IUser | undefined; setCurrentDm: Function}) {
 	);
 }
 
+
 function BlockUser(userid: number) {
 
-	useEffect(() => {
+	// useEffect(() => {
 
-		const blockUser = async () => {
-            const response = await fetch(`${process.env.REACT_APP_BACK}user/block/`, {
-				method: 'POST',
-				body: JSON.stringify({ id: userid}),
+	// 	const blockUser = async () => {
+    //         const response = await fetch(`${process.env.REACT_APP_BACK}user/block/`, {
+	// 			method: 'POST',
+	// 			body: JSON.stringify({ id: userid}),
 
-			// 	method: 'POST',
-			// 	body: JSON.stringify({ userId: user.id }),
-			// 	headers: { 'Content-Type': 'application/json' },
-			// 	credentials: 'include',
-		});
-			const data = await response.json();
-		}
-		blockUser();
+	// 	});
+	// 		const data = await response.json();
+	// 	}
+	// 	blockUser();
 		
-	}, []);
-
+	// }, []);
 }
-
 
 function UnblockUser(userid: number) {
 		
-	useEffect(() => {
+	// useEffect(() => {
 
-		const unblockUser = async() => {
-            const response = await fetch(`${process.env.REACT_APP_BACK}user/unblock/`, {
-				method: 'DELETE',
-				body: JSON.stringify({ id: userid}),
+	// 	const unblockUser = async() => {
+    //         const response = await fetch(`${process.env.REACT_APP_BACK}user/unblock/`, {
+	// 			method: 'DELETE',
+	// 			body: JSON.stringify({ id: userid}),
 
-			});
-			const data = await response.json();
-		}
-		unblockUser();
-	})
+	// 		});
+	// 		const data = await response.json();
+	// 	}
+	// 	unblockUser();
+	// })
 }
 
 function InfoFriend(props: {user: IUser}) {
@@ -158,22 +152,10 @@ export function DmMessages(props: { id: any; currentdm: IUser | undefined; setCu
 		setMessageList([]);
 	}, [props.currentdm]);
 
-	const handleBlock = () => { // to be improved
-		// if (blockedId == 0 && props.currentdm !== undefined)
-		// {
-		// 	setBlockedId(props.currentdm?.id);
-		// 	// emit block to the back
-		// }
-		// else
-		// {
-		// 	setBlockedId(0);
-		// 	// emit unblock to the back
-		// }
-	}
 	return (
 		<div className="chat-body">
 			<div className="body-header">
-				<img className="user-avatar" src={props.currentdm?.avatar} onClick={_ => handleBlock()} />
+				<img className="user-avatar" src={props.currentdm?.avatar} />
 				{props.currentdm?.username}
 			</div>
 			<div className="chat-messages">
@@ -205,9 +187,7 @@ export function DmMessages(props: { id: any; currentdm: IUser | undefined; setCu
 
 export function DirectMessage(props: any) {
 	const [currentDm, setCurrentDm] = useState<IUser | undefined>(undefined);
-	// useEffect(() => {
-	// 	setCurrentDm(undefined);
-	// }, [])
+
 	return (
 		<div id="chat-container">
 			<div className="sidebar left-sidebar">
@@ -222,9 +202,6 @@ export function DirectMessage(props: any) {
 				</>
 			}
 
-			{/* <div className="sidebar right-sidebar"> */}
-			{/* <AllFriendList /> */}
-			{/* </div> */}
 		</div>
 	);
 }

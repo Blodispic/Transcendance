@@ -113,13 +113,6 @@ export function ConfigureChannel(props: {trigger: boolean, setTrigger: Function,
 					<input type="password" id="channel-input" placeholder="Insert password" onChange={e => { setNewPassword(e.target.value); }} /><br />
 					</>
 				}
-				{/* {
-					props.channel.chanType === 1 &&
-					<>
-					<h3>Set New Password</h3>
-					<input type="password" id="channel-input" placeholder="Insert password" onChange={e => { setNewPassword(e.target.value); }} /><br />
-					</>
-				} */}
 				{
 					props.channel.chanType === 2 &&
 					<>

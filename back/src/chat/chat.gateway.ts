@@ -99,12 +99,12 @@ async handleJoinChannel(@ConnectedSocket() client: Socket, @MessageBody() joinCh
     throw new BadRequestException("No such user");  
   if (channel.password && !(await bcrypt.compare(joinChannelDto.password, channel.password)))
   {
-    client.emit("joinChannelFailed", "Wrong password"); // *selee test;
+    client.emit("joinChannelFailed", "Wrong password");
     throw new BadRequestException("Bad password"); // wrong password
   }
   if (await this.channelService.isUserBanned({chanid: channel.id, userid: user.id}))
   {
-    client.emit("joinChannelFailed", "You are banned from this channel"); // *selee test;
+    client.emit("joinChannelFailed", "You are banned from this channel");
     throw new BadRequestException("You are banned from this channel");
   }
   this.channelService.add({
@@ -121,7 +121,7 @@ async handleCreateChannel(@ConnectedSocket() client: Socket, @MessageBody() crea
   const channel = await this.channelService.getByName(createChannelDto.chanName);
 
   if (channel != null) {
-    client.emit("createChannelFailed", "An existing channel already have this name"); // *selee test;
+    client.emit("createChannelFailed", "An existing channel already have this name");
     throw new BadRequestException("An existing channel already have this name"); //channame already exist, possible ? if private/protected possible ?
   }
   const user = await this.userService.getById(client.handshake.auth.user.id);
@@ -135,7 +135,7 @@ async handleCreateChannel(@ConnectedSocket() client: Socket, @MessageBody() crea
 
   client.emit("createChannelOk", new_channel.id);
   client.emit("joinChannelOK", new_channel.id);
-  this.server.emit("createChannelOk", new_channel.id); // do we need it twice?
+  this.server.emit("createChannelOk", new_channel.id);
 }
 
 @SubscribeMessage('leaveChannel')

@@ -6,17 +6,6 @@ import { IUser } from "../../interface/User";
 import { useAppSelector } from "../../redux/Hook";
 import AllPeople from "../utils/Allpeople";
 
-function NewChannelFailed(props: any) { // still in progress
-	
-	return (props.trigger) ? (
-		<div className="chat-form-popup" onClick={_ => props.setTrigger(false)}>
-			<div className="chat-form-inner" onClick={e => e.stopPropagation()}>
-				Channel name already exists
-			</div>
-		</div>
-	) : <></>;
-}
-
 export function PopupCreateChannel(props: any) {
 	const [chanName, setChanName] = useState("");
 	const [password, setPassword] = useState("");
