@@ -445,7 +445,7 @@ export class UserService {
   async SetStatus(user: User, status: string): Promise<User | null> {
     if (!user)
       throw new HttpException(`user doesn't exists`, HttpStatus.BAD_REQUEST);
-
+      
     const users = await this.usersRepository.findOne({where: { id: user.id }});
     if (users) {
       users.status = status;
