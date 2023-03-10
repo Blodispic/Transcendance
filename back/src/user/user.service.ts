@@ -107,6 +107,7 @@ export class UserService {
       relations: {
         friends: true,
         results: true,
+        channels: true,
       },
       where: { id: id }
     });
@@ -164,10 +165,13 @@ export class UserService {
     if (user) {
       //Si vous voulez plus de chose a update, mettez le dans le body et faites un iff
       if (userUpdate.username) {
+        console.log("username");
+
         const checkUsername = await this.usersRepository.findOneBy({
           username: userUpdate.username,
         })
         if (checkUsername && checkUsername.id !== user.id) {
+          console.log("username exist"); // ca erntre jusque ici 
           throw new NotFoundException("Username exists");
         }
         else
@@ -507,15 +511,55 @@ export class UserService {
     return user ? user.results : [];
   }
 
-  async getChannel(id: number): Promise<Channel[]>
-  {
+  async getBlocked(id: number) {
+    const user = await this.usersRepository.findOne({
+      relations : {
+        blocked: true,
+      },
+      where: { id: id}
+    });
+    return user ? user.blocked: [];
+  }
+
+  async addBlock(id: number, blockedid: number) {
     const user = await this.usersRepository.findOne({
       relations: {
-        results: true,
+        blocked: true,
       },
-      where: { id: id }
+      where: {id: id}
     });
-    return user ? user.channels: [];
+    if (user === null)
+      throw new BadRequestException("No such User");
+    const blocked = await this.usersRepository.findOne({
+      relations: {
+        blocked: true,
+      },
+      where: {id: blockedid}
+    });
+    if (blocked === null)
+      throw new BadRequestException("No such User to block");
+    if (user.blocked.find(elem => elem.id = blocked.id))
+      throw new BadRequestException("User already blocked");
+    user.blocked.push(blocked);
+    return await this.usersRepository.save(user);
+  }
+
+  async RmBlock(id: number, blockedid: number) {
+    const user = await this.usersRepository.findOne({
+      relations: {
+        blocked: true,
+      },
+      where: {id: id}
+    });
+    if (user === null)
+      throw new BadRequestException("No such User");
+    const blocked = user?.blocked.find(elem => elem.id = blockedid)
+    if (blocked === undefined)
+      throw new BadRequestException("No such User already blocked")
+    const index = user.blocked.indexOf(blocked, 0);
+    if (index != -1)
+      user.blocked.splice(index, 1);
+    return await this.usersRepository.save(user);
   }
 
 }

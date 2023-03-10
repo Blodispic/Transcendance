@@ -63,11 +63,6 @@ export class UserController {
     return await this.userService.getResults(id)
   }
 
-  @Get('channel/:id')
-  async getChannel(@Param('id') id: number) {
-    return await this.userService.getChannel(id)
-  }
-
   @Post('access_token')
   @UseGuards(JwtGuard)
   GetbyAccessToken(@Body() token: any) {
@@ -128,7 +123,8 @@ export class UserController {
 
   @Post("friends/accept")
   @UseGuards(JwtGuard)
-  async acceptFriendRequest(@Body() body: { friendId: any, userId: number }) {
+  async acceptFriendRequest(@Body() body: { friendId: number, userId: number }) {
+    console.log(body);
     this.userService.addFriend(body.friendId, body.userId);
     return await this.userService.updateFriendRequestStatus(body.friendId, body.userId, {
       status: "Accepted",
@@ -144,7 +140,6 @@ export class UserController {
   }
 
   @Get(':id/avatar')
-  @UseGuards(JwtGuard)
   async getAvatar(@Param('id', ParseIntPipe) id: number, @Req() req: Request, @Res() res: Response) {
     const user = await this.userService.getById(id);
     if (user) {
@@ -181,7 +176,6 @@ export class UserController {
   }
 
   @Patch(':id')
-  @UseGuards(JwtGuard)
   update(@Param('id', ParseIntPipe) id: string, @Body() user: any) {
     return this.userService.update(+id, user);
   }
@@ -201,5 +195,15 @@ export class UserController {
   @Delete('deletefriend/:id')
   async deleteFriend(@Param('id', ParseIntPipe) id: number, @Body() friend: User) {
     return await this.userService.removeFriend(id, friend);
+  }
+
+  @Post('block/:id')
+  async addBlock(@Param('id') id: number, @Body() blockedId: number) {
+    return await this.userService.addBlock(id, blockedId);
+  }
+
+  @Delete('unblock/:id')
+  async RmBlock(@Param('id') id: number, @Body() blockedId: number) {
+    return await this.userService.addBlock(id, blockedId);
   }
 }

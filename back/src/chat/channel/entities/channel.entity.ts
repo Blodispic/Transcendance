@@ -19,10 +19,10 @@ export class Channel {
 	@Column('int', {default: 0})
 	chanType: ChanType
 
-	@Column({ nullable: true })
+	@Column({ nullable: true, select: false })
 	password: string;
 
-	@OneToMany(() => User, user => user.channels)
+	@ManyToOne(() => User, user => user.channels)
 	owner: User
 	
 	@ManyToMany(() => User, user => user.channels, { cascade: true })

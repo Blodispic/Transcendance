@@ -10,7 +10,7 @@ import CustomGamePopup from "../Game/CustomGamePopup";
 // make a list of friends that had conversation with
 function DMList(props: {currentdm: IUser | undefined; setCurrentDm: Function}) {
 	const [alluser, setAlluser] = useState<IUser[] | undefined>(undefined);
-	const myUser = useAppSelector(state => state.user);
+	const myStore = useAppSelector(state => state);
 
 	useEffect(() => {
 		const get_all = async () => {
@@ -18,12 +18,12 @@ function DMList(props: {currentdm: IUser | undefined; setCurrentDm: Function}) {
 				method: 'GET',
 				headers: {
 					'Content-Type': 'application/json',
+					'Authorization': `Bearer ${myStore.user.myToken}`,
 				},
-				credentials: 'include',
 			})
 			const data = await response.json();
 			setAlluser(data.filter((User: { status: string; }) => User.status === "Online"));
-			setAlluser(data.filter((User: { username: string; }) => User.username !== myUser.user?.username));
+			setAlluser(data.filter((User: { username: string; }) => User.username !== myStore.user.user?.username));
 		}
 		get_all();
 	}, [])
@@ -97,7 +97,7 @@ export function DmMessages(props: { id: any; currentdm: IUser | undefined; setCu
 		if (newInput != "") {
 	
 			const sendtime = new Date().toLocaleString();
-			socket.emit('sendMessageUser', { usertowho: props.currentdm, sender: myUser.user, message: newInput });
+			socket.emit('sendDM', { IdReceiver: props.currentdm?.id, message: newInput });
 			const newMessage: IMessage = {sender: myUser!.user, message: newInput, usertowho: props.currentdm, sendtime: sendtime};
 
 			setMessageList([...messageList, newMessage]);
@@ -105,11 +105,11 @@ export function DmMessages(props: { id: any; currentdm: IUser | undefined; setCu
 		setNewInput("");
 	}
 	useEffect(() => {
-		socket.on('sendMessageUserOK', (messageUserDto) => {
-			setMessageList([...messageList, messageUserDto]);
+		socket.on('ReceiveDM', (receiveDmDto) => {
+			setMessageList([...messageList, receiveDmDto]);
 		})
 		return () => {
-			socket.off('sendMessageUserOK');
+			socket.off('ReceiveDM');
 		};
 	}, [])
 

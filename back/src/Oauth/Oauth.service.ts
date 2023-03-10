@@ -58,7 +58,7 @@ export class OauthService {
     const data = await response.json();
     const user = await this.usersService.getByLogin(data.login);
     const payload = { username: data.login, }
-    const token = await this.jwtService.signAsync(payload, {
+    const access_token = await this.jwtService.signAsync(payload, {
       secret: jwtConstants.secret,
       expiresIn: '900s',
     });
@@ -68,9 +68,8 @@ export class OauthService {
         if (iterator.handshake.auth.user.id === user.id)
           throw new BadRequestException("t'as deja un tab frero");
       }
-      user.access_token = token
       await this.usersService.save(user);
-      return (user);
+      return ({user, access_token});
     }
     if (data.error)
       return (data.error);
@@ -78,8 +77,9 @@ export class OauthService {
       login: data.login,
       email: data.email,
       intra_avatar: data.image.link,
-      access_token: token
     }
-    return await this.usersService.create(userDto);
+    const realUser = await this.usersService.create(userDto);
+    console.log(realUser);
+    return ( {user: realUser, access_token});
   }
 }
