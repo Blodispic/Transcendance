@@ -15,7 +15,7 @@ export class User {
   @Column({ default: "Offline" })
   status: string;
 
-  @Column({ unique: true, nullable: true })
+  @Column({ unique: true, nullable: true, length: 16 })
   username: string;
 
   @Column({ unique: true })
