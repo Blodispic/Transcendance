@@ -39,7 +39,13 @@ export function Friends(props: { user: IUser }) {
         };
 
         checkFriendRequest();
-    }, [user]);
+        socket.on('UpdateSomeone', () => {
+            setUpdateFriend(prevFlag => !prevFlag);
+        });
+            return () => {
+        socket.off('UpdateSomeone');
+    };
+    }, [updateFriend]);
 
     useEffect(() => {
         const checkFriend = async () => {
@@ -52,12 +58,14 @@ export function Friends(props: { user: IUser }) {
                 },
             });
             const data = await response.json();
-            console.log("data = ", data);
             setFriend(data);
         };
 
         checkFriend();
-    }, [user]);
+            return () => {
+        socket.off('UpdateSomeone');
+    };
+    }, [setUpdateFriend, updateFriend]);
 
     interface FriendsListProps {
         friends: { name: string, avatar: string, id: number, ReqStatus: string, UserStatus: string }[];
@@ -88,16 +96,6 @@ export function Friends(props: { user: IUser }) {
         const data = await response.json();
         setFriendReq(prevState => prevState.filter(declined => declined.id !== id));
     };
-
-    useEffect(() => {
-        socket.on('UpdateSomeone', () => {
-            console.log("Update man");
-            setUpdateFriend(prevFlag => !prevFlag);
-        });
-    }, []);
-
-
-
 
     const FriendsReqList = (props: FriendsListProps) => {
         return (

@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { HiOutlineXMark, HiPlus } from "react-icons/hi2";
+import { useNavigate } from "react-router-dom";
 import { socket } from "../../App";
 import { IUser } from "../../interface/User";
 import { useAppSelector } from "../../redux/Hook";
@@ -11,6 +12,8 @@ export function PopupCreateChannel(props: any) {
 	const [chanMode, setChanMode] = useState(0);
     const [friend, setFriend] = useState<IUser[] >([]);
 	const [myVar, setMyvar] = useState<boolean> (false);
+	const [failed, setFailed] = useState<boolean> (false);
+	const navigate = useNavigate();
 
 	const handlePublic = () => {
 		setChanMode(0);
@@ -29,19 +32,40 @@ export function PopupCreateChannel(props: any) {
 
 	const handleCreateNewChan = () => {
 		if (chanName != "")
-			socket.emit('createChannel', { chanName: chanName, chanType: chanMode, password: password, users: friend });
+			socket.emit('createChannel', { chanName: chanName, password: password, chanType: chanMode, users: friend });
 		setChanName("");
 		setPassword("");
 		setChanMode(0);
-		props.setTrigger(false);
 	}
 
+	useEffect(() => {
+		socket.on("createChannelFailed", (error_message) => {
+			setFailed(true);
+		});
+		socket.on("createChannelOk", (new_chanid) => {
+			setFailed(false);
+			props.setTrigger(false);
+			navigate(`/Chat/channel/${new_chanid}`)
+		});
+
+		return () => {
+			socket.off("createChannelFailed");
+			socket.off("createChannelOk");
+		}
+	});
+
 	return (props.trigger) ? (
-		<div className="chat-form-popup" onClick={_ => (props.setTrigger(false), setChanMode(0))}>
+		<div className="chat-form-popup" onClick={_ => (props.setTrigger(false), setChanMode(0), setFailed(false))}>
 			<div className="chat-form-inner" onClick={e => e.stopPropagation()}>
-				<HiOutlineXMark className="close-icon" onClick={_ => (props.setTrigger(false), setChanMode(0)) } /> <br />
+				<HiOutlineXMark className="close-icon" onClick={_ => (props.setTrigger(false), setChanMode(0), setFailed(false)) } /> <br />
 				<h3>Channel Name</h3>
-				<input type="text" id="channel-input" placeholder="Insert channel name" maxLength={15} onChange={e => { setChanName(e.target.value) }} onSubmit={() => { handleCreateNewChan(); }} />
+				<input type="text" id="channel-input" placeholder="Insert channel name" onChange={e => { setChanName(e.target.value) }} onSubmit={() => { handleCreateNewChan(); }} />
+				<br />
+				{
+					failed === true &&
+					<a className="channel-error">Channel name already exists</a>
+				}
+				
 				<h3>Channel Mode</h3>
 				<input type="radio" name="chanMode" value={0} onChange={_ => handlePublic()} defaultChecked />Public
 				<input type="radio" name="chanMode" value={1} onChange={_ => handlePrivate()} />Private
