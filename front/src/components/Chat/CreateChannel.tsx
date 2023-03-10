@@ -32,7 +32,7 @@ export function PopupCreateChannel(props: any) {
 
 	const handleCreateNewChan = () => {
 		if (chanName != "")
-			socket.emit('createChannel', { chanName: chanName, chanType: chanMode, password: password, users: friend });
+			socket.emit('createChannel', { chanName: chanName, password: password, chanType: chanMode, users: friend });
 		setChanName("");
 		setPassword("");
 		setChanMode(0);
