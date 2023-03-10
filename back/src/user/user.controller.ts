@@ -209,4 +209,10 @@ export class UserController {
     console.log("ca rentre la ");
     return await this.userService.RmBlock(id, blockedId.blockedId);
   }
+
+  @Post("relations")
+  @UseGuards(JwtGuard)
+  async checkRelations(@Body() body: { friendId: number, userId: number }) {
+    return await this.userService.checkRelations(body.friendId, body.userId);
+  }
 }

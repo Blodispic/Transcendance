@@ -488,12 +488,6 @@ export class UserService {
     return await this.usersRepository.save(user);
   }
 
-  async removeFriendById(id: number, friendId: number) {
-    const user = await this.usersRepository.findOneBy({ id: id });
-    const friend = await this.usersRepository.findOneBy({ id: friendId });
-    return user;
-  }
-
   async checkFriends(myId: number, friendId: number): Promise<Boolean> {
     const myUser = await this.usersRepository.findOne({
       relations: ['friends'],
@@ -564,5 +558,52 @@ export class UserService {
       user.blocked.splice(index, 1);
     return await this.usersRepository.save(user);
   }
+
+  async checkRelations(friendId: number, userId: number) { 
+    const realUser = await this.usersRepository.findOne({
+      relations: {
+        friends: true,
+        blocked: true,
+        sendFriendRequests: true,
+        receiveFriendRequests: true,
+      },
+      where: { id: userId },
+    });
+  
+    if (!realUser) {
+      throw new NotFoundException("User doesn't exist");
+    }
+  
+    const friend = realUser.friends.find((friend) => friend.id === friendId);
+  
+    if (friend) {
+      return ("Friend");
+    }
+  
+    const blocked = realUser.blocked.find((blocked) => blocked.id === friendId);
+  
+    if (blocked) {
+      return ("Blocked");
+    }
+  
+    const friendRequestSent = realUser.sendFriendRequests.find(
+      (request) => request.receiver.id === friendId
+    );
+  
+    if (friendRequestSent) {
+      return ("friendRequestSent");
+    }
+  
+    const friendRequestReceived = realUser.receiveFriendRequests.find(
+      (request) => request.creator.id === friendId
+    );
+  
+    if (friendRequestReceived) {
+      return ("friendRequestReceived");
+    }
+    
+    return ("Nobody");
+  }
+  
 
 }
