@@ -51,39 +51,6 @@ export function CheckPassword(props: { trigger: boolean, setTrigger: Function, c
 	) : <></>;
 }
 
-
-// export function JoinChannel(channel: IChannel ) {
-// 	const [passPopup, setPassPopup] = useState(false);
-
-// 	if (channel === undefined)
-// 	{	
-// 		return (<></>);
-// 	}
-
-// 	const handleJoin = () => {
-// 		socket.emit('joinChannel', {chanid: channel.id, channame: channel.name});
-// 		console.log("JoinChannel");
-// 	}
-
-
-// 	return (
-// 		<div>
-// 			{
-// 				channel.chanType === 0 &&
-// 				<button onClick={_ => handleJoin()}>Join Channel</button>
-// 			}			
-// 			{
-// 				channel.chanType === 2 &&
-// 				<>
-// 				<button onClick={() => setPassPopup(true)}>Join Channel</button>
-// 				<CheckPassword trigger={passPopup} setTrigger={setPassPopup} channel={channel} />
-// 				</>
-// 			}
-// 		</div>
-// 	);
-// }
-
-
 export function JoinChannel(props: {channel: IChannel }) {
 	const [passPopup, setPassPopup] = useState(false);
 
@@ -94,7 +61,6 @@ export function JoinChannel(props: {channel: IChannel }) {
 
 	const handleJoin = () => {
 		socket.emit('joinChannel', {chanid: props.channel.id});
-		console.log("JoinChan");
 	}
 
 	return (
@@ -118,8 +84,6 @@ export function LeaveChannel (props: {channel: IChannel}) {
 	
 	const handleLeave = () => {
 		socket.emit('leaveChannel', {chanid: props.channel.id});
-		console.log("JoinChan");
-
 	}
 
 	if (props.channel.id === undefined)
@@ -135,18 +99,6 @@ export function LeaveChannel (props: {channel: IChannel}) {
 }
 
 export function JoinLeave(props: {currentUser: any, channel: IChannel}) {
-	// const [isMember, setIsMember] = useState(props.isMember);
-
-	// if (props.channel?.users.find(elem => elem.id == props.currentUser.id))
-	// 	setIsMember(true);
-	
-	// const handleClick = () => {
-	// 	setIsMember(!isMember);
-	// }
-
-	// return (
-	// 	<div onClick={_ => handleClick()}>{isMember ? <LeaveChannel channel={props.channel} /> :  <JoinChannel channel={props.channel} />}</div>
-	// );
 
 	return (
 		<>
@@ -168,38 +120,3 @@ export function JoinLeave(props: {currentUser: any, channel: IChannel}) {
 	);
 
 }
-
-
-// MANU VERSION //
-// export function JoinLeave(props: {currentUser: any, channel: IChannel}) {
-// 	const [buttonText, setButtonText] = useState("Join");
-// 	// const [isOnChan, setIsOnChannel] = useState(false);
-	
-// 	// const handleClick = () => {
-// 	// 	setIsOnChannel(!isOnChan);
-// 	// }
-// 	// return (
-// 	// 	<button onClick={handleClick}>{isOnChan ? "Leave" : "Join"}</button>
-// 	// );
-
-// 	return (
-// 		<>
-// 			{
-// 				props.channel.id !== undefined &&
-// 				<>
-// 					{
-// 						props.channel?.users.find(elem => elem.id == props.currentUser.id) &&
-// 						<LeaveChannel currentUser={props.currentUser} chanid={props.channel.id} />
-// 					}
-// 					{
-// 						props.channel?.users.find(elem => elem.id == props.currentUser.id) === undefined &&
-// 						<JoinChannel currentUser={props.currentUser} channel={props.channel} />
-// 					}
-// 				</>
-// 			}
-
-// 		</>
-// 	);
-// }
-
-

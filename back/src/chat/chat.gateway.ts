@@ -80,17 +80,7 @@ async handleSendMessageChannel(@ConnectedSocket() client: Socket, @MessageBody()
   if (await this.channelService.isUserMuted({chanid: channel.id, userid: sender.id}) || 
   await this.channelService.isUserBanned({chanid: channel.id, userid: sender.id })) // ban to remove soon
     throw new BadRequestException("you are muted for now on this channel"); // user is ban or mute from this channel
-    
-  /// test log for debug //
-  var roster = this.server.sockets.adapter.rooms.get("chan" + sendmessageChannelDto.chanid);
-  // console.log("rooms: ", this.server.sockets.adapter.rooms);
-  if (roster) {
-    console.log("size: ", roster.size);
-    roster.forEach(function(client) {
-      console.log('messageChannel: ', client);
-    }); }
-  /////////////////////////
-
+  
   this.server.to("chan" + sendmessageChannelDto.chanid).emit("sendMessageChannelOK", {
     chanid: channel.id,
     sender: sender,
@@ -122,16 +112,6 @@ async handleJoinChannel(@ConnectedSocket() client: Socket, @MessageBody() joinCh
     chanId: channel.id,
   });
   client.join("chan" + joinChannelDto.chanid);
-  // client.emit("joinChannelOK", channel);
-  
-    /// test log for debug //
-    var roster = this.server.sockets.adapter.rooms.get("chan" + joinChannelDto.chanid);
-    if (roster) {
-      roster.forEach(function(client) {
-        console.log('joinChannel: ', client);
-      }); }
-    /////////////////////////
-
   client.emit("joinChannelOK", channel);
   this.server.to("chan" + channel.id).emit("joinChannel", user);
 }
@@ -166,16 +146,6 @@ async handleLeaveChannel(@ConnectedSocket() client: Socket, @MessageBody() leave
     throw new BadRequestException("No such Channel or User"); // no such channel/user, shouldn't happened
   this.channelService.rm( { user, chanid: leaveChannelDto.chanid});
   client.leave("chan" + leaveChannelDto.chanid);
-  
-  /// test log for debug //
-  console.log("leave chan: ", channel.name, " user: ", user);
-  var roster = this.server.sockets.adapter.rooms.get("chan" + leaveChannelDto.chanid);
-  if (roster) {
-    roster.forEach(function(client) {
-      console.log('leaveChan: ', client);
-    }); }
-    /////////////////////////
-
   client.emit("leaveChannelOK", channel.id);
   this.server.to("chan" + channel.id).emit("leaveChannel", user);
 }

@@ -26,18 +26,15 @@ function JoinedChannelList() {
 
 	useEffect(() => {
 		fetchJoined();
-		console.log("joined chan fetch 1: ", chanList);
 	}, []);
 
 	useEffect(() => {
 		socket.on('joinChannelOK', (data) => {
 			fetchJoined();
-			console.log("joined chan join: ", chanList);
 		});
 
 		socket.on('leaveChannelOK', (data) => {
 			fetchJoined();
-			console.log("joined chan leave: ", chanList);
 		});
 
 		return () => {
@@ -84,7 +81,6 @@ function PublicChannelList() {
 	}
 	useEffect(() => {
 		fetchPublic();
-		console.log("pubChan fetch1: ", chanList);
 	}, []);
 
 	useEffect(() => {
@@ -97,7 +93,6 @@ function PublicChannelList() {
 				setChanList(data);	
 			}
 			fetchPublic();
-			console.log("pubChan create: ", chanList);
 		});
 		return () => {
 			socket.off('createChannelOk');
@@ -151,8 +146,7 @@ function ChannelMemberList(props: { chanId: any }) {
 			setCurrentChan(data);
 		}
 		getChannel();
-		console.log("chanMem fetch1: ", currentChan?.users.length);
-	}, []);
+	}, [props]);
 
 
 	useEffect(() => {
@@ -165,12 +159,10 @@ function ChannelMemberList(props: { chanId: any }) {
 		}
 		socket.on('joinChannel', (data) => {
 			getChannel();
-			console.log("chanMem join: ", currentChan?.users.length);
 		});
 
 		socket.on('leaveChannel', (data) => {
 			getChannel();
-			console.log("chanMem leave: ", currentChan?.users.length);
 		});
 
 		return () => {
@@ -221,36 +213,6 @@ export function Channels() {
 	const currentUser = useAppSelector(state => state.user);
 	const { id } = useParams();
 
-	// const getChannel = async () => {
-	// 	const response = await fetch(`${process.env.REACT_APP_BACK}channel/${props.chanId}`, {
-	// 		method: 'GET',
-	// 	})
-	// 	const data = await response.json();
-	// 	setCurrentChan(data);
-	// }
-	
-	// useEffect(() => {
-	// 	getChannel();
-	// }, [props]);
-
-
-	// useEffect(() => {
-	// 	socket.on('joinChannel', (data) => {
-	// 		getChannel();
-	// 	});
-
-	// 	socket.on('leaveChannel', (data) => {
-	// 		getChannel();
-	// 	});
-
-	// 	return () => {
-	// 		socket.off('joinChannel');
-	// 		socket.off('leaveChannel');
-	// 	}
-	// });
-
-	console.log("channels param id: ", id);
-	console.log("channels current : ", currentChan?.id);
 	return (
 		<div id="chat-container">
 			<div className="sidebar left-sidebar">
