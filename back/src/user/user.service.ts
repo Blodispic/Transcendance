@@ -18,6 +18,7 @@ import { Server } from "http";
 import { userList } from "src/app.gateway";
 import { Channel } from "src/chat/channel/entities/channel.entity";
 import { isNumber } from "class-validator";
+import { channel } from "diagnostics_channel";
 // import { userList } from "src/app.gateway";
 
 @Injectable()
@@ -108,6 +109,8 @@ export class UserService {
         friends: true,
         results: true,
         channels: true,
+        // owned: true,
+        blocked: true,
       },
       where: { id: id }
     });
@@ -518,6 +521,17 @@ export class UserService {
     return user ? user.blocked: [];
   }
 
+  async getBlockedid(id: number) { // a modifier, pour manu
+    const user = await this.usersRepository.findOne({
+      relations : {
+        blocked: true,
+      },
+      where: { id: id},
+      select: {id: true},
+    });
+    return user ? user.blocked: [];
+  }
+
   async addBlock(id: number, blockedid: number) {
     const user = await this.usersRepository.findOne({
       relations: {
@@ -535,7 +549,7 @@ export class UserService {
     });
     if (blocked === null)
       throw new BadRequestException("No such User to block");
-    if (user.blocked.find(elem => elem.id = blocked.id))
+    if (user.blocked.find(elem => elem.id === blocked.id))
       throw new BadRequestException("User already blocked");
     user.blocked.push(blocked);
     return await this.usersRepository.save(user);
@@ -550,7 +564,7 @@ export class UserService {
     });
     if (user === null)
       throw new BadRequestException("No such User");
-    const blocked = user?.blocked.find(elem => elem.id = blockedid)
+    const blocked = user?.blocked.find(elem => elem.id === blockedid)
     if (blocked === undefined)
       throw new BadRequestException("No such User already blocked")
     const index = user.blocked.indexOf(blocked, 0);
@@ -558,5 +572,19 @@ export class UserService {
       user.blocked.splice(index, 1);
     return await this.usersRepository.save(user);
   }
+
+  // async RmOwned(id: number, chanid: number) {
+  //   const user = await this.usersRepository.findOne({
+  //     relations: { owned: true },
+  //     where: { id: id },
+  //   });
+  //   if (user === null)
+  //     throw new BadRequestException("No such User");
+  //   console.log("Rmowned", user.owned);
+  //   user.owned = user.owned.filter(elem => elem.id != chanid);
+  //   console.log("Rmowned", user.owned);
+    
+  //   return await this.usersRepository.save(user);
+  // }
 
 }

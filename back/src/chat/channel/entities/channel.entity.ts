@@ -1,6 +1,7 @@
+import { IsOptional } from "class-validator";
 import { channel } from "diagnostics_channel";
 import { User } from "src/user/entities/user.entity";
-import { Column, Entity, JoinTable, ManyToMany, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 
 enum ChanType {
 	Public,
@@ -22,8 +23,13 @@ export class Channel {
 	@Column({ nullable: true, select: false })
 	password: string;
 
-	@ManyToOne(() => User, user => user.channels)
-	owner: User
+	// @IsOptional()
+	@ManyToOne(() => User, user => user.channels, {cascade: true} )
+	owner?: User
+
+	// @OneToOne(() => User, { createForeignKeyConstraints: false, nullable: true })
+	// @JoinColumn()
+	// owner?: User
 	
 	@ManyToMany(() => User, user => user.channels, { cascade: true })
 	@JoinTable()

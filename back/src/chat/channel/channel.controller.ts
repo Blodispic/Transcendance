@@ -30,6 +30,11 @@ export class ChannelController {
 		return await this.channelService.getAll();
 	}
 
+	@Get('user/:id')
+	async getUserChannel(@Param('id') id: number) {
+		return await this.channelService.getUserChannel(id);
+	}
+
 
 	@Post()
 	async create(@Body() createChannelDto: CreateChannelDto, user: User): Promise<Channel> {

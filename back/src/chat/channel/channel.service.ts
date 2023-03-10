@@ -12,6 +12,7 @@ import { MuteUserDto } from '../dto/mute-user.dto';
 import { CreateChannelDto } from '../dto/create-channel.dto';
 import { GiveAdminDto } from '../dto/give-admin.dto';
 import { BanUserDto } from '../dto/ban-user.dto';
+import { RmAdminDto } from '../dto/rm-admin.dto';
 var bcrypt = require('bcryptjs');
 
 @Injectable()
@@ -58,19 +59,25 @@ export class ChannelService {
 	}	
 
 	async rm(rmUserDto: RmUserDto) {
-		const channel: Channel | null = await this.channelRepository.findOne({
+		let channel: Channel | null = await this.channelRepository.findOne({
 			relations: { users: true, banned: true, muted: true, admin: true, owner: true},
 			where: {
 				id: rmUserDto.chanid
 			}
 			});
-		const user = channel?.users.find(elem => elem.id == rmUserDto.user.id)
-		if (channel == null || user == null)
+		const user = await this.userService.getById(rmUserDto.user.id);
+		if (channel === null || user === null)
 			throw new NotFoundException("No such Channel or User");
-		const index = channel.users.indexOf(user, 0);		
-		if (index != -1)
-			channel.users.splice(index, 1);
-		return this.channelRepository.save(channel);
+		// channel.users = channel.users.filter(elem => elem.id != user.id);		
+		if (channel.owner?.id == user.id){
+			// await this.userService.RmOwned(user.id, channel.id);
+			channel.owner = undefined;
+		}
+		// console.log("owned : ", await this.userService.getById(user.id));		
+		
+		// if (await this.isUserAdmin({chanid: channel.id, userid: user.id}))
+		// 	this.rmAdmin({chanid: channel.id, userid: user.id});	
+		return await this.channelRepository.save(channel);
 	}
 
 	async update(id: number, channelUpdate: any) {		
@@ -109,6 +116,7 @@ export class ChannelService {
 				muted: true,
 				banned: true,
 				owner: true,
+				admin: true,
 			},
 			where: {
 				id: id
@@ -250,6 +258,21 @@ export class ChannelService {
 			throw new NotFoundException("No such Channel or User");
 		channel.admin.push(user);
 		return this.channelRepository.save(channel);
+	}
+
+	async rmAdmin(rmAdminDto: RmAdminDto)
+	{
+		const channel = await this.channelRepository.findOne({
+			relations: { admin: true },
+			where: { id: rmAdminDto.chanid}
+		});
+		if (!channel)
+			throw new BadRequestException("No such Channel");
+		const user = channel.admin.find(user => user.id === rmAdminDto.userid);
+		if (!user)
+			throw new BadRequestException("No such User in Admin List");
+		channel.admin = channel.admin.filter(elem => elem.id != user.id);
+		return this.channelRepository.save(channel);		
 	}
 
 	async isUserAdmin(giveAdminDto: GiveAdminDto) {
