@@ -56,9 +56,6 @@ export default function CustomGamePopup(props: {trigger: boolean; setTrigger: Fu
         socket.emit("createCustomGame", { user1: myUser.user?.id, user2: friend[0], extra: extra, scoreMax: Max });
         props.setTrigger(false);
         setMyvar(false);
-        // setTimeout(() => {
-        //     swal("Timeout", "User didn't respond", "error");
-        //   }, 11000)
         return;
     }
 

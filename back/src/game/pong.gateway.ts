@@ -195,7 +195,7 @@ export class PongGateway implements OnGatewayDisconnect, OnGatewayInit {
 		if (user2.id)
 			this.removeInvite(user2.id);
 		let socket : any = this.findSocketFromUser(user1);
-		this.server.to(socket.id).emit("GameDeclined", user1.username);
+		this.server.to(socket.id).emit("GameDeclined", user2.username);
 
 	}
 
