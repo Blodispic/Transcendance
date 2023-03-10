@@ -1,4 +1,4 @@
-import { BadRequestException, Body, Controller, Get, Param, Patch, Post } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Get, Param, ParseIntPipe, Patch, Post } from '@nestjs/common';
 import { CreateUserDto } from 'src/user/dto/create-user.dto';
 import { ChannelService } from './channel.service';
 import { Channel } from './entities/channel.entity';
@@ -20,7 +20,7 @@ export class ChannelController {
 	}
 
 	@Get(':id')
-	async get(@Param('id') id: number): Promise<Channel | null> {
+	async get(@Param('id', ParseIntPipe) id: number): Promise<Channel | null> {
 		return await this.channelService.getById(id);
 	}
 	
@@ -30,6 +30,10 @@ export class ChannelController {
 		return await this.channelService.getAll();
 	}
 
+	@Get('user/:id')
+    async getUserChannel(@Param('id') id: number) {
+        return await this.channelService.getUserChannel(id);
+    }
 
 	@Post()
 	async create(@Body() createChannelDto: CreateChannelDto, user: User): Promise<Channel> {
