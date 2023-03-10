@@ -8,6 +8,7 @@ import { debug } from 'console';
 import { logDOM } from '@testing-library/react';
 import { HiOutlineXMark } from 'react-icons/hi2';
 import CustomGamePopup from './CustomGamePopup';
+import swal from 'sweetalert';
 
 
 export default function Queue() {
@@ -21,6 +22,7 @@ export default function Queue() {
             user: myStore.user.user,
         };
         socket.emit("addToWaitingRoom");
+        swal("Success", "You've been added to the waiting room.", "success");
         return;
     }
 
@@ -28,7 +30,9 @@ export default function Queue() {
         if (socket)
         {
           socket.on("RoomStart", (roomId: number, player: Player) => {
-              navigate("/game/" + roomId, { state: { Id: roomId } });
+            if (swal.close != undefined)
+                swal.close();
+            navigate("/game/" + roomId, { state: { Id: roomId } });
           });
         }
 

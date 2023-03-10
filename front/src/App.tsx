@@ -8,6 +8,7 @@ import { useEffect, useState } from "react";
 import { IUser, UserStatus } from "./interface/User";
 import InviteGame from "./components/utils/InviteGame";
 import { Player } from "./components/Game/Game";
+import swal from "sweetalert";
 
 export let socket: Socket;
 
@@ -41,6 +42,22 @@ function App() {
                 clearTimeout(timeOutId);
           });
       }
+
+      socket.on("RequestSent", () => {
+        
+        if (myUser && myUser.user && myUser.user.status != UserStatus.INGAME)
+          swal("Friend Request Received", "You can accept or refuse it from your profile page");
+      });
+
+      socket.on("RequestAccepted", () => {
+        if (myUser && myUser.user && myUser.user.status != UserStatus.INGAME)
+          swal("Friend Request Accepted", "One of your friend request has been accepted", "success");
+      });
+
+      socket.on("RequestDeclined", () => {
+        if (myUser && myUser.user && myUser.user.status != UserStatus.INGAME)
+          swal("Friend Request Accepted", "One of your friend request has been declined", "error");
+      });
 
       socket.on("invitationInGame", (payload: any) => {
         setInfoGame(payload);

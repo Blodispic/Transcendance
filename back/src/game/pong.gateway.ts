@@ -115,6 +115,14 @@ export class PongGateway implements OnGatewayDisconnect, OnGatewayInit {
 		return null;
 	}
 
+	findSocketById(userId: number) {
+		for (const iterator of userList) {
+			if (iterator.handshake.auth.user.id === userId)
+				return iterator;
+		}
+		return null;
+	}
+
 	@SubscribeMessage("createCustomGame")
 	async HandleCustomGame(@MessageBody() payload: any, @ConnectedSocket() client: Socket) {
 		// let user2: User | null = await this.userService.getById(payload.user2);
