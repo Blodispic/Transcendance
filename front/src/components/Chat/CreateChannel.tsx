@@ -41,7 +41,7 @@ export function PopupCreateChannel(props: any) {
 			<div className="chat-form-inner" onClick={e => e.stopPropagation()}>
 				<HiOutlineXMark className="close-icon" onClick={_ => (props.setTrigger(false), setChanMode(0)) } /> <br />
 				<h3>Channel Name</h3>
-				<input type="text" id="channel-input" placeholder="Insert channel name" onChange={e => { setChanName(e.target.value) }} onSubmit={() => { handleCreateNewChan(); }} />
+				<input type="text" id="channel-input" placeholder="Insert channel name" maxLength={15} onChange={e => { setChanName(e.target.value) }} onSubmit={() => { handleCreateNewChan(); }} />
 				<h3>Channel Mode</h3>
 				<input type="radio" name="chanMode" value={0} onChange={_ => handlePublic()} defaultChecked />Public
 				<input type="radio" name="chanMode" value={1} onChange={_ => handlePrivate()} />Private

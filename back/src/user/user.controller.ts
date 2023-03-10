@@ -206,6 +206,7 @@ export class UserController {
 
   @Delete('unblock/:id')
   async RmBlock(@Param('id') id: number, @Body()  blockedId: { blockedId: number}) {
-    return await this.userService.addBlock(id, blockedId.blockedId);
+    console.log("ca rentre la ");
+    return await this.userService.RmBlock(id, blockedId.blockedId);
   }
 }

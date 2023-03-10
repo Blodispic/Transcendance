@@ -64,9 +64,11 @@ export function Header(props: { currentUser: IUser, setCurrentUser: Function }) 
         let winPercentage = 0;
 
         useEffect( () => {
-                console.log("blocked", myUser.user?.blocked, currentUser.id);
-                if ((myUser.user!.blocked!.find(block => block.id === currentUser.id) === undefined))
-                        console.log("ca rentre dans le if")
+                Relation();
+                if ((myUser.user && (myUser.user.blocked === undefined || myUser.user.blocked.find(block => block.id === currentUser.id) === undefined)) && currentUser.username !== myUser.user!.username)
+                        console.log("okok");
+                console.log("relation ", relation);
+
         })
         if (totalGames > 0)
                 winPercentage = (currentUser.win / totalGames) * 100
@@ -112,6 +114,8 @@ export function Header(props: { currentUser: IUser, setCurrentUser: Function }) 
                                 if (response.ok) {
                                         const data = await response.json();
                                         setRelation(data);
+                                        console.log("relation ", data);
+
                                 }
                         })
         }
@@ -128,15 +132,15 @@ export function Header(props: { currentUser: IUser, setCurrentUser: Function }) 
                         }
                 })
                         .then(async response => {
-                                if (response.ok) {
-                                        console.log("ok je peux block");
+                                if (response.ok) 
                                         dispatch(addBlockedUser(currentUser));
-                                }
+                                        setRelation("Blocked");
+
                         })
         }
         const UnBlock = async () => {
                 await fetch(`${process.env.REACT_APP_BACK}user/unblock/${myUser.user?.id}`, {
-                        method: 'POST',
+                        method: 'DELETE',
                         body: JSON.stringify({
                                 blockedId: currentUser.id,
                         }),
@@ -146,10 +150,10 @@ export function Header(props: { currentUser: IUser, setCurrentUser: Function }) 
                         }
                 })
                         .then(async response => {
-                                if (response.ok) {
-                                        console.log("ok je peux block");
+                                if (response.ok) 
                                         dispatch(unBlockUser(currentUser));
-                                }
+                                        setRelation("Nobody");
+
                         })
         }
         return (
@@ -162,28 +166,39 @@ ch
                                                 <img className='logo' src={`${process.env.REACT_APP_BACK}user/${currentUser.id}/avatar`} />
                                         </div>
                                         {
-                                                                ((myUser.user && (myUser.user.blocked === undefined || myUser.user.blocked.find(block => block.id === currentUser.id) === undefined)) && currentUser.username !== myUser.user!.username )&& 
+                                                ((myUser.user && (myUser.user.blocked === undefined || myUser.user.blocked.find(block => block.id === currentUser.id) === undefined)) && currentUser.username !== myUser.user!.username) &&
                                                 <>
-                                                        {
-                                                               (myUser.user!.friends === undefined || myUser.user!.friends.find(allfriend => allfriend.id === currentUser.id) === undefined) &&
-                                                                // myUser.user!.friends !== undefined && myUser.user!.friends.find(allfriend => allfriend.id === currentUser.id) === undefined &&
-                                                                <InviteButton user={myUser.user} />
-                                                        }
                                                         {
                                                                 currentUser.status === UserStatus.INGAME &&
                                                                 <button className="button-style" onClick={_ => spectate()}> Spectate </button>
                                                         }
                                                         {
-                                                                (myUser.user && (myUser.user.blocked === undefined || myUser.user.blocked.find(block => block.id === currentUser.id) === undefined)) &&
-                                                                //  comment check si le user est blocked ? on met userblock: IUser[] dans l'interface user ? ou je fetch(/user/id/blockedList) pour avoir la list des user que moi j'ai blocker ?
-                                                                <button className="button-style" style={{ background: '#B33A3A' }} onClick={_ => Block()}> Block </button>
+                                                                // (myUser.user!.friends === undefined || myUser.user!.friends.find(allfriend => allfriend.id === currentUser.id) === undefined) &&
+                                                                relation === "Nobody" &&
+                                                                <>
+                                                                        <InviteButton user={myUser.user} />
+                                                                        {/* (myUser.user && (myUser.user.blocked === undefined || myUser.user.blocked.find(block => block.id === currentUser.id) === undefined)) && */}
+                                                                        <button className="button-style" style={{ background: '#B33A3A' }} onClick={_ => Block()}> Block </button>
+                                                                </>                                   
                                                         }
-                                                        
+                                                        {
+                                                                relation === "Friend" &&
+                                                                <button className="button-style" onClick={_ => (_)}> remove Friend </button>
+                                                        }
+                                                        {
+                                                                relation === "friendRequestSent" &&
+                                                                <button className="button-style"  onClick={_ => (_)}> Request already send </button>
+                                                        }
+                                                                                                                {
+                                                                relation === "friendRequestSent" &&
+                                                                <button className="button-style"  onClick={_ => (_)}> accept in Friend </button>
+                                                        }
+
                                                 </>
                                         }
                                         {
-                                                                ((myUser.user && (myUser.user.blocked !== undefined && myUser.user.blocked.find(block => block.id === currentUser.id) !== undefined)) && currentUser.username !== myUser.user!.username )&& 
-                                                                <button className="button-style" style={{ background: '#B33A3A' }} onClick={_ => UnBlock()}> unblock </button>
+                                                ((myUser.user && (myUser.user.blocked !== undefined && myUser.user.blocked.find(block => block.id === currentUser.id) !== undefined)) && currentUser.username !== myUser.user!.username) &&
+                                                <button className="button-style" style={{ background: '#B33A3A' }} onClick={_ => UnBlock()}> unblock </button>
 
                                         }
                                 </div>
@@ -220,7 +235,6 @@ ch
 
                                                 <div className=' block'>
                                                         <>
-
                                                         <span className={"color-status " + currentUser.status}>{currentUser.status}</span>
                                                         </>
       
