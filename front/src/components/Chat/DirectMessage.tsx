@@ -97,9 +97,7 @@ function InfoFriend(props: {user: IUser}) {
                     
                         <>
                             <li>
-                                <a>
-                                   Add friend
-                                </a>
+                                Add friend
                             </li>
                            
                             <li onClick={_ => setMyvar(true)}>

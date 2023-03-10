@@ -42,7 +42,7 @@ export function CheckPassword(props: { trigger: boolean, setTrigger: Function, c
 				<input type="password" id="channel-input" placeholder="Input password" value={password} onChange={e => { setPassword(e.target.value); }} /><br />
 				{
 					failed === true &&
-					<a className="channel-error">{errorMessage}</a>
+					<span className="channel-error">{errorMessage}</span>
 				}
 				<br />
 				<button onClick={_ => handleJoinWithPass()}>Enter Channel</button>
@@ -86,16 +86,11 @@ export function LeaveChannel (props: {channel: IChannel}) {
 		socket.emit('leaveChannel', {chanid: props.channel.id});
 	}
 
-	if (props.channel.id === undefined)
-	{
-		return (<></>);
-	}
-
-	return (
+	return (props.channel.id) ? (
 		<div>
 			<button onClick={_ => handleLeave()}>Leave Channel</button>
 		</div>
-	);
+	) : <></>;
 }
 
 export function JoinLeave(props: {currentUser: any, channel: IChannel}) {

@@ -58,7 +58,6 @@ export default function Chat() {
 			</div>
 			{
 				current == page.PAGE_1 &&
-				// <Channels chanId={id} />
 				<Channels />
 
 			}
