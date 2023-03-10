@@ -5,7 +5,7 @@ import { socket } from "../../App";
 import { IUser, UserStatus } from "../../interface/User";
 import { useAppDispatch, useAppSelector } from "../../redux/Hook";
 import { addBlockedUser, unBlockUser } from "../../redux/user";
-import { InviteButton } from "./friend_request";
+import HeaderButtons from "./buttonsHeader";
 
 function Search(props: { currentUser: IUser, setcurrentUser: Function }) {
 
@@ -21,15 +21,15 @@ function Search(props: { currentUser: IUser, setcurrentUser: Function }) {
                                 method: 'GET',
                                 headers: {
                                         'Authorization': `Bearer ${myToken}`,
-                                    },
+                                },
                         })
-                        .then(async response => {
-                                if (response.ok){
-                                        const data = await response.json()
-                                        setcurrentUser(data);       
-                                        navigate(`../Profile/${data.id}`);
-                                }
-                        })
+                                .then(async response => {
+                                        if (response.ok) {
+                                                const data = await response.json()
+                                                setcurrentUser(data);
+                                                navigate(`../Profile/${data.id}`);
+                                        }
+                                })
                 }
 
         }
@@ -58,26 +58,24 @@ export function Header(props: { currentUser: IUser, setCurrentUser: Function }) 
         const { currentUser, setCurrentUser } = props;
         const myUser = useAppSelector(state => state.user);
         const totalGames = currentUser.win + currentUser.lose;
-        const [relation, setRelation] = useState<String>("none"); 
+        const [relation, setRelation] = useState<String>("none");
         const dispatch = useAppDispatch();
 
         let winPercentage = 0;
 
-        useEffect( () => {
-                Relation();
+        useEffect(() => {
+                // Relations();
                 if ((myUser.user && (myUser.user.blocked === undefined || myUser.user.blocked.find(block => block.id === currentUser.id) === undefined)) && currentUser.username !== myUser.user!.username)
                         console.log("okok");
                 console.log("relation ", relation);
 
-        })
+        }, [currentUser])
         if (totalGames > 0)
                 winPercentage = (currentUser.win / totalGames) * 100
 
         const formattedPercentage = winPercentage.toFixed(2) + '%';
 
-        const spectate = () => {
-                socket.emit("spectateGame", currentUser.id);
-        }
+  
         const rank = () => {
                 if (currentUser.elo >= 1900)
                         return 'DIAMOND';
@@ -99,108 +97,17 @@ export function Header(props: { currentUser: IUser, setCurrentUser: Function }) 
                 }
                 return rankNames[rankNames.length - 1];
         };
-        const Relation = async () => {
-                await fetch(`${process.env.REACT_APP_BACK}user/relation`, {
-                        method: 'POST',
-                        body: JSON.stringify({
-                                userId: myUser.user?.id,
-                                friendId: currentUser.id,
-                        }),
-                        headers: {
-                                'Authorization': `Bearer ${myUser.myToken}`,
-                        }
-                })
-                        .then(async response => {
-                                if (response.ok) {
-                                        const data = await response.json();
-                                        setRelation(data);
-                                        console.log("relation ", data);
-
-                                }
-                        })
-        }
-
-        const Block = async () => {
-                await fetch(`${process.env.REACT_APP_BACK}user/block/${myUser.user?.id}`, {
-                        method: 'POST',
-                        body: JSON.stringify({
-                                blockedId: currentUser.id,
-                        }),
-                        headers: {
-                                'Content-Type': 'application/json',
-                                'Authorization': `Bearer ${myUser.myToken}`,
-                        }
-                })
-                        .then(async response => {
-                                if (response.ok) 
-                                        dispatch(addBlockedUser(currentUser));
-                                        setRelation("Blocked");
-
-                        })
-        }
-        const UnBlock = async () => {
-                await fetch(`${process.env.REACT_APP_BACK}user/unblock/${myUser.user?.id}`, {
-                        method: 'DELETE',
-                        body: JSON.stringify({
-                                blockedId: currentUser.id,
-                        }),
-                        headers: {
-                                'Content-Type': 'application/json',
-                                'Authorization': `Bearer ${myUser.myToken}`,
-                        }
-                })
-                        .then(async response => {
-                                if (response.ok) 
-                                        dispatch(unBlockUser(currentUser));
-                                        setRelation("Nobody");
-
-                        })
-        }
+      
         return (
                 <div className='profile-header'>
 
-ch
+                        ch
                         <div className='info-container'>
                                 <div className="left-part">
                                         <div className='avatar'>
                                                 <img className='logo' src={`${process.env.REACT_APP_BACK}user/${currentUser.id}/avatar`} />
                                         </div>
-                                        {
-                                                ((myUser.user && (myUser.user.blocked === undefined || myUser.user.blocked.find(block => block.id === currentUser.id) === undefined)) && currentUser.username !== myUser.user!.username) &&
-                                                <>
-                                                        {
-                                                                currentUser.status === UserStatus.INGAME &&
-                                                                <button className="button-style" onClick={_ => spectate()}> Spectate </button>
-                                                        }
-                                                        {
-                                                                // (myUser.user!.friends === undefined || myUser.user!.friends.find(allfriend => allfriend.id === currentUser.id) === undefined) &&
-                                                                relation === "Nobody" &&
-                                                                <>
-                                                                        <InviteButton user={myUser.user} />
-                                                                        {/* (myUser.user && (myUser.user.blocked === undefined || myUser.user.blocked.find(block => block.id === currentUser.id) === undefined)) && */}
-                                                                        <button className="button-style" style={{ background: '#B33A3A' }} onClick={_ => Block()}> Block </button>
-                                                                </>                                   
-                                                        }
-                                                        {
-                                                                relation === "Friend" &&
-                                                                <button className="button-style" onClick={_ => (_)}> remove Friend </button>
-                                                        }
-                                                        {
-                                                                relation === "friendRequestSent" &&
-                                                                <button className="button-style"  onClick={_ => (_)}> Request already send </button>
-                                                        }
-                                                                                                                {
-                                                                relation === "friendRequestSent" &&
-                                                                <button className="button-style"  onClick={_ => (_)}> accept in Friend </button>
-                                                        }
-
-                                                </>
-                                        }
-                                        {
-                                                ((myUser.user && (myUser.user.blocked !== undefined && myUser.user.blocked.find(block => block.id === currentUser.id) !== undefined)) && currentUser.username !== myUser.user!.username) &&
-                                                <button className="button-style" style={{ background: '#B33A3A' }} onClick={_ => UnBlock()}> unblock </button>
-
-                                        }
+                                        <HeaderButtons currentUser={currentUser} />
                                 </div>
 
                                 <div className='info-header'>
@@ -235,9 +142,9 @@ ch
 
                                                 <div className=' block'>
                                                         <>
-                                                        <span className={"color-status " + currentUser.status}>{currentUser.status}</span>
+                                                                <span className={"color-status " + currentUser.status}>{currentUser.status}</span>
                                                         </>
-      
+
                                                 </div>
                                         </div>
                                 </div>

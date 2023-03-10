@@ -212,7 +212,8 @@ export class UserController {
 
   @Post("relations")
   @UseGuards(JwtGuard)
-  async checkRelations(@Body() body: { friendId: number, userId: number }) {
+  async checkRelations(@Body() body: { userId: number,  friendId: number }) {
+    console.log(body.friendId, body.userId)
     return await this.userService.checkRelations(body.friendId, body.userId);
   }
 }

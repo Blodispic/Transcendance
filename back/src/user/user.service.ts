@@ -577,32 +577,41 @@ export class UserService {
     const friend = realUser.friends.find((friend) => friend.id === friendId);
   
     if (friend) {
-      return ("Friend");
+      return ({relation: "Friend"});
     }
   
     const blocked = realUser.blocked.find((blocked) => blocked.id === friendId);
   
     if (blocked) {
-      return ("Blocked");
+      return ({relation: "Blocked"});
     }
   
-    const friendRequestSent = realUser.sendFriendRequests.find(
-      (request) => request.receiver.id === friendId
-    );
-  
-    if (friendRequestSent) {
-      return ("friendRequestSent");
+    if (realUser.sendFriendRequests)
+    {
+      console.log("send = ", realUser.sendFriendRequests);
+      
+      const friendRequestSent = realUser.sendFriendRequests.find(
+        (request) => request.id === friendId
+        );
+        
+        if (friendRequestSent) {
+          return ({relation: "friendRequestSent"});
+        }
     }
   
-    const friendRequestReceived = realUser.receiveFriendRequests.find(
-      (request) => request.creator.id === friendId
-    );
-  
-    if (friendRequestReceived) {
-      return ("friendRequestReceived");
+    if (realUser.receiveFriendRequests)
+    {
+      console.log("received = ", realUser.receiveFriendRequests);
+      const friendRequestReceived = realUser.receiveFriendRequests.find(
+        (request) => request.creator.id === friendId
+        );
+        
+        if (friendRequestReceived) {
+          return ({relation: "friendRequestReceived"});
+        }
     }
     
-    return ("Nobody");
+    return ({relation: "Nobody"});
   }
   
 
