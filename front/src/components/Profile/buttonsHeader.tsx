@@ -146,7 +146,7 @@ export function InviteButton(props: { user: any, relation: string}) {
                 <button className="button-style" onClick={_ => (_)}> Request already send </button>
             }
             {
-                relation === "friendRequestSent" &&
+                relation === "friendRequestReceived" &&
                 <button className="button-style" onClick={_ => (_)}> accept in Friend </button>
             }
         </>
