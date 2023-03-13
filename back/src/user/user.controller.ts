@@ -132,19 +132,18 @@ export class UserController {
   @Post("friends/accept")
   @UseGuards(JwtGuard)
   async acceptFriendRequest(@Body() body: { friendId: number, userId: number }) {
-    console.log(body);
-    this.userService.addFriend(body.friendId, body.userId);
-    return await this.userService.updateFriendRequestStatus(body.friendId, body.userId, {
-      status: "Accepted",
-    });
+    console.log("friendId = ", body.friendId);
+    console.log("userId = ", body.userId);
+    
+    const realUser = await this.userService.addFriend(body.friendId, body.userId);
+    return await this.userService.DeleteFriendRequest(body.userId, body.friendId);
   }
+  
 
   @Post("friends/decline")
   @UseGuards(JwtGuard)
   async declineFriendRequest(@Body() body: { friendId: number, userId: number }) {
-    return await this.userService.updateFriendRequestStatus(body.friendId, body.userId, {
-      status: "Declined",
-    });
+    return await this.userService.DeleteFriendRequest(body.userId, body.friendId);
   }
 
   @Get(':id/avatar')
