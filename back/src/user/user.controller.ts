@@ -12,9 +12,17 @@ import { authenticator } from 'otplib';
 import { Results } from 'src/results/entities/results.entity';
 import { CreateResultDto } from 'src/results/dto/create-result.dto';
 import { JwtGuard } from 'src/Oauth/jwt-auth.guard';
+import { Server, Socket } from "socket.io";
+import { userList } from 'src/app.gateway';
+import { WebSocketServer } from '@nestjs/websockets';
+
+
 
 @Controller('user')
 export class UserController {
+	@WebSocketServer()
+  server: Server;
+
   constructor(private readonly userService: UserService) { }
 
   @Post()
