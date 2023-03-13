@@ -1,4 +1,4 @@
-import { RouterProvider } from "react-router-dom";
+import { RouterProvider, useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from './redux/Hook';
 import { io, Socket } from 'socket.io-client';
 import router from './router';
@@ -7,6 +7,8 @@ import { setUser, set_status } from './redux/user';
 import { useEffect, useState } from "react";
 import { IUser, UserStatus } from "./interface/User";
 import InviteGame from "./components/utils/InviteGame";
+import { Player } from "./components/Game/Game";
+import swal from "sweetalert";
 
 export let socket: Socket;
 
@@ -17,6 +19,8 @@ function App() {
   const dispatch = useAppDispatch();
   const cookies = new Cookies();
   const token = cookies.get('Token');
+  let timeOutId: any;
+
   const [trigger, setTrigger] = useState<boolean> (false);
   const [infoGame, setInfoGame] = useState<any | undefined> (undefined);
 
@@ -30,14 +34,46 @@ function App() {
         }
       });
       socket.emit("UpdateSomeone", { idChange: myUser.user?.id, idChange2: 0 })
-      socket.on("invitationInGame", (payload: any) => {
-        setInfoGame(payload);
-        setTrigger(true);
-        setTimeout(() => {
-					console.log("Retardée d'une seconde.");
-					setTrigger(false)
-				  }, 10000)
-      })
+
+      if (socket)
+      {
+        socket.on("RoomStart", (roomId: number, player: Player) => {
+              if (timeOutId)
+                clearTimeout(timeOutId);
+        });
+
+        socket.on("RequestSent", () => {
+          if (myUser && myUser.user && myUser.user.status != UserStatus.INGAME)
+            swal("Friend Request Received", "You can accept or refuse it from your profile page");
+        });
+
+        socket.on("RequestAccepted", () => {
+          if (myUser && myUser.user && myUser.user.status != UserStatus.INGAME)
+            swal("Friend Request Accepted", "One of your friend request has been accepted", "success");
+        });
+
+        socket.on("RequestDeclined", () => {
+          if (myUser && myUser.user && myUser.user.status != UserStatus.INGAME)
+            swal("Friend Request Accepted", "One of your friend request has been declined", "error");
+        });
+
+        socket.on("invitationInGame", (payload: any) => {
+          setInfoGame(payload);
+          setTrigger(true);
+          timeOutId = setTimeout(() => {
+            setTrigger(false)
+            socket.emit("declineCustomGame", payload);
+            }, 10000)
+        })
+
+      }
+        return () => {
+          socket.off("RoomStart");
+          socket.off("RequestSent");
+          socket.off("RequestAccepted");
+          socket.off("RequestDeclined");
+          socket.off("invitationInGame");
+        }
     }
   }, [myUser.isLog])
 

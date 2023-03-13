@@ -125,6 +125,8 @@ export function InviteButton(props: { user: any, relation: string}) {
             .then(async Response => {
                 if (Response.ok) {
                     setRelation("friendRequestSent");
+                    swal("Pending", "Your request has been sent", "success");
+                    socket.emit("RequestSent", id);
                 }
             })
     }

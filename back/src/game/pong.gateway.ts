@@ -115,6 +115,14 @@ export class PongGateway implements OnGatewayDisconnect, OnGatewayInit {
 		return null;
 	}
 
+	findSocketById(userId: number) {
+		for (const iterator of userList) {
+			if (iterator.handshake.auth.user.id === userId)
+				return iterator;
+		}
+		return null;
+	}
+
 	@SubscribeMessage("createCustomGame")
 	async HandleCustomGame(@MessageBody() payload: any, @ConnectedSocket() client: Socket) {
 		// let user2: User | null = await this.userService.getById(payload.user2);
@@ -142,6 +150,7 @@ export class PongGateway implements OnGatewayDisconnect, OnGatewayInit {
 						this.removeInvite(client.handshake.auth.user.id);
 					if (payload.user2.id)
 						this.removeInvite(payload.user2.id);
+					// this.server.to(client.id).emit("GameDeclined", payload.user2.username);
 				  }, 11000)
 			}
 		}
@@ -193,6 +202,9 @@ export class PongGateway implements OnGatewayDisconnect, OnGatewayInit {
 			this.removeInvite(user1.id);
 		if (user2.id)
 			this.removeInvite(user2.id);
+		let socket : any = this.findSocketFromUser(user1);
+		this.server.to(socket.id).emit("GameDeclined", user2.username);
+
 	}
 
 	@SubscribeMessage("GameEnd")
