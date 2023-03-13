@@ -8,4 +8,7 @@ export class SendDmDto {
 	@IsString()
 	@IsNotEmpty()
 	message: string; 
+
+	@IsNotEmpty()
+	sendtime: string;
 }

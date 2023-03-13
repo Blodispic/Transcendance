@@ -80,6 +80,7 @@ async handleSendMessageChannel(@ConnectedSocket() client: Socket, @MessageBody()
   if (await this.channelService.isUserMuted({chanid: channel.id, userid: sender.id}) || 
   await this.channelService.isUserBanned({chanid: channel.id, userid: sender.id })) // ban to remove soon
     throw new BadRequestException("you are muted for now on this channel"); // user is ban or mute from this channel
+  
   this.server.to("chan" + sendmessageChannelDto.chanid).emit("sendMessageChannelOK", {
     chanid: channel.id,
     sender: sender,
@@ -97,9 +98,15 @@ async handleJoinChannel(@ConnectedSocket() client: Socket, @MessageBody() joinCh
   if (user === null)
     throw new BadRequestException("No such user");  
   if (channel.password && !(await bcrypt.compare(joinChannelDto.password, channel.password)))
+  {
+    client.emit("joinChannelFailed", "Wrong password");
     throw new BadRequestException("Bad password"); // wrong password
+  }
   if (await this.channelService.isUserBanned({chanid: channel.id, userid: user.id}))
+  {
+    client.emit("joinChannelFailed", "You are banned from this channel");
     throw new BadRequestException("You are banned from this channel");
+  }
   this.channelService.add({
     user: user,
     chanId: channel.id,
@@ -110,20 +117,25 @@ async handleJoinChannel(@ConnectedSocket() client: Socket, @MessageBody() joinCh
 }
 
 @SubscribeMessage('createChannel')
-async handleCreateChannel(@ConnectedSocket() client: Socket, @MessageBody() createChannelDto: CreateChannelDto) {    
+async handleCreateChannel(@ConnectedSocket() client: Socket, @MessageBody() createChannelDto: CreateChannelDto) {
   const channel = await this.channelService.getByName(createChannelDto.chanName);
-  
-  if (channel != null)
-    throw new BadRequestException("An existing channel already have this name"); //channame already exist, possible ? if private/protected possible ?
 
+  if (channel != null) {
+    client.emit("createChannelFailed", "An existing channel already have this name");
+    throw new BadRequestException("An existing channel already have this name"); //channame already exist, possible ? if private/protected possible ?
+  }
   const user = await this.userService.getById(client.handshake.auth.user.id);
   if (user === null)
     throw new BadRequestException("No such user");
-    
-    const new_channel = await this.channelService.create(createChannelDto, user);
-    client.join("chan" + new_channel.id);
-    if (new_channel.chanType == 1 && createChannelDto.users && createChannelDto.users.length > 0)
-      this.inviteToChan(createChannelDto.users, new_channel.id);
+
+  const new_channel = await this.channelService.create(createChannelDto, user);
+  client.join("chan" + new_channel.id);
+  if (new_channel.chanType == 1 && createChannelDto.users && createChannelDto.users.length > 0)
+    this.inviteToChan(createChannelDto.users, new_channel.id);
+
+  client.emit("createChannelOk", new_channel.id);
+  client.emit("joinChannelOK", new_channel.id);
+  this.server.emit("createChannelOk", new_channel.id);
 }
 
 @SubscribeMessage('leaveChannel')
@@ -203,7 +215,7 @@ async handleBanUser(@ConnectedSocket() client: Socket, @MessageBody() banUserDto
   if (banUserDto.timeout)
     timer = banUserDto.timeout;
   setTimeout(() => {
-    this.channelService.unbanUser({ userid: user.id, chanid: channel.id })
+    this.channelService.unbanUser(banUserDto)
   }, timer);
   client.emit("banUserOK", user.id, channel.id);
 }

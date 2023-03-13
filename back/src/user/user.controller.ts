@@ -214,4 +214,10 @@ export class UserController {
   async RmBlock(@Param('id') id: number, @Body() blockedId: number) {
     return await this.userService.addBlock(id, blockedId);
   }
+
+  @Post("relations")
+  @UseGuards(JwtGuard)
+  async checkRelations(@Body() body: { friendId: number, userId: number }) {
+    return await this.userService.checkRelations(body.friendId, body.userId);
+  }
 }
