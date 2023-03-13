@@ -46,10 +46,8 @@ export default function Sign() {
                     body: JSON.stringify({ username: newname }),
                 })
                     .then(async response => {
-                        console.log("response ?")
                         if (!response.ok)
                         {
-                            console.log("ca rentre ? ");
                             SetNameExist(true);
                         }
                         else {
@@ -63,7 +61,7 @@ export default function Sign() {
 
                     })
                     .catch( () => {
-                        console.log("response ????")
+                        ;
                     })
             }
         }

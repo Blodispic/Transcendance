@@ -15,7 +15,6 @@ export default function Chat() {
 		
 
 	useEffect(() => {
-		console.log("et je set a false")
 		setReload(false);
 	}, [reload]);
 

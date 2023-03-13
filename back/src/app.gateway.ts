@@ -51,4 +51,41 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		userList.splice(userList.indexOf(client), 1);
 		this.server.emit("UpdateSomeone", { idChange: client.handshake.auth.user.id, idChange2: 0 })
 	}
+	
+	findSocketById(userId: number) {
+		for (const iterator of userList) {
+			if (iterator.handshake.auth.user.id == userId)
+			{
+				return iterator;
+			}
+		}
+		return null;
+	}
+
+	@SubscribeMessage("RequestSent")
+	HandleRequestSent(@MessageBody() playerId: number, @ConnectedSocket() client: Socket) {
+		let socket = this.findSocketById(playerId);
+		if (socket != null && socket.id != null)// && socket.handshake.auth.user.status == "Online")
+		{
+    	    this.server.to(socket.id).emit("RequestSent");
+		}
+	}
+
+	@SubscribeMessage("RequestAccepted")
+	HandleRequestAccepted(@MessageBody() playerId: number, @ConnectedSocket() client: Socket) {
+		let socket = this.findSocketById(playerId);
+		if (socket != null && socket.id != null)// && socket.handshake.auth.user.status == "Online")
+		{
+    	    this.server.to(socket.id).emit("RequestAccepted");
+		}
+	}
+
+	@SubscribeMessage("RequestDeclined")
+	HandleRequestDeclined(@MessageBody() playerId: number, @ConnectedSocket() client: Socket) {
+		let socket = this.findSocketById(playerId);
+		if (socket != null && socket.id != null)// && socket.handshake.auth.user.status == "Online")
+		{
+    	    this.server.to(socket.id).emit("RequestAccepted");
+		}
+	}
 }

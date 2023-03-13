@@ -4,6 +4,7 @@ import { IUser } from "../../interface/User";
 import { socket } from "../../App";
 import { useNavigate, useParams } from "react-router-dom";
 import { useAppSelector } from '../../redux/Hook';
+import swal from 'sweetalert';
 
 export function InviteButton(props: { user: any }) {
     const { user } = props;
@@ -18,7 +19,6 @@ export function InviteButton(props: { user: any }) {
 
 
     const ifFriend = async () => {
-        console.log("ca rentre ici");
         await fetch(`${process.env.REACT_APP_BACK}user/friend/check`, {
             method: 'POST',
             body: JSON.stringify({
@@ -33,7 +33,7 @@ export function InviteButton(props: { user: any }) {
             .then(async response => {
                 console.log("truefalse")
                 const data = await response.json();
-                console.log(data);
+                // console.log(data);
                 // check for error response
                 if (response.ok) {
                     setMyVar(!data);
@@ -55,6 +55,8 @@ export function InviteButton(props: { user: any }) {
             },
         });
         setStatus('Pending');
+        swal("Pending", "Your request has been sent", "success");
+        socket.emit("RequestSent", id);
     }
 
     useEffect(() => {
@@ -158,6 +160,10 @@ export function Friends(props: { user: IUser }) {
         });
         const data = await response.json();
         setFriendReq((prevFriendReq) => prevFriendReq.filter((req) => req.id !== id));
+        // console.log("Data :", data);
+        let str : string = "They" + " are now your friend!";
+        swal("Congrats", str, "success");
+        socket.emit("RequestAccepted", data.id);
     };
 
     const declineFriendRequest = async (id: number) => {
@@ -171,6 +177,9 @@ export function Friends(props: { user: IUser }) {
         });
         const data = await response.json();
         setFriendReq(prevState => prevState.filter(declined => declined.id !== id));
+        let str : string = "You declined " + "their" + " friend request!"
+        swal("Congrats", str, "success");
+        socket.emit("RequestDeclined", data.id);
     };
 
     const FriendsReqList = (props: FriendsListProps) => {

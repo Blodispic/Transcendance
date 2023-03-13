@@ -291,7 +291,10 @@
     height: 100%;
 }
 
-
+.scrollWesh {
+    height:calc(100vh - 500px);
+    overflow-y: auto;
+}
 
 .accept-button,
 .refuse-button {

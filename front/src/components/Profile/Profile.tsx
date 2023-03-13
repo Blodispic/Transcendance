@@ -109,7 +109,6 @@ export default function Profile() {
         useEffect(() => {
                 console.log("currentuser", currentUser);
                 if (currentUser?.id == myUser.user.user?.id) {
-                        console.log("In useeffects");
                         setCurrentUser(myUser.user.user);
 
                 }
