@@ -49,10 +49,10 @@ export const userSlice = createSlice({
         set_status: (state, { payload }: PayloadAction<UserStatus>) => {
 
             state.user!.status = payload;
-            if (payload === UserStatus.OFFLINE) 
-            state.isLog = false;
-            else 
-            state.isLog = true;
+            if (payload === UserStatus.OFFLINE)
+                state.isLog = false;
+            else
+                state.isLog = true;
             // socket.emit("UpdateSomeone", {idChange : state.user?.id})
             const response = fetch(`${process.env.REACT_APP_BACK}user/${state.user?.id}`, {
                 method: 'PATCH',
@@ -60,9 +60,9 @@ export const userSlice = createSlice({
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${state.myToken}`,
                 },
-                body: JSON.stringify( {status: payload }),
+                body: JSON.stringify({ status: payload }),
             })
-            .then(response => { return response.json()} )
+                .then(response => { return response.json() })
         },
         delete_user: (state) => {
             userSlice.caseReducers.set_status(state, { type: 'set_status', payload: UserStatus.OFFLINE })
@@ -73,9 +73,9 @@ export const userSlice = createSlice({
         },
         enableTwoFa: (state) => {
             if (state.user!.twoFaEnable == false)
-            state.user!.twoFaEnable = true;
-            else 
-            state.user!.twoFaEnable = false;
+                state.user!.twoFaEnable = true;
+            else
+                state.user!.twoFaEnable = false;
         },
         addBlockedUser: (state, { payload }: PayloadAction<IUser>) => {
             if (state.user) {
@@ -91,9 +91,9 @@ export const userSlice = createSlice({
                     state.user.blocked = state.user.blocked.filter(block => block.id !== payload.id);
             }
         },
-        
+
     },
 })
 
-export const { addBlockedUser, unBlockUser, setUser, setToken, change_status, enableTwoFa, change_name, change_avatar, set_status, delete_user, oauth} = userSlice.actions
+export const { addBlockedUser, unBlockUser, setUser, setToken, change_status, enableTwoFa, change_name, change_avatar, set_status, delete_user, oauth } = userSlice.actions
 export default userSlice.reducer

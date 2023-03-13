@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import swal from "sweetalert";
 import { socket } from "../../App";
 import { IUser, UserStatus } from "../../interface/User";
 import { useAppDispatch, useAppSelector } from "../../redux/Hook";
@@ -111,6 +112,9 @@ export function InviteButton(props: { user: any, relation: string}) {
     const myToken = useAppSelector(state => state.user.myToken);
     const [relation, setRelation] = useState<string>(props.relation);
 
+    useEffect( () => {
+        setRelation(props.relation);
+    })
     const sendFriendRequest = async () => {
         await new Promise((resolve) => setTimeout(resolve, 1000));
 
@@ -125,11 +129,28 @@ export function InviteButton(props: { user: any, relation: string}) {
             .then(async Response => {
                 if (Response.ok) {
                     setRelation("friendRequestSent");
-                    swal("Pending", "Your request has been sent", "success");
+                    swal( "Your request has been sent", "", "success");
                     socket.emit("RequestSent", id);
                 }
             })
     }
+
+    const acceptFriendRequest = async (id: number) => {
+        const response = await fetch(`${process.env.REACT_APP_BACK}user/friends/accept`, {
+            method: 'POST',
+            body: JSON.stringify({ friendId: id, userId: user.id }),
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${myToken}`,
+            },
+        });
+        const data = await response.json();
+        // console.log("Data :", data);
+        let str : string = "They" + " are now your friend!";
+        swal("Congrats", str, "success");
+        socket.emit("RequestAccepted", data.id);
+    };
+
 
     return (
         <>
@@ -149,7 +170,7 @@ export function InviteButton(props: { user: any, relation: string}) {
             }
             {
                 relation === "friendRequestReceived" &&
-                <button className="button-style" onClick={_ => (_)}> accept in Friend </button>
+                <button className="button-style" onClick={_ => (acceptFriendRequest(user.id))}> accept in Friend </button>
             }
         </>
     );

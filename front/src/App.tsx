@@ -35,14 +35,13 @@ function App() {
       });
       socket.emit("UpdateSomeone", { idChange: myUser.user?.id, idChange2: 0 })
 
-      if (socket)
-      {
+      if (socket) {
         socket.on("RoomStart", (roomId: number, player: Player) => {
-              if (timeOutId)
-                clearTimeout(timeOutId);
+          if (timeOutId)
+            clearTimeout(timeOutId);
         });
-
         socket.on("RequestSent", () => {
+          console.log("status myuser dans App socket.on RequestSent", myUser.user!.status);
           if (myUser && myUser.user && myUser.user.status != UserStatus.INGAME)
             swal("Friend Request Received", "You can accept or refuse it from your profile page");
         });
@@ -54,7 +53,7 @@ function App() {
 
         socket.on("RequestDeclined", () => {
           if (myUser && myUser.user && myUser.user.status != UserStatus.INGAME)
-            swal("Friend Request Accepted", "One of your friend request has been declined", "error");
+            swal("Friend Request decline", "One of your friend request has been declined", "error");
         });
 
         socket.on("invitationInGame", (payload: any) => {
@@ -63,9 +62,8 @@ function App() {
           timeOutId = setTimeout(() => {
             setTrigger(false)
             socket.emit("declineCustomGame", payload);
-            }, 10000)
+          }, 10000)
         })
-
       }
         return () => {
           socket.off("RoomStart");

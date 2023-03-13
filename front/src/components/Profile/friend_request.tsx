@@ -12,23 +12,24 @@ import swal from 'sweetalert';
 
 
 
-c
 
 
 
-export function Friends(props: { user: IUser }) {
-    const { user } = props;
+export function Friends() {
+
+    const myUser = useAppSelector(state => state.user);
     const [friendReq, setFriendReq] = useState<{ name: string, avatar: string, id: number, ReqStatus: string, UserStatus: string }[]>([]);
     const [friend, setFriend] = useState<{ name: string, avatar: string, id: number, ReqStatus: string, UserStatus: string }[]>([]);
     const [updateFriend, setUpdateFriend] = useState(false);
     const navigate = useNavigate();
     const myToken = useAppSelector(state => state.user.myToken);
 
+
     useEffect(() => {
         const checkFriendRequest = async () => {
             const response = await fetch(`${process.env.REACT_APP_BACK}user/friendsRequest`, {
                 method: 'POST',
-                body: JSON.stringify({ userId: user.id }),
+                body: JSON.stringify({ userId: myUser.user!.id }),
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${myToken}`,
@@ -52,7 +53,7 @@ export function Friends(props: { user: IUser }) {
         const checkFriend = async () => {
             const response = await fetch(`${process.env.REACT_APP_BACK}user/friends`, {
                 method: 'POST',
-                body: JSON.stringify({ userId: user.id }),
+                body: JSON.stringify({ userId: myUser.user!.id }),
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${myToken}`,
@@ -75,7 +76,7 @@ export function Friends(props: { user: IUser }) {
     const acceptFriendRequest = async (id: number) => {
         const response = await fetch(`${process.env.REACT_APP_BACK}user/friends/accept`, {
             method: 'POST',
-            body: JSON.stringify({ friendId: id, userId: user.id }),
+            body: JSON.stringify({ friendId: id, userId: myUser.user!.id }),
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${myToken}`,
@@ -92,7 +93,7 @@ export function Friends(props: { user: IUser }) {
     const declineFriendRequest = async (id: number) => {
         const response = await fetch(`${process.env.REACT_APP_BACK}user/friends/decline`, {
             method: 'POST',
-            body: JSON.stringify({ friend: id, userId: user.id }),
+            body: JSON.stringify({ friend: id, userId: myUser.user!.id }),
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${myToken}`,
