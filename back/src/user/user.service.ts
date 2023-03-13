@@ -79,6 +79,10 @@ export class UserService {
     return (await this.usersRepository.save(updateUserDto));
   }
 
+  async delete(updateUserDto: UpdateUserDto) {
+    return (await this.usersRepository.delete(updateUserDto));
+  }
+
 
   async generateQRCode(secret: string): Promise<string> {
     const qrCode = await QRCode.toDataURL(secret);
@@ -258,26 +262,45 @@ export class UserService {
       throw new UnauthorizedException("Friend Request already send")
     }
     const friendRequest: FriendRequestDto = {
+      creatorId: creator.id,
       creator: creator,
+      receiverId: creator.id,
       receiver: friend,
       status: 'Pending'
     }
 
     await this.friendRequestRepository.save(friendRequest);
-    const frienRequestPush: FriendRequest | null = await this.friendRequestRepository.findOne({
+    const friendRequestPush: FriendRequest | null = await this.friendRequestRepository.findOne({
       where: [{ creator: creator, receiver: friend }]
     });
-    if (frienRequestPush) {
+    if (friendRequestPush) {
       if (!friend.receiveFriendRequests)
         friend.receiveFriendRequests = [];
-      friend.receiveFriendRequests.push(frienRequestPush);
+      friend.receiveFriendRequests.push(friendRequestPush);
       await this.usersRepository.save(friend);
       if (!user.sendFriendRequests)
         user.sendFriendRequests = [];
-      user.sendFriendRequests.push(frienRequestPush);
+      user.sendFriendRequests.push(friendRequestPush);
       await this.usersRepository.save(user);
     }
     return { message: "Friend request sent" };
+  }
+
+  async DeleteFriendRequest(friendId: number, creatorId: number) {
+    
+    const friendRequestPush = await this.friendRequestRepository.findOne({
+      where: [{ creatorId: creatorId, receiverId: friendId }]
+    });
+    console.log("friendRequestPush = ", friendRequestPush);
+    
+    if (friendRequestPush)
+    {
+      console.log("trying delete");  
+      await this.friendRequestRepository.delete(friendRequestPush.id);
+    }
+    return await this.usersRepository.findOneBy({
+      id: creatorId,
+    })
   }
 
   async GetFriendRequestStatus(friendId: number, userId: number) {
