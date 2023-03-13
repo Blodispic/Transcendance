@@ -37,36 +37,43 @@ function App() {
 
       if (socket)
       {
-          socket.on("RoomStart", (roomId: number, player: Player) => {
+        socket.on("RoomStart", (roomId: number, player: Player) => {
               if (timeOutId)
                 clearTimeout(timeOutId);
-          });
+        });
+
+        socket.on("RequestSent", () => {
+          if (myUser && myUser.user && myUser.user.status != UserStatus.INGAME)
+            swal("Friend Request Received", "You can accept or refuse it from your profile page");
+        });
+
+        socket.on("RequestAccepted", () => {
+          if (myUser && myUser.user && myUser.user.status != UserStatus.INGAME)
+            swal("Friend Request Accepted", "One of your friend request has been accepted", "success");
+        });
+
+        socket.on("RequestDeclined", () => {
+          if (myUser && myUser.user && myUser.user.status != UserStatus.INGAME)
+            swal("Friend Request Accepted", "One of your friend request has been declined", "error");
+        });
+
+        socket.on("invitationInGame", (payload: any) => {
+          setInfoGame(payload);
+          setTrigger(true);
+          timeOutId = setTimeout(() => {
+            setTrigger(false)
+            socket.emit("declineCustomGame", payload);
+            }, 10000)
+        })
+
       }
-
-      socket.on("RequestSent", () => {
-        
-        if (myUser && myUser.user && myUser.user.status != UserStatus.INGAME)
-          swal("Friend Request Received", "You can accept or refuse it from your profile page");
-      });
-
-      socket.on("RequestAccepted", () => {
-        if (myUser && myUser.user && myUser.user.status != UserStatus.INGAME)
-          swal("Friend Request Accepted", "One of your friend request has been accepted", "success");
-      });
-
-      socket.on("RequestDeclined", () => {
-        if (myUser && myUser.user && myUser.user.status != UserStatus.INGAME)
-          swal("Friend Request Accepted", "One of your friend request has been declined", "error");
-      });
-
-      socket.on("invitationInGame", (payload: any) => {
-        setInfoGame(payload);
-        setTrigger(true);
-        timeOutId = setTimeout(() => {
-					setTrigger(false)
-          socket.emit("declineCustomGame", payload);
-				  }, 10000)
-      })
+        return () => {
+          socket.off("RoomStart");
+          socket.off("RequestSent");
+          socket.off("RequestAccepted");
+          socket.off("RequestDeclined");
+          socket.off("invitationInGame");
+        }
     }
   }, [myUser.isLog])
 
