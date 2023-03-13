@@ -53,7 +53,7 @@ function App() {
 
         socket.on("RequestDeclined", () => {
           if (myUser && myUser.user && myUser.user.status != UserStatus.INGAME)
-            swal("Friend Request decline", "One of your friend request has been declined", "error");
+            swal("Friend Request Declined", "One of your friend request has been declined", "error");
         });
 
         socket.on("invitationInGame", (payload: any) => {
