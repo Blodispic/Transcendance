@@ -1,10 +1,12 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { IChannel } from "../../interface/Channel";
 import { IUser } from "../../interface/User";
 import { useAppSelector } from "../../redux/Hook";
 import CustomGamePopup from "../Game/CustomGamePopup";
 import { AddAdmin, BanUser, KickUser, MuteUser } from "./AdminCommands";
+import { page } from "../../interface/enum";
+import { DirectMessage } from "./DirectMessage";
 
 export default function CLickableMenu(props: { user: IUser, chan: IChannel }) {
 
@@ -13,7 +15,8 @@ export default function CLickableMenu(props: { user: IUser, chan: IChannel }) {
     const myUser = useAppSelector(state => state.user.user)
     const [timeMute, setTimeMute] = useState(false);
     const [timeBan, setTimeBan] = useState(false);
-
+    const [onglet, setOnglet] = useState<page>(page.PAGE_1);
+    const navigate = useNavigate();
 
     return (
         <div className="dropdown-container">
@@ -31,9 +34,17 @@ export default function CLickableMenu(props: { user: IUser, chan: IChannel }) {
                                 Invite Game
                             </li>
                             <li>
-                                <Link to={`/Chat/dm/${user.id}`}>
+                                {/* <Link to={`/Chat/dm/${user.id}`}> */}
+                                <div onClick={e => { setOnglet(page.PAGE_2); navigate(`/Chat/dm/`); {DirectMessage(props.user.id)} }}>
+                                    <a>
                                     DM
-                                </Link>
+                                    </a>
+                                    {/* {
+                                        onglet == page.PAGE_2 &&
+                                        <DirectMessage dmId={props.user.id}/>
+                                    } */}
+                                </div> 
+                                {/* </Link> */}
                             </li>
                             {
                                 props.chan.admin?.find(obj => obj.id === myUser?.id) &&
