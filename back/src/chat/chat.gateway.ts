@@ -114,7 +114,8 @@ async handleJoinChannel(@ConnectedSocket() client: Socket, @MessageBody() joinCh
   client.join("chan" + joinChannelDto.chanid);
   // client.emit("joinChannelOK", channel);
   client.emit("updateMember", channel);
-  this.server.to("chan" + channel.id).emit("joinChannel", user);
+  // this.server.to("chan" + channel.id).emit("joinChannel", user);
+  this.server.to("chan" + channel.id).emit("updateMember", user);
 }
 
 @SubscribeMessage('createChannel')
@@ -149,8 +150,11 @@ async handleLeaveChannel(@ConnectedSocket() client: Socket, @MessageBody() leave
     throw new BadRequestException("No such Channel or User"); // no such channel/user, shouldn't happened
   this.channelService.rm( { user, chanid: leaveChannelDto.chanid});
   client.leave("chan" + leaveChannelDto.chanid);
+  // client.emit("leaveChannelOK", channel.id);
   client.emit("updateMember", channel.id);
-  this.server.to("chan" + channel.id).emit("leaveChannel", user);
+  // this.server.to("chan" + channel.id).emit("leaveChannel", user);
+  this.server.to("chan" + channel.id).emit("updateMember", user);
+
 }
 
 @SubscribeMessage('addPassword')

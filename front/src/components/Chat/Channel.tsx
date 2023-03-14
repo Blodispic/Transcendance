@@ -31,6 +31,7 @@ function JoinedChannelList() {
 	useEffect(() => {
 		socket.on('updateMember', (data) => {
 			fetchJoined();
+			console.log("updatemember received in JoinedChannel List");
 		});
 
 		return () => {
@@ -120,9 +121,8 @@ function PublicChannelList() {
 	);
 }
 
-function ChannelMemberList(props: { chanId: any }) {
+function ChannelMemberList(props: { chan: IChannel, reload: Function }) {
 	const [currentId, setCurrentId] = useState<number | undefined>(undefined);
-	const [currentChan, setCurrentChan] = useState<IChannel>();
 
 	const changeId = (id: number) => {
 		if (id == currentId)
@@ -131,71 +131,94 @@ function ChannelMemberList(props: { chanId: any }) {
 			setCurrentId(id);
 	}
 
-	const getChannel = async () => {
-		const response = await fetch(`${process.env.REACT_APP_BACK}channel/${props.chanId}`, {
-			method: 'GET',
-		})
-		const data = await response.json();
-		setCurrentChan(data);
-	}
+	// const getChannel = async () => {
+	// 	const response = await fetch(`${process.env.REACT_APP_BACK}channel/${props.chanId}`, {
+	// 		method: 'GET',
+	// 	})
+	// 	const data = await response.json();
+	// 	setCurrentChan(data);
+	// }
 	
 	useEffect(() => {
-		getChannel();
+		props.reload();
 	}, [props]);
 
 
 	useEffect(() => {
-		socket.on('joinChannel', (data) => {
-			getChannel();
-			console.log("joinChannel received in member list");
-		});
-
-		socket.on('leaveChannel', (data) => {
-			getChannel();
-			console.log("leaveChannel received in member list");
+		socket.on("updateMember", (data) => {
+			// getChannel();
+			props.reload();
+			console.log("updateMember received in member list");
 		});
 
 		return () => {
-			socket.off('joinChannel');
-			socket.off('leaveChannel');
+			socket.off("updateMember");
 		}
 	});
 
-
-	if (props.chanId === undefined) {
+	if (props.chan.users === undefined) {
 		return (
 			<div className="title"> Members <hr />
 			</div>
 		)
 	}
 
+
 	return (
 		<div className="title"> Members <hr />
-			{currentChan && currentChan.users?.map(user => (
+			{props.chan && props.chan.users?.map(user => (
 				<div key={user.id} className="user-list">
 					<ul onClick={e => { changeId(user.id) }}>
 						<li>
 							{user.username}
 							{
-								currentChan.owner.id === user.id &&
+								props.chan.owner?.id === user.id &&
 								<FaCrown />
 							}
 							{
-								currentChan.owner.id !== user.id &&
-									currentChan.admin?.find(obj => obj.id === user.id) &&
+								props.chan.owner?.id !== user.id &&
+									props.chan.admin?.find(obj => obj.id === user.id) &&
 									<BsFillPersonFill />
 							}
 						</li>
 					</ul>
 					{
 						currentId == user.id &&
-						<CLickableMenu user={user} chan={currentChan} />
+						<CLickableMenu user={user} chan={props.chan} />
 					}
 				</div>
 			))
 			}
 		</div>
 	);
+
+	// return (
+	// 	<div className="title"> Members <hr />
+	// 		{currentChan && currentChan.users?.map(user => (
+	// 			<div key={user.id} className="user-list">
+	// 				<ul onClick={e => { changeId(user.id) }}>
+	// 					<li>
+	// 						{user.username}
+	// 						{
+	// 							currentChan.owner.id === user.id &&
+	// 							<FaCrown />
+	// 						}
+	// 						{
+	// 							currentChan.owner.id !== user.id &&
+	// 								currentChan.admin?.find(obj => obj.id === user.id) &&
+	// 								<BsFillPersonFill />
+	// 						}
+	// 					</li>
+	// 				</ul>
+	// 				{
+	// 					currentId == user.id &&
+	// 					<CLickableMenu user={user} chan={currentChan} />
+	// 				}
+	// 			</div>
+	// 		))
+	// 		}
+	// 	</div>
+	// );
 }
 
 export function Channels() {
@@ -210,6 +233,21 @@ export function Channels() {
 		const data = await response.json();
 		setCurrentChan(data);
 	}
+
+	useEffect(() => {
+		getChannel();
+	}, [id]);
+
+	// useEffect(() => {
+	// 	socket.on("updateMember", (data) => {
+	// 		getChannel();
+	// 		console.log("updateMember received in channels");
+	// 	});
+
+	// 	return () => {
+	// 		socket.off("updateMember");
+	// 	}
+	// });
 
 	return (
 		<div id="chat-container">
@@ -226,8 +264,9 @@ export function Channels() {
 
 					{
 						// currentChan.users.find(obj => obj.id === currentUser.user?.id) &&
+						currentChan?.users &&
 						<div className="sidebar right-sidebar">
-							<ChannelMemberList chanId={id} />
+							<ChannelMemberList chan={currentChan} reload={getChannel}/>
 						</div>
 					}
 				</>

@@ -78,7 +78,7 @@ export function ChannelMessages(props: { chanId: any, reload: Function }) {
 
 	useEffect(() => {
 		getChannel();
-	}, [props]);
+	}, []);
 
 	const handleSubmitNewMessage = (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
