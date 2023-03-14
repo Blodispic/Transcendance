@@ -29,17 +29,12 @@ function JoinedChannelList() {
 	}, []);
 
 	useEffect(() => {
-		socket.on('joinChannelOK', (data) => {
-			fetchJoined();
-		});
-
-		socket.on('leaveChannelOK', (data) => {
+		socket.on('updateMember', (data) => {
 			fetchJoined();
 		});
 
 		return () => {
-			socket.off('joinChannelOK');
-			socket.off('leaveChannelOK');
+			socket.off('updateMember');
 		}
 	});
 
@@ -136,33 +131,28 @@ function ChannelMemberList(props: { chanId: any }) {
 			setCurrentId(id);
 	}
 
+	const getChannel = async () => {
+		const response = await fetch(`${process.env.REACT_APP_BACK}channel/${props.chanId}`, {
+			method: 'GET',
+		})
+		const data = await response.json();
+		setCurrentChan(data);
+	}
 	
 	useEffect(() => {
-		const getChannel = async () => {
-			const response = await fetch(`${process.env.REACT_APP_BACK}channel/${props.chanId}`, {
-				method: 'GET',
-			})
-			const data = await response.json();
-			setCurrentChan(data);
-		}
 		getChannel();
 	}, [props]);
 
 
 	useEffect(() => {
-		const getChannel = async () => {
-			const response = await fetch(`${process.env.REACT_APP_BACK}channel/${props.chanId}`, {
-				method: 'GET',
-			})
-			const data = await response.json();
-			setCurrentChan(data);
-		}
 		socket.on('joinChannel', (data) => {
 			getChannel();
+			console.log("joinChannel received in member list");
 		});
 
 		socket.on('leaveChannel', (data) => {
 			getChannel();
+			console.log("leaveChannel received in member list");
 		});
 
 		return () => {
@@ -213,6 +203,14 @@ export function Channels() {
 	const currentUser = useAppSelector(state => state.user);
 	const { id } = useParams();
 
+	const getChannel = async () => {
+		const response = await fetch(`${process.env.REACT_APP_BACK}channel/${id}`, {
+			method: 'GET',
+		})
+		const data = await response.json();
+		setCurrentChan(data);
+	}
+
 	return (
 		<div id="chat-container">
 			<div className="sidebar left-sidebar">
@@ -224,7 +222,7 @@ export function Channels() {
 				id !== undefined &&
 				<>
 					{/* <ChannelMessages channel={currentChan} /> */}
-					<ChannelMessages chanId={id} />
+					<ChannelMessages chanId={id} reload={getChannel} />
 
 					{
 						// currentChan.users.find(obj => obj.id === currentUser.user?.id) &&

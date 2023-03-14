@@ -93,25 +93,75 @@ export function LeaveChannel (props: {channel: IChannel}) {
 	) : <></>;
 }
 
-export function JoinLeave(props: {currentUser: any, channel: IChannel}) {
+export function JoinLeave(props: {currentUser: any, channel: IChannel, isJoined: boolean, reload: Function }) {
+	const [isJoined, setIsJoined] = useState<boolean | undefined>(props.isJoined);
+	const [passPopup, setPassPopup] = useState(false);
 
-	return (
+
+	const handleLeave = () => {
+		socket.emit('leaveChannel', {chanid: props.channel.id});
+	}
+		
+	const handleJoin = () => {
+		socket.emit('joinChannel', {chanid: props.channel.id});
+	}
+	
+	if (props.channel === undefined)
+	{	
+		return (<></>);
+	}
+
+	return (isJoined) ? (
 		<>
 			{
 				props.channel.id !== undefined &&
-				<>
-					{
-						props.channel?.users.find(elem => elem.id == props.currentUser.id) &&
-						<LeaveChannel channel={props.channel} />
-					}
-					{
-						props.channel?.users.find(elem => elem.id == props.currentUser.id) === undefined &&
-						<JoinChannel channel={props.channel} />
-					}
-				</>
+				<div>
+					<button onClick={e => {handleLeave(); props.reload(); setIsJoined(false)}}>Leave Channel</button>
+				</div>
 			}
-
+		</>
+	) : (
+		<>
+			{
+				props.channel.id !== undefined &&
+				<div>
+				{
+					props.channel.chanType === 0 &&
+					<button style={{ float: 'right' }} onClick={e => {handleJoin(); props.reload(); setIsJoined(true)}}>Join Channel</button>
+				}			
+				{
+					props.channel.chanType === 2 &&
+					<>
+					<button style={{ float: 'right' }} onClick={() => setPassPopup(true)}>Join Channel</button>
+					<CheckPassword trigger={passPopup} setTrigger={setPassPopup} channel={props.channel} />
+					</>
+				}
+			</div>
+			}
 		</>
 	);
-
 }
+
+
+
+// export function JoinLeave(props: {currentUser: any, channel: IChannel}) {
+
+// 	return (
+// 		<>
+// 			{
+// 				props.channel.id !== undefined &&
+// 				<>
+// 					{
+// 						props.channel?.users.find(elem => elem.id == props.currentUser.id) &&
+// 						<LeaveChannel channel={props.channel} />
+// 					}
+// 					{
+// 						props.channel?.users.find(elem => elem.id == props.currentUser.id) === undefined &&
+// 						<JoinChannel channel={props.channel} />
+// 					}
+// 				</>
+// 			}
+
+// 		</>
+// 	);
+// }
