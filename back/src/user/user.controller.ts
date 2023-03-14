@@ -196,6 +196,7 @@ export class UserController {
   }
 
   @Post('block/:id')
+<<<<<<< HEAD
   async addBlock(@Param('id') id: number, @Body() blockedId: number) {
     return await plainToClass(User, this.userService.addBlock(id, blockedId));
   }
@@ -203,11 +204,24 @@ export class UserController {
   @Delete('unblock/:id')
   async RmBlock(@Param('id') id: number, @Body() blockedId: number) {
     return await plainToClass(User, this.userService.addBlock(id, blockedId));
+=======
+  async addBlock(@Param('id') id: number, @Body() blockedId: { blockedId: number}) {
+    console.log(id);
+    console.log(blockedId);
+    return await this.userService.addBlock(id, blockedId.blockedId);
+  }
+
+  @Delete('unblock/:id')
+  async RmBlock(@Param('id') id: number, @Body()  blockedId: { blockedId: number}) {
+    console.log("ca rentre la ");
+    return await this.userService.RmBlock(id, blockedId.blockedId);
+>>>>>>> 1832330c4a1bce281e9c7792636e53e07d144751
   }
 
   @Post("relations")
   @UseGuards(JwtGuard)
-  async checkRelations(@Body() body: { friendId: number, userId: number }) {
+  async checkRelations(@Body() body: { userId: number,  friendId: number }) {
+    console.log(body.friendId, body.userId)
     return await this.userService.checkRelations(body.friendId, body.userId);
   }
 }
