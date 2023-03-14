@@ -196,15 +196,6 @@ export class UserController {
   }
 
   @Post('block/:id')
-<<<<<<< HEAD
-  async addBlock(@Param('id') id: number, @Body() blockedId: number) {
-    return await plainToClass(User, this.userService.addBlock(id, blockedId));
-  }
-
-  @Delete('unblock/:id')
-  async RmBlock(@Param('id') id: number, @Body() blockedId: number) {
-    return await plainToClass(User, this.userService.addBlock(id, blockedId));
-=======
   async addBlock(@Param('id') id: number, @Body() blockedId: { blockedId: number}) {
     console.log(id);
     console.log(blockedId);
@@ -215,7 +206,6 @@ export class UserController {
   async RmBlock(@Param('id') id: number, @Body()  blockedId: { blockedId: number}) {
     console.log("ca rentre la ");
     return await this.userService.RmBlock(id, blockedId.blockedId);
->>>>>>> 1832330c4a1bce281e9c7792636e53e07d144751
   }
 
   @Post("relations")
