@@ -227,11 +227,11 @@ export function Channels() {
 	const { id } = useParams();
 
 	const getChannel = async () => {
-		const response = await fetch(`${process.env.REACT_APP_BACK}channel/${id}`, {
-			method: 'GET',
-		})
-		const data = await response.json();
-		setCurrentChan(data);
+			const response = await fetch(`${process.env.REACT_APP_BACK}channel/${id}`, {
+				method: 'GET',
+			})
+			const data = await response.json();
+			setCurrentChan(data);
 	}
 
 	useEffect(() => {
@@ -249,7 +249,7 @@ export function Channels() {
 	// 	}
 	// });
 
-	return (
+	return (id) ? (
 		<div id="chat-container">
 			<div className="sidebar left-sidebar">
 				<JoinedChannelList />
@@ -257,10 +257,10 @@ export function Channels() {
 				<PublicChannelList />
 			</div>
 			{
-				id !== undefined &&
+				currentChan !== undefined &&
 				<>
 					{/* <ChannelMessages channel={currentChan} /> */}
-					<ChannelMessages chanId={id} reload={getChannel} />
+					<ChannelMessages chanId={id} chan={currentChan} reload={getChannel} />
 
 					{
 						// currentChan.users.find(obj => obj.id === currentUser.user?.id) &&
@@ -272,5 +272,13 @@ export function Channels() {
 				</>
 			}
 		</div>
+	) : (
+		<div id="chat-container">
+		<div className="sidebar left-sidebar">
+			<JoinedChannelList />
+			<AddChannel />
+			<PublicChannelList />
+		</div>
+	</div>
 	);
 }
