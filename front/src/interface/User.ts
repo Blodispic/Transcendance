@@ -22,4 +22,5 @@ export interface IUser {
     lose: number;
     friends?: IUser[];
     history?: Result[];
+    blocked?: IUser[];
 }

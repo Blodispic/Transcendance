@@ -136,7 +136,7 @@ export default function Profile() {
                                 }
                                 {
                                         pages == page.PAGE_2 &&
-                                        <Friends user={currentUser} />
+                                        <Friends />
                                 }
                                 {
                                         pages == page.PAGE_3 &&

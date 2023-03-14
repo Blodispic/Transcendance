@@ -91,7 +91,11 @@ export function ConfigureChannel(props: {trigger: boolean, setTrigger: Function,
 		}
 		else if (props.channel.chanType === 2) {
 			console.log('change password: ', newPassword);
-			socket.emit('changePassword', { chanid: props.channel.id, password: newPassword });
+			try {
+
+				socket.emit('changePassword', { chanid: props.channel.id, password: newPassword });
+			}
+			catch (e){ console.log(e)};
 		}
 		props.setTrigger(false);
 	}
