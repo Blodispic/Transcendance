@@ -66,8 +66,11 @@ export function Header(props: { currentUser: IUser, setCurrentUser: Function }) 
         const formattedPercentage = winPercentage.toFixed(2) + '%';
 
         const spectate = () => {
+                console.log("user = ", currentUser);
+                console.log("user = ", currentUser.id);
                 socket.emit("spectateGame", currentUser.id);
         }
+
         const rank = () => {
                 if (currentUser.elo >= 1900)
                         return 'DIAMOND';
