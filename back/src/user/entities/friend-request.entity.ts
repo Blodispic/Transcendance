@@ -8,10 +8,16 @@ export class FriendRequest {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @ManyToOne(() => User, (user) => user.sendFriendRequests)
+    @Column()
+    creatorId: number;
+
+    @Column()
+    receiverId: number;
+
+    @ManyToOne(() => User, (user) => user.sendFriendRequests, { cascade: true })
     creator: User;
 
-    @ManyToOne(() => User, (user) => user.receiveFriendRequests)
+    @ManyToOne(() => User, (user) => user.receiveFriendRequests, { cascade: true })
     receiver: User;
 
     @Column()

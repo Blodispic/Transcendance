@@ -100,6 +100,7 @@ export class PongGateway implements OnGatewayDisconnect, OnGatewayInit {
 
 	@SubscribeMessage("spectateGame")
 	async HandleSpectator(@MessageBody() playerId: number, @ConnectedSocket() client: Socket) {
+		
 		let i: number = 0;
 		let player: User | null = await this.userService.getById(playerId);
 		// let player = this.findByID(playerId);
