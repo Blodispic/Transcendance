@@ -75,16 +75,27 @@ export class PongGateway implements OnGatewayDisconnect, OnGatewayInit {
 	}
 
 	@SubscribeMessage("addToWaitingRoom")
-	HandleAddToWaitingRoom(@ConnectedSocket() client: Socket) {
+	async HandleAddToWaitingRoom(@ConnectedSocket() client: Socket) {
 		// this.gameService.addToWaitingRoom(userList[userList.indexOf(client)]);
 		if (this.isInInvite(client.handshake.auth.user.id) === true)
 		{
 			console.log("Already in Invite")
-			return;
+			this.server.to(client.id).emit("WaitingRoomFailure", "You are already in an invite, decline it or wait for an answer");
+			throw new UnauthorizedException("Already in invite");
 		}
-
-		this.gameService.addToWaitingRoom(client);
-		this.gameService.startGame(this.server);
+		if (this.gameService.inGame(client.handshake.auth.user.id) == true)
+		{
+			console.log("Already in a game");
+			throw new UnauthorizedException("Already in a game");
+			// this.server.to(client.id).emit("WaitingRoomFailure", "You are already in an game");
+		}
+		if (await this.gameService.addToWaitingRoom(client) == 1)
+			this.server.to(client.id).emit("WaitingRoomFailure", "You are already in the waitingRoom");
+		else
+		{
+			this.server.to(client.id).emit("WaitingRoomSuccess");
+			this.gameService.startGame(this.server);
+		}
 	}
 
 	@SubscribeMessage("spectateGame")
@@ -131,7 +142,9 @@ export class PongGateway implements OnGatewayDisconnect, OnGatewayInit {
 		if (!payload.user2 || !client.handshake.auth.user)
 			return;
 		this.gameService.removeFromWaitingRoom(client.id);
-		if (this.isInInvite(payload.user2.id) || this.isInInvite(client.handshake.auth.user.id))
+		if (this.isInInvite(payload.user2.id) || this.isInInvite(client.handshake.auth.user.id)
+			|| this.gameService.inGame(client.handshake.auth.user.id) == true
+			|| this.gameService.inGame(payload.user2.id) == true)
 		{
 			console.log("[CreateCustomGame] One of the two users is currently busy.");
 			throw new UnauthorizedException("One of the two users is currently busy.");

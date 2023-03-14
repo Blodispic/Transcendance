@@ -22,7 +22,6 @@ export default function Queue() {
             user: myStore.user.user,
         };
         socket.emit("addToWaitingRoom");
-        swal("Success", "You've been added to the waiting room.", "success");
         return;
     }
 
@@ -31,9 +30,17 @@ export default function Queue() {
         {
           socket.on("RoomStart", (roomId: number, player: Player) => {
             if (swal.close != undefined)
-                swal.close();
+            swal.close();
             navigate("/game/" + roomId, { state: { Id: roomId } });
-          });
+            });
+
+            socket.on("WaitingRoomSuccess", () => {
+            swal("Success", "You've been added to the waiting room.", "success");
+            });
+
+            socket.on("WaitingRoomFailure", (message: string) => {
+            swal("Failure", message, "error");
+            });
         }
 
         const fetchuser = async () => {

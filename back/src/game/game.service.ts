@@ -19,15 +19,27 @@ export class GameService {
 	public waitingRoom: any[] = [];
 	public gameRoom: Game[] = [];
 
+	inGame(playerId: number)
+	{
+		this.gameRoom.forEach(element => {
+			if (element.gameState.player1.id == playerId || element.gameState.player2.id == playerId)
+			{
+				return true;
+			}
+		});
+		return false;
+	}
+
 	async addToWaitingRoom(client: any) {
 		let i : number = 0;
 		while (i < this.waitingRoom.length)
 		{
 			if (this.waitingRoom[i] === client)
-				return;
+				return 1;
 			i++;
 		}
 		this.waitingRoom.push(client);
+		return 0;
 	}
 
 	removeFromWaitingRoom(client: any)
