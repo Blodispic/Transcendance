@@ -2,8 +2,8 @@ import { RouterProvider, useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from './redux/Hook';
 import { io, Socket } from 'socket.io-client';
 import router from './router';
-import { Cookies } from 'react-cookie';
-import { setUser, set_status } from './redux/user';
+import { Cookies, useCookies } from 'react-cookie';
+import { setToken, setUser, set_status } from './redux/user';
 import { useEffect, useState } from "react";
 import { IUser, UserStatus } from "./interface/User";
 import InviteGame from "./components/utils/InviteGame";
@@ -15,6 +15,7 @@ export let socket: Socket;
 function App() {
   const myUser = useAppSelector(state => state.user);
   const myToken = useAppSelector(state => state.user.myToken);
+  const [, setCookie] = useCookies(['Token']);
 
   const dispatch = useAppDispatch();
   const cookies = new Cookies();
@@ -77,11 +78,12 @@ function App() {
 
 
   const get_user = async () => {
+    console.log("check si ca rentre ici")
     const response = await fetch(`${process.env.REACT_APP_BACK}user/access_token`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${myToken}`,
+        // 'Authorization': `Bearer ${myToken}`,
       },
       body: JSON.stringify({ token: token }),
     })
@@ -90,8 +92,13 @@ function App() {
       // check for error response
 
       if (response.ok && data.username !== "") {
+        console.log("connection avec cookies", data);
         dispatch(setUser(data))
-        dispatch(set_status(UserStatus.ONLINE))
+        dispatch(set_status(UserStatus.ONLINE));
+        dispatch(setToken(token));
+
+        // setCookie('Token', data.access_token, { path: '/' });
+
         // socket.emit("UpdateSomeone", { idChange: myUser.user?.id, idChange2: 0 })
       }
       else {
