@@ -30,7 +30,7 @@ export default function Queue() {
         {
           socket.on("RoomStart", (roomId: number, player: Player) => {
             if (swal.close != undefined)
-            swal.close();
+                swal.close();
             navigate("/game/" + roomId, { state: { Id: roomId } });
             });
 

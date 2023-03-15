@@ -3,6 +3,7 @@ import { Circle, Layer, Rect, Stage, Text } from "react-konva";
 import { useBeforeUnload } from "react-router-dom";
 import { socket } from "../../App";
 import { ResultPopup } from "./Result";
+import swal from "sweetalert";
 
 export interface Vec2 {
 	x: number;
@@ -290,6 +291,8 @@ function convertState(state: GameState) {
 
 function updateGameState(prev: GameState) {
 	let newState = { ...prev }
+	if (swal.close != undefined)
+        swal.close();
 
 	if (window.innerHeight > GAME_RATIO * window.innerWidth)
 	{

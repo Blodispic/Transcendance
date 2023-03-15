@@ -148,8 +148,8 @@ export class PongGateway implements OnGatewayDisconnect, OnGatewayInit {
 			|| this.gameService.inGame(payload.user2.id) == true)
 		{
 			console.log("[CreateCustomGame] One of the two users is currently busy.");
+			this.server.to(client.id).emit("WaitingRoomFailure", "The person you're inviting is busy");
 			throw new UnauthorizedException("One of the two users is currently busy.");
-
 			return;
 		}
 		else {
@@ -208,7 +208,7 @@ export class PongGateway implements OnGatewayDisconnect, OnGatewayInit {
 
 	@SubscribeMessage("declineCustomGame")
 	DeclineCustomGame(@MessageBody() payload: any, @ConnectedSocket() client: Socket) {
-		let user1: User = this.findByID(payload.user1);
+		let user1: User = payload.user1;
 		let user2: User = payload.user2;
 
 		// Remove both users from InviteList, the can now invite and be invited again
