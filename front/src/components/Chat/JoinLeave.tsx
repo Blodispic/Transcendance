@@ -94,9 +94,10 @@ export function LeaveChannel (props: {channel: IChannel}) {
 }
 
 export function JoinLeave(props: {currentUser: any, channel: IChannel, isJoined: boolean, reload: Function }) {
-	const [isJoined, setIsJoined] = useState<boolean | undefined>(props.isJoined);
+	const [isJoined, setIsJoined] = useState(props.isJoined);
 	const [passPopup, setPassPopup] = useState(false);
-
+	
+	console.log("1: props.isJoined: ", props.isJoined, " isJoined: ", isJoined);
 
 	const handleLeave = () => {
 		socket.emit('leaveChannel', {chanid: props.channel.id});
@@ -111,7 +112,7 @@ export function JoinLeave(props: {currentUser: any, channel: IChannel, isJoined:
 		return (<></>);
 	}
 
-	return (isJoined) ? (
+	return (props.isJoined) ? (
 		<>
 			{
 				props.channel.id !== undefined &&

@@ -10,13 +10,19 @@ import { useAppSelector } from "../../redux/Hook";
 import { ConfigureChannel } from "./AdminCommands";
 import { JoinChannel, JoinLeave, LeaveChannel } from "./JoinLeave";
 
-function ChannelHeader(props: { user: any, channel: IChannel, reload: Function}) {
+// export function ChannelHeader(props: { user: any, channel: IChannel}) {
+export function ChannelHeader(props: { user: any, channel: IChannel, reload: Function}) {
 	const [popup, setPopup] = useState(false);
 	let isJoined: boolean = false;
 
 	if (props.channel.users?.find(obj => obj.id === props.user?.id))
+	{
 		isJoined = true;
-	
+		console.log("here");
+	}
+
+	console.log("0: isJoined: ", isJoined);
+
 	return (
 		<div className="body-header" >
 		{props.channel.name}
@@ -61,11 +67,11 @@ function ChannelHeader(props: { user: any, channel: IChannel, reload: Function})
 	);
 }
 
-export function ChannelMessages(props: { chanId: any, chan: IChannel, reload: Function }) {
+export function ChannelMessages(props: { chan: IChannel }) {
 	const currentUser = useAppSelector(state => state.user);
 	const [newInput, setNewInput] = useState<string>("");
 	const [messageList, setMessageList] = useState<IMessage[]>([]);
-	const [currentChan, setCurrentChan] = useState<IChannel>();
+	// const [currentChan, setCurrentChan] = useState<IChannel>();
 
 	// const getChannel = async () => {
 	// 	const response = await fetch(`${process.env.REACT_APP_BACK}channel/${props.chanId}`, {
@@ -84,7 +90,7 @@ export function ChannelMessages(props: { chanId: any, chan: IChannel, reload: Fu
 		e.preventDefault();
 		if (newInput != "") {			
 			const sendTime = new Date().toLocaleString('en-US');
-			socket.emit('sendMessageChannel', { chanid: props.chanId, message: newInput, sendtime: sendTime });
+			socket.emit('sendMessageChannel', { chanid: props.chan.id, message: newInput, sendtime: sendTime });
 		}
 		setNewInput("");
 	}
@@ -100,19 +106,14 @@ export function ChannelMessages(props: { chanId: any, chan: IChannel, reload: Fu
 	});
 		
 	return (
-		<div className="chat-body">
-			{
-				props.chan &&
-				<ChannelHeader user={currentUser.user} channel={props.chan} reload={props.reload()}/>
-			}
-
-			{currentChan?.users.find(obj => obj.id == currentUser.user?.id) !== undefined &&
+		<>
+			{props.chan.users?.find(obj => obj.id == currentUser.user?.id) !== undefined &&
 				<>
 					<div className="chat-messages">
 						{
 							<div className="reverse">
 								{messageList && messageList.map(message => (
-									message.chanid == props.chanId &&
+									message.chanid == props.chan.id &&
 									<div key={message.sendtime + message.message} className="__wrap">
 										<div className="message-info">
 											<img className="user-avatar" src={`${process.env.REACT_APP_BACK}user/${message.sender?.id}/avatar`} />
@@ -131,6 +132,6 @@ export function ChannelMessages(props: { chanId: any, chan: IChannel, reload: Fu
 					</form>
 				</>
 			}
-		</div>
+		</>
 	);
 }

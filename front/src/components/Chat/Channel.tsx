@@ -7,43 +7,43 @@ import { socket } from "../../App";
 import { IChannel } from "../../interface/Channel";
 import { IUser } from "../../interface/User";
 import { useAppSelector } from "../../redux/Hook";
-import { ChannelMessages } from "./ChannelMessages";
+import { ChannelHeader, ChannelMessages } from "./ChannelMessages";
 import CLickableMenu from "./clickableMenu";
 import { AddChannel } from "./CreateChannel";
 
-function JoinedChannelList() {
-	const [chanList, setChanList] = useState<IChannel[]>([]);
+function JoinedChannelList(props: {chanList: IChannel[]}) {
+	// const [chanList, setChanList] = useState<IChannel[]>([]);
 	const currentUser = useAppSelector(state => state.user);
 	const navigate = useNavigate();
 
-	const fetchJoined = async () => {
-		const response = await fetch(`${process.env.REACT_APP_BACK}channel/user/${currentUser.user?.id}`, {
-			method: 'GET',
-		})
-		const data = await response.json();
-		setChanList(data);
-	}
+	// const fetchJoined = async () => {
+	// 	const response = await fetch(`${process.env.REACT_APP_BACK}channel/user/${currentUser.user?.id}`, {
+	// 		method: 'GET',
+	// 	})
+	// 	const data = await response.json();
+	// 	setChanList(data);
+	// }
 
-	useEffect(() => {
-		fetchJoined();
-	}, []);
+	// useEffect(() => {
+	// 	fetchJoined();
+	// }, []);
 
-	useEffect(() => {
-		socket.on('updateMember', (data) => {
-			fetchJoined();
-			console.log("updatemember received in JoinedChannel List");
-		});
+	// useEffect(() => {
+	// 	socket.on('updateMember', (data) => {
+	// 		fetchJoined();
+	// 		console.log("updatemember received in JoinedChannel List");
+	// 	});
 
-		return () => {
-			socket.off('updateMember');
-		}
-	});
+	// 	return () => {
+	// 		socket.off('updateMember');
+	// 	}
+	// });
 
 	
 	return (
 		<div className="title">
 			<header>Joined Channels <hr /></header>
-			{chanList && chanList.map(chan => (
+			{props.chanList && props.chanList.map(chan => (
 				<ul key={chan.name}>
 					<li>
 						<div onClick={_ => navigate(`/Chat/channel/${chan.id}`)}>{chan.name}
@@ -63,44 +63,44 @@ function JoinedChannelList() {
 	);
 }
 
-function PublicChannelList() {
-	const [chanList, setChanList] = useState<IChannel[]>([]);
+function PublicChannelList(props: {chanList: IChannel[]}) {
+	// const [chanList, setChanList] = useState<IChannel[]>([]);
 	const currentUser = useAppSelector(state => state.user);
 	const navigate = useNavigate();
 
-	const fetchPublic = async () => {
-		const response = await fetch(`${process.env.REACT_APP_BACK}channel/public`, {
-			method: 'GET',
-		})
-		const data = await response.json();
-		setChanList(data);
-	}
-	useEffect(() => {
-		fetchPublic();
-	}, []);
+	// const fetchPublic = async () => {
+	// 	const response = await fetch(`${process.env.REACT_APP_BACK}channel/public`, {
+	// 		method: 'GET',
+	// 	})
+	// 	const data = await response.json();
+	// 	setChanList(data);
+	// }
+	// useEffect(() => {
+	// 	fetchPublic();
+	// }, []);
 
-	useEffect(() => {
-		socket.on('createChannelOk', (newChanId) => {
-			const fetchPublic = async () => {
-				const response = await fetch(`${process.env.REACT_APP_BACK}channel/public`, {
-					method: 'GET',
-				})
-				const data = await response.json();
-				setChanList(data);	
-			}
-			fetchPublic();
-		});
-		return () => {
-			socket.off('createChannelOk');
-		};
-	});
+	// useEffect(() => {
+	// 	socket.on('createChannelOk', (newChanId) => {
+	// 		const fetchPublic = async () => {
+	// 			const response = await fetch(`${process.env.REACT_APP_BACK}channel/public`, {
+	// 				method: 'GET',
+	// 			})
+	// 			const data = await response.json();
+	// 			setChanList(data);	
+	// 		}
+	// 		fetchPublic();
+	// 	});
+	// 	return () => {
+	// 		socket.off('createChannelOk');
+	// 	};
+	// });
 
 	return (
 		<div className="title">
 
 			<div className="bottom">
 				<header>All Joinable Channels <hr /></header>
-				{chanList && chanList.map(chan => (
+				{props.chanList && props.chanList.map(chan => (
 					<ul key={chan.name} onClick={e => {  }}>
 						<li>
 							<div onClick={_ => navigate(`/Chat/channel/${chan.id}`)}>{chan.name}
@@ -121,7 +121,7 @@ function PublicChannelList() {
 	);
 }
 
-function ChannelMemberList(props: { chan: IChannel, reload: Function }) {
+function ChannelMemberList(props: { chan: IChannel }) {
 	const [currentId, setCurrentId] = useState<number | undefined>(undefined);
 
 	const changeId = (id: number) => {
@@ -138,23 +138,18 @@ function ChannelMemberList(props: { chan: IChannel, reload: Function }) {
 	// 	const data = await response.json();
 	// 	setCurrentChan(data);
 	// }
-	
-	useEffect(() => {
-		props.reload();
-	}, [props]);
 
+	// useEffect(() => {
+	// 	socket.on("updateMember", (data) => {
+	// 		// getChannel();
+	// 		props.reload();
+	// 		console.log("updateMember received in member list");
+	// 	});
 
-	useEffect(() => {
-		socket.on("updateMember", (data) => {
-			// getChannel();
-			props.reload();
-			console.log("updateMember received in member list");
-		});
-
-		return () => {
-			socket.off("updateMember");
-		}
-	});
+	// 	return () => {
+	// 		socket.off("updateMember");
+	// 	}
+	// });
 
 	if (props.chan.users === undefined) {
 		return (
@@ -222,62 +217,119 @@ function ChannelMemberList(props: { chan: IChannel, reload: Function }) {
 }
 
 export function Channels() {
-	const [currentChan, setCurrentChan] = useState<IChannel | undefined>(undefined);
 	const currentUser = useAppSelector(state => state.user);
+	const [currentChan, setCurrentChan] = useState<IChannel | undefined>(undefined);
+	const [joinedList, setJoinedList] = useState<IChannel[]>([]);
+	const [publicList, setPublicList] = useState<IChannel[]>([]);
+	const [reload, setReload] = useState(0);
 	const { id } = useParams();
 
 	useEffect(() => {
-	const getChannel = async () => {
+		const fetchCurrentChan = async () => {
 			const response = await fetch(`${process.env.REACT_APP_BACK}channel/${id}`, {
 				method: 'GET',
 			})
 			const data = await response.json();
 			setCurrentChan(data);
-	}
-		getChannel();
+			console.log("--- 0: fetchChan ---");
+		}
+		const fetchJoined = async () => {
+			const response = await fetch(`${process.env.REACT_APP_BACK}channel/user/${currentUser.user?.id}`, {
+				method: 'GET',
+			})
+			const data = await response.json();
+			setJoinedList(data);
+			console.log("--- 0: fetchJoined ---");
+		}
+		const fetchPublic = async () => {
+			const response = await fetch(`${process.env.REACT_APP_BACK}channel/public`, {
+				method: 'GET',
+			})
+			const data = await response.json();
+			setPublicList(data);
+			console.log("--- 0: fetchPublic ---");
+		}
+		fetchCurrentChan();
+		fetchJoined();
+		fetchPublic();
 	}, [id]);
 
-	// useEffect(() => {
-	// 	socket.on("updateMember", (data) => {
-	// 		getChannel();
-	// 		console.log("updateMember received in channels");
-	// 	});
+	const handleReload = () => {
+		setReload(reload + 1);
+	}
 
-	// 	return () => {
-	// 		socket.off("updateMember");
-	// 	}
-	// });
+	useEffect(() => {
+		socket.on("updateMember", (data) => {
+			const fetchCurrentChan = async () => {
+				const response = await fetch(`${process.env.REACT_APP_BACK}channel/${id}`, {
+					method: 'GET',
+				})
+				const data = await response.json();
+				setCurrentChan(data);
+				console.log("--- 1: fetchCurrentChan (updateMember) ---");
+		}
+			const fetchJoined = async() => {
+				const response = await fetch(`${process.env.REACT_APP_BACK}channel/user/${currentUser.user?.id}`, {
+					method: 'GET',
+				})
+				const data = await response.json();
+				setJoinedList(data);
+				console.log("--- 1: fetchJoined (updateMember) ---");
+		}
+		fetchCurrentChan();
+		fetchJoined();
+		});
+
+		socket.on("createChannelOk", (data) => {
+			const fetchPublic = async () => {
+				const response = await fetch(`${process.env.REACT_APP_BACK}channel/public`, {
+					method: 'GET',
+				})
+				const data = await response.json();
+				setPublicList(data);	
+				console.log("--- 1: fetchPublic (createChannelOk) ---");
+			}
+			fetchPublic();
+		});
+
+		return () => {
+			socket.off("updateMember");
+			socket.off("createChannelOk");
+		}
+	});
 
 	return (id) ? (
 		<div id="chat-container">
 			<div className="sidebar left-sidebar">
-				<JoinedChannelList />
+				<JoinedChannelList chanList={joinedList} />
 				<AddChannel />
-				<PublicChannelList />
+				<PublicChannelList chanList={publicList} />
 			</div>
+
 			{
 				currentChan !== undefined &&
 				<>
-					{/* <ChannelMessages channel={currentChan} /> */}
-					<ChannelMessages chanId={id} chan={currentChan} reload={getChannel} />
-
-					{
-						// currentChan.users.find(obj => obj.id === currentUser.user?.id) &&
-						currentChan?.users &&
-						<div className="sidebar right-sidebar">
-							<ChannelMemberList chan={currentChan} reload={getChannel}/>
-						</div>
-					}
+					<div className="chat-body">
+						<ChannelHeader user={currentUser.user} channel={currentChan} reload={handleReload} />
+						<ChannelMessages chan={currentChan} />
+					</div>
+					<div className="sidebar right-sidebar">
+						{
+							// currentChan.users.find(obj => obj.id === currentUser.user?.id) &&
+							currentChan?.users &&
+							<ChannelMemberList chan={currentChan} />
+						}
+					</div>
 				</>
 			}
 		</div>
 	) : (
 		<div id="chat-container">
-		<div className="sidebar left-sidebar">
-			<JoinedChannelList />
-			<AddChannel />
-			<PublicChannelList />
+			<div className="sidebar left-sidebar">
+				<JoinedChannelList chanList={joinedList} />
+				<AddChannel />
+				<PublicChannelList chanList={publicList} />
+			</div>
 		</div>
-	</div>
 	);
 }
