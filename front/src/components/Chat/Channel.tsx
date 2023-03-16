@@ -226,6 +226,7 @@ export function Channels() {
 	const currentUser = useAppSelector(state => state.user);
 	const { id } = useParams();
 
+	useEffect(() => {
 	const getChannel = async () => {
 			const response = await fetch(`${process.env.REACT_APP_BACK}channel/${id}`, {
 				method: 'GET',
@@ -233,8 +234,6 @@ export function Channels() {
 			const data = await response.json();
 			setCurrentChan(data);
 	}
-
-	useEffect(() => {
 		getChannel();
 	}, [id]);
 

@@ -18,6 +18,10 @@ export default function CLickableMenu(props: { user: IUser, chan: IChannel }) {
     const [onglet, setOnglet] = useState<page>(page.PAGE_1);
     const navigate = useNavigate();
 
+    /**
+     * For DM tab change, useEffect can be used to reload the page
+     * 
+     */
     return (
         <div className="dropdown-container">
             <div className="dropdown clickable-menu hover-style">
