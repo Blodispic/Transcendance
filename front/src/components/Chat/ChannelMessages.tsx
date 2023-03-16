@@ -18,10 +18,7 @@ export function ChannelHeader(props: { user: any, channel: IChannel, reload: Fun
 	if (props.channel.users?.find(obj => obj.id === props.user?.id))
 	{
 		isJoined = true;
-		console.log("here");
 	}
-
-	console.log("0: isJoined: ", isJoined);
 
 	return (
 		<div className="body-header" >
@@ -71,20 +68,6 @@ export function ChannelMessages(props: { chan: IChannel }) {
 	const currentUser = useAppSelector(state => state.user);
 	const [newInput, setNewInput] = useState<string>("");
 	const [messageList, setMessageList] = useState<IMessage[]>([]);
-	// const [currentChan, setCurrentChan] = useState<IChannel>();
-
-	// const getChannel = async () => {
-	// 	const response = await fetch(`${process.env.REACT_APP_BACK}channel/${props.chanId}`, {
-	// 		method: 'GET',
-	// 	})
-	// 	const data = await response.json();
-	// 	setCurrentChan(data);
-	// 	console.log("getchannel called in channel messages");
-	// }
-
-	// useEffect(() => {
-	// 	getChannel();
-	// }, []);
 
 	const handleSubmitNewMessage = (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();

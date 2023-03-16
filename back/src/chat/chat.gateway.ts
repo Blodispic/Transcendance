@@ -113,7 +113,7 @@ async handleJoinChannel(@ConnectedSocket() client: Socket, @MessageBody() joinCh
   });
   client.join("chan" + joinChannelDto.chanid);
   // client.emit("joinChannelOK", channel);
-  client.emit("updateMember", channel);
+  client.emit("updateJoined", channel);
   // this.server.to("chan" + channel.id).emit("joinChannel", user);
   this.server.to("chan" + channel.id).emit("updateMember", user);
 }
@@ -137,7 +137,7 @@ async handleCreateChannel(@ConnectedSocket() client: Socket, @MessageBody() crea
 
   client.emit("createChannelOk", new_channel.id);
   // client.emit("joinChannelOK", new_channel.id);
-  client.emit("updateMember", new_channel.id);
+  client.emit("updateJoined", new_channel.id);
 
   this.server.emit("createChannelOk", new_channel.id);
 }
@@ -151,7 +151,7 @@ async handleLeaveChannel(@ConnectedSocket() client: Socket, @MessageBody() leave
   this.channelService.rm( { user, chanid: leaveChannelDto.chanid});
   client.leave("chan" + leaveChannelDto.chanid);
   // client.emit("leaveChannelOK", channel.id);
-  client.emit("updateMember", channel.id);
+  client.emit("updateJoined", channel.id);
   // this.server.to("chan" + channel.id).emit("leaveChannel", user);
   this.server.to("chan" + channel.id).emit("updateMember", user);
 
