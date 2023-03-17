@@ -5,7 +5,7 @@ import { socket } from "../../App";
 import { IChannel } from "../../interface/Channel";
 import { IUser } from "../../interface/User";
 
-export function CheckPassword(props: { trigger: boolean, setTrigger: Function, channel: IChannel }) {
+export function CheckPassword(props: { trigger: boolean, setTrigger: Function, channel: IChannel, reload: Function }) {
 	const [password, setPassword] = useState("");
 	const [failed, setFailed] = useState<boolean>(false);
 	const [errorMessage, setErrorMessage] = useState("");
@@ -25,6 +25,7 @@ export function CheckPassword(props: { trigger: boolean, setTrigger: Function, c
 		socket.on("joinChannel", (new_chanid) => {
 			setFailed(false);
 			props.setTrigger(false);
+			props.reload();
 		});
 
 		return () => {
@@ -47,48 +48,6 @@ export function CheckPassword(props: { trigger: boolean, setTrigger: Function, c
 				<br />
 				<button onClick={_ => handleJoinWithPass()}>Enter Channel</button>
 			</div>
-		</div>
-	) : <></>;
-}
-
-export function JoinChannel(props: {channel: IChannel }) {
-	const [passPopup, setPassPopup] = useState(false);
-
-	if (props.channel === undefined)
-	{	
-		return (<></>);
-	}
-
-	const handleJoin = () => {
-		socket.emit('joinChannel', {chanid: props.channel.id});
-	}
-
-	return (
-		<div>
-			{
-				props.channel.chanType === 0 &&
-				<button style={{ float: 'right' }} onClick={_ => handleJoin()}>Join Channel</button>
-			}			
-			{
-				props.channel.chanType === 2 &&
-				<>
-				<button style={{ float: 'right' }} onClick={() => setPassPopup(true)}>Join Channel</button>
-				<CheckPassword trigger={passPopup} setTrigger={setPassPopup} channel={props.channel} />
-				</>
-			}
-		</div>
-	);
-}
-
-export function LeaveChannel (props: {channel: IChannel}) {
-	
-	const handleLeave = () => {
-		socket.emit('leaveChannel', {chanid: props.channel.id});
-	}
-
-	return (props.channel.id) ? (
-		<div>
-			<button onClick={_ => handleLeave()}>Leave Channel</button>
 		</div>
 	) : <></>;
 }
@@ -131,7 +90,7 @@ export function JoinLeave(props: {currentUser: any, channel: IChannel, isJoined:
 					props.channel.chanType === 2 &&
 					<>
 					<button style={{ float: 'right' }} onClick={() => setPassPopup(true)}>Join Channel</button>
-					<CheckPassword trigger={passPopup} setTrigger={setPassPopup} channel={props.channel} />
+					<CheckPassword trigger={passPopup} setTrigger={setPassPopup} channel={props.channel} reload={props.reload} />
 					</>
 				}
 			</div>

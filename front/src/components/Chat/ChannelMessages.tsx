@@ -8,7 +8,7 @@ import { IMessage } from "../../interface/Message";
 import { IUser } from "../../interface/User";
 import { useAppSelector } from "../../redux/Hook";
 import { ConfigureChannel } from "./AdminCommands";
-import { JoinChannel, JoinLeave, LeaveChannel } from "./JoinLeave";
+import { JoinLeave } from "./JoinLeave";
 
 // export function ChannelHeader(props: { user: any, channel: IChannel}) {
 export function ChannelHeader(props: { user: any, channel: IChannel, reload: Function}) {

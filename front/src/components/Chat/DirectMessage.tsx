@@ -48,6 +48,25 @@ function DMList(props: {currentdm: IUser | undefined; setCurrentDm: Function}) {
 
 function BlockUser(userid: number) {
 
+	// const Block = async () => {
+    //     await fetch(`${process.env.REACT_APP_BACK}user/block/${myUser.user?.id}`, {
+    //         method: 'POST',
+    //         body: JSON.stringify({
+    //             blockedId: currentUser.id,
+    //         }),
+    //         headers: {
+    //             'Content-Type': 'application/json',
+    //             'Authorization': `Bearer ${myUser.myToken}`,
+    //         }
+    //     })
+    //         .then(async response => {
+    //             if (response.ok)
+    //                 dispatch(addBlockedUser(currentUser));
+    //             setRelation("Blocked");
+
+    //         })
+    // }
+
 	// useEffect(() => {
 
 	// 	const blockUser = async () => {
@@ -65,6 +84,26 @@ function BlockUser(userid: number) {
 
 function UnblockUser(userid: number) {
 		
+
+	// const UnBlock = async () => {
+    //     await fetch(`${process.env.REACT_APP_BACK}user/unblock/${myUser.user?.id}`, {
+    //         method: 'DELETE',
+    //         body: JSON.stringify({
+    //             blockedId: currentUser.id,
+    //         }),
+    //         headers: {
+    //             'Content-Type': 'application/json',
+    //             'Authorization': `Bearer ${myUser.myToken}`,
+    //         }
+    //     })
+    //         .then(async response => {
+    //             if (response.ok)
+    //                 dispatch(unBlockUser(currentUser));
+    //             setRelation("Nobody");
+
+    //         })
+    // }
+
 	// useEffect(() => {
 
 	// 	const unblockUser = async() => {

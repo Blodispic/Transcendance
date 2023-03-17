@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { BsFillKeyFill, BsFillPersonFill } from "react-icons/bs";
 import { FaCrown } from "react-icons/fa";
-import { HiLockClosed, HiPlusCircle } from "react-icons/hi2";
+import { HiLockClosed } from "react-icons/hi2";
 import { useNavigate, useParams } from "react-router-dom";
 import { socket } from "../../App";
 import { IChannel } from "../../interface/Channel";
@@ -11,22 +11,56 @@ import { ChannelHeader, ChannelMessages } from "./ChannelMessages";
 import CLickableMenu from "./clickableMenu";
 import { AddChannel } from "./CreateChannel";
 
-function JoinedChannelList(props: {chanList: IChannel[]}) {
+// function JoinedChannelList(props: {chanList: IChannel[]}) {
+function JoinedChannelList() {
 	const navigate = useNavigate();
+	const [chanList, setChanList] = useState<IChannel[] | undefined>(undefined);
+	const currentUser = useAppSelector(state => state.user);
+	const [reload, setReload] = useState(0);
+
+	const handleReload = () => {
+		setReload(reload + 1);
+	}
+
+	useEffect(() => {
+		const fetchJoined = async () => {
+			const response = await fetch(`${process.env.REACT_APP_BACK}channel/user/${currentUser.user?.id}`, {
+				method: 'GET',
+			})
+			const data = await response.json();
+			setChanList(data);
+			// console.log("---", reload,": fetchJoined ---");
+		}
+		fetchJoined();
+		}, [reload]);
+
+
+	useEffect(() => {
+		socket.on("updateJoined", (data) => {
+			handleReload();
+			console.log("+++ joined update +++");
+		});
+
+		return () => {
+				socket.off("updateJoined");
+			}
+	});
+	
+	console.log(reload," No. of joined: ", chanList?.length);
 
 	return (
 		<div className="title">
 			<header>Joined Channels <hr /></header>
-			{props.chanList && props.chanList.map(chan => (
+			{chanList && chanList.map(chan => (
 				<ul key={chan.name}>
 					<li>
 						<div onClick={_ => navigate(`/Chat/channel/${chan.id}`)}>{chan.name}
 							{
-								chan.chanType == 1 &&
+								chan.chanType === 1 &&
 								<HiLockClosed style={{ float: 'right' }} />
 							}
 							{
-								chan.chanType == 2 &&
+								chan.chanType === 2 &&
 								<BsFillKeyFill style={{ float: 'right' }} />
 							}
 						</div>
@@ -37,8 +71,14 @@ function JoinedChannelList(props: {chanList: IChannel[]}) {
 	);
 }
 
-function PublicChannelList(props: {chanList: IChannel[]}) {
+function PublicChannelList(props: {chanList: IChannel[], reload: Function}) {
 	const navigate = useNavigate();
+
+
+	socket.on("createChannelOk", (data) => {
+		console.log("+++ create chan +++");
+		props.reload();
+	});
 
 	return (
 		<div className="title">
@@ -50,11 +90,11 @@ function PublicChannelList(props: {chanList: IChannel[]}) {
 						<li>
 							<div onClick={_ => navigate(`/Chat/channel/${chan.id}`)}>{chan.name}
 								{
-									chan.chanType == 1 &&
+									chan.chanType === 1 &&
 									<HiLockClosed style={{ float: 'right' }} />
 								}
 								{
-									chan.chanType == 2 &&
+									chan.chanType === 2 &&
 									<BsFillKeyFill style={{ paddingLeft: '10px' }} />
 								}
 							</div>
@@ -66,11 +106,11 @@ function PublicChannelList(props: {chanList: IChannel[]}) {
 	);
 }
 
-function ChannelMemberList(props: { user: IUser, chan: IChannel }) {
+function ChannelMemberList(props: { user: IUser, chan: IChannel, reload: Function }) {
 	const [currentId, setCurrentId] = useState<number | undefined>(undefined);
 
 	const changeId = (id: number) => {
-		if (id == currentId)
+		if (id === currentId)
 			setCurrentId(undefined);
 		else
 			setCurrentId(id);
@@ -102,7 +142,7 @@ function ChannelMemberList(props: { user: IUser, chan: IChannel }) {
 						</li>
 					</ul>
 					{
-						currentId == user.id &&
+						currentId === user.id &&
 						<CLickableMenu user={user} chan={props.chan} />
 					}
 				</div>
@@ -127,34 +167,34 @@ export function Channels() {
 			})
 			const data = await response.json();
 			setCurrentChan(data);
-			console.log("---", reload,": fetchChan ---");
+			// console.log("---", reload,": fetchChan ---");
 		}
-		const fetchJoined = async () => {
-			const response = await fetch(`${process.env.REACT_APP_BACK}channel/user/${currentUser.user?.id}`, {
-				method: 'GET',
-			})
-			const data = await response.json();
-			setJoinedList(data);
-			console.log("---", reload,": fetchJoined ---");
-		}
+		// const fetchJoined = async () => {
+		// 	const response = await fetch(`${process.env.REACT_APP_BACK}channel/user/${currentUser.user?.id}`, {
+		// 		method: 'GET',
+		// 	})
+		// 	const data = await response.json();
+		// 	setJoinedList(data);
+		// 	console.log("---", reload,": fetchJoined ---");
+		// }
 		const fetchPublic = async () => {
 			const response = await fetch(`${process.env.REACT_APP_BACK}channel/public`, {
 				method: 'GET',
 			})
 			const data = await response.json();
 			setPublicList(data);
-			console.log("---", reload,": fetchPublic ---");
+			// console.log("---", reload,": fetchPublic ---");
 		}
 
-		socket.on("createChannelOk", (data) => {
-			console.log("+++ create chan +++");
-			handleReload();
-		});
+		// socket.on("createChannelOk", (data) => {
+		// 	console.log("+++ create chan +++");
+		// 	handleReload();
+		// });
 
-		socket.on("updateJoined", (data) => {
-			console.log("+++ joined update +++");
-			handleReload();
-		});
+		// socket.on("updateJoined", (data) => {
+		// 	console.log("+++ joined update +++");
+		// 	handleReload();
+		// });
 
 		socket.on("updateMember", (data) => {
 			console.log("+++ member update +++");
@@ -162,19 +202,60 @@ export function Channels() {
 		});
 
 		fetchCurrentChan();
-		fetchJoined();
+		// fetchJoined();
 		fetchPublic();
 		
 		return () => {
 				socket.off("updateMember");
-				socket.off("updateJoined");
-				socket.off("createChannelOk");
+				// socket.off("updateJoined");
+				// socket.off("createChannelOk");
 			}
 	}, [id, reload]);
 
 	const handleReload = () => {
 		setReload(reload + 1);
 	}
+
+	if (currentChan !== undefined)
+		console.log(reload, " channame: ", currentChan?.name ," | users: ", currentChan.users?.length , " | joined: ", joinedList?.length);
+
+	return (id) ? (
+		<div id="chat-container">
+			<div className="sidebar left-sidebar">
+				<JoinedChannelList />
+				<AddChannel />
+				<PublicChannelList chanList={publicList} reload={handleReload}/>
+			</div>
+
+			{
+				currentChan !== undefined &&
+				<>
+					<div className="chat-body">
+						<ChannelHeader user={currentUser.user} channel={currentChan} reload={handleReload} />
+						<ChannelMessages chan={currentChan} />
+					</div>
+					<div className="sidebar right-sidebar">
+						{
+							// currentChan.users.find(obj => obj.id === currentUser.user?.id) &&
+							currentUser.user &&
+							<ChannelMemberList user={currentUser.user} chan={currentChan} reload={handleReload} />
+						}
+					</div>
+				</>
+			}
+		</div>
+	) : (
+		<div id="chat-container">
+			<div className="sidebar left-sidebar">
+				<JoinedChannelList />
+				<AddChannel />
+				<PublicChannelList chanList={publicList} reload={handleReload}/>
+			</div>
+		</div>
+	);
+}
+
+
 
 
 	/**
@@ -268,42 +349,3 @@ export function Channels() {
 	// 		socket.off("updateMember");
 	// 	}
 	// });
-
-	if (currentChan !== undefined)
-		console.log(reload, " channame: ", currentChan?.name ," | users: ", currentChan.users?.length , " | joined: ", joinedList?.length);
-
-	return (id) ? (
-		<div id="chat-container">
-			<div className="sidebar left-sidebar">
-				<JoinedChannelList chanList={joinedList} />
-				<AddChannel />
-				<PublicChannelList chanList={publicList} />
-			</div>
-
-			{
-				currentChan !== undefined &&
-				<>
-					<div className="chat-body">
-						<ChannelHeader user={currentUser.user} channel={currentChan} reload={handleReload} />
-						<ChannelMessages chan={currentChan} />
-					</div>
-					<div className="sidebar right-sidebar">
-						{
-							// currentChan.users.find(obj => obj.id === currentUser.user?.id) &&
-							currentUser.user &&
-							<ChannelMemberList user={currentUser.user} chan={currentChan} />
-						}
-					</div>
-				</>
-			}
-		</div>
-	) : (
-		<div id="chat-container">
-			<div className="sidebar left-sidebar">
-				<JoinedChannelList chanList={joinedList} />
-				<AddChannel />
-				<PublicChannelList chanList={publicList} />
-			</div>
-		</div>
-	);
-}
