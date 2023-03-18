@@ -1,3 +1,4 @@
+import { IMessage } from "./Message";
 import { IUser } from "./User";
 
 export interface IChannel {
@@ -10,4 +11,5 @@ export interface IChannel {
 	users: IUser[];
 	banned: IUser[];
 	muted: IUser[];
+	messages?: IMessage[];
 }

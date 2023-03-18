@@ -158,7 +158,15 @@ export class ChannelService {
 	  }
 
 	  getAll() {
-		return this.channelRepository.find();
+		return this.channelRepository.find({ // need to check with beco if this is ok to do
+			relations: {
+				admin: true,
+				users: true,
+				muted: true,
+				banned: true,
+				owner: true,
+			}
+		});
 	  }
 
 	  getPublic() {		

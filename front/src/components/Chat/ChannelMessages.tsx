@@ -2,56 +2,62 @@ import { useEffect, useState } from "react";
 import { BsKeyFill } from "react-icons/bs";
 import { HiLockClosed } from "react-icons/hi2";
 import { ImCog } from "react-icons/im";
+import { useParams } from "react-router-dom";
 import { socket } from "../../App";
-import { IChannel } from "../../interface/Channel";
-import { IMessage } from "../../interface/Message";
-import { IUser } from "../../interface/User";
-import { useAppSelector } from "../../redux/Hook";
+import { addMessage } from "../../redux/chat";
+import { useAppDispatch, useAppSelector } from "../../redux/Hook";
 import { ConfigureChannel } from "./AdminCommands";
-import { JoinLeave } from "./JoinLeave";
+import { JoinChannel, JoinLeave, LeaveChannel } from "./JoinLeave";
 
-// export function ChannelHeader(props: { user: any, channel: IChannel}) {
-export function ChannelHeader(props: { user: any, channel: IChannel, reload: Function}) {
+export function ChannelHeader() {
 	const [popup, setPopup] = useState(false);
-	let isJoined: boolean = false;
+	const currentUser = useAppSelector(state => state.user.user);
+	const { id } = useParams();
+	const [chanId, setChanId] = useState<number | undefined>(undefined);
 
-	if (props.channel.users?.find(obj => obj.id === props.user?.id))
-	{
-		isJoined = true;
-	}
+	useEffect(() => {
+		if (id !== undefined) {
+			setChanId(parseInt(id));
+		}
+	}, [id]);
 
-	return (
+	const currentChan = useAppSelector(state => 
+		state.chat.channels.find(chan => chan.id === chanId));
+	
+	console.log("currentHeader: ", currentChan?.users);
+
+	return (currentChan) ? (
 		<div className="body-header" >
-		{props.channel.name}
+		{currentChan.name}
 		{
-			props.channel?.chanType == 1 &&
+			currentChan.chanType === 1 &&
 			<HiLockClosed />
 		}
 		{
-			props.channel?.chanType == 2 &&
+			currentChan.chanType === 2 &&
 			<BsKeyFill />
 		}
 		{
-			props.channel !== undefined &&
-			<>
-			<JoinLeave currentUser={props.user} channel={props.channel} isJoined={isJoined} reload={props.reload} />
-			{/* <JoinChannel channel={props.channel} />
-			<LeaveChannel channel={props.channel} /> */}
-			</>	
+			currentChan.users?.find(obj => obj.id === currentUser?.id) === undefined &&
+			<JoinChannel channel={currentChan}/>
 		}
 		{
-			props.channel?.id &&
+			currentChan.users?.find(obj => obj.id === currentUser?.id) &&
+			<LeaveChannel channel={currentChan} />
+		}
+		{
+			currentChan.id &&
 			<>
 				{
-					props.channel?.chanType !== 1 &&
+					currentChan.chanType !== 1 &&
 					<>
 						{
-							props.channel.users.find(obj => obj.id == props.user?.id) &&
+							currentChan.users?.find(obj => obj.id === currentUser?.id) &&
 							<>
-							{props.channel.owner.id === props.user?.id&&
+							{currentChan.owner.id === currentUser?.id&&
 							<>
-								<ImCog className="config-icon" onClick={() => setPopup(true)} />
-								<ConfigureChannel trigger={popup} setTrigger={setPopup} channel={props.channel} />
+								<ImCog className="config-icon" onClick={_ => setPopup(true)} />
+								<ConfigureChannel trigger={popup} setTrigger={setPopup} channel={currentChan} />
 							</>}
 							</>
 						}
@@ -59,28 +65,44 @@ export function ChannelHeader(props: { user: any, channel: IChannel, reload: Fun
 				}
 			</>
 		}
-
 	</div>
-	);
+	) : <></>;
 }
 
-export function ChannelMessages(props: { chan: IChannel }) {
+export function ChannelMessages() {
 	const currentUser = useAppSelector(state => state.user);
 	const [newInput, setNewInput] = useState<string>("");
-	const [messageList, setMessageList] = useState<IMessage[]>([]);
+	// const currentChan = useAppSelector(state => state.chat.channels.find(chan => chan.id === props.chanId));
+	const dispatch = useAppDispatch();
+	// const [chanId, setChanId] = useState(props.chanId);
+
+	const { id } = useParams();
+	const [chanId, setChanId] = useState<number | undefined>(undefined);
+
+	useEffect(() => {
+		if (id !== undefined) {
+			setChanId(parseInt(id));
+		}
+	}, [id]);
+
+	console.log("ChanMessage: ", id, " | number: ", chanId);
+	const currentChan = useAppSelector(state => 
+		state.chat.channels.find(chan => chan.id === chanId));
 
 	const handleSubmitNewMessage = (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
-		if (newInput != "") {			
+		if (newInput !== "") {			
 			const sendTime = new Date().toLocaleString('en-US');
-			socket.emit('sendMessageChannel', { chanid: props.chan.id, message: newInput, sendtime: sendTime });
+			socket.emit('sendMessageChannel', { chanid: currentChan?.id, message: newInput, sendtime: sendTime });
 		}
 		setNewInput("");
 	}
 	
 	useEffect(() => {
 		socket.on('sendMessageChannelOK', (messageDto) => {
-			setMessageList([...messageList, messageDto]);
+			console.log(messageDto);
+			dispatch(addMessage({id:chanId, message:messageDto}));
+			// setMessageList([...messageList, messageDto]);
 		});
 
 		return () => {
@@ -88,15 +110,15 @@ export function ChannelMessages(props: { chan: IChannel }) {
 		}
 	});
 		
-	return (
+	return (currentChan) ? (
 		<>
-			{props.chan.users?.find(obj => obj.id == currentUser.user?.id) !== undefined &&
+			{currentChan.users?.find(obj => obj.id === currentUser.user?.id) !== undefined &&
 				<>
 					<div className="chat-messages">
 						{
 							<div className="reverse">
-								{messageList && messageList.map(message => (
-									message.chanid == props.chan.id &&
+								{currentChan.messages && currentChan.messages.map(message => (
+									message.chanid === currentChan.id &&
 									<div key={message.sendtime + message.message} className="__wrap">
 										<div className="message-info">
 											<img className="user-avatar" src={`${process.env.REACT_APP_BACK}user/${message.sender?.id}/avatar`} />
@@ -116,5 +138,5 @@ export function ChannelMessages(props: { chan: IChannel }) {
 				</>
 			}
 		</>
-	);
+	) : <></>;
 }

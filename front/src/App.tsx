@@ -9,6 +9,7 @@ import { IUser, UserStatus } from "./interface/User";
 import InviteGame from "./components/utils/InviteGame";
 import { Player } from "./components/Game/Game";
 import swal from "sweetalert";
+import { setChannels } from "./redux/chat";
 
 export let socket: Socket;
 
@@ -75,6 +76,18 @@ function App() {
     }
   }, [myUser.isLog])
 
+  // need to check with manu on this -- a function for setting initial values on channels store
+  const get_channels = async() => {
+    const response = await fetch(`${process.env.REACT_APP_BACK}channel`, {
+      method: 'GET',
+    }).then(async response => {
+      const data = await response.json();
+
+      if (response.ok) {
+        dispatch(setChannels(data));
+      }
+    })
+  }
 
   const get_user = async () => {
     const response = await fetch(`${process.env.REACT_APP_BACK}user/access_token`, {
@@ -102,6 +115,7 @@ function App() {
   if (myUser.user === undefined) {
     if (token !== undefined)
       get_user();
+      get_channels(); //added
   }
 
   return (

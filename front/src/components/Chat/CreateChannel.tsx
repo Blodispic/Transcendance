@@ -3,7 +3,8 @@ import { HiOutlineXMark, HiPlus } from "react-icons/hi2";
 import { useNavigate } from "react-router-dom";
 import { socket } from "../../App";
 import { IUser } from "../../interface/User";
-import { useAppSelector } from "../../redux/Hook";
+import { addChannel } from "../../redux/chat";
+import { useAppDispatch } from "../../redux/Hook";
 import AllPeople from "../utils/Allpeople";
 
 export function PopupCreateChannel(props: any) {
@@ -13,7 +14,8 @@ export function PopupCreateChannel(props: any) {
     const [friend, setFriend] = useState<IUser[] >([]);
 	const [myVar, setMyvar] = useState<boolean> (false);
 	const [failed, setFailed] = useState<boolean> (false);
-	const navigate = useNavigate();
+	// const navigate = useNavigate();
+	const dispatch = useAppDispatch();
 
 	const handlePublic = () => {
 		setChanMode(0);
@@ -31,7 +33,7 @@ export function PopupCreateChannel(props: any) {
 	}, [friend] )
 
 	const handleCreateNewChan = () => {
-		if (chanName != "")
+		if (chanName !== "")
 			socket.emit('createChannel', { chanName: chanName, password: password, chanType: chanMode, users: friend });
 		setChanName("");
 		setPassword("");
@@ -43,9 +45,18 @@ export function PopupCreateChannel(props: any) {
 			setFailed(true);
 		});
 		socket.on("createChannelOk", (new_chanid) => {
+			const fetchChanInfo = async () => {
+				const response = await fetch(`${process.env.REACT_APP_BACK}channel/${new_chanid}`, {
+					method: 'GET',
+				})
+				const data = await response.json();
+				dispatch(addChannel(data));
+				console.log(":: create chan ::");
+			}
+			fetchChanInfo();
 			setFailed(false);
 			props.setTrigger(false);
-			navigate(`/Chat/channel/${new_chanid}`)
+			// navigate(`/Chat/channel/${new_chanid}`)
 		});
 
 		return () => {

@@ -112,10 +112,11 @@ async handleJoinChannel(@ConnectedSocket() client: Socket, @MessageBody() joinCh
     chanId: channel.id,
   });
   client.join("chan" + joinChannelDto.chanid);
-  // client.emit("joinChannelOK", channel);
-  client.emit("updateJoined", channel);
-  // this.server.to("chan" + channel.id).emit("joinChannel", user);
-  this.server.to("chan" + channel.id).emit("updateMember", user);
+  // client.emit("joinChannelOK", channel); //original
+  client.emit("joinChannelOK", channel.id);
+  // client.emit("updateJoined", channel);
+  this.server.to("chan" + channel.id).emit("joinChannel", user);
+  // this.server.to("chan" + channel.id).emit("updateMember", user);
 }
 
 @SubscribeMessage('createChannel')
@@ -135,9 +136,9 @@ async handleCreateChannel(@ConnectedSocket() client: Socket, @MessageBody() crea
   if (new_channel.chanType == 1 && createChannelDto.users && createChannelDto.users.length > 0)
     this.inviteToChan(createChannelDto.users, new_channel.id);
 
-  client.emit("createChannelOk", new_channel.id);
+  // client.emit("createChannelOk", new_channel.id);
   // client.emit("joinChannelOK", new_channel.id);
-  client.emit("updateJoined", new_channel.id);
+  // client.emit("updateJoined", new_channel.id);
 
   this.server.emit("createChannelOk", new_channel.id);
 }
@@ -150,10 +151,10 @@ async handleLeaveChannel(@ConnectedSocket() client: Socket, @MessageBody() leave
     throw new BadRequestException("No such Channel or User"); // no such channel/user, shouldn't happened
   this.channelService.rm( { user, chanid: leaveChannelDto.chanid});
   client.leave("chan" + leaveChannelDto.chanid);
-  // client.emit("leaveChannelOK", channel.id);
-  client.emit("updateJoined", channel.id);
-  // this.server.to("chan" + channel.id).emit("leaveChannel", user);
-  this.server.to("chan" + channel.id).emit("updateMember", user);
+  client.emit("leaveChannelOK", channel.id);
+  // client.emit("updateJoined", channel.id);
+  this.server.to("chan" + channel.id).emit("leaveChannel", user);
+  // this.server.to("chan" + channel.id).emit("updateMember", user);
 
 }
 
