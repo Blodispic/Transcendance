@@ -36,17 +36,19 @@ function JoinedChannelList() {
 
 
 	useEffect(() => {
-		socket.on("updateJoined", (data) => {
+		socket.on("joinChannelOK", (data) => {
 			handleReload();
-			console.log("+++ joined update +++");
+		});
+		socket.on("leaveChannelOK", (data) => {
+			handleReload();
 		});
 
 		return () => {
-				socket.off("updateJoined");
+				socket.off("joinChannelOK");
+				socket.off("leaveChannelOK");
 			}
 	});
 	
-
 	return (
 		<div className="title">
 			<header>Joined Channels <hr /></header>
@@ -123,12 +125,10 @@ function ChannelMemberList() {
 		useEffect(() => {
 			socket.on("joinChannel", (user) => {
 				dispatch(addMember({id: currentChan?.id, user: user}));
-				console.log("+++ added member  +++");
 			});
 	
 			socket.on("leaveChannel", (user) => {
 				dispatch(removeMember({id: currentChan?.id, user: user}));
-				console.log("+++ removed member  +++");
 			});
 			return () => {
 					socket.off("joinChannel");
@@ -136,8 +136,6 @@ function ChannelMemberList() {
 				}
 		});
 		
-
-
 	const changeId = (id: number) => {
 		if (id === currentId)
 			setCurrentId(undefined);

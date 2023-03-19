@@ -100,9 +100,7 @@ export function ChannelMessages() {
 	
 	useEffect(() => {
 		socket.on('sendMessageChannelOK', (messageDto) => {
-			console.log(messageDto);
-			dispatch(addMessage({id:chanId, message:messageDto}));
-			// setMessageList([...messageList, messageDto]);
+			dispatch(addMessage(messageDto));
 		});
 
 		return () => {
