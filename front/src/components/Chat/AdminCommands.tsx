@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { HiOutlineXMark } from "react-icons/hi2";
 import { socket } from "../../App";
 import { IChannel } from "../../interface/Channel";
+import { useAppDispatch } from "../../redux/Hook";
 
 export function BanUser(props: { chanid: any, userid: any, trigger: boolean, setTrigger: Function }) {
 	const [timeout, setTimeout] = useState<string>("");
@@ -74,7 +75,15 @@ export function MuteUser(props: { chanid: any, userid: any, trigger: boolean, se
 }
 
 export function AddAdmin(chanid: any, userid: any) {
+	const dispatch = useAppDispatch();
 	socket.emit('GiveAdmin', {chanid: chanid, userid: userid});
+//  client.emit("giveAdminOK", user.id, channel.id);
+	// useEffect(() => {
+	// 	socket.on("giveAdminOK", ({userId, chanId}) =>{
+	// 		dispatch()
+	// 	})
+	// })
+
 }
 
 export function KickUser(chanid: any, userid: any) {

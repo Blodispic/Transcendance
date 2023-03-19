@@ -5,54 +5,54 @@ import { HiLockClosed } from "react-icons/hi2";
 import { useNavigate, useParams } from "react-router-dom";
 import { socket } from "../../App";
 import { IChannel } from "../../interface/Channel";
-import { addChannel, addMember, removeMember } from "../../redux/chat";
+import { addMember, removeMember } from "../../redux/chat";
 import { useAppDispatch, useAppSelector } from "../../redux/Hook";
 import { ChannelHeader, ChannelMessages } from "./ChannelMessages";
 import CLickableMenu from "./clickableMenu";
 import { AddChannel } from "./CreateChannel";
 
-// function JoinedChannelList(props: {chanList: IChannel[]}) {
-function JoinedChannelList() {
+function JoinedChannelList(props: {chanList: IChannel[]}) {
+// function JoinedChannelList() {
 	const navigate = useNavigate();
-	const [chanList, setChanList] = useState<IChannel[] | undefined>(undefined);
+	// const [chanList, setChanList] = useState<IChannel[] | undefined>(undefined);
 	const currentUser = useAppSelector(state => state.user);
-	const [reload, setReload] = useState(0);
+	// const [reload, setReload] = useState(0);
 
-	const handleReload = () => {
-		setReload(reload + 1);
-	}
+	// const handleReload = () => {
+	// 	setReload(reload + 1);
+	// }
 
-	useEffect(() => {
-		const fetchJoined = async () => {
-			const response = await fetch(`${process.env.REACT_APP_BACK}channel/user/${currentUser.user?.id}`, {
-				method: 'GET',
-			})
-			const data = await response.json();
-			setChanList(data);
-			// console.log("---", reload,": fetchJoined ---");
-		}
-		fetchJoined();
-		}, [reload]);
+	// useEffect(() => {
+	// 	const fetchJoined = async () => {
+	// 		const response = await fetch(`${process.env.REACT_APP_BACK}channel/user/${currentUser.user?.id}`, {
+	// 			method: 'GET',
+	// 		})
+	// 		const data = await response.json();
+	// 		setChanList(data);
+	// 		// console.log("---", reload,": fetchJoined ---");
+	// 	}
+	// 	fetchJoined();
+	// 	}, [reload]);
 
 
-	useEffect(() => {
-		socket.on("joinChannelOK", (data) => {
-			handleReload();
-		});
-		socket.on("leaveChannelOK", (data) => {
-			handleReload();
-		});
+	// useEffect(() => {
+	// 	socket.on("joinChannelOK", (data) => {
+	// 		handleReload();
+	// 	});
+	// 	socket.on("leaveChannelOK", (data) => {
+	// 		handleReload();
+	// 	});
 
-		return () => {
-				socket.off("joinChannelOK");
-				socket.off("leaveChannelOK");
-			}
-	});
+	// 	return () => {
+	// 			socket.off("joinChannelOK");
+	// 			socket.off("leaveChannelOK");
+	// 		}
+	// });
 	
 	return (
 		<div className="title">
 			<header>Joined Channels <hr /></header>
-			{chanList && chanList.map(chan => (
+			{props.chanList && props.chanList.map(chan => (
 				<ul key={chan.name}>
 					<li>
 						<div onClick={_ => navigate(`/Chat/channel/${chan.id}`)}>{chan.name}
@@ -124,11 +124,13 @@ function ChannelMemberList() {
 
 		useEffect(() => {
 			socket.on("joinChannel", (user) => {
-				dispatch(addMember({id: currentChan?.id, user: user}));
+				if (currentChan?.id !== undefined)
+					dispatch(addMember({id: currentChan.id, user: user}));
 			});
 	
 			socket.on("leaveChannel", (user) => {
-				dispatch(removeMember({id: currentChan?.id, user: user}));
+				if (currentChan?.id !== undefined)
+					dispatch(removeMember({id: currentChan.id, user: user}));
 			});
 			return () => {
 					socket.off("joinChannel");
@@ -136,6 +138,15 @@ function ChannelMemberList() {
 				}
 		});
 		
+		// useEffect(() => {
+		// 	socket.on("updateMember", (user) => {
+		// 		dispatch(updateMember({id: chanId}));
+		// 	});
+		// 	return () => {
+		// 			socket.off("updateMember");
+		// 		}
+		// });
+
 	const changeId = (id: number) => {
 		if (id === currentId)
 			setCurrentId(undefined);
@@ -183,23 +194,48 @@ export function Channels() {
 	const currentUser = useAppSelector(state => state.user);
 	const [joinedList, setJoinedList] = useState<IChannel[]>([]);
 	const { id } = useParams();
-	// const [chanId, setChanId] = useState<number | undefined>(undefined);
+	const [reload, setReload] = useState(0);
+
+	const handleReload = () => {
+		setReload(reload + 1);
+	}
+
+	useEffect(() => {
+		const fetchJoined = async () => {
+			const response = await fetch(`${process.env.REACT_APP_BACK}channel/user/${currentUser.user?.id}`, {
+				method: 'GET',
+			})
+			const data = await response.json();
+			setJoinedList(data);
+			console.log("---", reload,": fetchJoined ---");
+		}
+		fetchJoined();
+		}, [reload]);
 
 	// useEffect(() => {
-	// 	if (id !== undefined) {
-	// 		setChanId(parseInt(id));
-	// 	}
-	// }, [id]);
+	// 	socket.on("joinChannelOK", (data) => {
+	// 		handleReload();
+	// 	});
+	// 	socket.on("leaveChannelOK", (data) => {
+	// 		handleReload();
+	// 	});
+
+	// 	return () => {
+	// 			socket.off("joinChannelOK");
+	// 			socket.off("leaveChannelOK");
+	// 		}
+	// });
+	
 
 	return (id) ? (
 		<div id="chat-container">
 			<div className="sidebar left-sidebar">
-				<JoinedChannelList />
+				<JoinedChannelList chanList={joinedList}/>
 				<AddChannel />
 				<PublicChannelList />
 			</div>
 			<div className="chat-body">
-				<ChannelHeader />
+				<ChannelHeader reload={handleReload}/>
 				<ChannelMessages />
 			</div>
 			<div className="sidebar right-sidebar">
@@ -213,7 +249,7 @@ export function Channels() {
 	) : (
 		<div id="chat-container">
 			<div className="sidebar left-sidebar">
-				<JoinedChannelList />
+				<JoinedChannelList chanList={joinedList}/>
 				<AddChannel />
 				<PublicChannelList />
 			</div>

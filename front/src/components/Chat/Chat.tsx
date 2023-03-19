@@ -11,27 +11,27 @@ export default function Chat() {
 	const navigate = useNavigate();
 	const [current, setOnglet] = useState<page>(page.PAGE_1);
 	const { id } = useParams();
-	const [reload, setReload] = useState<boolean>(false);
+	// const [reload, setReload] = useState<boolean>(false);
 		
 
-	useEffect(() => {
-		setReload(false);
-	}, [reload]);
+	// useEffect(() => {
+	// 	setReload(false);
+	// }, [reload]);
 
-	useEffect(() => {
-		socket.on('leaveChannelOK', (chanid) => {
-			console.log("leavechanles");
-			setReload(true);
-		})
-		socket.on('joinChannelOK', (chanid) => {
-			console.log("join chanels ok");
-			setReload(true);
-		})
-		return () => {
-			socket.off('leaveChannelOK');
-			socket.off('joinChannelOK');
-		}
-	}, []);
+	// useEffect(() => {
+	// 	socket.on('leaveChannelOK', (chanid) => {
+	// 		console.log("leavechanles");
+	// 		setReload(true);
+	// 	})
+	// 	socket.on('joinChannelOK', (chanid) => {
+	// 		console.log("join chanels ok");
+	// 		setReload(true);
+	// 	})
+	// 	return () => {
+	// 		socket.off('leaveChannelOK');
+	// 		socket.off('joinChannelOK');
+	// 	}
+	// }, []);
 
 	useEffect(() => {
 		socket.on("RoomStart", (roomId: number, player: Player) => {
@@ -45,7 +45,7 @@ export default function Chat() {
 				<button className={`pointer ${current === page.PAGE_1 ? "" : "not-selected"}`}
 					onClick={e => { setOnglet(page.PAGE_1); navigate(`/Chat/channel/`) }}>
 					<a >
-						Chanels
+						Channels
 					</a>
 				</button>
 				<button className={`pointer ${current === page.PAGE_2 ? "" : "not-selected"}`}
@@ -56,12 +56,12 @@ export default function Chat() {
 				</button>
 			</div>
 			{
-				current == page.PAGE_1 &&
+				current === page.PAGE_1 &&
 				<Channels />
 
 			}
 			{
-				current == page.PAGE_2 &&
+				current === page.PAGE_2 &&
 				<DirectMessage dmId={id}/>
 			}
 

@@ -7,24 +7,21 @@ import { socket } from "../../App";
 import { addMessage } from "../../redux/chat";
 import { useAppDispatch, useAppSelector } from "../../redux/Hook";
 import { ConfigureChannel } from "./AdminCommands";
-import { JoinChannel, JoinLeave, LeaveChannel } from "./JoinLeave";
+import { JoinChannel, LeaveChannel } from "./JoinLeave";
 
-export function ChannelHeader() {
+export function ChannelHeader(props: {reload: Function}) {
 	const [popup, setPopup] = useState(false);
 	const currentUser = useAppSelector(state => state.user.user);
 	const { id } = useParams();
 	const [chanId, setChanId] = useState<number | undefined>(undefined);
+	const currentChan = useAppSelector(state => 
+		state.chat.channels.find(chan => chan.id === chanId));
 
 	useEffect(() => {
 		if (id !== undefined) {
 			setChanId(parseInt(id));
 		}
 	}, [id]);
-
-	const currentChan = useAppSelector(state => 
-		state.chat.channels.find(chan => chan.id === chanId));
-	
-	console.log("currentHeader: ", currentChan?.users);
 
 	return (currentChan) ? (
 		<div className="body-header" >
@@ -39,11 +36,11 @@ export function ChannelHeader() {
 		}
 		{
 			currentChan.users?.find(obj => obj.id === currentUser?.id) === undefined &&
-			<JoinChannel channel={currentChan}/>
+			<JoinChannel channel={currentChan} reload={props.reload} />
 		}
 		{
 			currentChan.users?.find(obj => obj.id === currentUser?.id) &&
-			<LeaveChannel channel={currentChan} />
+			<LeaveChannel channel={currentChan} reload={props.reload} />
 		}
 		{
 			currentChan.id &&
@@ -85,7 +82,6 @@ export function ChannelMessages() {
 		}
 	}, [id]);
 
-	console.log("ChanMessage: ", id, " | number: ", chanId);
 	const currentChan = useAppSelector(state => 
 		state.chat.channels.find(chan => chan.id === chanId));
 
