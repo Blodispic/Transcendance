@@ -51,9 +51,12 @@ export class ChatGateway
   const socketReceiver = this.findSocketFromUser(receiver);
   if (socketReceiver === null)
     throw new BadRequestException("Receiver is not connected");
+
+  client.emit("sendDmOK", sendDmDto); // added by selee
   this.server.to(socketReceiver.id).emit("ReceiveDM", {
     sender: sender,
     message: sendDmDto.message,
+    sendtime: sendDmDto.sendtime, //added by selee
   });
  }
 

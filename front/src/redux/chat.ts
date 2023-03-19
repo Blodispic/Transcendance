@@ -6,11 +6,13 @@ import { IUser } from "../interface/User";
 interface StateTest {
     channels: IChannel[],
     messages: IMessage[],
+    DMs: IMessage[],
 }
 
 const initialChat: StateTest = {
     channels: [],
     messages: [],
+    DMs: [],
 }
 
 export const chatSlice = createSlice({
@@ -120,6 +122,7 @@ export const chatSlice = createSlice({
             }
             console.log(":: redux :: removePass");
         },
+
         addMessage: (state, { payload }: PayloadAction<IMessage>) => {
             const chan = state.channels.find(obj => obj.id === payload.chanid);
             if (chan) {
@@ -129,8 +132,13 @@ export const chatSlice = createSlice({
                     chan.messages = ([payload]);
             }
         },
+
+        addDM: (state, { payload }: PayloadAction<IMessage>) => {
+            console.log(payload);
+            state.DMs = ([...state.DMs, payload]);
+        } 
     },
 });
 
-export const { setChannels, addChannel, addMember, removeMember, addAdmin, banUser, muteUser, setPass, removePass, addMessage } = chatSlice.actions;
+export const { setChannels, addChannel, addMember, removeMember, addAdmin, banUser, muteUser, setPass, removePass, addMessage, addDM } = chatSlice.actions;
 export default chatSlice.reducer;

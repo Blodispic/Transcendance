@@ -57,7 +57,7 @@ export default function CLickableMenu(props: { user: IUser, chan: IChannel }) {
                                         props.chan.admin?.find(obj => obj.id === props.user.id) == undefined &&
                                         <>
                                             <li>
-                                                <a onClick={_ => AddAdmin(props.chan.id, props.user.id)}>
+                                                <a onClick={_ => AddAdmin({ chanid: props.chan.id, user: props.user})}>
                                                     Add to Admin
                                                 </a>
                                             </li>

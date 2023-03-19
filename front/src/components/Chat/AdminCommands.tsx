@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { HiOutlineXMark } from "react-icons/hi2";
 import { socket } from "../../App";
 import { IChannel } from "../../interface/Channel";
+import { IUser } from "../../interface/User";
+import { addAdmin } from "../../redux/chat";
 import { useAppDispatch } from "../../redux/Hook";
 
 export function BanUser(props: { chanid: any, userid: any, trigger: boolean, setTrigger: Function }) {
@@ -74,16 +76,19 @@ export function MuteUser(props: { chanid: any, userid: any, trigger: boolean, se
 	) : <></>;
 }
 
-export function AddAdmin(chanid: any, userid: any) {
+export function AddAdmin(props: {chanid: any, user: IUser}) {
 	const dispatch = useAppDispatch();
-	socket.emit('GiveAdmin', {chanid: chanid, userid: userid});
-//  client.emit("giveAdminOK", user.id, channel.id);
-	// useEffect(() => {
-	// 	socket.on("giveAdminOK", ({userId, chanId}) =>{
-	// 		dispatch()
-	// 	})
-	// })
 
+	socket.emit('GiveAdmin', {chanid: props.chanid, userid: props.user.id});
+//  client.emit("giveAdminOK", user.id, channel.id);
+	useEffect(() => {
+		socket.on("giveAdminOK", ({userId, chanId}) =>{
+			dispatch(addAdmin({id: chanId, user: props.user}));
+		});
+		return () => {
+			socket.off("giveAdminOK");
+		}
+	})
 }
 
 export function KickUser(chanid: any, userid: any) {
