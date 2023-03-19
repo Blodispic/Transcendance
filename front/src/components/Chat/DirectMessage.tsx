@@ -1,12 +1,11 @@
-import { render } from "@testing-library/react";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { useParams } from "react-router-dom";
 import { socket } from "../../App";
 import { IMessage } from "../../interface/Message";
 import { IUser } from "../../interface/User";
 import { addDM } from "../../redux/chat";
 import { useAppDispatch, useAppSelector } from "../../redux/Hook";
+import { addBlockedUser, unBlockUser } from "../../redux/user";
 import CustomGamePopup from "../Game/CustomGamePopup";
 
 function DMList(props: {currentdm: IUser | undefined; setCurrentDm: Function}) {
@@ -46,83 +45,46 @@ function DMList(props: {currentdm: IUser | undefined; setCurrentDm: Function}) {
 	);
 }
 
-
-function BlockUser(userid: number) {
-
-	// const Block = async () => {
-    //     await fetch(`${process.env.REACT_APP_BACK}user/block/${myUser.user?.id}`, {
-    //         method: 'POST',
-    //         body: JSON.stringify({
-    //             blockedId: currentUser.id,
-    //         }),
-    //         headers: {
-    //             'Content-Type': 'application/json',
-    //             'Authorization': `Bearer ${myUser.myToken}`,
-    //         }
-    //     })
-    //         .then(async response => {
-    //             if (response.ok)
-    //                 dispatch(addBlockedUser(currentUser));
-    //             setRelation("Blocked");
-
-    //         })
-    // }
-
-	// useEffect(() => {
-
-	// 	const blockUser = async () => {
-    //         const response = await fetch(`${process.env.REACT_APP_BACK}user/block/`, {
-	// 			method: 'POST',
-	// 			body: JSON.stringify({ id: userid}),
-
-	// 	});
-	// 		const data = await response.json();
-	// 	}
-	// 	blockUser();
-		
-	// }, []);
-}
-
-function UnblockUser(userid: number) {
-		
-
-	// const UnBlock = async () => {
-    //     await fetch(`${process.env.REACT_APP_BACK}user/unblock/${myUser.user?.id}`, {
-    //         method: 'DELETE',
-    //         body: JSON.stringify({
-    //             blockedId: currentUser.id,
-    //         }),
-    //         headers: {
-    //             'Content-Type': 'application/json',
-    //             'Authorization': `Bearer ${myUser.myToken}`,
-    //         }
-    //     })
-    //         .then(async response => {
-    //             if (response.ok)
-    //                 dispatch(unBlockUser(currentUser));
-    //             setRelation("Nobody");
-
-    //         })
-    // }
-
-	// useEffect(() => {
-
-	// 	const unblockUser = async() => {
-    //         const response = await fetch(`${process.env.REACT_APP_BACK}user/unblock/`, {
-	// 			method: 'DELETE',
-	// 			body: JSON.stringify({ id: userid}),
-
-	// 		});
-	// 		const data = await response.json();
-	// 	}
-	// 	unblockUser();
-	// })
-}
-
 function InfoFriend(props: {user: IUser}) {
-
+    const myUser = useAppSelector(state => state.user);
 	const user: IUser = props.user;
 	const [myVar, setMyvar] = useState<boolean>(false);
+
+	const dispatch = useAppDispatch();
+
+	const Block = async () => {
+        await fetch(`${process.env.REACT_APP_BACK}user/block/${myUser.user?.id}`, {
+            method: 'POST',
+            body: JSON.stringify({
+                blockedId: user.id,
+            }),
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${myUser.myToken}`,
+            }
+        })
+            .then(async response => {
+                if (response.ok)
+                    dispatch(addBlockedUser(user));
+            })
+    }
+
+	const UnBlock = async () => {
+        await fetch(`${process.env.REACT_APP_BACK}user/unblock/${myUser.user?.id}`, {
+            method: 'DELETE',
+            body: JSON.stringify({
+                blockedId: user.id,
+            }),
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${myUser.myToken}`,
+            }
+        })
+            .then(async response => {
+                if (response.ok)
+                    dispatch(unBlockUser (user));
+            })
+    }
 
 	return (
 		<div className="title"> menu <hr />
@@ -143,9 +105,20 @@ function InfoFriend(props: {user: IUser}) {
                             <li onClick={_ => setMyvar(true)}>
                                 Invite Game
                             </li>
-							<li onClick={_ => BlockUser(user.id)}>
-								Block
+							{
+								((myUser.user && (myUser.user.blocked === undefined 
+									|| myUser.user.blocked.find(block => block.id === user.id) === undefined)) 
+									&& user.username !== myUser.user!.username) &&
+									<li onClick={_ => Block()}>
+									Block
+									</li>
+							}
+							{
+	                ((myUser.user && (myUser.user.blocked !== undefined && myUser.user.blocked.find(block => block.id === user.id) !== undefined)) && user.username !== myUser.user!.username) &&
+							<li onClick={_ => UnBlock()}>
+								Unblock
 							</li>
+							}
                         </>
                 </ul>
 		</div>
@@ -157,8 +130,6 @@ function InfoFriend(props: {user: IUser}) {
 }
 
 export function DmMessages(props: { id: any; currentdm: IUser | undefined; setCurrentDm: Function}) {
-// currentDm : 相手
-// myUser : me
 	const [newInput, setNewInput] = useState("");
 	const myUser = useAppSelector(state => state.user.user);
 	const dispatch = useAppDispatch();
@@ -175,11 +146,11 @@ export function DmMessages(props: { id: any; currentdm: IUser | undefined; setCu
 
 	useEffect(() => {
 		socket.on('sendDmOK', (sendDmDto) => {
-			// setMessageList([...messageList, receiveDmDto]);
-			dispatch(addDM(sendDmDto));
+			const newMessage: IMessage = sendDmDto;
+			newMessage.sender = myUser;
+			dispatch(addDM(newMessage));
 		})
 		socket.on('ReceiveDM', (receiveDmDto) => {
-			// setMessageList([...messageList, receiveDmDto]);
 			dispatch(addDM(receiveDmDto));
 		})
 		return () => {
@@ -198,9 +169,8 @@ export function DmMessages(props: { id: any; currentdm: IUser | undefined; setCu
 				<div className="reverse">
 
 				{messages && messages.map(message => (
-					// ( (myUser?.blocked?.find(obj => obj.id === props.currentdm?.id) === undefined && message.sender?.id === props.currentdm?.id) 
-					// 	|| (message.sender?.id === myUser?.id)) ? (
-
+					( (myUser?.blocked?.find(obj => obj.id === props.currentdm?.id) === undefined && message.sender?.id === props.currentdm?.id) 
+						|| (message.sender?.id === myUser?.id && message.IdReceiver === props.currentdm?.id)) ? (
 						<div key={message.sender?.id + message.message} className="__wrap">
 						<div className="message-info">
 							<img className="user-avatar" src={message.sender?.avatar} />
@@ -210,8 +180,8 @@ export function DmMessages(props: { id: any; currentdm: IUser | undefined; setCu
 						{message.message}
 					</div>
 
-					// ) 
-					// : <></>
+					) 
+					: <></>
 				))}
 
 				</div>
@@ -228,7 +198,6 @@ export function DmMessages(props: { id: any; currentdm: IUser | undefined; setCu
 
 	);
 }
-
 
 // export function DmMessages(props: { id: any; currentdm: IUser | undefined; setCurrentDm: Function}) {
 
