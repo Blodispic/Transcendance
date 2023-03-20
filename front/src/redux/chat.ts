@@ -6,13 +6,11 @@ import { IUser } from "../interface/User";
 interface StateTest {
     channels: IChannel[],
     DMs: IMessage[],
-    // DMs: Map<number, IMessage[]>;
 }
 
 const initialChat: StateTest = {
     channels: [],
     DMs: [],
-    // DMs: new Map<number, IMessage[]>(),
 }
 
 export const chatSlice = createSlice({
@@ -36,7 +34,7 @@ export const chatSlice = createSlice({
 
             if (chan) {
                 const get_channel = async() => {
-                    const response = await fetch(`${process.env.REACT_APP_BACK}channel`, {
+                    const response = await fetch(`${process.env.REACT_APP_BACK}channel/${payload.id}`, {
                       method: 'GET',
                     }).then(async response => {
                       const data = await response.json();             
@@ -140,13 +138,6 @@ export const chatSlice = createSlice({
             state.DMs = ([...state.DMs, payload]);
         }, 
 
-        // addDM: (state, { payload }: PayloadAction<{id: number, message: IMessage}>) => {
-        //    if (state.DMs.get(payload.id) !== undefined)
-        //         state.DMs.get(payload.id)?.push(payload.message);
-        //     else
-        //         state.DMs.set(payload.id, [payload.message]);
-        //     console.log(state.DMs.get(payload.id));
-        // },
     },
 });
 

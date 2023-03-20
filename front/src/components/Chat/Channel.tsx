@@ -5,7 +5,7 @@ import { HiLockClosed } from "react-icons/hi2";
 import { useNavigate, useParams } from "react-router-dom";
 import { socket } from "../../App";
 import { IChannel } from "../../interface/Channel";
-import { addMember, removeMember } from "../../redux/chat";
+import { addMember, removeMember, setChannels } from "../../redux/chat";
 import { useAppDispatch, useAppSelector } from "../../redux/Hook";
 import { ChannelHeader, ChannelMessages } from "./ChannelMessages";
 import CLickableMenu from "./clickableMenu";
@@ -151,10 +151,27 @@ export function Channels(props: {page: Function}) {
 	const [joinedList, setJoinedList] = useState<IChannel[]>([]);
 	const { id } = useParams();
 	const [reload, setReload] = useState(0);
+	const dispatch = useAppDispatch();
 
 	const handleReload = () => {
 		setReload(reload + 1);
 	}
+
+	useEffect(() => {
+		const get_channels = async() => {
+			const response = await fetch(`${process.env.REACT_APP_BACK}channel`, {
+				method: 'GET',
+			}).then(async response => {
+				const data = await response.json();
+				
+				if (response.ok) {
+					dispatch(setChannels(data));
+				}
+			})
+			console.log("set set");
+		}
+		get_channels();
+	}, []);
 
 	useEffect(() => {
 		const fetchJoined = async () => {
@@ -165,7 +182,7 @@ export function Channels(props: {page: Function}) {
 			setJoinedList(data);
 		}
 		fetchJoined();
-		}, [reload]);
+	}, [reload]);
 	
 	return (id) ? (
 		<div id="chat-container">
