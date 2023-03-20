@@ -83,7 +83,7 @@ function PublicChannelList() {
 			<div className="bottom">
 				<header>All Joinable Channels <hr /></header>
 				{channels && channels.map(chan => (
-					<ul key={chan.name} onClick={e => {  }}>
+					<ul key={chan.name}>
 						<li>
 							<div onClick={_ => navigate(`/Chat/channel/${chan.id}`)}>{chan.name}
 								{

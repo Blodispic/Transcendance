@@ -22,7 +22,6 @@ export const chatSlice = createSlice({
 
         setChannels: (state, { payload }: PayloadAction<IChannel[]>) => {
             state.channels = payload;
-            console.log("setChannels no.: ", state.channels.length);
         },
 
         addChannel: (state, { payload }: PayloadAction<IChannel>) => {
@@ -30,7 +29,6 @@ export const chatSlice = createSlice({
                 state.channels = ([...state.channels, payload]);
             else
                 state.channels = ([payload]);
-            console.log(":: redux :: addChannel");
         },
 
         addMember: (state, { payload }: PayloadAction<{id: number, user: IUser}>) => {
@@ -61,7 +59,6 @@ export const chatSlice = createSlice({
                 else
                     chan.admin = ([payload.user]);
             }
-            console.log(":: redux :: addAdmin");
         },
 
         banUser: (state, { payload }: PayloadAction<{id: number, user: IUser}>) => {
@@ -104,14 +101,11 @@ export const chatSlice = createSlice({
             console.log(":: redux :: unMuteUser");
         },
 
-        setPass: (state, { payload }: PayloadAction<{id: number, pass: string}>) => {
-            const chan = state.channels.find(obj => obj.id === payload.id);
+        setPass: (state, { payload }: PayloadAction<number>) => {
+            const chan = state.channels.find(obj => obj.id === payload);
             if (chan) {
-                chan.password = payload.pass;
-                if (chan.chanType === 0) // 0 === public
-                    chan.chanType = 2; // 2 === protected
+                chan.chanType = 2; // 2 === protected
             }
-            console.log(":: redux :: setPass");
         },
 
         removePass: (state, { payload }: PayloadAction<number>) => {
@@ -120,7 +114,6 @@ export const chatSlice = createSlice({
                 chan.password = "";
                 chan.chanType = 0;
             }
-            console.log(":: redux :: removePass");
         },
 
         addMessage: (state, { payload }: PayloadAction<IMessage>) => {

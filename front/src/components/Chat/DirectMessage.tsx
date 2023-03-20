@@ -144,20 +144,20 @@ export function DmMessages(props: { id: any; currentdm: IUser | undefined; setCu
 		setNewInput("");
 	}
 
-	useEffect(() => {
-		socket.on('sendDmOK', (sendDmDto) => {
-			const newMessage: IMessage = sendDmDto;
-			newMessage.sender = myUser;
-			dispatch(addDM(newMessage));
-		})
-		socket.on('ReceiveDM', (receiveDmDto) => {
-			dispatch(addDM(receiveDmDto));
-		})
-		return () => {
-			socket.off('sendDmOK');
-			socket.off('ReceiveDM');
-		};
-	});
+	// useEffect(() => {
+	// 	socket.on('sendDmOK', (sendDmDto) => {
+	// 		const newMessage: IMessage = sendDmDto;
+	// 		newMessage.sender = myUser;
+	// 		dispatch(addDM(newMessage));
+	// 	})
+	// 	socket.on('ReceiveDM', (receiveDmDto) => {
+	// 		dispatch(addDM(receiveDmDto));
+	// 	})
+	// 	return () => {
+	// 		socket.off('sendDmOK');
+	// 		socket.off('ReceiveDM');
+	// 	};
+	// });
 
 	return (
 		<div className="chat-body">

@@ -173,7 +173,8 @@ async handleAddPassword(@ConnectedSocket() client: Socket, @MessageBody() chanPa
     password: chanPasswordDto.password,
     chanType: 2,
   });
-  client.emit("addPasswordOK", channel.id);
+  // client.emit("addPasswordOK", channel.id);
+  this.server.emit("addPasswordOK", channel.id); //selee
 }
 
 @SubscribeMessage('rmPassword')
@@ -188,7 +189,8 @@ async handleRmPassword(@ConnectedSocket() client: Socket, @MessageBody() chanPas
     rmPassword: 1,
     chanType: 0,
   });
-  client.emit("rmPasswordOK", channel.id);
+  // client.emit("rmPasswordOK", channel.id);
+  this.server.emit("rmPasswordOK", channel.id); //selee
   }
 
 @SubscribeMessage('changePassword')

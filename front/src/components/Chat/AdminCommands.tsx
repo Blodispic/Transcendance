@@ -3,7 +3,7 @@ import { HiOutlineXMark } from "react-icons/hi2";
 import { socket } from "../../App";
 import { IChannel } from "../../interface/Channel";
 import { IUser } from "../../interface/User";
-import { addAdmin } from "../../redux/chat";
+import { addAdmin, removePass, setPass } from "../../redux/chat";
 import { useAppDispatch } from "../../redux/Hook";
 
 export function BanUser(props: { chanid: any, userid: any, trigger: boolean, setTrigger: Function }) {
@@ -97,6 +97,7 @@ export function KickUser(chanid: any, userid: any) {
 
 export function ConfigureChannel(props: {trigger: boolean, setTrigger: Function, channel: IChannel}) {
 	const [newPassword, setNewPassword] = useState("");
+	const dispatch = useAppDispatch();
 	
 	const setPassword = () => {
 		if (props.channel.chanType === 0 && newPassword !== undefined) {
@@ -106,7 +107,6 @@ export function ConfigureChannel(props: {trigger: boolean, setTrigger: Function,
 		else if (props.channel.chanType === 2) {
 			console.log('change password: ', newPassword);
 			try {
-
 				socket.emit('changePassword', { chanid: props.channel.id, password: newPassword });
 			}
 			catch (e){ console.log(e)};
@@ -115,10 +115,23 @@ export function ConfigureChannel(props: {trigger: boolean, setTrigger: Function,
 	}
 
 	const removePassword = () => {
-		console.log('remove password');
 		socket.emit('rmPassword', { chanid: props.channel.id, pass: "" });
 		props.setTrigger(false);
 	}
+
+// 	useEffect(() => {
+// 		socket.on("addPasswordOK", (chanId) => {
+// 			dispatch(setPass(chanId));
+// 		})
+
+// 		socket.on("rmPasswordOK", (chanId) => {
+// 			dispatch(removePass(chanId));
+// 		});
+// 		return () => {
+// 			socket.off("addPasswordOK");
+// 			socket.off("rmPasswordOK");
+// 		}
+// })
 
 	return (props.trigger) ? (
 		<div className="chat-form-popup" onClick={_ => props.setTrigger(false)}>

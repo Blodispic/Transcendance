@@ -6,13 +6,49 @@ import 'react-tabs/style/react-tabs.css';
 import { useNavigate, useParams } from "react-router-dom";
 import { page } from "../../interface/enum";
 import { Player } from "../Game/Game";
+import { useAppDispatch, useAppSelector } from "../../redux/Hook";
+import { IMessage } from "../../interface/Message";
+import { addDM, addMessage, removePass, setPass } from "../../redux/chat";
 
 export default function Chat() {
 	const navigate = useNavigate();
 	const [current, setOnglet] = useState<page>(page.PAGE_1);
 	const { id } = useParams();
+	const dispatch = useAppDispatch();
+	const myUser = useAppSelector(state => state.user.user);
+
 	// const [reload, setReload] = useState<boolean>(false);
-		
+
+	useEffect(() => {
+		socket.on('sendMessageChannelOK', (messageDto) => {
+			dispatch(addMessage(messageDto));
+		});
+
+		socket.on('sendDmOK', (sendDmDto) => {
+			const newMessage: IMessage = sendDmDto;
+			newMessage.sender = myUser;
+			dispatch(addDM(newMessage));
+		})
+		socket.on('ReceiveDM', (receiveDmDto) => {
+			dispatch(addDM(receiveDmDto));
+		})
+
+		socket.on("addPasswordOK", (chanId) => {
+			dispatch(setPass(chanId));
+		})
+
+		socket.on("rmPasswordOK", (chanId) => {
+			dispatch(removePass(chanId));
+		});
+		return () => {
+			socket.off('sendMessageChannelOK');
+			socket.off('sendDmOK');
+			socket.off('ReceiveDM');
+			socket.off("addPasswordOK");
+			socket.off("rmPasswordOK");
+		};
+	});
+
 
 	// useEffect(() => {
 	// 	setReload(false);

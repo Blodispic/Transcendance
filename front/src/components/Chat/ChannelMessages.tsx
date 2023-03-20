@@ -93,17 +93,7 @@ export function ChannelMessages() {
 		}
 		setNewInput("");
 	}
-	
-	useEffect(() => {
-		socket.on('sendMessageChannelOK', (messageDto) => {
-			dispatch(addMessage(messageDto));
-		});
 
-		return () => {
-			socket.off('sendMessageChannelOK');
-		}
-	});
-		
 	return (currentChan) ? (
 		<>
 			{currentChan.users?.find(obj => obj.id === currentUser.user?.id) !== undefined &&
