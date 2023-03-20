@@ -67,7 +67,6 @@ export function Header(props: { currentUser: IUser, setCurrentUser: Function }) 
                 // Relations();
                 if ((myUser.user && (myUser.user.blocked === undefined || myUser.user.blocked.find(block => block.id === currentUser.id) === undefined)) && currentUser.username !== myUser.user!.username)
                         console.log("okok");
-                console.log("relation ", relation);
 
         }, [currentUser])
         if (totalGames > 0)

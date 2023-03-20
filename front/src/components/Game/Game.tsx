@@ -161,6 +161,8 @@ export default function GameApp() {
 			document.removeEventListener("keydown", keyEvent);
 			document.removeEventListener("keyup", keyEvent);
 			socket.off("UpdateState");
+			socket.off('GameEnd');
+
 			socket.emit("PlayerLeft");
 		};
 	}, []);
@@ -291,8 +293,12 @@ function convertState(state: GameState) {
 
 function updateGameState(prev: GameState) {
 	let newState = { ...prev }
-	if (swal.close != undefined)
-        swal.close();
+	if (swal && swal.close != undefined && swal.stopLoading != undefined)
+	{
+		// swal("Success", "You've been added to the custom room.", "success");
+		// swal.stopLoading();
+		swal.close();
+	}
 
 	if (window.innerHeight > GAME_RATIO * window.innerWidth)
 	{

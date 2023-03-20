@@ -35,7 +35,6 @@ export default function HeaderButtons(props: { currentUser: IUser }) {
             .then(async response => {
                 if (response.ok) {
                     const data = await response.json();
-                    console.log("relation ", data);
                     setRelation(data.relation);
                 }
             })

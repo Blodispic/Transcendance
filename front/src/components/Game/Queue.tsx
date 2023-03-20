@@ -28,18 +28,23 @@ export default function Queue() {
     useEffect(() => {
         if (socket)
         {
-          socket.on("RoomStart", (roomId: number, player: Player) => {
-            if (swal.close != undefined)
-                swal.close();
-            navigate("/game/" + roomId, { state: { Id: roomId } });
+            socket.on("RoomStart", (roomId: number, player: Player) => {
+                console.log("ALED");
+                if (swal && swal.close != undefined && swal.stopLoading != undefined)
+                {
+                    swal("Success", "You've been added to the custom room.", "success");
+                    swal.stopLoading();
+                    swal.close();
+                }
+                navigate("/game/" + roomId, { state: { Id: roomId } });
             });
 
             socket.on("WaitingRoomSuccess", () => {
-            swal("Success", "You've been added to the waiting room.", "success");
+                swal("Success", "You've been added to the waiting room.", "success");
             });
 
             socket.on("WaitingRoomFailure", (message: string) => {
-            swal("Failure", message, "error");
+                swal("Failure", message, "error");
             });
         }
 
@@ -54,6 +59,11 @@ export default function Queue() {
             }
         }
         fetchuser()
+        return () => {
+            socket.off("RoomStart");
+            socket.off("WaitingRoomSuccess");
+            socket.off("WaitingRoomFailure");
+          }
     }, [])
 
     return (

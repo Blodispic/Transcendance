@@ -57,7 +57,6 @@ function App() {
         });
 
         socket.on("invitationInGame", (payload: any) => {
-          console.log("payload", payload);
           setInfoGame(payload);
           setTrigger(true);
           timeOutId = setTimeout(() => {
