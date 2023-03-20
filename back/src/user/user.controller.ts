@@ -123,9 +123,6 @@ export class UserController {
   @Post("friends/accept")
   @UseGuards(JwtGuard)
   async acceptFriendRequest(@Body() body: { friendId: number, userId: number }) {
-    console.log("friendId = ", body.friendId);
-    console.log("userId = ", body.userId);
-    
     const realUser = await this.userService.addFriend(body.friendId, body.userId);
     return await this.userService.DeleteFriendRequest(body.userId, body.friendId);
   }
@@ -192,29 +189,23 @@ export class UserController {
 
   @Delete('deletefriend/:id')
   async deleteFriend(@Param('id', ParseIntPipe) id: number, @Body() friendId: { friendId: number }) {
-    console.log("id = ", id);
-    console.log("friendId = ", friendId.friendId);
     await this.userService.removeFriend(friendId.friendId, id)
     return plainToClass(User, await this.userService.removeFriend(id, friendId.friendId));
   }
 
   @Post('block/:id')
   async addBlock(@Param('id') id: number, @Body() blockedId: { blockedId: number}) {
-    console.log(id);
-    console.log(blockedId);
     return await this.userService.addBlock(id, blockedId.blockedId);
   }
 
   @Delete('unblock/:id')
   async RmBlock(@Param('id') id: number, @Body()  blockedId: { blockedId: number}) {
-    console.log("ca rentre la ");
     return await this.userService.RmBlock(id, blockedId.blockedId);
   }
 
   @Post("relations")
   @UseGuards(JwtGuard)
   async checkRelations(@Body() body: { userId: number,  friendId: number }) {
-    console.log(body.friendId, body.userId)
     return await this.userService.checkRelations(body.friendId, body.userId);
   }
 }
