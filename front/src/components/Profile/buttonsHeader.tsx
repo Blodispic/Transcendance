@@ -20,7 +20,6 @@ export default function HeaderButtons(props: { currentUser: IUser }) {
         socket.emit("spectateGame", currentUser.id);
     }
     const Relations = async () => {
-        console.log(myUser.user?.id, currentUser.id)
         await fetch(`${process.env.REACT_APP_BACK}user/relations`, {
             method: 'POST',
             body: JSON.stringify({
@@ -144,7 +143,6 @@ export function InviteButton(props: { user: any, relation: string}) {
             },
         });
         const data = await response.json();
-        // console.log("Data :", data);
         let str : string = "They" + " are now your friend!";
         swal("Congrats", str, "success");
         socket.emit("RequestAccepted", data.id);

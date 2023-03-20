@@ -22,10 +22,10 @@ export interface Move {
 export class PongGateway implements OnGatewayDisconnect, OnGatewayInit {
 	@WebSocketServer()
 	server: Server;
-	userService: UserService;
+	// userService: UserService;
 	inviteList: number[];
 	
-	constructor(private gameService: GameService) {
+	constructor(private gameService: GameService, private readonly userService: UserService) {
 		this.inviteList = new Array<number>;
 	}
 	
@@ -171,10 +171,15 @@ export class PongGateway implements OnGatewayDisconnect, OnGatewayInit {
 	}
 
 	@SubscribeMessage("acceptCustomGame")
-	AcceptCustomGame(@MessageBody() payload: any, @ConnectedSocket() client: Socket) {
-		let user1: User = payload.user1;
-		let user2: User = payload.user2;
+	async AcceptCustomGame(@MessageBody() payload: any, @ConnectedSocket() client: Socket) {
 
+		const user1 = await this.userService.getById(payload.user1.id);
+		const user2 = await this.userService.getById(payload.user2.id);
+
+		if (user2 === null || user1 === null)
+		{
+			throw new BadRequestException("User doesn't exist");
+		}
 		// Remove both users from InviteList, the can now invite and be invited again
 		if (user1.id)
 			this.removeInvite(user1.id);
@@ -182,8 +187,6 @@ export class PongGateway implements OnGatewayDisconnect, OnGatewayInit {
 			this.removeInvite(user2.id);
 		this.gameService.removeFromWaitingRoom(client.id);
 
-		if (user2 === null || user1 === null)
-			throw new BadRequestException("User doesn't exist");
 		console.log("Add " + user1.username + " and " + user2.username + " to custom game.");
 		let userSocket1: any = userList[0]; //By default both user are the first user of the list
 		let userSocket2: any = userList[0]; //By default both user are the first user of the list
@@ -203,6 +206,15 @@ export class PongGateway implements OnGatewayDisconnect, OnGatewayInit {
 			}
 			i++;
 		}
+		if (user1.status != "Online" || user2.status != "Online")
+		{
+			console.log("userSocket1=", userSocket1);
+			console.log("userSocket2=", userSocket2);
+			this.server.to(userSocket1.id).emit("GameCancelled", user2.username);
+			this.server.to(userSocket2.id).emit("GameCancelled", user1.username);
+			// throw new BadRequestException("User is not available");
+			return;
+		}
 		this.gameService.startCustomGame(this.server, userSocket1, userSocket2, payload.extra, parseInt(payload.scoreMax));
 	}
 
@@ -217,9 +229,11 @@ export class PongGateway implements OnGatewayDisconnect, OnGatewayInit {
 		if (user2.id)
 			this.removeInvite(user2.id);
 		let socket : any = this.findSocketFromUser(user1);
-		this.server.to(socket.id).emit("GameDeclined", user2.username);
+		if (socket)
+			this.server.to(socket.id).emit("GameDeclined", user2.username);
 		socket = this.findSocketFromUser(user2);
-		this.server.to(socket.id).emit("GameDeclined", "You");
+		if (socket)
+			this.server.to(socket.id).emit("GameDeclined", "You");
 	}
 
 	@SubscribeMessage("GameEnd")

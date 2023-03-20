@@ -64,6 +64,11 @@ function App() {
             swal("Invitation Declined", username + " declined your game", "error");
         });
 
+        socket.on("GameCancelled", (username: string) => {
+          console.log("YO");
+          swal("Game Cancelled", username + " is not available", "error");
+        });
+
         socket.on("invitationInGame", (payload: any) => {
           setInfoGame(payload);
           setTrigger(true);
@@ -71,7 +76,6 @@ function App() {
             setTrigger(false)
             socket.emit("declineCustomGame", payload);
           }, 10000)
-          console.log(timeOutId);
         })
       }
         return () => {
@@ -81,6 +85,7 @@ function App() {
           socket.off("RequestDeclined");
           socket.off("invitationInGame");
           socket.off("GameDeclined");
+          socket.off("GameCancelled");
         }
     }
   }, [myUser.isLog])
