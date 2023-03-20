@@ -20,7 +20,6 @@ export default function HeaderButtons(props: { currentUser: IUser }) {
         socket.emit("spectateGame", currentUser.id);
     }
     const Relations = async () => {
-        console.log(myUser.user?.id, currentUser.id)
         await fetch(`${process.env.REACT_APP_BACK}user/relations`, {
             method: 'POST',
             body: JSON.stringify({
@@ -35,7 +34,6 @@ export default function HeaderButtons(props: { currentUser: IUser }) {
             .then(async response => {
                 if (response.ok) {
                     const data = await response.json();
-                    console.log("relation ", data);
                     setRelation(data.relation);
                 }
             })
