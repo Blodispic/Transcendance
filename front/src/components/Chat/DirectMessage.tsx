@@ -176,8 +176,6 @@ export function DmMessages(props: { id: any; currentdm: IUser | undefined; setCu
 				</form>
 			}
 		</div>
-
-
 	);
 }
 

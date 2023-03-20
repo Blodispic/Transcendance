@@ -119,20 +119,6 @@ export function ConfigureChannel(props: {trigger: boolean, setTrigger: Function,
 		props.setTrigger(false);
 	}
 
-// 	useEffect(() => {
-// 		socket.on("addPasswordOK", (chanId) => {
-// 			dispatch(setPass(chanId));
-// 		})
-
-// 		socket.on("rmPasswordOK", (chanId) => {
-// 			dispatch(removePass(chanId));
-// 		});
-// 		return () => {
-// 			socket.off("addPasswordOK");
-// 			socket.off("rmPasswordOK");
-// 		}
-// })
-
 	return (props.trigger) ? (
 		<div className="chat-form-popup" onClick={_ => props.setTrigger(false)}>
 			<div className="chat-form-inner" onClick={e => e.stopPropagation()}>

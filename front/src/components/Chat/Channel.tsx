@@ -179,11 +179,7 @@ export function Channels(props: {page: Function}) {
 				<ChannelMessages />
 			</div>
 			<div className="sidebar right-sidebar">
-				{
-					// currentChan.users.find(obj => obj.id === currentUser.user?.id) &&
-					currentUser.user &&
-					<ChannelMemberList page={props.page}/>
-				}
+				<ChannelMemberList page={props.page}/>
 			</div>
 		</div>
 	) : (
