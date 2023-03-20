@@ -49,7 +49,7 @@ export default function CLickableMenu(props: { user: IUser, chan: IChannel, page
                                 Invite Game
                             </li>
                             <li>
-                                <a onClick={e => props.page(page.PAGE_2)}>
+                                <a onClick={e => {props.page(page.PAGE_2); navigate(`/Chat/dm/${user.id}`)}}>
                                     DM
                                 </a>
                             </li>

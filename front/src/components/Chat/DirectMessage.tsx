@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { socket } from "../../App";
 import { IUser } from "../../interface/User";
 import { useAppDispatch, useAppSelector } from "../../redux/Hook";
@@ -9,6 +9,7 @@ import CustomGamePopup from "../Game/CustomGamePopup";
 function DMList(props: { currentdm: IUser | undefined; setCurrentDm: Function }) {
 	const [alluser, setAlluser] = useState<IUser[] | undefined>(undefined);
 	const myStore = useAppSelector(state => state);
+	const navigate = useNavigate();
 
 	useEffect(() => {
 		const get_all = async () => {
@@ -31,7 +32,7 @@ function DMList(props: { currentdm: IUser | undefined; setCurrentDm: Function })
 			{alluser != undefined &&
 				<>
 					{alluser && alluser.map(user => (
-						<ul key={user.username} onClick={_ => props.setCurrentDm(user)} >
+						<ul key={user.username} onClick={_ => {props.setCurrentDm(user); navigate(`/Chat/dm/${user.id}`)}} >
 							<li >
 								{user.username}
 							</li>
