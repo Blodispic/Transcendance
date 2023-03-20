@@ -140,11 +140,11 @@ export const chatSlice = createSlice({
             state.DMs = ([...state.DMs, payload]);
         }, 
 
-        addDms: (state, { payload }: PayloadAction<{id: number, message: IMessage}>) => {
-            state.dms.set(payload.id, {...state.dms.get(payload.id), payload.message});
-        },
+        // addDms: (state, { payload }: PayloadAction<{id: number, message: IMessage}>) => {
+        //     state.dms.set(payload.id, {...state.dms.get(payload.id), payload.message});
+        // },
     },
 });
 
-export const { setChannels, addChannel, addMember, removeMember, addAdmin, banUser, muteUser, setPass, removePass, addMessage, addDM, addDms } = chatSlice.actions;
+export const { setChannels, addChannel, addMember, removeMember, addAdmin, banUser, muteUser, setPass, removePass, addMessage, addDM } = chatSlice.actions;
 export default chatSlice.reducer;
