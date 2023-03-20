@@ -144,25 +144,10 @@ export function DmMessages(props: { id: any; currentdm: IUser | undefined; setCu
 		setNewInput("");
 	}
 
-	// useEffect(() => {
-	// 	socket.on('sendDmOK', (sendDmDto) => {
-	// 		const newMessage: IMessage = sendDmDto;
-	// 		newMessage.sender = myUser;
-	// 		dispatch(addDM(newMessage));
-	// 	})
-	// 	socket.on('ReceiveDM', (receiveDmDto) => {
-	// 		dispatch(addDM(receiveDmDto));
-	// 	})
-	// 	return () => {
-	// 		socket.off('sendDmOK');
-	// 		socket.off('ReceiveDM');
-	// 	};
-	// });
-
 	return (
 		<div className="chat-body">
 			<div className="body-header">
-				<img className="user-avatar" src={props.currentdm?.avatar} />
+				<img className="user-avatar" src={`${process.env.REACT_APP_BACK}user/${props.currentdm?.id}/avatar`} />
 				{props.currentdm?.username}
 			</div>
 			<div className="chat-messages">
@@ -172,8 +157,8 @@ export function DmMessages(props: { id: any; currentdm: IUser | undefined; setCu
 						((myUser?.blocked?.find(obj => obj.id === props.currentdm?.id) === undefined && message.sender?.id === props.currentdm?.id)
 							|| (message.sender?.id === myUser?.id && message.IdReceiver === props.currentdm?.id)) ? (
 							<div key={index} className="__wrap">
-								<div key={message.sendtime}className="message-info">
-									<img className="user-avatar" src={message.sender?.avatar} />
+								<div className="message-info">
+									<img className="user-avatar" src={`${process.env.REACT_APP_BACK}user/${message.sender?.id}/avatar`}  />
 									{message.sender?.username}
 									<span className="timestamp">{message.sendtime}</span>
 								</div>

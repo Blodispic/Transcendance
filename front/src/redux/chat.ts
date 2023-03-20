@@ -5,13 +5,11 @@ import { IUser } from "../interface/User";
 
 interface StateTest {
     channels: IChannel[],
-    messages: IMessage[],
     DMs: IMessage[],
 }
 
 const initialChat: StateTest = {
     channels: [],
-    messages: [],
     DMs: [],
 }
 
@@ -32,14 +30,25 @@ export const chatSlice = createSlice({
         },
 
         addMember: (state, { payload }: PayloadAction<{id: number, user: IUser}>) => {
-            const chan = state.channels.find(obj => obj.id === payload.id);
+            let chan = state.channels.find(obj => obj.id === payload.id);
+
             if (chan) {
+                const get_channel = async() => {
+                    const response = await fetch(`${process.env.REACT_APP_BACK}channel`, {
+                      method: 'GET',
+                    }).then(async response => {
+                      const data = await response.json();             
+                      if (response.ok) {
+                       chan = data;
+                    }
+                    })
+                  }
+                get_channel();
                 if (chan.users && chan.users.find(obj => obj.id === payload.user.id) === undefined)
                     chan.users = ([...chan.users, payload.user]);
                 else
                     chan.users = ([payload.user]);
             }
-            // console.log(":: redux :: addMember: ", chan?.users);
         },
 
         removeMember: (state, { payload }: PayloadAction<{id: number, user: IUser}>) => {
@@ -48,7 +57,6 @@ export const chatSlice = createSlice({
                 if (chan.users && chan.users.find(obj => obj.id === payload.user.id) !== undefined)
                     chan.users = chan.users.filter(obj => obj.id !== payload.user.id);
             }
-            // console.log(":: redux :: removeMember: ", chan?.users);
         },
 
         addAdmin: (state, { payload }: PayloadAction<{id: number, user: IUser}>) => {
@@ -104,7 +112,7 @@ export const chatSlice = createSlice({
         setPass: (state, { payload }: PayloadAction<number>) => {
             const chan = state.channels.find(obj => obj.id === payload);
             if (chan) {
-                chan.chanType = 2; // 2 === protected
+                chan.chanType = 2;
             }
         },
 
@@ -127,7 +135,6 @@ export const chatSlice = createSlice({
         },
 
         addDM: (state, { payload }: PayloadAction<IMessage>) => {
-            
             state.DMs = ([...state.DMs, payload]);
         } 
     },
