@@ -22,18 +22,29 @@ export default function Queue() {
             user: myStore.user.user,
         };
         socket.emit("addToWaitingRoom");
-        swal("Success", "You've been added to the waiting room.", "success");
         return;
     }
 
     useEffect(() => {
         if (socket)
         {
-          socket.on("RoomStart", (roomId: number, player: Player) => {
-            if (swal.close != undefined)
-                swal.close();
-            navigate("/game/" + roomId, { state: { Id: roomId } });
-          });
+            socket.on("RoomStart", (roomId: number, player: Player) => {
+                if (swal && swal.close != undefined && swal.stopLoading != undefined)
+                {
+                    swal("Success", "You've been added to the custom room.", "success");
+                    swal.stopLoading();
+                    swal.close();
+                }
+                navigate("/game/" + roomId, { state: { Id: roomId } });
+            });
+
+            socket.on("WaitingRoomSuccess", () => {
+                swal("Success", "You've been added to the waiting room.", "success");
+            });
+
+            socket.on("WaitingRoomFailure", (message: string) => {
+                swal("Failure", message, "error");
+            });
         }
 
         const fetchuser = async () => {
@@ -47,6 +58,11 @@ export default function Queue() {
             }
         }
         fetchuser()
+        return () => {
+            socket.off("RoomStart");
+            socket.off("WaitingRoomSuccess");
+            socket.off("WaitingRoomFailure");
+          }
     }, [])
 
     return (

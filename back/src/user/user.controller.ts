@@ -193,7 +193,7 @@ export class UserController {
   @Delete('deletefriend/:id')
   @UseGuards(JwtGuard)
   async deleteFriend(@Param('id', ParseIntPipe) id: number, @Body() friend: User) {
-    return await plainToClass(User, this.userService.removeFriend(id, friend));
+    return await plainToClass(User, this.userService.removeFriend(id, friend.id));
   }
 
   @Post('block/:id')
