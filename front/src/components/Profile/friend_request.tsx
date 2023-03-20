@@ -42,7 +42,7 @@ export function Friends() {
 
         checkFriendRequest();
         socket.on('UpdateSomeone', () => {
-            setUpdateFriend(prevFlag => !prevFlag);
+            setUpdateFriend(!updateFriend);
         });
             return () => {
         socket.off('UpdateSomeone');
@@ -65,7 +65,7 @@ export function Friends() {
 
         checkFriend();
             return () => {
-        socket.off('UpdateSomeone');
+        // socket.off('UpdateSomeone');
     };
     }, [setUpdateFriend, updateFriend]);
 
@@ -74,7 +74,6 @@ export function Friends() {
     }
 
     const acceptFriendRequest = async (id: number) => {
-        console.log("accept frine in my profile", "friendId", id, "myID", myUser.user!.id )
         const response = await fetch(`${process.env.REACT_APP_BACK}user/friends/accept`, {
             method: 'POST',
             body: JSON.stringify({ friendId: id, userId: myUser.user!.id }),
@@ -85,7 +84,6 @@ export function Friends() {
         });
         const data = await response.json();
         setFriendReq((prevFriendReq) => prevFriendReq.filter((req) => req.id !== id));
-        // console.log("Data :", data);
         let str : string = "They" + " are now your friend!";
         swal("Congrats", str, "success");
         socket.emit("RequestAccepted", data.id);

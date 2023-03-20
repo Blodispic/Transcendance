@@ -131,9 +131,6 @@ export class UserController {
   @Post("friends/accept")
   @UseGuards(JwtGuard)
   async acceptFriendRequest(@Body() body: { friendId: number, userId: number }) {
-    console.log("friendId = ", body.friendId);
-    console.log("userId = ", body.userId);
-    
     const realUser = await this.userService.addFriend(body.friendId, body.userId);
     return await this.userService.DeleteFriendRequest(body.userId, body.friendId);
   }

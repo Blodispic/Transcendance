@@ -11,6 +11,7 @@ services:
     networks:
       - Wow
 
+
   back:
     depends_on:
       - PostgreSQL
@@ -25,6 +26,11 @@ services:
     init: true
     networks:
       - Wow
+    environment:
+    - API42_UID=${API42_UID}
+    - API42_SECRET=${API42_SECRET}
+    - REDIRECT_URI=${REDIRECT_URI}
+    - FRONT_URL=${FRONT_URL}
 
   front:
     depends_on:
@@ -40,7 +46,12 @@ services:
     init: true
     networks:
       - Wow
-  
+    environment:
+    - REACT_APP_API42_UID=${API42_UID}
+    - REACT_APP_REDIRECT_URI=${REDIRECT_URI}
+    - REACT_APP_BACK=${APP_BACK}
+
+
   adminer :
     image: adminer
     restart: always

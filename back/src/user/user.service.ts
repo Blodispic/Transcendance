@@ -171,13 +171,11 @@ export class UserService {
     if (user) {
       //Si vous voulez plus de chose a update, mettez le dans le body et faites un iff
       if (userUpdate.username) {
-        // console.log("username");
 
         const checkUsername = await this.usersRepository.findOneBy({
           username: userUpdate.username,
         })
         if (checkUsername && checkUsername.id !== user.id) {
-          console.log("username exist"); // ca erntre jusque ici 
           throw new NotFoundException("Username exists");
         }
         else
@@ -292,11 +290,9 @@ export class UserService {
     const friendRequestPush = await this.friendRequestRepository.findOne({
       where: [{ creatorId: creatorId, receiverId: friendId }]
     });
-    console.log("friendRequestPush = ", friendRequestPush);
     
     if (friendRequestPush)
     {
-      console.log("trying delete");  
       await this.friendRequestRepository.delete(friendRequestPush.id);
     }
     return await this.usersRepository.findOneBy({
@@ -540,7 +536,6 @@ export class UserService {
   }
 
   async addBlock(id: number, blockedid: number) {
-    console.log("ca block un peu ici ", id, blockedid);
     const user = await this.usersRepository.findOne({
       relations: {
         blocked: true,

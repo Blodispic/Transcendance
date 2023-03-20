@@ -16,7 +16,6 @@ export function BanUser(props: { chanid: any, userid: any, trigger: boolean, set
 	useEffect(() => {
 		socket.on("banUserOK", (data) => {
 			props.setTrigger(false);
-			console.log("banUserOK", data);
 		});
 		return () => {
 			socket.off("banUserOK");
@@ -51,7 +50,6 @@ export function MuteUser(props: { chanid: any, userid: any, trigger: boolean, se
 	useEffect(() => {
 		socket.on("muteUserOK", (data) => {
 			props.setTrigger(false);
-			console.log("muteUserOK: ", data);
 		});
 		return () => {
 			socket.off("muteUserOK");
@@ -86,22 +84,15 @@ export function ConfigureChannel(props: {trigger: boolean, setTrigger: Function,
 	
 	const setPassword = () => {
 		if (props.channel.chanType === 0 && newPassword !== undefined) {
-			console.log('add password: ', newPassword);
 			socket.emit('addPassword', { chanid: props.channel.id, password: newPassword });
 		}
 		else if (props.channel.chanType === 2) {
-			console.log('change password: ', newPassword);
-			try {
-
-				socket.emit('changePassword', { chanid: props.channel.id, password: newPassword });
-			}
-			catch (e){ console.log(e)};
+			socket.emit('changePassword', { chanid: props.channel.id, password: newPassword });
 		}
 		props.setTrigger(false);
 	}
 
 	const removePassword = () => {
-		console.log('remove password');
 		socket.emit('rmPassword', { chanid: props.channel.id, pass: "" });
 		props.setTrigger(false);
 	}

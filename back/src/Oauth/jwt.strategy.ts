@@ -6,7 +6,6 @@ import { jwtConstants } from './constants';
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor() {
-    console.log("In JWT");
     super({
       
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),

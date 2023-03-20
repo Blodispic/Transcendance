@@ -20,7 +20,6 @@ export default function HeaderButtons(props: { currentUser: IUser }) {
         socket.emit("spectateGame", currentUser.id);
     }
     const Relations = async () => {
-        console.log(myUser.user?.id, currentUser.id)
         await fetch(`${process.env.REACT_APP_BACK}user/relations`, {
             method: 'POST',
             body: JSON.stringify({
@@ -35,7 +34,6 @@ export default function HeaderButtons(props: { currentUser: IUser }) {
             .then(async response => {
                 if (response.ok) {
                     const data = await response.json();
-                    console.log("relation ", data);
                     setRelation(data.relation);
                 }
             })
@@ -114,7 +112,6 @@ export function InviteButton(props: { user: any, relation: string, setRelation: 
     const myToken = useAppSelector(state => state.user.myToken);
 
     useEffect( () => {
-        console.log("ca eload?")
         // setRelation(props.relation);
     })
     const sendFriendRequest = async () => {
@@ -160,7 +157,6 @@ export function InviteButton(props: { user: any, relation: string, setRelation: 
     };
 
     const removeFriend = async () => {
-        console.log("delete frined en front ", user.id, myUser.user!.id )
         const response = await fetch(`${process.env.REACT_APP_BACK}user/deletefriend/${myUser.user?.id}`, {
             method: 'DELETE',
             body: JSON.stringify({ friendId: user.id}),
@@ -170,9 +166,7 @@ export function InviteButton(props: { user: any, relation: string, setRelation: 
             },
         })
             .then(async Response => {
-                console.log(".then")
                 if (Response.ok) {
-                console.log("response ok")
                     swal("", "Friend Remove", "success");
                     socket.emit("RemoveFriend", user.id);
                     props.setRelation("Nobody");

@@ -49,7 +49,6 @@ export default function CustomGamePopup(props: {trigger: boolean; setTrigger: Fu
     function CreateCustomRoom(extra: any, Max: any) {         
         if (!myUser.user || !friend || !friend[0])
         {
-            console.log("Error: User doesn't exist");
             swal("Error", "User doesn't exist", "error");
             return ;
         }

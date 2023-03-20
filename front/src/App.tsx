@@ -42,7 +42,6 @@ function App() {
             clearTimeout(timeOutId);
         });
         socket.on("RequestSent", () => {
-          console.log("status myuser dans App socket.on RequestSent", myUser.user!.status);
           if (myUser && myUser.user && myUser.user.status != UserStatus.INGAME)
             swal("Friend Request Received", "You can accept or refuse it from your profile page");
         });
@@ -78,7 +77,6 @@ function App() {
 
 
   const get_user = async () => {
-    console.log("check si ca rentre ici")
     const response = await fetch(`${process.env.REACT_APP_BACK}user/access_token`, {
       method: 'POST',
       headers: {
@@ -92,7 +90,6 @@ function App() {
       // check for error response
 
       if (response.ok && data.username !== "") {
-        console.log("connection avec cookies", data);
         dispatch(setUser(data))
         dispatch(set_status(UserStatus.ONLINE));
         dispatch(setToken(token));
