@@ -127,7 +127,7 @@ export const chatSlice = createSlice({
         },
 
         addDM: (state, { payload }: PayloadAction<IMessage>) => {
-            console.log(payload);
+            
             state.DMs = ([...state.DMs, payload]);
         } 
     },

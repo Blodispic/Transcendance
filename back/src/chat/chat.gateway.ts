@@ -116,7 +116,7 @@ async handleJoinChannel(@ConnectedSocket() client: Socket, @MessageBody() joinCh
   });
   client.join("chan" + joinChannelDto.chanid);
   // client.emit("joinChannelOK", channel); //original
-  client.emit("joinChannelOK", channel.id);
+  client.emit("joinChannelOK", channel.id); // + (maybe) list of members
   // client.emit("updateJoined", channel);
   this.server.to("chan" + channel.id).emit("joinChannel", user);
   // this.server.to("chan" + channel.id).emit("updateMember", user);

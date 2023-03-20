@@ -68,6 +68,9 @@ export function JoinChannel(props: {channel: IChannel, reload: Function}) {
 		socket.emit('joinChannel', {chanid: props.channel.id});
 	}
 	
+
+	// getall member
+
 	useEffect(() => {
 		socket.on("joinChannelFailed", (error_message) => {
 			setErrorMessage(error_message);
@@ -75,7 +78,8 @@ export function JoinChannel(props: {channel: IChannel, reload: Function}) {
 		});
 		socket.on("joinChannelOK", (chanId) => {
 			if (currentUser !== undefined) {
-				dispatch(addMember({id:chanId, user:currentUser}));
+				// dispatch(addMember({id:chanId, user:currentUser}));
+				// dispatch(getAllMember(...));
 				props.reload();
 				swal("You joined " + props.channel.name, "success");
 			}

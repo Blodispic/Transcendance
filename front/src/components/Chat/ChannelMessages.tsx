@@ -96,9 +96,9 @@ export function ChannelMessages() {
 					<div className="chat-messages">
 						{
 							<div className="reverse">
-								{currentChan.messages && currentChan.messages.map(message => (
+								{currentChan.messages && currentChan.messages.map((message, index) => (
 									message.chanid === currentChan.id &&
-									<div key={message.sendtime + message.message} className="__wrap">
+									<div key={index} className="__wrap">
 										<div className="message-info">
 											<img className="user-avatar" src={`${process.env.REACT_APP_BACK}user/${message.sender?.id}/avatar`} />
 											<p>{message.sender?.username}</p>
