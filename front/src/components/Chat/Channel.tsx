@@ -168,7 +168,6 @@ export function Channels(props: {page: Function}) {
 					dispatch(setChannels(data));
 				}
 			})
-			console.log("set set");
 		}
 		get_channels();
 	}, []);

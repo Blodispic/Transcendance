@@ -77,7 +77,7 @@ export default function Chat() {
 			}
 			{
 				current === page.PAGE_2 &&
-				<DirectMessage dmId={id}/>
+				<DirectMessage dmId={id} />
 			}
 
 		</div>

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { socket } from "../../App";
+import { IMessage } from "../../interface/Message";
 import { IUser } from "../../interface/User";
 import { useAppDispatch, useAppSelector } from "../../redux/Hook";
 import { addBlockedUser, unBlockUser } from "../../redux/user";
@@ -48,7 +49,6 @@ function InfoFriend(props: { user: IUser }) {
 	const myUser = useAppSelector(state => state.user);
 	const user: IUser = props.user;
 	const [myVar, setMyvar] = useState<boolean>(false);
-
 	const dispatch = useAppDispatch();
 
 	const Block = async () => {
@@ -128,16 +128,18 @@ function InfoFriend(props: { user: IUser }) {
 	);
 }
 
-export function DmMessages(props: { id: any; currentdm: IUser | undefined; setCurrentDm: Function }) {
+export function DmMessages(props: { id: number; currentdm: IUser | undefined; setCurrentDm: Function }) {
+	// props.id ---- userId of receiver 
+
 	const [newInput, setNewInput] = useState("");
 	const myUser = useAppSelector(state => state.user.user);
-	const messages = useAppSelector(state => state.chat.DMs);
+	const messages = useAppSelector(state => state.chat.DMs.filter(obj => obj.chanid === props.id));
 
 	const handleSubmitNewMessage = (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
 		if (newInput != "") {
 			const sendtime = new Date().toLocaleString('en-US');
-			socket.emit('sendDM', { IdReceiver: props.currentdm?.id, message: newInput, sendtime: sendtime });
+			socket.emit('sendDM', { IdReceiver: props.id, message: newInput, sendtime: sendtime });
 		}
 		setNewInput("");
 	}
@@ -151,12 +153,11 @@ export function DmMessages(props: { id: any; currentdm: IUser | undefined; setCu
 			<div className="chat-messages">
 				<div className="reverse">
 
-					{messages && messages.map((message, index) => (
+					{messages && messages.map((message: IMessage, index: number) => (
 						<div key={index} >
 							{
 
-								((myUser?.blocked?.find(obj => obj.id === props.currentdm?.id) === undefined && message.sender?.id === props.currentdm?.id)
-									|| (message.sender?.id === myUser?.id && message.IdReceiver === props.currentdm?.id)) ? (
+								((myUser?.blocked?.find(obj => obj.id === props.currentdm?.id) === undefined)) ? (
 									<div className="__wrap">
 										<div className="message-info">
 											<img className="user-avatar" src={`${process.env.REACT_APP_BACK}user/${message.sender?.id}/avatar`} />
@@ -165,7 +166,6 @@ export function DmMessages(props: { id: any; currentdm: IUser | undefined; setCu
 										</div>
 										{message.message}
 									</div>
-
 								)
 									: <></>
 							}
@@ -187,15 +187,40 @@ export function DmMessages(props: { id: any; currentdm: IUser | undefined; setCu
 
 export function DirectMessage(props: any) {
 	const [currentDm, setCurrentDm] = useState<IUser | undefined>(undefined);
+	const { id } = useParams();
+	const [dmId, setDmId] = useState<number | undefined>(undefined);
+	const myUser = useAppSelector(state => state);
 
-	return (
+
+	useEffect(() => {
+		if (id !== undefined)
+			setDmId(parseInt(id));
+	})
+
+	useEffect(() => {
+		const get_user = async () => {
+			const response = await fetch(`${process.env.REACT_APP_BACK}user/id/${dmId}`, {
+				method: 'GET',
+				headers: {
+					'Authorization': `Bearer ${myUser.user.myToken}`,
+				},
+			})
+			const data = await response.json();
+			setCurrentDm(data);
+		}
+		console.log("getuser");
+		get_user();
+	}, [dmId]);
+
+
+	return (dmId) ? (
 		<div id="chat-container">
 			<div className="sidebar left-sidebar">
 				<DMList currentdm={currentDm} setCurrentDm={setCurrentDm} />
 			</div>
 			{currentDm !== undefined &&
 				<>
-					<DmMessages id={props} currentdm={currentDm} setCurrentDm={setCurrentDm} />
+					<DmMessages id={dmId} currentdm={currentDm} setCurrentDm={setCurrentDm} />
 					<div className="sidebar left-sidebar">
 						<InfoFriend user={currentDm} />
 					</div>
@@ -203,5 +228,20 @@ export function DirectMessage(props: any) {
 			}
 
 		</div>
-	);
+	) : (
+			<div id="chat-container">
+				<div className="sidebar left-sidebar">
+					<DMList currentdm={currentDm} setCurrentDm={setCurrentDm} />
+				</div>
+				{currentDm !== undefined &&
+					<>
+						<DmMessages id={props} currentdm={currentDm} setCurrentDm={setCurrentDm} />
+						<div className="sidebar left-sidebar">
+							<InfoFriend user={currentDm} />
+						</div>
+					</>
+				}
+
+			</div>
+		);
 }
