@@ -10,7 +10,7 @@ import { DirectMessage } from "./DirectMessage";
 import { socket } from "../../App";
 import { addAdmin } from "../../redux/chat";
 
-export default function CLickableMenu(props: { user: IUser, chan: IChannel }) {
+export default function CLickableMenu(props: { user: IUser, chan: IChannel, page: Function}) {
 
     const user: IUser = props.user;
     const [myVar, setMyvar] = useState<boolean>(false);
@@ -55,15 +55,15 @@ export default function CLickableMenu(props: { user: IUser, chan: IChannel }) {
                             </li>
                             <li>
                                 {/* <Link to={`/Chat/dm/${user.id}`}> */}
-                                <div onClick={e => { setOnglet(page.PAGE_2); navigate(`/Chat/dm/`); {DirectMessage(props.user.id)} }}>
-                                    <a>
+                                {/* <div onClick={e => { setOnglet(page.PAGE_2); navigate(`/Chat/dm/`); {DirectMessage(props.user.id)} }}> */}
+                                    <a onClick={e => props.page(page.PAGE_2)}>
                                     DM
                                     </a>
                                     {/* {
                                         onglet == page.PAGE_2 &&
                                         <DirectMessage dmId={props.user.id}/>
                                     } */}
-                                </div> 
+                                {/* </div>  */}
                                 {/* </Link> */}
                             </li>
                             {

@@ -103,7 +103,7 @@ function PublicChannelList() {
 	);
 }
 
-function ChannelMemberList() {
+function ChannelMemberList(props: {page: Function}) {
 	const [currentId, setCurrentId] = useState<number | undefined>(undefined);
 	const currentUser = useAppSelector(state => state.user.user);
 	// const currentChan = useAppSelector(state => 
@@ -181,7 +181,7 @@ function ChannelMemberList() {
 					</ul>
 					{
 						currentId === user.id &&
-						<CLickableMenu user={user} chan={currentChan} />
+						<CLickableMenu user={user} chan={currentChan} page={props.page} />
 					}
 				</div>
 			))
@@ -190,7 +190,7 @@ function ChannelMemberList() {
 	);
 }
 
-export function Channels() {
+export function Channels(props: {page: Function}) {
 	const currentUser = useAppSelector(state => state.user);
 	const [joinedList, setJoinedList] = useState<IChannel[]>([]);
 	const { id } = useParams();
@@ -242,7 +242,7 @@ export function Channels() {
 				{
 					// currentChan.users.find(obj => obj.id === currentUser.user?.id) &&
 					currentUser.user &&
-					<ChannelMemberList />
+					<ChannelMemberList page={props.page}/>
 				}
 			</div>
 		</div>
