@@ -19,15 +19,27 @@ export class GameService {
 	public waitingRoom: any[] = [];
 	public gameRoom: Game[] = [];
 
+	inGame(playerId: number)
+	{
+		this.gameRoom.forEach(element => {
+			if (element.gameState.player1.id == playerId || element.gameState.player2.id == playerId)
+			{
+				return true;
+			}
+		});
+		return false;
+	}
+
 	async addToWaitingRoom(client: any) {
 		let i : number = 0;
 		while (i < this.waitingRoom.length)
 		{
 			if (this.waitingRoom[i] === client)
-				return;
+				return 1;
 			i++;
 		}
 		this.waitingRoom.push(client);
+		return 0;
 	}
 
 	removeFromWaitingRoom(client: any)
@@ -135,10 +147,14 @@ export class GameService {
 		player1.id = socket1.handshake.auth.user.id;
 		player2.name = socket2.handshake.auth.user.username;
 		player2.id = socket2.handshake.auth.user.id;
+		if (scoreMax < 1)
+			scoreMax = 1;
+		else if (scoreMax > 10)
+			scoreMax = 10;
 		this.gameRoom.push(new Game(this, server, player1, player2, extra, scoreMax, socket1, socket2, this.gameRoom.length + 1));
 		this.userService.SetStatus(socket1.handshake.auth.user, "InGame");
 		this.userService.SetStatus(socket2.handshake.auth.user, "InGame");
-		server.emit("UpdateSomeone", { idChange: socket1.handshake.auth.user.id, idChange2: socket2.handshake.auth.user.id  });
+		server.emit("UpdateSomeone", { idChange: socket1.handshake.auth.user.id, idChange2: socket2.handshake.auth.user.id });
 		server.to(player1.socket).emit("RoomStart", this.gameRoom.length, player1);
 		server.to(player2.socket).emit("RoomStart", this.gameRoom.length, player2);
 	}

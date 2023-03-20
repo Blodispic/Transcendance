@@ -22,10 +22,9 @@ export interface Move {
 export class PongGateway implements OnGatewayDisconnect, OnGatewayInit {
 	@WebSocketServer()
 	server: Server;
-	userService: UserService;
 	inviteList: number[];
 	
-	constructor(private gameService: GameService) {
+	constructor(private gameService: GameService, private readonly userService: UserService) {
 		this.inviteList = new Array<number>;
 	}
 	
@@ -75,16 +74,27 @@ export class PongGateway implements OnGatewayDisconnect, OnGatewayInit {
 	}
 
 	@SubscribeMessage("addToWaitingRoom")
-	HandleAddToWaitingRoom(@ConnectedSocket() client: Socket) {
+	async HandleAddToWaitingRoom(@ConnectedSocket() client: Socket) {
 		// this.gameService.addToWaitingRoom(userList[userList.indexOf(client)]);
 		if (this.isInInvite(client.handshake.auth.user.id) === true)
 		{
 			console.log("Already in Invite")
-			return;
+			this.server.to(client.id).emit("WaitingRoomFailure", "You are already in an invite, decline it or wait for an answer");
+			throw new UnauthorizedException("Already in invite");
 		}
-
-		this.gameService.addToWaitingRoom(client);
-		this.gameService.startGame(this.server);
+		if (this.gameService.inGame(client.handshake.auth.user.id) == true)
+		{
+			console.log("Already in a game");
+			throw new UnauthorizedException("Already in a game");
+			// this.server.to(client.id).emit("WaitingRoomFailure", "You are already in an game");
+		}
+		if (await this.gameService.addToWaitingRoom(client) == 1)
+			this.server.to(client.id).emit("WaitingRoomFailure", "You are already in the waitingRoom");
+		else
+		{
+			this.server.to(client.id).emit("WaitingRoomSuccess");
+			this.gameService.startGame(this.server);
+		}
 	}
 
 	@SubscribeMessage("spectateGame")
@@ -132,11 +142,13 @@ export class PongGateway implements OnGatewayDisconnect, OnGatewayInit {
 		if (!payload.user2 || !client.handshake.auth.user)
 			return;
 		this.gameService.removeFromWaitingRoom(client.id);
-		if (this.isInInvite(payload.user2.id) || this.isInInvite(client.handshake.auth.user.id))
+		if (this.isInInvite(payload.user2.id) || this.isInInvite(client.handshake.auth.user.id)
+			|| this.gameService.inGame(client.handshake.auth.user.id) == true
+			|| this.gameService.inGame(payload.user2.id) == true)
 		{
 			console.log("[CreateCustomGame] One of the two users is currently busy.");
+			this.server.to(client.id).emit("WaitingRoomFailure", "The person you're inviting is busy");
 			throw new UnauthorizedException("One of the two users is currently busy.");
-
 			return;
 		}
 		else {
@@ -158,10 +170,15 @@ export class PongGateway implements OnGatewayDisconnect, OnGatewayInit {
 	}
 
 	@SubscribeMessage("acceptCustomGame")
-	AcceptCustomGame(@MessageBody() payload: any, @ConnectedSocket() client: Socket) {
-		let user1: User = this.findByID(payload.user1);
-		let user2: User = payload.user2;
+	async AcceptCustomGame(@MessageBody() payload: any, @ConnectedSocket() client: Socket) {
 
+		const user1 = await this.userService.getById(payload.user1.id);
+		const user2 = await this.userService.getById(payload.user2.id);
+
+		if (user2 === null || user1 === null)
+		{
+			throw new BadRequestException("User doesn't exist");
+		}
 		// Remove both users from InviteList, the can now invite and be invited again
 		if (user1.id)
 			this.removeInvite(user1.id);
@@ -169,8 +186,6 @@ export class PongGateway implements OnGatewayDisconnect, OnGatewayInit {
 			this.removeInvite(user2.id);
 		this.gameService.removeFromWaitingRoom(client.id);
 
-		if (user2 === null)
-			throw new BadRequestException("User2 doesn't exist");
 		console.log("Add " + user1.username + " and " + user2.username + " to custom game.");
 		let userSocket1: any = userList[0]; //By default both user are the first user of the list
 		let userSocket2: any = userList[0]; //By default both user are the first user of the list
@@ -190,12 +205,21 @@ export class PongGateway implements OnGatewayDisconnect, OnGatewayInit {
 			}
 			i++;
 		}
+		if (user1.status != "Online" || user2.status != "Online")
+		{
+			console.log("userSocket1=", userSocket1);
+			console.log("userSocket2=", userSocket2);
+			this.server.to(userSocket1.id).emit("GameCancelled", user2.username);
+			this.server.to(userSocket2.id).emit("GameCancelled", user1.username);
+			// throw new BadRequestException("User is not available");
+			return;
+		}
 		this.gameService.startCustomGame(this.server, userSocket1, userSocket2, payload.extra, parseInt(payload.scoreMax));
 	}
 
 	@SubscribeMessage("declineCustomGame")
 	DeclineCustomGame(@MessageBody() payload: any, @ConnectedSocket() client: Socket) {
-		let user1: User = this.findByID(payload.user1);
+		let user1: User = payload.user1;
 		let user2: User = payload.user2;
 
 		// Remove both users from InviteList, the can now invite and be invited again
@@ -204,8 +228,11 @@ export class PongGateway implements OnGatewayDisconnect, OnGatewayInit {
 		if (user2.id)
 			this.removeInvite(user2.id);
 		let socket : any = this.findSocketFromUser(user1);
-		this.server.to(socket.id).emit("GameDeclined", user2.username);
-
+		if (socket)
+			this.server.to(socket.id).emit("GameDeclined", user2.username);
+		socket = this.findSocketFromUser(user2);
+		if (socket)
+			this.server.to(socket.id).emit("GameDeclined", "You");
 	}
 
 	@SubscribeMessage("GameEnd")
