@@ -22,10 +22,12 @@ export interface Move {
 export class PongGateway implements OnGatewayDisconnect, OnGatewayInit {
 	@WebSocketServer()
 	server: Server;
-	userService: UserService;
 	inviteList: number[];
 	
-	constructor(private gameService: GameService) {
+	constructor(
+		private gameService: GameService,
+		private userService: UserService,
+	) {
 		this.inviteList = new Array<number>;
 	}
 	
