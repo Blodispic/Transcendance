@@ -147,6 +147,10 @@ export class GameService {
 		player1.id = socket1.handshake.auth.user.id;
 		player2.name = socket2.handshake.auth.user.username;
 		player2.id = socket2.handshake.auth.user.id;
+		if (scoreMax < 1)
+			scoreMax = 1;
+		else if (scoreMax > 10)
+			scoreMax = 10;
 		this.gameRoom.push(new Game(this, server, player1, player2, extra, scoreMax, socket1, socket2, this.gameRoom.length + 1));
 		this.userService.SetStatus(socket1.handshake.auth.user, "InGame");
 		this.userService.SetStatus(socket2.handshake.auth.user, "InGame");
