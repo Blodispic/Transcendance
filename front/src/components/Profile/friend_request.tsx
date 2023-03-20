@@ -83,11 +83,7 @@ export function Friends() {
             },
         });
         const data = await response.json();
-<<<<<<< HEAD
         setFriendReq((prevFriendReq) => prevFriendReq.filter((req) => req.id !== id));
-=======
-        // console.log("Data :", data);
->>>>>>> 464ebb599f68f9f422ad63d2931f9109096fd3c8
         let str : string = "They" + " are now your friend!";
         swal("Congrats", str, "success");
         socket.emit("RequestAccepted", data.id);
