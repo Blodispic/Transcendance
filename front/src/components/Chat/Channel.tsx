@@ -12,43 +12,9 @@ import CLickableMenu from "./clickableMenu";
 import { AddChannel } from "./CreateChannel";
 
 function JoinedChannelList(props: {chanList: IChannel[]}) {
-// function JoinedChannelList() {
 	const navigate = useNavigate();
-	// const [chanList, setChanList] = useState<IChannel[] | undefined>(undefined);
 	const currentUser = useAppSelector(state => state.user);
-	// const [reload, setReload] = useState(0);
 
-	// const handleReload = () => {
-	// 	setReload(reload + 1);
-	// }
-
-	// useEffect(() => {
-	// 	const fetchJoined = async () => {
-	// 		const response = await fetch(`${process.env.REACT_APP_BACK}channel/user/${currentUser.user?.id}`, {
-	// 			method: 'GET',
-	// 		})
-	// 		const data = await response.json();
-	// 		setChanList(data);
-	// 		// console.log("---", reload,": fetchJoined ---");
-	// 	}
-	// 	fetchJoined();
-	// 	}, [reload]);
-
-
-	// useEffect(() => {
-	// 	socket.on("joinChannelOK", (data) => {
-	// 		handleReload();
-	// 	});
-	// 	socket.on("leaveChannelOK", (data) => {
-	// 		handleReload();
-	// 	});
-
-	// 	return () => {
-	// 			socket.off("joinChannelOK");
-	// 			socket.off("leaveChannelOK");
-	// 		}
-	// });
-	
 	return (
 		<div className="title">
 			<header>Joined Channels <hr /></header>
@@ -106,8 +72,7 @@ function PublicChannelList() {
 function ChannelMemberList(props: {page: Function}) {
 	const [currentId, setCurrentId] = useState<number | undefined>(undefined);
 	const currentUser = useAppSelector(state => state.user.user);
-	// const currentChan = useAppSelector(state => 
-	// 	state.chat.channels.find(chan => chan.id === props.chanId));
+
 	const dispatch = useAppDispatch();
 
 		const { id } = useParams();
@@ -138,15 +103,6 @@ function ChannelMemberList(props: {page: Function}) {
 				}
 		});
 		
-		// useEffect(() => {
-		// 	socket.on("updateMember", (user) => {
-		// 		dispatch(updateMember({id: chanId}));
-		// 	});
-		// 	return () => {
-		// 			socket.off("updateMember");
-		// 		}
-		// });
-
 	const changeId = (id: number) => {
 		if (id === currentId)
 			setCurrentId(undefined);
@@ -211,22 +167,7 @@ export function Channels(props: {page: Function}) {
 		}
 		fetchJoined();
 		}, [reload]);
-
-	// useEffect(() => {
-	// 	socket.on("joinChannelOK", (data) => {
-	// 		handleReload();
-	// 	});
-	// 	socket.on("leaveChannelOK", (data) => {
-	// 		handleReload();
-	// 	});
-
-	// 	return () => {
-	// 			socket.off("joinChannelOK");
-	// 			socket.off("leaveChannelOK");
-	// 		}
-	// });
 	
-
 	return (id) ? (
 		<div id="chat-container">
 			<div className="sidebar left-sidebar">
@@ -256,207 +197,3 @@ export function Channels(props: {page: Function}) {
 		</div>
 	);
 }
-
-
-
-
-
-
-
-// export function Channels() {
-// 	const currentUser = useAppSelector(state => state.user);
-// 	const [currentChan, setCurrentChan] = useState<IChannel | undefined>(undefined);
-// 	const [joinedList, setJoinedList] = useState<IChannel[]>([]);
-// 	const [publicList, setPublicList] = useState<IChannel[]>([]);
-// 	const [reload, setReload] = useState(0);
-// 	const { id } = useParams();
-
-// 	useEffect(() => {
-// 		const fetchCurrentChan = async () => {
-// 			const response = await fetch(`${process.env.REACT_APP_BACK}channel/${id}`, {
-// 				method: 'GET',
-// 			})
-// 			const data = await response.json();
-// 			setCurrentChan(data);
-// 			// console.log("---", reload,": fetchChan ---");
-// 		}
-// 		// const fetchJoined = async () => {
-// 		// 	const response = await fetch(`${process.env.REACT_APP_BACK}channel/user/${currentUser.user?.id}`, {
-// 		// 		method: 'GET',
-// 		// 	})
-// 		// 	const data = await response.json();
-// 		// 	setJoinedList(data);
-// 		// 	console.log("---", reload,": fetchJoined ---");
-// 		// }
-// 		const fetchPublic = async () => {
-// 			const response = await fetch(`${process.env.REACT_APP_BACK}channel/public`, {
-// 				method: 'GET',
-// 			})
-// 			const data = await response.json();
-// 			setPublicList(data);
-// 			// console.log("---", reload,": fetchPublic ---");
-// 		}
-
-// 		// socket.on("createChannelOk", (data) => {
-// 		// 	console.log("+++ create chan +++");
-// 		// 	handleReload();
-// 		// });
-
-// 		// socket.on("updateJoined", (data) => {
-// 		// 	console.log("+++ joined update +++");
-// 		// 	handleReload();
-// 		// });
-
-// 		socket.on("updateMember", (data) => {
-// 			console.log("+++ member update +++");
-// 			handleReload();
-// 		});
-
-// 		fetchCurrentChan();
-// 		// fetchJoined();
-// 		fetchPublic();
-		
-// 		return () => {
-// 				socket.off("updateMember");
-// 				// socket.off("updateJoined");
-// 				// socket.off("createChannelOk");
-// 			}
-// 	}, [id, reload]);
-
-// 	const handleReload = () => {
-// 		setReload(reload + 1);
-// 	}
-
-// 	if (currentChan !== undefined)
-// 		console.log(reload, " channame: ", currentChan?.name ," | users: ", currentChan.users?.length , " | joined: ", joinedList?.length);
-
-// 	return (id) ? (
-// 		<div id="chat-container">
-// 			<div className="sidebar left-sidebar">
-// 				<JoinedChannelList />
-// 				<AddChannel />
-// 				<PublicChannelList chanList={publicList} reload={handleReload}/>
-// 			</div>
-
-// 			{
-// 				currentChan !== undefined &&
-// 				<>
-// 					<div className="chat-body">
-// 						<ChannelHeader user={currentUser.user} channel={currentChan} reload={handleReload} />
-// 						<ChannelMessages chan={currentChan} />
-// 					</div>
-// 					<div className="sidebar right-sidebar">
-// 						{
-// 							// currentChan.users.find(obj => obj.id === currentUser.user?.id) &&
-// 							currentUser.user &&
-// 							<ChannelMemberList user={currentUser.user} chan={currentChan} reload={handleReload} />
-// 						}
-// 					</div>
-// 				</>
-// 			}
-// 		</div>
-// 	) : (
-// 		<div id="chat-container">
-// 			<div className="sidebar left-sidebar">
-// 				<JoinedChannelList />
-// 				<AddChannel />
-// 				<PublicChannelList chanList={publicList} reload={handleReload}/>
-// 			</div>
-// 		</div>
-// 	);
-// }
-
-
-
-
-	/**
-	 *  useEffect(() => {
-	Promise.all([
-	  fetch('https://jsonplaceholder.typicode.com/users'),
-	  fetch('https://jsonplaceholder.typicode.com/posts'),
-	])
-	  .then(([resUsers, resPosts]) => 
-		Promise.all([resUsers.json(), resPosts.json()])
-	  )
-	  .then(([dataUsers, dataPosts]) => {
-		setUsers(dataUsers);
-		setPosts(dataPosts);
-		setCombinedData(dataUsers.concat(dataPosts));
-	  });
-  }, []);
-
-	 */
-
-	// 	useEffect(() => {
-	// 	socket.on("updateMember", () => {
-	// 		Promise.all([
-	// 			fetch(`${process.env.REACT_APP_BACK}channel/${id}`, { method: 'GET', }),
-	// 			fetch(`${process.env.REACT_APP_BACK}channel/user/${currentUser.user?.id}`, { method: 'GET', })
-	// 		])
-	// 			.then(([resChan, resJoined]) => Promise.all([resChan.json(), resJoined.json()]))
-	// 			.then(([dataChan, dataJoined]) => {
-	// 				setCurrentChan(dataChan);
-	// 				setJoinedList(dataJoined);
-	// 				console.log("1: Promise.All : channame: ", currentChan?.name ," | users: ", currentChan?.users.length , " | joined: ", joinedList.length);
-	// 			})
-	// 	});
-
-	// 	return () => {
-	// 		socket.off("updateMember");
-	// 	}
-	// });
-
-	// useEffect(() => {
-	// 	socket.on("createChannelOk", (data) => {
-	// 		const fetchPublic = async () => {
-	// 			const response = await fetch(`${process.env.REACT_APP_BACK}channel/public`, {
-	// 				method: 'GET',
-	// 			})
-	// 			const data = await response.json();
-	// 			setPublicList(data);
-	// 			console.log("--- 1: fetchPublic (createChannelOk) ---");
-	// 		}
-	// 		fetchPublic();
-	// 	});
-
-	// 	return () => {
-	// 		socket.off("createChannelOk");
-	// 	}
-	// });
-
-	// useEffect(() => {
-	// 	socket.on("updateMember", () => {
-	// 		const fetchCurrentChan = async () => {
-	// 			const response = await fetch(`${process.env.REACT_APP_BACK}channel/${id}`, {
-	// 				method: 'GET',
-	// 			})
-	// 			const data = await response.json();
-	// 			setCurrentChan(data);
-	// 			console.log("--- 1: fetchCurrentChan (updateMember) ---");
-	// 	}
-
-	// 	fetchCurrentChan();
-	// 	});
-
-	// 	return () => {
-	// 		socket.off("updateMember");
-	// 	}
-	// });
-
-	// useEffect(() => {
-	// 	socket.on("updateMember", () => {
-	// 		const fetchJoined = async() => {
-	// 			const response = await fetch(`${process.env.REACT_APP_BACK}channel/user/${currentUser.user?.id}`, {
-	// 				method: 'GET',
-	// 			})
-	// 			const data = await response.json();
-	// 			setJoinedList(data);
-	// 			console.log("--- 1: fetchJoined (updateMember) ---");
-	// 	}
-	// 	fetchJoined();
-	// 	});
-
-	// 	return () => {
-	// 		socket.off("updateMember");
-	// 	}
-	// });

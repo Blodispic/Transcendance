@@ -17,8 +17,6 @@ export default function Chat() {
 	const dispatch = useAppDispatch();
 	const myUser = useAppSelector(state => state.user.user);
 
-	// const [reload, setReload] = useState<boolean>(false);
-
 	useEffect(() => {
 		socket.on('sendMessageChannelOK', (messageDto) => {
 			dispatch(addMessage(messageDto));
@@ -48,26 +46,6 @@ export default function Chat() {
 			socket.off("rmPasswordOK");
 		};
 	});
-
-
-	// useEffect(() => {
-	// 	setReload(false);
-	// }, [reload]);
-
-	// useEffect(() => {
-	// 	socket.on('leaveChannelOK', (chanid) => {
-	// 		console.log("leavechanles");
-	// 		setReload(true);
-	// 	})
-	// 	socket.on('joinChannelOK', (chanid) => {
-	// 		console.log("join chanels ok");
-	// 		setReload(true);
-	// 	})
-	// 	return () => {
-	// 		socket.off('leaveChannelOK');
-	// 		socket.off('joinChannelOK');
-	// 	}
-	// }, []);
 
 	useEffect(() => {
 		socket.on("RoomStart", (roomId: number, player: Player) => {

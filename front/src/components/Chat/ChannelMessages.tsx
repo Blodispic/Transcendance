@@ -69,21 +69,16 @@ export function ChannelHeader(props: {reload: Function}) {
 export function ChannelMessages() {
 	const currentUser = useAppSelector(state => state.user);
 	const [newInput, setNewInput] = useState<string>("");
-	// const currentChan = useAppSelector(state => state.chat.channels.find(chan => chan.id === props.chanId));
-	const dispatch = useAppDispatch();
-	// const [chanId, setChanId] = useState(props.chanId);
-
 	const { id } = useParams();
 	const [chanId, setChanId] = useState<number | undefined>(undefined);
+	const currentChan = useAppSelector(state => 
+		state.chat.channels.find(chan => chan.id === chanId));
 
 	useEffect(() => {
 		if (id !== undefined) {
 			setChanId(parseInt(id));
 		}
 	}, [id]);
-
-	const currentChan = useAppSelector(state => 
-		state.chat.channels.find(chan => chan.id === chanId));
 
 	const handleSubmitNewMessage = (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();

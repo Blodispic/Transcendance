@@ -4,13 +4,12 @@ import { IChannel } from "../../interface/Channel";
 import { IUser } from "../../interface/User";
 import { useAppDispatch, useAppSelector } from "../../redux/Hook";
 import CustomGamePopup from "../Game/CustomGamePopup";
-import { AddAdmin, BanUser, KickUser, MuteUser } from "./AdminCommands";
+import { BanUser, KickUser, MuteUser } from "./AdminCommands";
 import { page } from "../../interface/enum";
-import { DirectMessage } from "./DirectMessage";
 import { socket } from "../../App";
 import { addAdmin } from "../../redux/chat";
 
-export default function CLickableMenu(props: { user: IUser, chan: IChannel, page: Function}) {
+export default function CLickableMenu(props: { user: IUser, chan: IChannel, page: Function }) {
 
     const user: IUser = props.user;
     const [myVar, setMyvar] = useState<boolean>(false);
@@ -21,17 +20,13 @@ export default function CLickableMenu(props: { user: IUser, chan: IChannel, page
     const navigate = useNavigate();
     const dispatch = useAppDispatch();
 
-    /**
-     * For DM tab change, useEffect can be used to reload the page
-     * 
-     */
     const handleAddAdmin = () => {
-        socket.emit('GiveAdmin', {chanid: props.chan.id, userid: props.user.id});
+        socket.emit('GiveAdmin', { chanid: props.chan.id, userid: props.user.id });
     }
-    
+
     useEffect(() => {
-        socket.on("giveAdminOK", ({userId, chanId}) =>{
-            dispatch(addAdmin({id: chanId, user: props.user}));
+        socket.on("giveAdminOK", ({ userId, chanId }) => {
+            dispatch(addAdmin({ id: chanId, user: props.user }));
         });
         return () => {
             socket.off("giveAdminOK");
@@ -54,17 +49,9 @@ export default function CLickableMenu(props: { user: IUser, chan: IChannel, page
                                 Invite Game
                             </li>
                             <li>
-                                {/* <Link to={`/Chat/dm/${user.id}`}> */}
-                                {/* <div onClick={e => { setOnglet(page.PAGE_2); navigate(`/Chat/dm/`); {DirectMessage(props.user.id)} }}> */}
-                                    <a onClick={e => props.page(page.PAGE_2)}>
+                                <a onClick={e => props.page(page.PAGE_2)}>
                                     DM
-                                    </a>
-                                    {/* {
-                                        onglet == page.PAGE_2 &&
-                                        <DirectMessage dmId={props.user.id}/>
-                                    } */}
-                                {/* </div>  */}
-                                {/* </Link> */}
+                                </a>
                             </li>
                             {
                                 props.chan.admin?.find(obj => obj.id === myUser?.id) &&
@@ -85,21 +72,21 @@ export default function CLickableMenu(props: { user: IUser, chan: IChannel, page
                                             {
                                                 props.chan.muted?.find(obj => obj.id === props.user.id) === undefined &&
                                                 <li>
-                                                <a onClick={() => setTimeMute(true)}>
-                                                    Mute
-                                                    <MuteUser chanid={props.chan.id} userid={user.id} trigger={timeMute} setTrigger={setTimeMute} />
-                                                </a>
-                                            </li>
+                                                    <a onClick={() => setTimeMute(true)}>
+                                                        Mute
+                                                        <MuteUser chanid={props.chan.id} userid={user.id} trigger={timeMute} setTrigger={setTimeMute} />
+                                                    </a>
+                                                </li>
                                             }
-                                            
+
                                             {
                                                 props.chan.banned?.find(obj => obj.id === props.user.id) === undefined &&
                                                 <li>
-                                                <a onClick={() => setTimeBan(true)}>
-                                                    Ban
-                                                    <BanUser chanid={props.chan.id} userid={user.id} trigger={timeBan} setTrigger={setTimeBan} />
-                                                </a>
-                                              </li>
+                                                    <a onClick={() => setTimeBan(true)}>
+                                                        Ban
+                                                        <BanUser chanid={props.chan.id} userid={user.id} trigger={timeBan} setTrigger={setTimeBan} />
+                                                    </a>
+                                                </li>
                                             }
 
                                             <li>

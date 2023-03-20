@@ -80,7 +80,7 @@ export function AddAdmin(props: {chanid: any, user: IUser}) {
 	const dispatch = useAppDispatch();
 
 	socket.emit('GiveAdmin', {chanid: props.chanid, userid: props.user.id});
-//  client.emit("giveAdminOK", user.id, channel.id);
+
 	useEffect(() => {
 		socket.on("giveAdminOK", ({userId, chanId}) =>{
 			dispatch(addAdmin({id: chanId, user: props.user}));
