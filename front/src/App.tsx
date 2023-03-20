@@ -19,10 +19,10 @@ function App() {
   const dispatch = useAppDispatch();
   const cookies = new Cookies();
   const token = cookies.get('Token');
-  let timeOutId: any;
-
+  
   const [trigger, setTrigger] = useState<boolean> (false);
   const [infoGame, setInfoGame] = useState<any | undefined> (undefined);
+  let timeOutId : any = undefined;
 
 
   useEffect(() => {
@@ -40,6 +40,7 @@ function App() {
           if (timeOutId)
             clearTimeout(timeOutId);
         });
+
         socket.on("RequestSent", () => {
           console.log("status myuser dans App socket.on RequestSent", myUser.user!.status);
           if (myUser && myUser.user && myUser.user.status != UserStatus.INGAME)
@@ -56,6 +57,13 @@ function App() {
             swal("Friend Request Declined", "One of your friend request has been declined", "error");
         });
 
+        socket.on("GameDeclined", (username: string) => {
+          if (timeOutId)
+            clearTimeout(timeOutId);
+          if (username != "You")
+            swal("Invitation Declined", username + " declined your game", "error");
+        });
+
         socket.on("invitationInGame", (payload: any) => {
           setInfoGame(payload);
           setTrigger(true);
@@ -63,6 +71,7 @@ function App() {
             setTrigger(false)
             socket.emit("declineCustomGame", payload);
           }, 10000)
+          console.log(timeOutId);
         })
       }
         return () => {
@@ -71,6 +80,7 @@ function App() {
           socket.off("RequestAccepted");
           socket.off("RequestDeclined");
           socket.off("invitationInGame");
+          socket.off("GameDeclined");
         }
     }
   }, [myUser.isLog])

@@ -29,7 +29,6 @@ export default function Queue() {
         if (socket)
         {
             socket.on("RoomStart", (roomId: number, player: Player) => {
-                console.log("ALED");
                 if (swal && swal.close != undefined && swal.stopLoading != undefined)
                 {
                     swal("Success", "You've been added to the custom room.", "success");

@@ -31,11 +31,6 @@ export default function CustomGamePopup(props: {trigger: boolean; setTrigger: Fu
         if ( window.location.href.search('Game') == -1 ) {
             setInpage(true);
         }
-        socket.on("GameDeclined", (username: string) => {
-            swal("Invitation Declined", username + " declined your game", "error");
-        });
-
-
     }, [props])
 
     const changeScore = (event: any) => {
