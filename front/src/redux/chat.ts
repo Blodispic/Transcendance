@@ -6,11 +6,13 @@ import { IUser } from "../interface/User";
 interface StateTest {
     channels: IChannel[],
     DMs: IMessage[],
+    dms: Map<number, IMessage[]>;
 }
 
 const initialChat: StateTest = {
     channels: [],
     DMs: [],
+    dms: new Map<number, IMessage[]>(),
 }
 
 export const chatSlice = createSlice({
@@ -136,9 +138,13 @@ export const chatSlice = createSlice({
 
         addDM: (state, { payload }: PayloadAction<IMessage>) => {
             state.DMs = ([...state.DMs, payload]);
-        } 
+        }, 
+
+        addDms: (state, { payload }: PayloadAction<{id: number, message: IMessage}>) => {
+            state.dms.set(payload.id, {...state.dms.get(payload.id), payload.message});
+        },
     },
 });
 
-export const { setChannels, addChannel, addMember, removeMember, addAdmin, banUser, muteUser, setPass, removePass, addMessage, addDM } = chatSlice.actions;
+export const { setChannels, addChannel, addMember, removeMember, addAdmin, banUser, muteUser, setPass, removePass, addMessage, addDM, addDms } = chatSlice.actions;
 export default chatSlice.reducer;

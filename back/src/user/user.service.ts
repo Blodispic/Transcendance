@@ -496,7 +496,7 @@ export class UserService {
     return user;
   }
 
-  async removeFriend(id: number, friend: User) {
+  async removeFriend(id: number, friend: number) {
     const user = await this.usersRepository.findOne({
       relations: ['friends'],
       where: { id },
@@ -505,7 +505,7 @@ export class UserService {
     if (!user) {
       return;
     }
-    user.friends = user.friends.filter((f) => f.id !== friend.id);
+    user.friends = user.friends.filter((f) => friend !== id);
     return await this.usersRepository.save(user);
   }
 

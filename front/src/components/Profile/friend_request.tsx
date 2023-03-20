@@ -74,6 +74,7 @@ export function Friends() {
     }
 
     const acceptFriendRequest = async (id: number) => {
+        console.log("accept frine in my profile", "friendId", id, "myID", myUser.user!.id )
         const response = await fetch(`${process.env.REACT_APP_BACK}user/friends/accept`, {
             method: 'POST',
             body: JSON.stringify({ friendId: id, userId: myUser.user!.id }),
