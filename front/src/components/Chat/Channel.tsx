@@ -163,7 +163,6 @@ export function Channels(props: {page: Function}) {
 			})
 			const data = await response.json();
 			setJoinedList(data);
-			console.log("---", reload,": fetchJoined ---");
 		}
 		fetchJoined();
 		}, [reload]);
