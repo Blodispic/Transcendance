@@ -1,12 +1,14 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { IChannel } from "../../interface/Channel";
 import { IUser } from "../../interface/User";
-import { useAppSelector } from "../../redux/Hook";
+import { useAppDispatch, useAppSelector } from "../../redux/Hook";
 import CustomGamePopup from "../Game/CustomGamePopup";
 import { AddAdmin, BanUser, KickUser, MuteUser } from "./AdminCommands";
 import { page } from "../../interface/enum";
 import { DirectMessage } from "./DirectMessage";
+import { socket } from "../../App";
+import { addAdmin } from "../../redux/chat";
 
 export default function CLickableMenu(props: { user: IUser, chan: IChannel }) {
 
@@ -17,11 +19,25 @@ export default function CLickableMenu(props: { user: IUser, chan: IChannel }) {
     const [timeBan, setTimeBan] = useState(false);
     const [onglet, setOnglet] = useState<page>(page.PAGE_1);
     const navigate = useNavigate();
+    const dispatch = useAppDispatch();
 
     /**
      * For DM tab change, useEffect can be used to reload the page
      * 
      */
+    const handleAddAdmin = () => {
+        socket.emit('GiveAdmin', {chanid: props.chan.id, userid: props.user.id});
+    }
+    
+    useEffect(() => {
+        socket.on("giveAdminOK", ({userId, chanId}) =>{
+            dispatch(addAdmin({id: chanId, user: props.user}));
+        });
+        return () => {
+            socket.off("giveAdminOK");
+        }
+    })
+
     return (
         <div className="dropdown-container">
             <div className="dropdown clickable-menu hover-style">
@@ -57,7 +73,7 @@ export default function CLickableMenu(props: { user: IUser, chan: IChannel }) {
                                         props.chan.admin?.find(obj => obj.id === props.user.id) == undefined &&
                                         <>
                                             <li>
-                                                <a onClick={_ => AddAdmin({ chanid: props.chan.id, user: props.user})}>
+                                                <a onClick={_ => handleAddAdmin()}>
                                                     Add to Admin
                                                 </a>
                                             </li>
@@ -66,19 +82,26 @@ export default function CLickableMenu(props: { user: IUser, chan: IChannel }) {
                                     {
                                         props.chan.owner?.id !== props.user.id &&
                                         <>
-
-                                            <li>
+                                            {
+                                                props.chan.muted?.find(obj => obj.id === props.user.id) === undefined &&
+                                                <li>
                                                 <a onClick={() => setTimeMute(true)}>
                                                     Mute
                                                     <MuteUser chanid={props.chan.id} userid={user.id} trigger={timeMute} setTrigger={setTimeMute} />
                                                 </a>
                                             </li>
-                                            <li>
+                                            }
+                                            
+                                            {
+                                                props.chan.banned?.find(obj => obj.id === props.user.id) === undefined &&
+                                                <li>
                                                 <a onClick={() => setTimeBan(true)}>
                                                     Ban
                                                     <BanUser chanid={props.chan.id} userid={user.id} trigger={timeBan} setTrigger={setTimeBan} />
                                                 </a>
-                                            </li>
+                                              </li>
+                                            }
+
                                             <li>
                                                 <a onClick={() => KickUser(props.chan.id, user.id)}>
                                                     Kick

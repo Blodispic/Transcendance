@@ -8,7 +8,7 @@ import { useAppDispatch, useAppSelector } from "../../redux/Hook";
 import { addBlockedUser, unBlockUser } from "../../redux/user";
 import CustomGamePopup from "../Game/CustomGamePopup";
 
-function DMList(props: {currentdm: IUser | undefined; setCurrentDm: Function}) {
+function DMList(props: { currentdm: IUser | undefined; setCurrentDm: Function }) {
 	const [alluser, setAlluser] = useState<IUser[] | undefined>(undefined);
 	const myStore = useAppSelector(state => state);
 
@@ -45,91 +45,91 @@ function DMList(props: {currentdm: IUser | undefined; setCurrentDm: Function}) {
 	);
 }
 
-function InfoFriend(props: {user: IUser}) {
-    const myUser = useAppSelector(state => state.user);
+function InfoFriend(props: { user: IUser }) {
+	const myUser = useAppSelector(state => state.user);
 	const user: IUser = props.user;
 	const [myVar, setMyvar] = useState<boolean>(false);
 
 	const dispatch = useAppDispatch();
 
 	const Block = async () => {
-        await fetch(`${process.env.REACT_APP_BACK}user/block/${myUser.user?.id}`, {
-            method: 'POST',
-            body: JSON.stringify({
-                blockedId: user.id,
-            }),
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${myUser.myToken}`,
-            }
-        })
-            .then(async response => {
-                if (response.ok)
-                    dispatch(addBlockedUser(user));
-            })
-    }
+		await fetch(`${process.env.REACT_APP_BACK}user/block/${myUser.user?.id}`, {
+			method: 'POST',
+			body: JSON.stringify({
+				blockedId: user.id,
+			}),
+			headers: {
+				'Content-Type': 'application/json',
+				'Authorization': `Bearer ${myUser.myToken}`,
+			}
+		})
+			.then(async response => {
+				if (response.ok)
+					dispatch(addBlockedUser(user));
+			})
+	}
 
 	const UnBlock = async () => {
-        await fetch(`${process.env.REACT_APP_BACK}user/unblock/${myUser.user?.id}`, {
-            method: 'DELETE',
-            body: JSON.stringify({
-                blockedId: user.id,
-            }),
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${myUser.myToken}`,
-            }
-        })
-            .then(async response => {
-                if (response.ok)
-                    dispatch(unBlockUser (user));
-            })
-    }
+		await fetch(`${process.env.REACT_APP_BACK}user/unblock/${myUser.user?.id}`, {
+			method: 'DELETE',
+			body: JSON.stringify({
+				blockedId: user.id,
+			}),
+			headers: {
+				'Content-Type': 'application/json',
+				'Authorization': `Bearer ${myUser.myToken}`,
+			}
+		})
+			.then(async response => {
+				if (response.ok)
+					dispatch(unBlockUser(user));
+			})
+	}
 
 	return (
 		<div className="title"> menu <hr />
-		<div className="menu hover-style">
+			<div className="menu hover-style">
 
-		 <ul >
-                    <li >
-                        <Link to={`/Profile/${user.id}`}>
-                            Profile
-                        </Link>
-                    </li>
-                    
-                        <>
-                            <li>
-                                Add friend
-                            </li>
-                           
-                            <li onClick={_ => setMyvar(true)}>
-                                Invite Game
-                            </li>
-							{
-								((myUser.user && (myUser.user.blocked === undefined 
-									|| myUser.user.blocked.find(block => block.id === user.id) === undefined)) 
-									&& user.username !== myUser.user!.username) &&
-									<li onClick={_ => Block()}>
-									Block
-									</li>
-							}
-							{
-	                ((myUser.user && (myUser.user.blocked !== undefined && myUser.user.blocked.find(block => block.id === user.id) !== undefined)) && user.username !== myUser.user!.username) &&
+				<ul >
+					<li >
+						<Link to={`/Profile/${user.id}`}>
+							Profile
+						</Link>
+					</li>
+
+					<>
+						<li>
+							Add friend
+						</li>
+
+						<li onClick={_ => setMyvar(true)}>
+							Invite Game
+						</li>
+						{
+							((myUser.user && (myUser.user.blocked === undefined
+								|| myUser.user.blocked.find(block => block.id === user.id) === undefined))
+								&& user.username !== myUser.user!.username) &&
+							<li onClick={_ => Block()}>
+								Block
+							</li>
+						}
+						{
+							((myUser.user && (myUser.user.blocked !== undefined && myUser.user.blocked.find(block => block.id === user.id) !== undefined)) && user.username !== myUser.user!.username) &&
 							<li onClick={_ => UnBlock()}>
 								Unblock
 							</li>
-							}
-                        </>
-                </ul>
-		</div>
-		{
-                <CustomGamePopup trigger={myVar} setTrigger={setMyvar} friend={user} />
-        }
+						}
+					</>
+				</ul>
+			</div>
+			{
+				<CustomGamePopup trigger={myVar} setTrigger={setMyvar} friend={user} />
+			}
 		</div>
 	);
 }
 
-export function DmMessages(props: { id: any; currentdm: IUser | undefined; setCurrentDm: Function}) {
+export function DmMessages(props: { id: any; currentdm: IUser | undefined; setCurrentDm: Function }) {
 	const [newInput, setNewInput] = useState("");
 	const myUser = useAppSelector(state => state.user.user);
 	const dispatch = useAppDispatch();
@@ -168,21 +168,21 @@ export function DmMessages(props: { id: any; currentdm: IUser | undefined; setCu
 			<div className="chat-messages">
 				<div className="reverse">
 
-				{messages && messages.map(message => (
-					( (myUser?.blocked?.find(obj => obj.id === props.currentdm?.id) === undefined && message.sender?.id === props.currentdm?.id) 
-						|| (message.sender?.id === myUser?.id && message.IdReceiver === props.currentdm?.id)) ? (
-						<div key={message.sender?.id + message.message} className="__wrap">
-						<div className="message-info">
-							<img className="user-avatar" src={message.sender?.avatar} />
-							{message.sender?.username}
-							<span className="timestamp">{message.sendtime}</span>
-						</div>
-						{message.message}
-					</div>
+					{messages && messages.map(message => (
+						((myUser?.blocked?.find(obj => obj.id === props.currentdm?.id) === undefined && message.sender?.id === props.currentdm?.id)
+							|| (message.sender?.id === myUser?.id && message.IdReceiver === props.currentdm?.id)) ? (
+							<div key={message.message + message.sendtime} className="__wrap">
+								<div key={message.sendtime}className="message-info">
+									<img className="user-avatar" src={message.sender?.avatar} />
+									{message.sender?.username}
+									<span className="timestamp">{message.sendtime}</span>
+								</div>
+								{message.message}
+							</div>
 
-					) 
-					: <></>
-				))}
+						)
+							: <></>
+					))}
 
 				</div>
 			</div>
@@ -209,7 +209,7 @@ export function DmMessages(props: { id: any; currentdm: IUser | undefined; setCu
 // 	const handleSubmitNewMessage = (e: React.FormEvent<HTMLFormElement>) => {
 // 		e.preventDefault();
 // 		if (newInput != "") {
-	
+
 // 			const sendtime = new Date().toLocaleString('en-US');
 // 			socket.emit('sendDM', { IdReceiver: props.currentdm?.id, message: newInput, sendtime: sendtime });
 
