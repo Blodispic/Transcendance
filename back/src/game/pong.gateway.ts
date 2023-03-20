@@ -22,7 +22,6 @@ export interface Move {
 export class PongGateway implements OnGatewayDisconnect, OnGatewayInit {
 	@WebSocketServer()
 	server: Server;
-	// userService: UserService;
 	inviteList: number[];
 	
 	constructor(private gameService: GameService, private readonly userService: UserService) {

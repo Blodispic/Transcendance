@@ -60,7 +60,7 @@ export class OauthService {
     const payload = { username: data.login, }
     const access_token = await this.jwtService.signAsync(payload, {
       secret: jwtConstants.secret,
-      expiresIn: '900s',
+      expiresIn: '3600s',
     });
     if (user)
     {
