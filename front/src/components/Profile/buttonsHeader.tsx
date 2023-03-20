@@ -59,6 +59,7 @@ export default function HeaderButtons(props: { currentUser: IUser }) {
 
             })
     }
+
     const UnBlock = async () => {
         await fetch(`${process.env.REACT_APP_BACK}user/unblock/${myUser.user?.id}`, {
             method: 'DELETE',
@@ -151,6 +152,22 @@ export function InviteButton(props: { user: any, relation: string}) {
         socket.emit("RequestAccepted", data.id);
     };
 
+    const RemoveFriend = async () => {
+        await fetch(`${process.env.REACT_APP_BACK}user/deletefriend/${user.id}`, {
+            method: 'DELETE',
+            body: JSON.stringify({
+                friendId: id,
+            }),
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${user.myToken}`,
+            }
+        })
+            .then(async response => {
+                setRelation("Nobody");
+            })
+    }
+
 
     return (
         <>
@@ -162,7 +179,7 @@ export function InviteButton(props: { user: any, relation: string}) {
             }
             {
                 relation === "Friend" &&
-                <button className="button-style" onClick={_ => (setRelation("Nobody"))}> remove Friend </button>
+                <button className="button-style" onClick={_ => (RemoveFriend())}> remove Friend </button>
             }
             {
                 relation === "friendRequestSent" &&

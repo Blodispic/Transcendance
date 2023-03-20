@@ -191,8 +191,11 @@ export class UserController {
   }
 
   @Delete('deletefriend/:id')
-  async deleteFriend(@Param('id', ParseIntPipe) id: number, @Body() friend: User) {
-    return await plainToClass(User, this.userService.removeFriend(id, friend));
+  async deleteFriend(@Param('id', ParseIntPipe) id: number, @Body() friendId: { friendId: number }) {
+    console.log("id = ", id);
+    console.log("friendId = ", friendId.friendId);
+    await this.userService.removeFriend(friendId.friendId, id)
+    return plainToClass(User, await this.userService.removeFriend(id, friendId.friendId));
   }
 
   @Post('block/:id')
