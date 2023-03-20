@@ -151,19 +151,24 @@ export function DmMessages(props: { id: any; currentdm: IUser | undefined; setCu
 				<div className="reverse">
 
 					{messages && messages.map((message, index) => (
-						((myUser?.blocked?.find(obj => obj.id === props.currentdm?.id) === undefined && message.sender?.id === props.currentdm?.id)
-							|| (message.sender?.id === myUser?.id && message.IdReceiver === props.currentdm?.id)) ? (
-							<div key={index} className="__wrap">
-								<div className="message-info">
-									<img className="user-avatar" src={`${process.env.REACT_APP_BACK}user/${message.sender?.id}/avatar`}  />
-									{message.sender?.username}
-									<span className="timestamp">{message.sendtime}</span>
-								</div>
-								{message.message}
-							</div>
+						<div key={index} >
+							{
 
-						)
-							: <></>
+								((myUser?.blocked?.find(obj => obj.id === props.currentdm?.id) === undefined && message.sender?.id === props.currentdm?.id)
+									|| (message.sender?.id === myUser?.id && message.IdReceiver === props.currentdm?.id)) ? (
+									<div className="__wrap">
+										<div className="message-info">
+											<img className="user-avatar" src={`${process.env.REACT_APP_BACK}user/${message.sender?.id}/avatar`} />
+											{message.sender?.username}
+											<span className="timestamp">{message.sendtime}</span>
+										</div>
+										{message.message}
+									</div>
+
+								)
+									: <></>
+							}
+						</div>
 					))}
 
 				</div>

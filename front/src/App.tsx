@@ -91,7 +91,6 @@ function App() {
     }
   }, [myUser.isLog])
 
-  // need to check with manu on this -- a function for setting initial values on channels store
   const get_channels = async() => {
     const response = await fetch(`${process.env.REACT_APP_BACK}channel`, {
       method: 'GET',
@@ -125,7 +124,6 @@ function App() {
         dispatch(setToken(token));
 
         // setCookie('Token', data.access_token, { path: '/' });
-
         // socket.emit("UpdateSomeone", { idChange: myUser.user?.id, idChange2: 0 })
       }
       else {
@@ -136,7 +134,7 @@ function App() {
   if (myUser.user === undefined) {
     if (token !== undefined)
       get_user();
-      get_channels(); //added
+      get_channels();
   }
 
   return (

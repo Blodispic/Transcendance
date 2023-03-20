@@ -6,13 +6,13 @@ import { IUser } from "../interface/User";
 interface StateTest {
     channels: IChannel[],
     DMs: IMessage[],
-    dms: Map<number, IMessage[]>;
+    // DMs: Map<number, IMessage[]>;
 }
 
 const initialChat: StateTest = {
     channels: [],
     DMs: [],
-    dms: new Map<number, IMessage[]>(),
+    // DMs: new Map<number, IMessage[]>(),
 }
 
 export const chatSlice = createSlice({
@@ -140,8 +140,12 @@ export const chatSlice = createSlice({
             state.DMs = ([...state.DMs, payload]);
         }, 
 
-        // addDms: (state, { payload }: PayloadAction<{id: number, message: IMessage}>) => {
-        //     state.dms.set(payload.id, {...state.dms.get(payload.id), payload.message});
+        // addDM: (state, { payload }: PayloadAction<{id: number, message: IMessage}>) => {
+        //    if (state.DMs.get(payload.id) !== undefined)
+        //         state.DMs.get(payload.id)?.push(payload.message);
+        //     else
+        //         state.DMs.set(payload.id, [payload.message]);
+        //     console.log(state.DMs.get(payload.id));
         // },
     },
 });

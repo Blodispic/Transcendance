@@ -22,6 +22,7 @@ export default function Chat() {
 			dispatch(addMessage(messageDto));
 		});
 
+		// maybe handle errors (sendDMfail or something)
 		socket.on('sendDmOK', (sendDmDto) => {
 			const newMessage: IMessage = sendDmDto;
 			newMessage.sender = myUser;
