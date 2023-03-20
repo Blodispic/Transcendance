@@ -194,10 +194,12 @@ export class UserController {
   }
 
   @Post('block/:id')
+  @UseGuards(JwtGuard)
   async addBlock(@Param('id') id: number, @Body() blockedId: { blockedId: number}) {
     return await this.userService.addBlock(id, blockedId.blockedId);
   }
 
+  @UseGuards(JwtGuard)
   @Delete('unblock/:id')
   async RmBlock(@Param('id') id: number, @Body()  blockedId: { blockedId: number}) {
     return await this.userService.RmBlock(id, blockedId.blockedId);

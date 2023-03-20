@@ -58,9 +58,10 @@ export class OauthService {
     const data = await response.json();
     const user = await this.usersService.getByLogin(data.login);
     const payload = { username: data.login, }
+    console.log("Check si ca passe la");
     const access_token = await this.jwtService.signAsync(payload, {
       secret: jwtConstants.secret,
-      expiresIn: '900s',
+      expiresIn: '3600s',
     });
     if (user)
     {
