@@ -191,27 +191,28 @@ export class UserController {
   }
 
   @Delete('deletefriend/:id')
+  @UseGuards(JwtGuard)
   async deleteFriend(@Param('id', ParseIntPipe) id: number, @Body() friend: User) {
     return await plainToClass(User, this.userService.removeFriend(id, friend));
   }
 
   @Post('block/:id')
+  @UseGuards(JwtGuard)
   async addBlock(@Param('id') id: number, @Body() blockedId: { blockedId: number}) {
-    console.log(id);
-    console.log(blockedId);
+
+    await this.userService.removeFriend(id, blockedId.blockedId);
     return await this.userService.addBlock(id, blockedId.blockedId);
   }
 
+  @UseGuards(JwtGuard)
   @Delete('unblock/:id')
   async RmBlock(@Param('id') id: number, @Body()  blockedId: { blockedId: number}) {
-    console.log("ca rentre la ");
     return await this.userService.RmBlock(id, blockedId.blockedId);
   }
 
   @Post("relations")
   @UseGuards(JwtGuard)
   async checkRelations(@Body() body: { userId: number,  friendId: number }) {
-    console.log(body.friendId, body.userId)
     return await this.userService.checkRelations(body.friendId, body.userId);
   }
 }
