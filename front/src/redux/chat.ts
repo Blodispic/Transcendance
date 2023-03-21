@@ -29,20 +29,20 @@ export const chatSlice = createSlice({
                 state.channels = ([payload]);
         },
 
-        addMember: (state, { payload }: PayloadAction<{id: number, user: IUser}>) => {
+        addMember: (state, { payload }: PayloadAction<{ id: number, user: IUser }>) => {
             let chan = state.channels.find(obj => obj.id === payload.id);
 
             if (chan) {
-                const get_channel = async() => {
+                const get_channel = async () => {
                     const response = await fetch(`${process.env.REACT_APP_BACK}channel/${payload.id}`, {
-                      method: 'GET',
+                        method: 'GET',
                     }).then(async response => {
-                      const data = await response.json();             
-                      if (response.ok) {
-                       chan = data;
-                    }
+                        const data = await response.json();
+                        if (response.ok) {
+                            chan = data;
+                        }
                     })
-                  }
+                }
                 get_channel();
                 if (chan.users && chan.users.find(obj => obj.id === payload.user.id) === undefined)
                     chan.users = ([...chan.users, payload.user]);
@@ -51,7 +51,7 @@ export const chatSlice = createSlice({
             }
         },
 
-        removeMember: (state, { payload }: PayloadAction<{id: number, user: IUser}>) => {
+        removeMember: (state, { payload }: PayloadAction<{ id: number, user: IUser }>) => {
             const chan = state.channels.find(obj => obj.id === payload.id);
             if (chan) {
                 if (chan.users && chan.users.find(obj => obj.id === payload.user.id) !== undefined)
@@ -59,7 +59,7 @@ export const chatSlice = createSlice({
             }
         },
 
-        addAdmin: (state, { payload }: PayloadAction<{id: number, user: IUser}>) => {
+        addAdmin: (state, { payload }: PayloadAction<{ id: number, user: IUser }>) => {
             const chan = state.channels.find(obj => obj.id === payload.id);
             if (chan) {
                 if (chan.admin && chan.admin.find(obj => obj.id === payload.user.id) === undefined)
@@ -69,7 +69,7 @@ export const chatSlice = createSlice({
             }
         },
 
-        banUser: (state, { payload }: PayloadAction<{id: number, user: IUser}>) => {
+        banUser: (state, { payload }: PayloadAction<{ id: number, user: IUser }>) => {
             const chan = state.channels.find(obj => obj.id === payload.id);
             if (chan) {
                 if (chan.banned && chan.banned.find(obj => obj.id === payload.user.id) === undefined)
@@ -80,7 +80,7 @@ export const chatSlice = createSlice({
             console.log(":: redux :: banUser");
         },
 
-        unBanUser: (state, { payload }: PayloadAction<{id: number, user: IUser}>) => {
+        unBanUser: (state, { payload }: PayloadAction<{ id: number, user: IUser }>) => {
             const chan = state.channels.find(obj => obj.id === payload.id);
             if (chan) {
                 if (chan.banned && chan.banned.find(obj => obj.id === payload.user.id) !== undefined)
@@ -89,7 +89,7 @@ export const chatSlice = createSlice({
             console.log(":: redux :: unBanUser");
         },
 
-        muteUser: (state, { payload }: PayloadAction<{id: number, user: IUser}>) => {
+        muteUser: (state, { payload }: PayloadAction<{ id: number, user: IUser }>) => {
             const chan = state.channels.find(obj => obj.id === payload.id);
             if (chan) {
                 if (chan.muted && chan.muted.find(obj => obj.id === payload.user.id) === undefined)
@@ -100,7 +100,7 @@ export const chatSlice = createSlice({
             console.log(":: redux :: muteUser");
         },
 
-        unMuteUser: (state, { payload }: PayloadAction<{id: number, user: IUser}>) => {
+        unMuteUser: (state, { payload }: PayloadAction<{ id: number, user: IUser }>) => {
             const chan = state.channels.find(obj => obj.id === payload.id);
             if (chan) {
                 if (chan.muted && chan.muted.find(obj => obj.id === payload.user.id) !== undefined)
@@ -126,17 +126,31 @@ export const chatSlice = createSlice({
 
         addMessage: (state, { payload }: PayloadAction<IMessage>) => {
             const chan = state.channels.find(obj => obj.id === payload.chanid);
+            //      if (!chan)
+            //           const chan = state.channels.find(obj => obj.id === undefined && obj.sender === payload.sender);
             if (chan) {
                 if (chan.messages)
                     chan.messages = ([...chan.messages, payload]);
                 else
                     chan.messages = ([payload]);
             }
+            //// OR LIKE THIS
+            // else{
+            //     const DM = state.channels.find(obj => obj.id === undefined && obj.sender.id === payload.sender.id);
+            //     if (DM) {
+            //          if (DM.messages)
+            //              DM.messages = ([...DM.messages, payload]);
+            //          else
+            //              DM.messages = ([payload]);
+            //      }
+            //} 
+
+            //SO NO NEDD NEXT FUNCTION
         },
 
         addDM: (state, { payload }: PayloadAction<IMessage>) => {
             state.DMs = ([...state.DMs, payload]);
-        }, 
+        },
 
     },
 });

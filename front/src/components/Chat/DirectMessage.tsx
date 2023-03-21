@@ -133,7 +133,8 @@ export function DmMessages(props: { id: number; currentdm: IUser | undefined; se
 
 	const [newInput, setNewInput] = useState("");
 	const myUser = useAppSelector(state => state.user.user);
-	const messages = useAppSelector(state => state.chat.DMs.filter(obj => obj.chanid === props.id));
+	const messages: IMessage[] = useAppSelector(state => state.chat.DMs.filter(obj => obj.chanid === props.id));
+	// const messages: IMessage[] = useAppSelector(state => state.chat.channels.filter(obj => obj.chanid === undefined && obj.sender.id === currentdm.id);
 
 	const handleSubmitNewMessage = (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
