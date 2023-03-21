@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { HiOutlineXMark, HiPlus } from "react-icons/hi2";
-import { useNavigate } from "react-router-dom";
 import { socket } from "../../App";
 import { IUser } from "../../interface/User";
 import { addChannel } from "../../redux/chat";
@@ -29,8 +28,8 @@ export function PopupCreateChannel(props: any) {
 		setChanMode(2);
 	}
 
-	useEffect( () => {
-	}, [friend] )
+	// useEffect( () => {
+	// }, [friend] )
 
 	const handleCreateNewChan = () => {
 		if (chanName !== "")

@@ -9,7 +9,8 @@ import { IUser, UserStatus } from "./interface/User";
 import InviteGame from "./components/utils/InviteGame";
 import { Player } from "./components/Game/Game";
 import swal from "sweetalert";
-import { setChannels } from "./redux/chat";
+import { addDM, addMember, addMessage, removeMember, removePass, setChannels, setPass } from "./redux/chat";
+import { IMessage } from "./interface/Message";
 
 export let socket: Socket;
 
@@ -78,6 +79,42 @@ function App() {
             socket.emit("declineCustomGame", payload);
           }, 10000)
         })
+
+        /* Chat */
+        socket.on("joinChannel", ({ chanid, user }) => {
+          dispatch(addMember({ id: chanid, user: user }));
+        });
+
+        socket.on("leaveChannel", ({ chanid, user }) => {
+          dispatch(removeMember({ id: chanid, user: user }));
+        });
+
+        socket.on('sendMessageChannelOK', (messageDto) => {
+          dispatch(addMessage(messageDto));
+        });
+
+        socket.on('sendDmOK', (sendDmDto) => {
+          const newMessage: IMessage = sendDmDto;
+          newMessage.sender = myUser.user;
+          newMessage.chanid = sendDmDto.IdReceiver;
+          dispatch(addDM(newMessage));
+        });
+        
+        socket.on('ReceiveDM', (receiveDmDto) => {
+          const newMessage: IMessage = receiveDmDto;
+          newMessage.chanid = receiveDmDto.sender.id;
+          dispatch(addDM(receiveDmDto));
+        });
+
+        socket.on("addPasswordOK", (chanId) => {
+          dispatch(setPass(chanId));
+        });
+
+        socket.on("rmPasswordOK", (chanId) => {
+          dispatch(removePass(chanId));
+        });
+
+
       }
         return () => {
           socket.off("RoomStart");
@@ -87,6 +124,15 @@ function App() {
           socket.off("invitationInGame");
           socket.off("GameDeclined");
           socket.off("GameCancelled");
+
+          socket.off("joinChannel");
+          socket.off("leaveChannel");
+          socket.off('sendMessageChannelOK');
+          socket.off('sendDmOK');
+          socket.off('ReceiveDM');
+          socket.off("addPasswordOK");
+          socket.off("rmPasswordOK");
+
         }
     }
   }, [myUser.isLog])

@@ -3,7 +3,7 @@ import { HiOutlineXMark } from "react-icons/hi2";
 import { socket } from "../../App";
 import { IChannel } from "../../interface/Channel";
 import { IUser } from "../../interface/User";
-import { addAdmin, removePass, setPass } from "../../redux/chat";
+import { addAdmin } from "../../redux/chat";
 import { useAppDispatch } from "../../redux/Hook";
 
 export function BanUser(props: { chanid: any, userid: any, trigger: boolean, setTrigger: Function }) {

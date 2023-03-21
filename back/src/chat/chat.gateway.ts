@@ -99,7 +99,10 @@ async handleJoinChannel(@ConnectedSocket() client: Socket, @MessageBody() joinCh
     throw new BadRequestException("No such Channel"); // no such channel
   const user = await this.userService.getById(client.handshake.auth.user.id);
   if (user === null)
+  {
+    client.emit("joinChannelFailed", "Invalid User"); 
     throw new BadRequestException("No such user");  
+  }
   if (channel.password && !(await bcrypt.compare(joinChannelDto.password, channel.password)))
   {
     client.emit("joinChannelFailed", "Wrong password");
@@ -117,9 +120,7 @@ async handleJoinChannel(@ConnectedSocket() client: Socket, @MessageBody() joinCh
   client.join("chan" + joinChannelDto.chanid);
   // client.emit("joinChannelOK", channel); //original
   client.emit("joinChannelOK", channel.id); // + (maybe) list of members
-  // client.emit("updateJoined", channel);
-  this.server.to("chan" + channel.id).emit("joinChannel", user);
-  // this.server.to("chan" + channel.id).emit("updateMember", user);
+  this.server.to("chan" + channel.id).emit("joinChannel", {chanid: channel.id, user: user,});
 }
 
 @SubscribeMessage('createChannel')
@@ -141,7 +142,6 @@ async handleCreateChannel(@ConnectedSocket() client: Socket, @MessageBody() crea
 
   // client.emit("createChannelOk", new_channel.id);
   // client.emit("joinChannelOK", new_channel.id);
-  // client.emit("updateJoined", new_channel.id);
 
   this.server.emit("createChannelOk", new_channel.id);
 }
@@ -151,14 +151,14 @@ async handleLeaveChannel(@ConnectedSocket() client: Socket, @MessageBody() leave
   const channel = await this.channelService.getById(leaveChannelDto.chanid);
   const user = await this.userService.getById(client.handshake.auth.user.id);
   if (channel === null || user === null)
+  {
+    client.emit("leaveChannelFailed", "Invalid User or Channel"); 
     throw new BadRequestException("No such Channel or User"); // no such channel/user, shouldn't happened
+  }
   this.channelService.rm( { user, chanid: leaveChannelDto.chanid});
   client.leave("chan" + leaveChannelDto.chanid);
   client.emit("leaveChannelOK", channel.id);
-  // client.emit("updateJoined", channel.id);
-  this.server.to("chan" + channel.id).emit("leaveChannel", user);
-  // this.server.to("chan" + channel.id).emit("updateMember", user);
-
+  this.server.to("chan" + channel.id).emit("leaveChannel", {chanid: channel.id, user: user,});
 }
 
 @SubscribeMessage('addPassword')

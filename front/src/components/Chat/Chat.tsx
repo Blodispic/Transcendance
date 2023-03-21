@@ -18,39 +18,6 @@ export default function Chat() {
 	const myUser = useAppSelector(state => state.user.user);
 
 	useEffect(() => {
-		socket.on('sendMessageChannelOK', (messageDto) => {
-			dispatch(addMessage(messageDto));
-		});
-
-		socket.on('sendDmOK', (sendDmDto) => {
-			const newMessage: IMessage = sendDmDto;
-			newMessage.sender = myUser;
-			newMessage.chanid = sendDmDto.IdReceiver;
-			dispatch(addDM(newMessage));
-		})
-		socket.on('ReceiveDM', (receiveDmDto) => {
-			const newMessage: IMessage = receiveDmDto;
-			newMessage.chanid = receiveDmDto.sender.id;
-			dispatch(addDM(receiveDmDto));
-		})
-
-		socket.on("addPasswordOK", (chanId) => {
-			dispatch(setPass(chanId));
-		})
-
-		socket.on("rmPasswordOK", (chanId) => {
-			dispatch(removePass(chanId));
-		});
-		return () => {
-			socket.off('sendMessageChannelOK');
-			socket.off('sendDmOK');
-			socket.off('ReceiveDM');
-			socket.off("addPasswordOK");
-			socket.off("rmPasswordOK");
-		};
-	});
-
-	useEffect(() => {
 		socket.on("RoomStart", (roomId: number, player: Player) => {
             navigate("/game/" + roomId, { state: { Id: roomId } });
         });

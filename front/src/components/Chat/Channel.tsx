@@ -3,9 +3,7 @@ import { BsFillKeyFill, BsFillPersonFill } from "react-icons/bs";
 import { FaCrown } from "react-icons/fa";
 import { HiLockClosed } from "react-icons/hi2";
 import { useNavigate, useParams } from "react-router-dom";
-import { socket } from "../../App";
 import { IChannel } from "../../interface/Channel";
-import { addMember, removeMember, setChannels } from "../../redux/chat";
 import { useAppDispatch, useAppSelector } from "../../redux/Hook";
 import { ChannelHeader, ChannelMessages } from "./ChannelMessages";
 import CLickableMenu from "./clickableMenu";
@@ -82,29 +80,12 @@ function ChannelMemberList(props: { page: Function }) {
 	const [chanId, setChanId] = useState<number | undefined>(undefined);
 	const currentChan = useAppSelector(state =>
 		state.chat.channels.find(chan => chan.id === chanId));
-	const dispatch = useAppDispatch();
 
 	useEffect(() => {
 		if (id !== undefined) {
 			setChanId(parseInt(id));
 		}
 	}, [id]);
-
-	useEffect(() => {
-		socket.on("joinChannel", (user) => {
-			if (currentChan?.id !== undefined)
-				dispatch(addMember({ id: currentChan.id, user: user }));
-		});
-
-		socket.on("leaveChannel", (user) => {
-			if (currentChan?.id !== undefined)
-				dispatch(removeMember({ id: currentChan.id, user: user }));
-		});
-		return () => {
-			socket.off("joinChannel");
-			socket.off("leaveChannel");
-		}
-	});
 
 	const changeId = (id: number) => {
 		if (id === currentId)
@@ -150,11 +131,7 @@ function ChannelMemberList(props: { page: Function }) {
 }
 
 export function Channels(props: {page: Function}) {
-	const currentUser = useAppSelector(state => state.user);
-	const [joinedList, setJoinedList] = useState<IChannel[]>([]);
 	const { id } = useParams();
-	const [reload, setReload] = useState(0);
-	const dispatch = useAppDispatch();
 
 	return (id) ? (
 		<div id="chat-container">
