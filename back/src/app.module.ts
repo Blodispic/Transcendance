@@ -12,7 +12,6 @@ import { AppGateway } from './app.gateway';
 import { MulterModule } from '@nestjs/platform-express';
 import { Results } from './results/entities/results.entity';
 import { ChannelModule } from './chat/channel/channel.module';
-import { ResultModule } from './results/results.module';
 import { Channel } from './chat/channel/entities/channel.entity';
 import { FriendRequest } from './user/entities/friend-request.entity';
 import { UserService } from './user/user.service';
@@ -39,7 +38,6 @@ import { GatewayExceptionFilter } from './app.exceptionFilter';
     GameModule,
     OauthModule,
     ChannelModule,
-    ResultModule,
   ],
   controllers: [AppController],
   providers: [AppService, ChatGateway, AppGateway,
