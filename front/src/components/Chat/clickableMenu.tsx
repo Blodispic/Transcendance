@@ -16,7 +16,6 @@ export default function CLickableMenu(props: { user: IUser, chan: IChannel, page
     const myUser = useAppSelector(state => state.user.user)
     const [timeMute, setTimeMute] = useState(false);
     const [timeBan, setTimeBan] = useState(false);
-    const [onglet, setOnglet] = useState<page>(page.PAGE_1);
     const navigate = useNavigate();
     const dispatch = useAppDispatch();
 

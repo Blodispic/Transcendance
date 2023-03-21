@@ -184,12 +184,11 @@ export function DmMessages(props: { id: number; currentdm: IUser | undefined; se
 	);
 }
 
-export function DirectMessage(props: any) {
+export function DirectMessage() {
 	const [currentDm, setCurrentDm] = useState<IUser | undefined>(undefined);
 	const { id } = useParams();
 	const [dmId, setDmId] = useState<number | undefined>(undefined);
 	const myUser = useAppSelector(state => state);
-
 
 	useEffect(() => {
 		if (id !== undefined)
@@ -198,26 +197,28 @@ export function DirectMessage(props: any) {
 
 	useEffect(() => {
 		const get_user = async () => {
-			const response = await fetch(`${process.env.REACT_APP_BACK}user/id/${dmId}`, {
-				method: 'GET',
-				headers: {
-					'Authorization': `Bearer ${myUser.user.myToken}`,
-				},
-			})
-			const data = await response.json();
-			setCurrentDm(data);
+			if (dmId) {
+				const response = await fetch(`${process.env.REACT_APP_BACK}user/id/${dmId}`, {
+					method: 'GET',
+					headers: {
+						'Authorization': `Bearer ${myUser.user.myToken}`,
+					},
+				})
+				const data = await response.json();
+				setCurrentDm(data);
+			}
 		}
 		console.log("getuser");
 		get_user();
 	}, [dmId]);
 
 
-	return (dmId) ? (
+	return (id) ? (
 		<div id="chat-container">
 			<div className="sidebar left-sidebar">
 				<DMList currentdm={currentDm} setCurrentDm={setCurrentDm} />
 			</div>
-			{currentDm !== undefined &&
+			{(currentDm !== undefined && dmId !== undefined) &&
 				<>
 					<DmMessages id={dmId} currentdm={currentDm} setCurrentDm={setCurrentDm} />
 					<div className="sidebar left-sidebar">

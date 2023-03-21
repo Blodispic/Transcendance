@@ -9,7 +9,7 @@ import { useAppDispatch, useAppSelector } from "../../redux/Hook";
 import { ConfigureChannel } from "./AdminCommands";
 import { JoinChannel, LeaveChannel } from "./JoinLeave";
 
-export function ChannelHeader(props: {reload: Function}) {
+export function ChannelHeader() {
 	const [popup, setPopup] = useState(false);
 	const currentUser = useAppSelector(state => state.user.user);
 	const { id } = useParams();
@@ -36,11 +36,11 @@ export function ChannelHeader(props: {reload: Function}) {
 		}
 		{
 			currentChan.users?.find(obj => obj.id === currentUser?.id) === undefined &&
-			<JoinChannel channel={currentChan} reload={props.reload} />
+			<JoinChannel channel={currentChan} />
 		}
 		{
 			currentChan.users?.find(obj => obj.id === currentUser?.id) &&
-			<LeaveChannel channel={currentChan} reload={props.reload} />
+			<LeaveChannel channel={currentChan} />
 		}
 		{
 			currentChan.id &&

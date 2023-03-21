@@ -11,15 +11,19 @@ import { ChannelHeader, ChannelMessages } from "./ChannelMessages";
 import CLickableMenu from "./clickableMenu";
 import { AddChannel } from "./CreateChannel";
 
-function JoinedChannelList(props: {chanList: IChannel[]}) {
+function JoinedChannelList() {
 	const navigate = useNavigate();
-	const currentUser = useAppSelector(state => state.user);
+	const currentUser = useAppSelector(state => state.user.user);
+	const channels = useAppSelector(state => state.chat.channels);
+
 
 	return (
 		<div className="title">
 			<header>Joined Channels <hr /></header>
-			{props.chanList && props.chanList.map(chan => (
+			{channels && channels.map(chan => (
 				<ul key={chan.name}>
+				{
+					chan.users.find(obj => obj.id === currentUser?.id) &&
 					<li>
 						<div onClick={_ => navigate(`/Chat/channel/${chan.id}`)}>{chan.name}
 							{
@@ -32,6 +36,8 @@ function JoinedChannelList(props: {chanList: IChannel[]}) {
 							}
 						</div>
 					</li>
+				}	
+				
 				</ul>
 			))}
 		</div>
@@ -69,40 +75,37 @@ function PublicChannelList() {
 	);
 }
 
-function ChannelMemberList(props: {page: Function}) {
+function ChannelMemberList(props: { page: Function }) {
 	const [currentId, setCurrentId] = useState<number | undefined>(undefined);
 	const currentUser = useAppSelector(state => state.user.user);
-
+	const { id } = useParams();
+	const [chanId, setChanId] = useState<number | undefined>(undefined);
+	const currentChan = useAppSelector(state =>
+		state.chat.channels.find(chan => chan.id === chanId));
 	const dispatch = useAppDispatch();
 
-		const { id } = useParams();
-		const [chanId, setChanId] = useState<number | undefined>(undefined);
-	
-		useEffect(() => {
-			if (id !== undefined) {
-				setChanId(parseInt(id));
-			}
-		}, [id]);
-	
-		const currentChan = useAppSelector(state => 
-			state.chat.channels.find(chan => chan.id === chanId));
+	useEffect(() => {
+		if (id !== undefined) {
+			setChanId(parseInt(id));
+		}
+	}, [id]);
 
-		useEffect(() => {
-			socket.on("joinChannel", (user) => {
-				if (currentChan?.id !== undefined)
-					dispatch(addMember({id: currentChan.id, user: user}));
-			});
-	
-			socket.on("leaveChannel", (user) => {
-				if (currentChan?.id !== undefined)
-					dispatch(removeMember({id: currentChan.id, user: user}));
-			});
-			return () => {
-					socket.off("joinChannel");
-					socket.off("leaveChannel");
-				}
+	useEffect(() => {
+		socket.on("joinChannel", (user) => {
+			if (currentChan?.id !== undefined)
+				dispatch(addMember({ id: currentChan.id, user: user }));
 		});
-		
+
+		socket.on("leaveChannel", (user) => {
+			if (currentChan?.id !== undefined)
+				dispatch(removeMember({ id: currentChan.id, user: user }));
+		});
+		return () => {
+			socket.off("joinChannel");
+			socket.off("leaveChannel");
+		}
+	});
+
 	const changeId = (id: number) => {
 		if (id === currentId)
 			setCurrentId(undefined);
@@ -130,8 +133,8 @@ function ChannelMemberList(props: {page: Function}) {
 							}
 							{
 								currentChan.owner?.id !== user.id &&
-									currentChan.admin?.find(obj => obj.id === user.id) &&
-									<BsFillPersonFill />
+								currentChan.admin?.find(obj => obj.id === user.id) &&
+								<BsFillPersonFill />
 							}
 						</li>
 					</ul>
@@ -153,45 +156,15 @@ export function Channels(props: {page: Function}) {
 	const [reload, setReload] = useState(0);
 	const dispatch = useAppDispatch();
 
-	const handleReload = () => {
-		setReload(reload + 1);
-	}
-
-	useEffect(() => {
-		const get_channels = async() => {
-			const response = await fetch(`${process.env.REACT_APP_BACK}channel`, {
-				method: 'GET',
-			}).then(async response => {
-				const data = await response.json();
-				
-				if (response.ok) {
-					dispatch(setChannels(data));
-				}
-			})
-		}
-		get_channels();
-	}, []);
-
-	useEffect(() => {
-		const fetchJoined = async () => {
-			const response = await fetch(`${process.env.REACT_APP_BACK}channel/user/${currentUser.user?.id}`, {
-				method: 'GET',
-			})
-			const data = await response.json();
-			setJoinedList(data);
-		}
-		fetchJoined();
-	}, [reload]);
-	
 	return (id) ? (
 		<div id="chat-container">
 			<div className="sidebar left-sidebar">
-				<JoinedChannelList chanList={joinedList}/>
+				<JoinedChannelList />
 				<AddChannel />
 				<PublicChannelList />
 			</div>
 			<div className="chat-body">
-				<ChannelHeader reload={handleReload}/>
+				<ChannelHeader />
 				<ChannelMessages />
 			</div>
 			<div className="sidebar right-sidebar">
@@ -201,7 +174,7 @@ export function Channels(props: {page: Function}) {
 	) : (
 		<div id="chat-container">
 			<div className="sidebar left-sidebar">
-				<JoinedChannelList chanList={joinedList}/>
+				<JoinedChannelList />
 				<AddChannel />
 				<PublicChannelList />
 			</div>
