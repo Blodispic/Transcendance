@@ -28,12 +28,12 @@ export function BanUser(props: { chanid: any, userid: any, trigger: boolean, set
 
 	return (props.trigger) ? (
 		<div className="chat-form-popup" onClick={_ => (props.setTrigger(false))}>
-			<div className="chat-form-inner" onClick={e => e.stopPropagation()}>
+			<div className="clickable-pop-up-inner" onClick={e => e.stopPropagation()}>
 				<HiOutlineXMark className="close-icon" onClick={_ => (props.setTrigger(false))} /> 
 				<br />
 				<h3>Ban User</h3>
 				<h4>Set time (optional)</h4>
-				<input type="text" placeholder="Timeout in seconds" onChange={e => { setTimeout(e.target.value) }}></input>
+				<input type="number" id="clickable-input" min="0" onChange={e => { setTimeout(e.target.value) }} />seconds
 				<br /><br />
 				<button onClick={_ => handleBan()}>Ban User</button>
 			</div>
@@ -63,14 +63,14 @@ export function MuteUser(props: { chanid: any, userid: any, trigger: boolean, se
 
 	return (props.trigger) ? (
 		<div className="chat-form-popup" onClick={_ => (props.setTrigger(false))}>
-			<div className="chat-form-inner" onClick={e => e.stopPropagation()}>
+			<div className="clickable-pop-up-inner" onClick={e => e.stopPropagation()}>
 				<HiOutlineXMark className="close-icon" onClick={_ => (props.setTrigger(false))} /> 
 				<br />
 				<h3>Mute User</h3>
 				<h4>Set time (optional)</h4>
-				<input placeholder="Timeout in seconds" onChange={e => { setTimeout(e.target.value) }}></input>
+				<input type="number" id="clickable-input" min="0" onChange={e => { setTimeout(e.target.value) }} />seconds
 				<br /><br />
-				<button onClick={_ => handleMute()}>Ban User</button>
+				<button onClick={_ => handleMute()}>Mute User</button>
 			</div>
 		</div>
 	) : <></>;
