@@ -71,7 +71,7 @@ export function ChannelMessages() {
 	const [newInput, setNewInput] = useState<string>("");
 	const { id } = useParams();
 	const [chanId, setChanId] = useState<number | undefined>(undefined);
-	const currentChan = useAppSelector(state => 
+	const currentChan = useAppSelector(state =>
 		state.chat.channels.find(chan => chan.id === chanId));
 
 	useEffect(() => {
@@ -82,7 +82,7 @@ export function ChannelMessages() {
 
 	const handleSubmitNewMessage = (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
-		if (newInput !== "") {			
+		if (newInput !== "") {
 			const sendTime = new Date().toLocaleString('en-US');
 			socket.emit('sendMessageChannel', { chanid: currentChan?.id, message: newInput, sendtime: sendTime });
 		}
@@ -94,22 +94,28 @@ export function ChannelMessages() {
 			{currentChan.users?.find(obj => obj.id === currentUser.user?.id) !== undefined &&
 				<>
 					<div className="chat-messages">
-						{
-							<div className="reverse">
-								{currentChan.messages && currentChan.messages.map((message, index) => (
-									message.chanid === currentChan.id &&
-									<div key={index} className="__wrap">
-										<div className="message-info">
-											<img className="user-avatar" src={`${process.env.REACT_APP_BACK}user/${message.sender?.id}/avatar`} />
-											<p>{message.sender?.username}</p>
-											<p className="timestamp">{message.sendtime}</p>
+						<div className="reverse">
+
+							{currentChan.messages && currentChan.messages.map((message, index) => (
+								<div key={index}>
+									{message.chanid === currentChan.id &&
+										<div className="__wrap">
+											<div className="message-info">
+												<img className="user-avatar" src={`${process.env.REACT_APP_BACK}user/${message.sender?.id}/avatar`} />
+												<p>{message.sender?.username}</p>
+												<p className="timestamp">{message.sendtime}</p>
+											</div>
+											{message.message}
 										</div>
-										{message.message}
-									</div>
-								))}
-							</div>
-						}
+									}
+								</div>
+
+							))
+							}
+
+						</div>
 					</div>
+
 					<form id="input_form" onSubmit={(e) => { handleSubmitNewMessage(e); }}>
 						<input type="text" onChange={(e) => { setNewInput(e.target.value) }}
 							placeholder="type message here" value={newInput} />

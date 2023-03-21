@@ -22,13 +22,15 @@ export default function Chat() {
 			dispatch(addMessage(messageDto));
 		});
 
-		// maybe handle errors (sendDMfail or something)
 		socket.on('sendDmOK', (sendDmDto) => {
 			const newMessage: IMessage = sendDmDto;
 			newMessage.sender = myUser;
+			newMessage.chanid = sendDmDto.IdReceiver;
 			dispatch(addDM(newMessage));
 		})
 		socket.on('ReceiveDM', (receiveDmDto) => {
+			const newMessage: IMessage = receiveDmDto;
+			newMessage.chanid = receiveDmDto.sender.id;
 			dispatch(addDM(receiveDmDto));
 		})
 

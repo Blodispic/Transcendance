@@ -129,12 +129,11 @@ function InfoFriend(props: { user: IUser }) {
 }
 
 export function DmMessages(props: { id: number; currentdm: IUser | undefined; setCurrentDm: Function }) {
-	// props.id ---- userId of receiver 
-
 	const [newInput, setNewInput] = useState("");
 	const myUser = useAppSelector(state => state.user.user);
 	const messages: IMessage[] = useAppSelector(state => state.chat.DMs.filter(obj => obj.chanid === props.id));
-	// const messages: IMessage[] = useAppSelector(state => state.chat.channels.filter(obj => obj.chanid === undefined && obj.sender.id === currentdm.id);
+	// const messages: IMessage[] = useAppSelector(state => state.chat.channels.filter(obj => obj.id === undefined && obj.messages !== undefined && obj.messages.sender.id  !== undefined && === currentdm.id && obj.);
+ 	// .sender !== undefined && obj.m.sender.id === currentdm.id && obj.);
 
 	const handleSubmitNewMessage = (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
@@ -158,7 +157,7 @@ export function DmMessages(props: { id: number; currentdm: IUser | undefined; se
 						<div key={index} >
 							{
 
-								((myUser?.blocked?.find(obj => obj.id === props.currentdm?.id) === undefined)) ? (
+								myUser?.blocked?.find(obj => obj.id === props.currentdm?.id) === undefined &&
 									<div className="__wrap">
 										<div className="message-info">
 											<img className="user-avatar" src={`${process.env.REACT_APP_BACK}user/${message.sender?.id}/avatar`} />
@@ -167,8 +166,7 @@ export function DmMessages(props: { id: number; currentdm: IUser | undefined; se
 										</div>
 										{message.message}
 									</div>
-								)
-									: <></>
+
 							}
 						</div>
 					))}
@@ -234,15 +232,6 @@ export function DirectMessage(props: any) {
 				<div className="sidebar left-sidebar">
 					<DMList currentdm={currentDm} setCurrentDm={setCurrentDm} />
 				</div>
-				{currentDm !== undefined &&
-					<>
-						<DmMessages id={props} currentdm={currentDm} setCurrentDm={setCurrentDm} />
-						<div className="sidebar left-sidebar">
-							<InfoFriend user={currentDm} />
-						</div>
-					</>
-				}
-
 			</div>
 		);
 }
