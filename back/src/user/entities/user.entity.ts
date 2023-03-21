@@ -35,7 +35,7 @@ export class User {
   @Column()
   intra_avatar: string;
 
-  @ManyToMany(() => User, user => user.friends)
+  @ManyToMany(() => User, user => user.friends, { onDelete: 'CASCADE' })
   @JoinTable()
   friends: User[];
 
