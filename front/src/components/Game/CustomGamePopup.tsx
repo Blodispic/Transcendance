@@ -31,11 +31,6 @@ export default function CustomGamePopup(props: {trigger: boolean; setTrigger: Fu
         if ( window.location.href.search('Game') == -1 ) {
             setInpage(true);
         }
-        socket.on("GameDeclined", (username: string) => {
-            swal("Invitation Declined", username + " declined your game", "error");
-        });
-
-
     }, [props])
 
     const changeScore = (event: any) => {
@@ -53,7 +48,7 @@ export default function CustomGamePopup(props: {trigger: boolean; setTrigger: Fu
             swal("Error", "User doesn't exist", "error");
             return ;
         }
-        socket.emit("createCustomGame", { user1: myUser.user?.id, user2: friend[0], extra: extra, scoreMax: Max });
+        socket.emit("createCustomGame", { user1: myUser.user, user2: friend[0], extra: extra, scoreMax: Max });
         props.setTrigger(false);
         setMyvar(false);
         return;

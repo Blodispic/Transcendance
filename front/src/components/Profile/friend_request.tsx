@@ -29,7 +29,6 @@ export function Friends() {
         const checkFriendRequest = async () => {
             const response = await fetch(`${process.env.REACT_APP_BACK}user/friendsRequest`, {
                 method: 'POST',
-                body: JSON.stringify({ userId: myUser.user!.id }),
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${myToken}`,
