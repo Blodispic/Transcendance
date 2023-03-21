@@ -72,6 +72,7 @@ export function ChannelMessages() {
 	const [chanId, setChanId] = useState<number | undefined>(undefined);
 	const currentChan = useAppSelector(state =>
 		state.chat.channels.find(chan => chan.id === chanId));
+	const messages = useAppSelector(state=> state.chat.chanMs.filter(obj => obj.chanid === chanId));
 
 	useEffect(() => {
 		if (id !== undefined) {
@@ -95,7 +96,7 @@ export function ChannelMessages() {
 					<div className="chat-messages">
 						<div className="reverse">
 
-							{currentChan.messages && currentChan.messages.map((message, index) => (
+							{messages && messages.map((message, index) => (
 								<div key={index}>
 									{(message.chanid === currentChan.id && message.sender !== undefined) &&
 										<div className="__wrap">

@@ -140,10 +140,10 @@ async handleCreateChannel(@ConnectedSocket() client: Socket, @MessageBody() crea
   if (new_channel.chanType == 1 && createChannelDto.users && createChannelDto.users.length > 0)
     this.inviteToChan(createChannelDto.users, new_channel.id);
 
-  // client.emit("createChannelOk", new_channel.id);
+  client.emit("createChannelOk", new_channel.id);
   // client.emit("joinChannelOK", new_channel.id);
 
-  this.server.emit("createChannelOk", new_channel.id);
+  // this.server.emit("createChannelOk", new_channel.id);
 }
 
 @SubscribeMessage('leaveChannel')

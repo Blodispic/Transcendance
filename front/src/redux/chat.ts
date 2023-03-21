@@ -5,11 +5,13 @@ import { IUser } from "../interface/User";
 
 interface StateTest {
     channels: IChannel[],
+    chanMs: IMessage[],
     DMs: IMessage[],
 }
 
 const initialChat: StateTest = {
     channels: [],
+    chanMs: [],
     DMs: [],
 }
 
@@ -20,6 +22,7 @@ export const chatSlice = createSlice({
 
         setChannels: (state, { payload }: PayloadAction<IChannel[]>) => {
             state.channels = payload;
+            console.log("rdx: set all channels");
         },
 
         addChannel: (state, { payload }: PayloadAction<IChannel>) => {
@@ -124,27 +127,15 @@ export const chatSlice = createSlice({
         },
 
         addMessage: (state, { payload }: PayloadAction<IMessage>) => {
-            const chan = state.channels.find(obj => obj.id === payload.chanid);
-            //      if (!chan)
-            //           const chan = state.channels.find(obj => obj.id === undefined && obj.sender === payload.sender);
-            if (chan) {
-                if (chan.messages)
-                    chan.messages = ([...chan.messages, payload]);
-                else
-                    chan.messages = ([payload]);
-            }
-            //// OR LIKE THIS
-            // else{
-            //     const DM = state.channels.find(obj => obj.id === undefined && obj.sender.id === payload.sender.id);
-            //     if (DM) {
-            //          if (DM.messages)
-            //              DM.messages = ([...DM.messages, payload]);
-            //          else
-            //              DM.messages = ([payload]);
-            //      }
-            //} 
+            // const chan = state.channels.find(obj => obj.id === payload.chanid);
 
-            //SO NO NEDD NEXT FUNCTION
+            // if (chan) {
+            //     if (chan.messages)
+            //         chan.messages = ([...chan.messages, payload]);
+            //     else
+            //         chan.messages = ([payload]);
+            // }
+            state.chanMs = ([...state.chanMs, payload]);
         },
 
         addDM: (state, { payload }: PayloadAction<IMessage>) => {

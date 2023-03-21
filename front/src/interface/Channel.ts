@@ -11,5 +11,4 @@ export interface IChannel {
 	users: IUser[];
 	banned: IUser[];
 	muted: IUser[];
-	messages?: IMessage[];
 }

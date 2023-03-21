@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { HiOutlineXMark, HiPlus } from "react-icons/hi2";
+import { useNavigate } from "react-router-dom";
 import { socket } from "../../App";
 import { IUser } from "../../interface/User";
 import { addChannel } from "../../redux/chat";
@@ -13,7 +14,7 @@ export function PopupCreateChannel(props: any) {
     const [friend, setFriend] = useState<IUser[] >([]);
 	const [myVar, setMyvar] = useState<boolean> (false);
 	const [failed, setFailed] = useState<boolean> (false);
-	// const navigate = useNavigate();
+	const navigate = useNavigate();
 	const dispatch = useAppDispatch();
 
 	const handlePublic = () => {
@@ -50,14 +51,12 @@ export function PopupCreateChannel(props: any) {
 				})
 				const data = await response.json();
 				dispatch(addChannel(data));
-				console.log(":: create chan :: ", data.users);
+				console.log(":: create chan ::");
 			}
 			fetchChanInfo();
 			setFailed(false);
 			props.setTrigger(false);
-
-			
-			// navigate(`/Chat/channel/${new_chanid}`)
+			navigate(`/Chat/channel/${new_chanid}`)
 		});
 
 		return () => {

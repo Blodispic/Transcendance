@@ -4,6 +4,7 @@ import { FaCrown } from "react-icons/fa";
 import { HiLockClosed } from "react-icons/hi2";
 import { useNavigate, useParams } from "react-router-dom";
 import { IChannel } from "../../interface/Channel";
+import { setChannels } from "../../redux/chat";
 import { useAppDispatch, useAppSelector } from "../../redux/Hook";
 import { ChannelHeader, ChannelMessages } from "./ChannelMessages";
 import CLickableMenu from "./clickableMenu";
@@ -130,6 +131,22 @@ function ChannelMemberList(props: { page: Function }) {
 
 export function Channels(props: {page: Function}) {
 	const { id } = useParams();
+	const dispatch = useAppDispatch();
+
+	useEffect(() => {
+		const get_channels = async() => {
+			const response = await fetch(`${process.env.REACT_APP_BACK}channel`, {
+				method: 'GET',
+			}).then(async response => {
+				const data = await response.json();
+				
+				if (response.ok) {
+					dispatch(setChannels(data));
+				}
+			})
+		}
+		get_channels();
+	}, []);
 
 	return (id) ? (
 		<div id="chat-container">
