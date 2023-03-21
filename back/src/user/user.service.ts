@@ -286,13 +286,12 @@ export class UserService {
   }
 
   async DeleteFriendRequest(friendId: number, creatorId: number) {
-    
+
     const friendRequestPush = await this.friendRequestRepository.findOne({
       where: [{ creatorId: creatorId, receiverId: friendId }]
     });
-    
-    if (friendRequestPush)
-    {
+
+    if (friendRequestPush) {
       await this.friendRequestRepository.delete(friendRequestPush.id);
     }
     return await this.usersRepository.findOneBy({
@@ -465,8 +464,8 @@ export class UserService {
   async SetStatus(user: User, status: string): Promise<User | null> {
     if (!user)
       throw new HttpException(`user doesn't exists`, HttpStatus.BAD_REQUEST);
-      
-    const users = await this.usersRepository.findOne({where: { id: user.id }});
+
+    const users = await this.usersRepository.findOne({ where: { id: user.id } });
     if (users) {
       users.status = status;
       return await this.usersRepository.save(users);
@@ -501,6 +500,7 @@ export class UserService {
     if (!user) {
       throw new NotFoundException("UserNotFound");
     }
+
     user.friends = user.friends.filter((f) => f.id != friendid);
     return this.usersRepository.save(user);
   }
@@ -595,23 +595,17 @@ export class UserService {
       },
       where: { id: userId },
     });
-
     if (!realUser) {
       throw new NotFoundException("User doesn't exist");
     }
-
     const friend = realUser.friends.find((friend) => friend.id === friendId);
-
     if (friend) {
       return ({ relation: "Friend" });
     }
-
     const blocked = realUser.blocked.find((blocked) => blocked.id === friendId);
-
     if (blocked) {
       return ({ relation: "Blocked" });
     }
-
     if (realUser.sendFriendRequests) {
       const friendRequestSent = realUser.sendFriendRequests.find(
         (request) => request.receiver.id === friendId
@@ -621,7 +615,6 @@ export class UserService {
         return ({ relation: "friendRequestSent" });
       }
     }
-
     if (realUser.receiveFriendRequests) {
       const friendRequestReceived = realUser.receiveFriendRequests.find(
         (request) => request.creator.id === friendId
@@ -633,6 +626,4 @@ export class UserService {
     }
     return ({ relation: "Nobody" });
   }
-
-
 }

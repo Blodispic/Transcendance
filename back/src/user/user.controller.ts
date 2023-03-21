@@ -42,13 +42,6 @@ export class UserController {
     return await plainToClass(User, this.userService.findAll());
   }
 
-  // Creates a new result for a specific user
-  @Post('results')
-  @UseGuards(JwtGuard)
-  async createResults(@Body() resultDto: CreateResultDto) {
-    return await this.userService.createResult(resultDto);
-  }
-
   // Retrieves a user by their username
   @Get('username/:username')
   @UseGuards(JwtGuard)
@@ -63,13 +56,6 @@ export class UserController {
     return await plainToClass(User, this.userService.getById(id));
   }
 
-  // Retrieves all results for a specific user
-  @Get('game/:id')
-  @UseGuards(JwtGuard)
-  async getResult(@Param('id', ParseIntPipe) id: number) {
-    return await plainToClass(Results, this.userService.getResults(id));
-  }
-
   // Retrieves a user by their access token
   @Post('access_token')
   @UseGuards(JwtGuard)
@@ -81,14 +67,10 @@ export class UserController {
   @Post('2fa/qrcode')
   @UseGuards(JwtGuard)
   async enable2FA(@GetUser() user: User) {
-    const realUser = await this.userService.getById(user.id);
-    if (!realUser) {
-      throw new NotFoundException(`User with id ${user.id} not found`);
-    }
-    if (realUser.twoFaEnable == false) {
+    if (user.twoFaEnable == false) {
       const secret = authenticator.generateSecret();
-      this.userService.enable2FA(realUser, secret);
-      const otpauthURL = authenticator.keyuri('Transcendence', realUser.email, secret);
+      this.userService.enable2FA(user, secret);
+      const otpauthURL = authenticator.keyuri('Transcendence', user.email, secret);
       const qrCode = await this.userService.generateQRCode(otpauthURL);
       return { qrCode };
     } else return 'Qr code active';
@@ -101,14 +83,7 @@ export class UserController {
     const result = await this.userService.check2FA(user.id, code);
     return { result };
   }
-
-  // Retrieves the status of a friend request
-  @Post('friend-request/status/:id')
-  @UseGuards(JwtGuard)
-  async GetFriendRequestStatus(@Param('id', ParseIntPipe) id: number, @Body() user: { userId: number }) {
-    return this.userService.GetFriendRequestStatus(id, user.userId);
-  }
-
+  
   // Retrieves all friend requests for a specific user
   @Post('friendsRequest')
   @UseGuards(JwtGuard)
@@ -117,9 +92,10 @@ export class UserController {
   }
 
   // Retrieves all friends for a specific user
-  @Post('friends')
+  @Get('friends')
   @UseGuards(JwtGuard)
   GetFriends(@GetUser() user: User) {
+    console.log("User = ", user);
     return this.userService.GetFriends(user.id);
   }
 
@@ -133,16 +109,16 @@ export class UserController {
   // Accepts a friend request
   @Post("friends/accept")
   @UseGuards(JwtGuard)
-  async acceptFriendRequest(@Body() body: { friendId: number, userId: number }) {
-    const realUser = await this.userService.addFriend(body.friendId, body.userId);
-    return await this.userService.DeleteFriendRequest(body.userId, body.friendId);
+  async acceptFriendRequest(@GetUser() user: User, @Body('friendId') friendId: number) {
+    const realUser = await this.userService.addFriend(friendId, user.id);
+    return await this.userService.DeleteFriendRequest(user.id, friendId);
   }
 
   // Declines a friend request
   @Post("friends/decline")
   @UseGuards(JwtGuard)
-  async declineFriendRequest(@Body() body: { friendId: number, userId: number }) {
-    return await this.userService.DeleteFriendRequest(body.userId, body.friendId);
+  async declineFriendRequest(@GetUser() user: User, @Body('friendId') friendId: number) {
+    return await this.userService.DeleteFriendRequest(user.id, friendId);
   }
 
   // Retrieves the avatar for a specific user
@@ -160,13 +136,6 @@ export class UserController {
     }
   }
 
-  // Checks if two users are friends
-  @Post('friend/check')
-  @UseGuards(JwtGuard)
-  async checkFriends(@Body() body: { myId: number, friendId: number }) {
-    return (await this.userService.checkFriends(body.myId, body.friendId));
-  }
-
   // Sets the avatar for a specific user
   @Patch(':id/avatar')
   @UseGuards(JwtGuard)
@@ -179,51 +148,54 @@ export class UserController {
       fileFilter: imageFilter,
     }),
   )
-  async setAvatar(@Param('id', ParseIntPipe) id: number, @UploadedFile() file: any, @Body('username') username: string) {
-    await this.userService.setAvatar(id, username, file);
+  async setAvatar(@GetUser() user: User, @UploadedFile() file: any, @Body('username') username: string) {
+    await this.userService.setAvatar(user.id, username, file);
     return { message: 'Avatar set successfully' };
   }
 
   // Updates a user's information
   @Patch(':id')
-  update(@Param('id', ParseIntPipe) id: string, @Body() user: any) {
-    return plainToClass(User, this.userService.update(+id, user));
+  @UseGuards(JwtGuard)
+  update(@GetUser() user: User, @Body() updateUserDto: any) {
+    return plainToClass(User, this.userService.update(user.id, updateUserDto));
   }
 
   // Sends a friend request to a user
   @Post('friend-request/send/:id')
   @UseGuards(JwtGuard)
   sendFriendRequest(
-    @Param('id', ParseIntPipe) id: number, @Body() user: { userId: number }) {
-    return this.userService.sendFriendRequest(id, user.userId)
+    @Param('id', ParseIntPipe) id: number, @GetUser() user: User) {
+    return this.userService.sendFriendRequest(id, user.id)
   }
 
   // Deletes a friend for a user
   @Delete('deletefriend/:id')
-  async deleteFriend(@Param('id', ParseIntPipe) id: number, @Body() friendId: { friendId: number }) {
-    await this.userService.removeFriend(friendId.friendId, id)
-    return plainToClass(User, await this.userService.removeFriend(id, friendId.friendId));
+  @UseGuards(JwtGuard)
+  async deleteFriend(@GetUser() user: User, @Body('friendId') friendId: number) {
+    await this.userService.removeFriend(friendId, user.id)
+    return plainToClass(User, await this.userService.removeFriend(user.id, friendId));
   }
 
   // Blocks a user for another user
   @Post('block/:id')
   @UseGuards(JwtGuard)
-  async addBlock(@Param('id') id: number, @Body() blockedId: { blockedId: number }) {
-    return await this.userService.addBlock(id, blockedId.blockedId);
+  async addBlock(@Body('blockedId') blockedId: number, @GetUser() user: User) {
+    blockedId
+    return await this.userService.addBlock(user.id, blockedId);
   }
 
   // Removes a block for a user
   @UseGuards(JwtGuard)
   @Delete('unblock/:id')
-  async RmBlock(@Param('id') id: number, @Body() blockedId: { blockedId: number }) {
-    return await this.userService.RmBlock(id, blockedId.blockedId);
+  async RmBlock(@Body('blockedId') blockedId: number, @GetUser() user: User) {
+    return await this.userService.RmBlock(user.id, blockedId);
   }
 
   // Checks the relationship between two users
   @Post("relations")
   @UseGuards(JwtGuard)
-  async checkRelations(@Body() body: { userId: number, friendId: number }) {
-    return await this.userService.checkRelations(body.friendId, body.userId);
+  async checkRelations(@GetUser() user: User, @Body('friendId') friendId: number) {
+    return await this.userService.checkRelations(friendId, user.id);
   }
 
 }
