@@ -180,7 +180,6 @@ export class UserController {
   @Post('block/:id')
   @UseGuards(JwtGuard)
   async addBlock(@Body('blockedId') blockedId: number, @GetUser() user: User) {
-    blockedId
     return await this.userService.addBlock(user, blockedId);
   }
 

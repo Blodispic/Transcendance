@@ -491,11 +491,12 @@ export class UserService {
       relations: ['friends', 'blocked'],
       where: { id },
     });
-
     if (!user) {
       throw new NotFoundException("UserNotFound");
     }
 
+    console.log("Block: id= ", id, " friendid = ", friendid);
+    
     user.friends = user.friends.filter((f) => f.id != friendid);
     return this.usersRepository.save(user);
   }
@@ -544,8 +545,8 @@ export class UserService {
       throw new BadRequestException("No such User to block");
     if (user.blocked.find(elem => elem.id === blocked.id) !== undefined)
       throw new BadRequestException("User already blocked");
-    await this.removeFriend(user.id, blockedid);
-    await this.removeFriend(blockedid, user.id);
+    user = await this.removeFriend(user.id, blocked.id);
+    await this.removeFriend(blocked.id, user.id);
     user.blocked.push(blocked);
     return await this.usersRepository.save(user);
   }
