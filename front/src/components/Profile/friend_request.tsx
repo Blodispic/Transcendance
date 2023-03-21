@@ -75,7 +75,7 @@ export function Friends() {
         console.log("accept frine in my profile", "friendId", id, "myID", myUser.user!.id )
         const response = await fetch(`${process.env.REACT_APP_BACK}user/friends/accept`, {
             method: 'POST',
-            body: JSON.stringify({ friendId: id, userId: myUser.user!.id }),
+            body: JSON.stringify({ friendId: id}),
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${myToken}`,
@@ -92,7 +92,7 @@ export function Friends() {
     const declineFriendRequest = async (id: number) => {
         const response = await fetch(`${process.env.REACT_APP_BACK}user/friends/decline`, {
             method: 'POST',
-            body: JSON.stringify({ friend: id, userId: myUser.user!.id }),
+            body: JSON.stringify({ friendId: id }),
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${myToken}`,

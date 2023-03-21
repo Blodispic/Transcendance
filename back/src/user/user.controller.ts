@@ -80,10 +80,10 @@ export class UserController {
   @Post('2fa/check')
   @UseGuards(JwtGuard)
   async checkCode(@GetUser() user: User, @Body('code') code: string) {
-    const result = await this.userService.check2FA(user.id, code);
+    const result = await this.userService.check2FA(user, code);
     return { result };
   }
-  
+
   // Retrieves all friend requests for a specific user
   @Post('friendsRequest')
   @UseGuards(JwtGuard)
@@ -110,15 +110,15 @@ export class UserController {
   @Post("friends/accept")
   @UseGuards(JwtGuard)
   async acceptFriendRequest(@GetUser() user: User, @Body('friendId') friendId: number) {
-    const realUser = await this.userService.addFriend(friendId, user.id);
-    return await this.userService.DeleteFriendRequest(user.id, friendId);
+    const realUser = await this.userService.addFriend(friendId, user);
+    return await this.userService.DeleteFriendRequest(user, friendId);
   }
 
   // Declines a friend request
   @Post("friends/decline")
   @UseGuards(JwtGuard)
   async declineFriendRequest(@GetUser() user: User, @Body('friendId') friendId: number) {
-    return await this.userService.DeleteFriendRequest(user.id, friendId);
+    return await this.userService.DeleteFriendRequest(user, friendId);
   }
 
   // Retrieves the avatar for a specific user
@@ -149,7 +149,7 @@ export class UserController {
     }),
   )
   async setAvatar(@GetUser() user: User, @UploadedFile() file: any, @Body('username') username: string) {
-    await this.userService.setAvatar(user.id, username, file);
+    await this.userService.setAvatar(user, username, file);
     return { message: 'Avatar set successfully' };
   }
 
@@ -165,7 +165,7 @@ export class UserController {
   @UseGuards(JwtGuard)
   sendFriendRequest(
     @Param('id', ParseIntPipe) id: number, @GetUser() user: User) {
-    return this.userService.sendFriendRequest(id, user.id)
+    return this.userService.sendFriendRequest(id, user)
   }
 
   // Deletes a friend for a user
@@ -181,7 +181,7 @@ export class UserController {
   @UseGuards(JwtGuard)
   async addBlock(@Body('blockedId') blockedId: number, @GetUser() user: User) {
     blockedId
-    return await this.userService.addBlock(user.id, blockedId);
+    return await this.userService.addBlock(user, blockedId);
   }
 
   // Removes a block for a user

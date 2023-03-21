@@ -13,7 +13,7 @@ export default function TwoFa() {
 
     const disable2fa = async (e: any) => {
         e.preventDefault();
-        await fetch(`${process.env.REACT_APP_BACK}user/${myStore.user?.id}`, {
+        await fetch(`${process.env.REACT_APP_BACK}user`, {
             method: 'PATCH',
             headers: {
                 'Content-Type': 'application/json',
@@ -41,7 +41,6 @@ export default function TwoFa() {
                 'Authorization': `Bearer ${myToken}`,
             },
             body: JSON.stringify({
-                userId: myStore.user?.id,
                 code: code,
             }),
         })
@@ -72,7 +71,6 @@ export default function TwoFa() {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${myToken}`,
             },
-            body: JSON.stringify({ userId: myStore.user?.id }),
         })
             .then(async response => {
                 if (response.ok) {
