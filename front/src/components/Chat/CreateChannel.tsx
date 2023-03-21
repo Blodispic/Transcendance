@@ -7,7 +7,7 @@ import { addChannel } from "../../redux/chat";
 import { useAppDispatch } from "../../redux/Hook";
 import AllPeople from "../utils/Allpeople";
 
-export function PopupCreateChannel(props: any) {
+export function PopupCreateChannel(props: {trigger: boolean, setTrigger: Function}) {
 	const [chanName, setChanName] = useState("");
 	const [password, setPassword] = useState("");
 	const [chanMode, setChanMode] = useState(0);
@@ -51,7 +51,6 @@ export function PopupCreateChannel(props: any) {
 				})
 				const data = await response.json();
 				dispatch(addChannel(data));
-				console.log(":: create chan ::");
 			}
 			fetchChanInfo();
 			setFailed(false);
@@ -66,7 +65,7 @@ export function PopupCreateChannel(props: any) {
 	});
 
 	return (props.trigger) ? (
-		<div className="chat-form-popup" onClick={_ => (props.setTrigger(false), setChanMode(0), setFailed(false))}>
+		<div className="chat-form-popup" onClick={_ => (props.setTrigger(false), setChanMode(0), setFailed(false)) } >
 			<div className="chat-form-inner" onClick={e => e.stopPropagation()}>
 				<HiOutlineXMark className="close-icon" onClick={_ => (props.setTrigger(false), setChanMode(0), setFailed(false)) } /> <br />
 				<h3>Channel Name</h3>
