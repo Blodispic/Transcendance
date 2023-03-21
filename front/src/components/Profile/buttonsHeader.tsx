@@ -184,7 +184,7 @@ export function InviteButton(props: { user: any, relation: string, setRelation: 
             {
                 props.relation === "Nobody" &&
                 <button className="reqButton pointer white width_50" onClick={_ => (sendFriendRequest())} >
-                    Add Friend {(props.relation)}
+                    Add Friend {/*{(props.relation)} */}
                 </button>
             }
             {
