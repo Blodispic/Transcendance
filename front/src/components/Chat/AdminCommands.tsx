@@ -97,15 +97,12 @@ export function KickUser(chanid: any, userid: any) {
 
 export function ConfigureChannel(props: {trigger: boolean, setTrigger: Function, channel: IChannel}) {
 	const [newPassword, setNewPassword] = useState("");
-	const dispatch = useAppDispatch();
 	
 	const setPassword = () => {
 		if (props.channel.chanType === 0 && newPassword !== undefined) {
-			console.log('add password: ', newPassword);
 			socket.emit('addPassword', { chanid: props.channel.id, password: newPassword });
 		}
 		else if (props.channel.chanType === 2) {
-			console.log('change password: ', newPassword);
 			try {
 				socket.emit('changePassword', { chanid: props.channel.id, password: newPassword });
 			}
@@ -128,6 +125,13 @@ export function ConfigureChannel(props: {trigger: boolean, setTrigger: Function,
 					<>
 					<h3>Set Password</h3>
 					<input type="password" id="channel-input" placeholder="Insert password" onChange={e => { setNewPassword(e.target.value); }} /><br />
+					</>
+				}
+				{
+					props.channel.chanType === 1 &&
+					<>
+					
+					
 					</>
 				}
 				{

@@ -82,10 +82,20 @@ function App() {
 
         /* Chat */
         socket.on("joinChannel", ({ chanid, user }) => {
+          const newMessage: IMessage = {
+            chanid: chanid,
+            message: user.username + " has joined the channel",
+          }
+          dispatch(addMessage(newMessage));
           dispatch(addMember({ id: chanid, user: user }));
         });
 
         socket.on("leaveChannel", ({ chanid, user }) => {
+          const newMessage: IMessage = {
+            chanid: chanid,
+            message: user.username + " has left the channel",
+          }
+          dispatch(addMessage(newMessage));
           dispatch(removeMember({ id: chanid, user: user }));
         });
 

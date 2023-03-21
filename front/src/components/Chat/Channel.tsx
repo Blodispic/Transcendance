@@ -46,7 +46,6 @@ function PublicChannelList() {
 	const navigate = useNavigate();
 	const channels = useAppSelector(state => state.chat.channels);
 
-	// need to apply chan mode condition to hide private chan
 	return (
 		<div className="title">
 
@@ -54,18 +53,17 @@ function PublicChannelList() {
 				<header>All Joinable Channels <hr /></header>
 				{channels && channels.map(chan => (
 					<ul key={chan.name}>
-						<li>
+						{
+							chan.chanType !== 1 &&
+							<li>
 							<div onClick={_ => navigate(`/Chat/channel/${chan.id}`)}>{chan.name}
-								{
-									chan.chanType === 1 &&
-									<HiLockClosed style={{ float: 'right' }} />
-								}
 								{
 									chan.chanType === 2 &&
 									<BsFillKeyFill style={{ paddingLeft: '10px' }} />
 								}
 							</div>
 						</li>
+						}
 					</ul>
 				))}
 			</div>

@@ -97,7 +97,7 @@ export function ChannelMessages() {
 
 							{currentChan.messages && currentChan.messages.map((message, index) => (
 								<div key={index}>
-									{message.chanid === currentChan.id &&
+									{(message.chanid === currentChan.id && message.sender !== undefined) &&
 										<div className="__wrap">
 											<div className="message-info">
 												<img className="user-avatar" src={`${process.env.REACT_APP_BACK}user/${message.sender?.id}/avatar`} />
@@ -105,6 +105,11 @@ export function ChannelMessages() {
 												<p className="timestamp">{message.sendtime}</p>
 											</div>
 											{message.message}
+										</div>
+									}
+									{(message.chanid === currentChan.id && message.sender === undefined) &&
+										<div className="channel-announce">
+										{message.message}
 										</div>
 									}
 								</div>

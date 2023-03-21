@@ -50,11 +50,13 @@ export function PopupCreateChannel(props: any) {
 				})
 				const data = await response.json();
 				dispatch(addChannel(data));
-				console.log(":: create chan ::");
+				console.log(":: create chan :: ", data.users);
 			}
 			fetchChanInfo();
 			setFailed(false);
 			props.setTrigger(false);
+
+			
 			// navigate(`/Chat/channel/${new_chanid}`)
 		});
 
