@@ -75,7 +75,7 @@ export function Friends() {
         console.log("accept frine in my profile", "friendId", id, "myID", myUser.user!.id )
         const response = await fetch(`${process.env.REACT_APP_BACK}user/friends/accept`, {
             method: 'POST',
-            body: JSON.stringify({ friendId: id, userId: myUser.user!.id }),
+            body: JSON.stringify({ friendId: id}),
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${myToken}`,
@@ -86,12 +86,13 @@ export function Friends() {
         let str : string = "They" + " are now your friend!";
         swal("Congrats", str, "success");
         socket.emit("RequestAccepted", data.id);
+        setUpdateFriend(prevFlag => !prevFlag);
     };
 
     const declineFriendRequest = async (id: number) => {
         const response = await fetch(`${process.env.REACT_APP_BACK}user/friends/decline`, {
             method: 'POST',
-            body: JSON.stringify({ friend: id, userId: myUser.user!.id }),
+            body: JSON.stringify({ friendId: id }),
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${myToken}`,
@@ -103,6 +104,7 @@ export function Friends() {
         let str : string = "You declined " + "their" + " friend request!"
         swal("Congrats", str, "success");
         socket.emit("RequestDeclined", data.id);
+        setUpdateFriend(prevFlag => !prevFlag);
     };
 
     const FriendsReqList = (props: FriendsListProps) => {
