@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
+import swal from "sweetalert";
 import { socket } from "../../App";
 import { IMessage } from "../../interface/Message";
 import { IUser } from "../../interface/User";
@@ -50,6 +51,94 @@ function InfoFriend(props: { user: IUser }) {
 	const user: IUser = props.user;
 	const [myVar, setMyvar] = useState<boolean>(false);
 	const dispatch = useAppDispatch();
+	const [relation, setRelation] = useState<string>("");
+	const myToken = useAppSelector(state => state.user.myToken);
+
+	useEffect(() => {
+		Relations();
+	})
+
+	const Relations = async () => {
+		await fetch(`${process.env.REACT_APP_BACK}user/relations`, {
+			method: 'POST',
+			body: JSON.stringify({
+				userId: myUser.user?.id,
+				friendId: user.id,
+			}),
+			headers: {
+				'Content-Type': 'application/json',
+				'Authorization': `Bearer ${myUser.myToken}`,
+			}
+		})
+			.then(async response => {
+				if (response.ok) {
+					const data = await response.json();
+					setRelation(data.relation);
+				}
+			})
+	}
+
+	const sendFriendRequest = async () => {
+		await new Promise((resolve) => setTimeout(resolve, 1000));
+
+		await fetch(`${process.env.REACT_APP_BACK}user/friend-request/send/${user.id}`, {
+			method: 'POST',
+			body: JSON.stringify({ userId: myUser.user!.id }),
+			headers: {
+				'Content-Type': 'application/json',
+				'Authorization': `Bearer ${myToken}`,
+			}
+		})
+			.then(async Response => {
+				if (Response.ok) {
+					setRelation("friendRequestSent");
+					swal("Your request has been sent", "", "success");
+					socket.emit("RequestSent", user.id);
+
+				}
+			})
+	}
+
+	const acceptFriendRequest = async () => {
+		const response = await fetch(`${process.env.REACT_APP_BACK}user/friends/accept`, {
+			method: 'POST',
+			body: JSON.stringify({ friendId: user.id, userId: myUser.user!.id }),
+			headers: {
+				'Content-Type': 'application/json',
+				'Authorization': `Bearer ${myToken}`,
+			},
+		})
+			.then(async Response => {
+				if (Response.ok) {
+					let str: string = "They" + " are now your friend!";
+					swal("Congrats", str, "success");
+					socket.emit("RequestAccepted", user.id);
+					setRelation("Friend");
+
+				}
+			});
+	};
+
+	const removeFriend = async () => {
+		console.log("delete frined en front ", user.id, myUser.user!.id)
+		const response = await fetch(`${process.env.REACT_APP_BACK}user/deletefriend/${myUser.user?.id}`, {
+			method: 'DELETE',
+			body: JSON.stringify({ friendId: user.id }),
+			headers: {
+				'Content-Type': 'application/json',
+				'Authorization': `Bearer ${myToken}`,
+			},
+		})
+			.then(async Response => {
+				console.log(".then")
+				if (Response.ok) {
+					console.log("response ok")
+					swal("", "Friend Remove", "success");
+					socket.emit("RemoveFriend", user.id);
+					setRelation("Nobody");
+				}
+			});
+	};
 
 	const Block = async () => {
 		await fetch(`${process.env.REACT_APP_BACK}user/block/${myUser.user?.id}`, {
@@ -65,6 +154,7 @@ function InfoFriend(props: { user: IUser }) {
 			.then(async response => {
 				if (response.ok)
 					dispatch(addBlockedUser(user));
+				setRelation("Blocked");
 			})
 	}
 
@@ -82,6 +172,7 @@ function InfoFriend(props: { user: IUser }) {
 			.then(async response => {
 				if (response.ok)
 					dispatch(unBlockUser(user));
+				setRelation("Nobody");
 			})
 	}
 
@@ -97,13 +188,30 @@ function InfoFriend(props: { user: IUser }) {
 					</li>
 
 					<>
-						<li>
-							Add friend
-						</li>
+						{
+							relation === "Nobody" &&
+							<li onClick={_ => (sendFriendRequest())} >
+								Add Friend
+							</li>
+						}
+						{
+							relation === "Friend" &&
+							<li onClick={_ => (removeFriend())}> Remove Friend </li>
+						}
+						{
+							relation === "friendRequestSent" &&
+							<li onClick={_ => (_)}> Request already sent </li>
+						}
+						{
+							relation === "friendRequestReceived" &&
+							<li onClick={_ => (acceptFriendRequest())}> accept in Friend </li>
+						}
+
 
 						<li onClick={_ => setMyvar(true)}>
 							Invite Game
 						</li>
+
 						{
 							((myUser.user && (myUser.user.blocked === undefined
 								|| myUser.user.blocked.find(block => block.id === user.id) === undefined))
@@ -112,12 +220,14 @@ function InfoFriend(props: { user: IUser }) {
 								Block
 							</li>
 						}
+
 						{
 							((myUser.user && (myUser.user.blocked !== undefined && myUser.user.blocked.find(block => block.id === user.id) !== undefined)) && user.username !== myUser.user!.username) &&
 							<li onClick={_ => UnBlock()}>
 								Unblock
 							</li>
 						}
+
 					</>
 				</ul>
 			</div>
@@ -132,8 +242,6 @@ export function DmMessages(props: { id: number; currentdm: IUser | undefined; se
 	const [newInput, setNewInput] = useState("");
 	const myUser = useAppSelector(state => state.user.user);
 	const messages: IMessage[] = useAppSelector(state => state.chat.DMs.filter(obj => obj.chanid === props.id));
-	// const messages: IMessage[] = useAppSelector(state => state.chat.channels.filter(obj => obj.id === undefined && obj.messages !== undefined && obj.messages.sender.id  !== undefined && === currentdm.id && obj.);
- 	// .sender !== undefined && obj.m.sender.id === currentdm.id && obj.);
 
 	const handleSubmitNewMessage = (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
