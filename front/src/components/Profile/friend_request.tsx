@@ -86,6 +86,7 @@ export function Friends() {
         let str : string = "They" + " are now your friend!";
         swal("Congrats", str, "success");
         socket.emit("RequestAccepted", data.id);
+        setUpdateFriend(prevFlag => !prevFlag);
     };
 
     const declineFriendRequest = async (id: number) => {
@@ -103,6 +104,7 @@ export function Friends() {
         let str : string = "You declined " + "their" + " friend request!"
         swal("Congrats", str, "success");
         socket.emit("RequestDeclined", data.id);
+        setUpdateFriend(prevFlag => !prevFlag);
     };
 
     const FriendsReqList = (props: FriendsListProps) => {
