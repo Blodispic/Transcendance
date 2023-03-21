@@ -29,7 +29,6 @@ export function Friends() {
         const checkFriendRequest = async () => {
             const response = await fetch(`${process.env.REACT_APP_BACK}user/friendsRequest`, {
                 method: 'POST',
-                body: JSON.stringify({ userId: myUser.user!.id }),
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${myToken}`,
@@ -52,8 +51,7 @@ export function Friends() {
     useEffect(() => {
         const checkFriend = async () => {
             const response = await fetch(`${process.env.REACT_APP_BACK}user/friends`, {
-                method: 'POST',
-                body: JSON.stringify({ userId: myUser.user!.id }),
+                method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${myToken}`,

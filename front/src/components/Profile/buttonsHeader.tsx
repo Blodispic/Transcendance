@@ -58,6 +58,7 @@ export default function HeaderButtons(props: { currentUser: IUser }) {
 
             })
     }
+
     const UnBlock = async () => {
         await fetch(`${process.env.REACT_APP_BACK}user/unblock/${myUser.user?.id}`, {
             method: 'DELETE',
@@ -183,7 +184,7 @@ export function InviteButton(props: { user: any, relation: string, setRelation: 
             {
                 props.relation === "Nobody" &&
                 <button className="reqButton pointer white width_50" onClick={_ => (sendFriendRequest())} >
-                    Add Friend {(props.relation)}
+                    Add Friend {/*{(props.relation)} */}
                 </button>
             }
             {
