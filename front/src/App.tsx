@@ -9,6 +9,8 @@ import { IUser, UserStatus } from "./interface/User";
 import InviteGame from "./components/utils/InviteGame";
 import { Player } from "./components/Game/Game";
 import swal from "sweetalert";
+import { addDM, addMember, addMessage, removeMember, removePass, setChannels, setPass } from "./redux/chat";
+import { IMessage } from "./interface/Message";
 
 export let socket: Socket;
 
@@ -76,6 +78,52 @@ function App() {
             socket.emit("declineCustomGame", payload);
           }, 10000)
         })
+
+        /* Chat */
+        socket.on("joinChannel", ({ chanid, user }) => {
+          const newMessage: IMessage = {
+            chanid: chanid,
+            message: user.username + " has joined the channel",
+          }
+          dispatch(addMessage(newMessage));
+          dispatch(addMember({ id: chanid, user: user }));
+        });
+
+        socket.on("leaveChannel", ({ chanid, user }) => {
+          const newMessage: IMessage = {
+            chanid: chanid,
+            message: user.username + " has left the channel",
+          }
+          dispatch(addMessage(newMessage));
+          dispatch(removeMember({ id: chanid, user: user }));
+        });
+
+        socket.on('sendMessageChannelOK', (messageDto) => {
+          dispatch(addMessage(messageDto));
+        });
+
+        socket.on('sendDmOK', (sendDmDto) => {
+          const newMessage: IMessage = sendDmDto;
+          newMessage.sender = myUser.user;
+          newMessage.chanid = sendDmDto.IdReceiver;
+          dispatch(addDM(newMessage));
+        });
+        
+        socket.on('ReceiveDM', (receiveDmDto) => {
+          const newMessage: IMessage = receiveDmDto;
+          newMessage.chanid = receiveDmDto.sender.id;
+          dispatch(addDM(receiveDmDto));
+        });
+
+        socket.on("addPasswordOK", (chanId) => {
+          dispatch(setPass(chanId));
+        });
+
+        socket.on("rmPasswordOK", (chanId) => {
+          dispatch(removePass(chanId));
+        });
+
+
       }
         return () => {
           socket.off("RoomStart");
@@ -85,10 +133,30 @@ function App() {
           socket.off("invitationInGame");
           socket.off("GameDeclined");
           socket.off("GameCancelled");
+
+          socket.off("joinChannel");
+          socket.off("leaveChannel");
+          socket.off('sendMessageChannelOK');
+          socket.off('sendDmOK');
+          socket.off('ReceiveDM');
+          socket.off("addPasswordOK");
+          socket.off("rmPasswordOK");
+
         }
     }
   }, [myUser.isLog])
 
+  const get_channels = async() => {
+    const response = await fetch(`${process.env.REACT_APP_BACK}channel`, {
+      method: 'GET',
+    }).then(async response => {
+      const data = await response.json();
+
+      if (response.ok) {
+        dispatch(setChannels(data));
+      }
+    })
+  }
 
   const get_user = async () => {
     const response = await fetch(`${process.env.REACT_APP_BACK}user/access_token`, {
@@ -109,7 +177,6 @@ function App() {
         dispatch(setToken(token));
 
         // setCookie('Token', data.access_token, { path: '/' });
-
         // socket.emit("UpdateSomeone", { idChange: myUser.user?.id, idChange2: 0 })
       }
       else {
@@ -120,6 +187,7 @@ function App() {
   if (myUser.user === undefined) {
     if (token !== undefined)
       get_user();
+      get_channels();
   }
 
   return (

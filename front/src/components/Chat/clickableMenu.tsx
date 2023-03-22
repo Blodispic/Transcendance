@@ -1,19 +1,36 @@
-import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { IChannel } from "../../interface/Channel";
 import { IUser } from "../../interface/User";
-import { useAppSelector } from "../../redux/Hook";
+import { useAppDispatch, useAppSelector } from "../../redux/Hook";
 import CustomGamePopup from "../Game/CustomGamePopup";
-import { AddAdmin, BanUser, KickUser, MuteUser } from "./AdminCommands";
+import { BanUser, KickUser, MuteUser } from "./AdminCommands";
+import { page } from "../../interface/enum";
+import { socket } from "../../App";
+import { addAdmin } from "../../redux/chat";
 
-export default function CLickableMenu(props: { user: IUser, chan: IChannel }) {
+export default function ClickableMenu(props: { user: IUser, chan: IChannel, page: Function }) {
 
     const user: IUser = props.user;
     const [myVar, setMyvar] = useState<boolean>(false);
     const myUser = useAppSelector(state => state.user.user)
     const [timeMute, setTimeMute] = useState(false);
     const [timeBan, setTimeBan] = useState(false);
+    const navigate = useNavigate();
+    const dispatch = useAppDispatch();
 
+    const handleAddAdmin = () => {
+        socket.emit('GiveAdmin', { chanid: props.chan.id, userid: props.user.id });
+    }
+
+    useEffect(() => {
+        socket.on("giveAdminOK", ({ userId, chanId }) => {
+            dispatch(addAdmin({ id: chanId, user: props.user }));
+        });
+        return () => {
+            socket.off("giveAdminOK");
+        }
+    })
 
     return (
         <div className="dropdown-container">
@@ -31,9 +48,9 @@ export default function CLickableMenu(props: { user: IUser, chan: IChannel }) {
                                 Invite Game
                             </li>
                             <li>
-                                <Link to={`/Chat/dm/${user.id}`}>
+                                <a onClick={e => { props.page(page.PAGE_2); navigate(`/Chat/dm/${user.id}`) }}>
                                     DM
-                                </Link>
+                                </a>
                             </li>
                             {
                                 props.chan.admin?.find(obj => obj.id === myUser?.id) &&
@@ -42,7 +59,7 @@ export default function CLickableMenu(props: { user: IUser, chan: IChannel }) {
                                         props.chan.admin?.find(obj => obj.id === props.user.id) == undefined &&
                                         <>
                                             <li>
-                                                <a onClick={_ => AddAdmin(props.chan.id, props.user.id)}>
+                                                <a onClick={_ => handleAddAdmin()}>
                                                     Add to Admin
                                                 </a>
                                             </li>
@@ -51,19 +68,26 @@ export default function CLickableMenu(props: { user: IUser, chan: IChannel }) {
                                     {
                                         props.chan.owner?.id !== props.user.id &&
                                         <>
+                                            {
+                                                props.chan.muted?.find(obj => obj.id === props.user.id) === undefined &&
+                                                <li>
+                                                    <a onClick={() => setTimeMute(true)}>
+                                                        Mute
+                                                        <MuteUser chanid={props.chan.id} userid={user.id} trigger={timeMute} setTrigger={setTimeMute} />
+                                                    </a>
+                                                </li>
+                                            }
 
-                                            <li>
-                                                <a onClick={() => setTimeMute(true)}>
-                                                    Mute
-                                                    <MuteUser chanid={props.chan.id} userid={user.id} trigger={timeMute} setTrigger={setTimeMute} />
-                                                </a>
-                                            </li>
-                                            <li>
-                                                <a onClick={() => setTimeBan(true)}>
-                                                    Ban
-                                                    <BanUser chanid={props.chan.id} userid={user.id} trigger={timeBan} setTrigger={setTimeBan} />
-                                                </a>
-                                            </li>
+                                            {
+                                                props.chan.banned?.find(obj => obj.id === props.user.id) === undefined &&
+                                                <li>
+                                                    <a onClick={() => setTimeBan(true)}>
+                                                        Ban
+                                                        <BanUser chanid={props.chan.id} userid={user.id} trigger={timeBan} setTrigger={setTimeBan} />
+                                                    </a>
+                                                </li>
+                                            }
+
                                             <li>
                                                 <a onClick={() => KickUser(props.chan.id, user.id)}>
                                                     Kick

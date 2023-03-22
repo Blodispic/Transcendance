@@ -3,22 +3,24 @@ import { HiOutlineXMark, HiPlus } from "react-icons/hi2";
 import { useNavigate } from "react-router-dom";
 import { socket } from "../../App";
 import { IUser } from "../../interface/User";
-import { useAppSelector } from "../../redux/Hook";
+import { addChannel } from "../../redux/chat";
+import { useAppDispatch } from "../../redux/Hook";
 import AllPeople from "../utils/Allpeople";
 
-export function PopupCreateChannel(props: any) {
+export function PopupCreateChannel(props: { trigger: boolean, setTrigger: Function }) {
 	const [chanName, setChanName] = useState("");
 	const [password, setPassword] = useState("");
 	const [chanMode, setChanMode] = useState(0);
-    const [friend, setFriend] = useState<IUser[] >([]);
-	const [myVar, setMyvar] = useState<boolean> (false);
-	const [failed, setFailed] = useState<boolean> (false);
+	const [friend, setFriend] = useState<IUser[]>([]);
+	const [myVar, setMyvar] = useState<boolean>(false);
+	const [failed, setFailed] = useState<boolean>(false);
 	const navigate = useNavigate();
+	const dispatch = useAppDispatch();
 
 	const handlePublic = () => {
 		setChanMode(0);
 	}
-	
+
 	const handlePrivate = () => {
 		setChanMode(1);
 	}
@@ -27,11 +29,8 @@ export function PopupCreateChannel(props: any) {
 		setChanMode(2);
 	}
 
-	useEffect( () => {
-	}, [friend] )
-
 	const handleCreateNewChan = () => {
-		if (chanName != "")
+		if (chanName !== "")
 			socket.emit('createChannel', { chanName: chanName, password: password, chanType: chanMode, users: friend });
 		setChanName("");
 		setPassword("");
@@ -40,12 +39,21 @@ export function PopupCreateChannel(props: any) {
 
 	useEffect(() => {
 		socket.on("createChannelFailed", (error_message) => {
+			setChanMode(0);
 			setFailed(true);
 		});
 		socket.on("createChannelOk", (new_chanid) => {
+			const fetchChanInfo = async () => {
+				const response = await fetch(`${process.env.REACT_APP_BACK}channel/${new_chanid}`, {
+					method: 'GET',
+				})
+				const data = await response.json();
+				dispatch(addChannel(data));
+			}
+			fetchChanInfo();
 			setFailed(false);
 			props.setTrigger(false);
-			navigate(`/Chat/channel/${new_chanid}`)
+			// navigate(`/Chat/channel/${new_chanid}`)
 		});
 
 		return () => {
@@ -55,17 +63,17 @@ export function PopupCreateChannel(props: any) {
 	});
 
 	return (props.trigger) ? (
-		<div className="chat-form-popup" onClick={_ => (props.setTrigger(false), setChanMode(0), setFailed(false))}>
+		<div className="chat-form-popup" onClick={_ => (props.setTrigger(false), setChanMode(0), setFailed(false))} >
 			<div className="chat-form-inner" onClick={e => e.stopPropagation()}>
-				<HiOutlineXMark className="close-icon" onClick={_ => (props.setTrigger(false), setChanMode(0), setFailed(false)) } /> <br />
+				<HiOutlineXMark className="close-icon" onClick={_ => (props.setTrigger(false), setChanMode(0), setFailed(false))} /> <br />
 				<h3>Channel Name</h3>
 				<input type="text" id="channel-input" placeholder="Insert channel name"  maxLength={15} onChange={e => { setChanName(e.target.value) }} onSubmit={() => { handleCreateNewChan(); }} />
 				<br />
 				{
 					failed === true &&
-					<a className="channel-error">Channel name already exists</a>
+					<span className="channel-error">Channel name already exists</span>
 				}
-				
+
 				<h3>Channel Mode</h3>
 				<input type="radio" name="chanMode" value={0} onChange={_ => handlePublic()} defaultChecked />Public
 				<input type="radio" name="chanMode" value={1} onChange={_ => handlePrivate()} />Private
@@ -77,7 +85,7 @@ export function PopupCreateChannel(props: any) {
 				{
 					chanMode === 1 &&
 					<div className="allpoeple">
-					<AllPeople friend={undefined} setFriend={setFriend} myVar={myVar} setMyvar={setMyvar}  />
+						<AllPeople friend={undefined} setFriend={setFriend} myVar={myVar} setMyvar={setMyvar} />
 					</div>
 				}
 				<button onClick={() => handleCreateNewChan()}>Create Channel</button><span></span>
