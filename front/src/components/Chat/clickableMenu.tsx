@@ -13,7 +13,7 @@ export default function ClickableMenu(props: { user: IUser, chan: IChannel, page
 
     const user: IUser = props.user;
     const [myVar, setMyvar] = useState<boolean>(false);
-    const myUser = useAppSelector(state => state.user.user)
+    const myUser: IUser | undefined = useAppSelector(state => state.user.user)
     const [timeMute, setTimeMute] = useState(false);
     const [timeBan, setTimeBan] = useState(false);
     const navigate = useNavigate();

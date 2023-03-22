@@ -4,16 +4,19 @@ import { HiLockClosed } from "react-icons/hi2";
 import { ImCog } from "react-icons/im";
 import { useParams } from "react-router-dom";
 import { socket } from "../../App";
+import { IChannel } from "../../interface/Channel";
+import { IMessage } from "../../interface/Message";
+import { IUser } from "../../interface/User";
 import { useAppSelector } from "../../redux/Hook";
 import { ConfigureChannel } from "./AdminCommands";
 import { JoinChannel, LeaveChannel } from "./JoinLeave";
 
 export function ChannelHeader() {
 	const [popup, setPopup] = useState(false);
-	const currentUser = useAppSelector(state => state.user.user);
+	const currentUser: IUser | undefined = useAppSelector(state => state.user.user);
 	const { id } = useParams();
 	const [chanId, setChanId] = useState<number | undefined>(undefined);
-	const currentChan = useAppSelector(state => state.chat.channels.find(chan => chan.id === chanId));
+	const currentChan: IChannel | undefined = useAppSelector(state => state.chat.channels.find(chan => chan.id === chanId));
 
 	useEffect(() => {
 		if (id !== undefined) {
@@ -69,9 +72,9 @@ export function ChannelMessages() {
 	const [newInput, setNewInput] = useState<string>("");
 	const { id } = useParams();
 	const [chanId, setChanId] = useState<number | undefined>(undefined);
-	const currentChan = useAppSelector(state =>
+	const currentChan: IChannel | undefined = useAppSelector(state =>
 		state.chat.channels.find(chan => chan.id === chanId));
-	const messages = useAppSelector(state => state.chat.chanMs.filter(obj => obj.chanid === chanId));
+	const messages: IMessage[] = useAppSelector(state => state.chat.chanMs.filter(obj => obj.chanid === chanId));
 
 	useEffect(() => {
 		if (id !== undefined) {

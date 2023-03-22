@@ -47,12 +47,12 @@ function DMList(props: { currentdm: IUser | undefined; setCurrentDm: Function })
 }
 
 function InfoFriend(props: { user: IUser }) {
-	const myUser = useAppSelector(state => state.user);
-	const user: IUser = props.user;
 	const [myVar, setMyvar] = useState<boolean>(false);
-	const dispatch = useAppDispatch();
 	const [relation, setRelation] = useState<string>("");
+	const user: IUser = props.user;
+	const myUser = useAppSelector(state => state.user);
 	const myToken = useAppSelector(state => state.user.myToken);
+	const dispatch = useAppDispatch();
 
 	useEffect(() => {
 		Relations();
@@ -237,7 +237,7 @@ function InfoFriend(props: { user: IUser }) {
 
 export function DmMessages(props: { id: number; currentdm: IUser | undefined; setCurrentDm: Function }) {
 	const [newInput, setNewInput] = useState("");
-	const myUser = useAppSelector(state => state.user.user);
+	const myUser: IUser | undefined = useAppSelector(state => state.user.user);
 	const messages: IMessage[] = useAppSelector(state => state.chat.DMs.filter(obj => obj.chanid === props.id));
 
 	const handleSubmitNewMessage = (e: React.FormEvent<HTMLFormElement>) => {

@@ -3,6 +3,7 @@ import { HiOutlineXMark } from "react-icons/hi2";
 import swal from "sweetalert";
 import { socket } from "../../App";
 import { IChannel } from "../../interface/Channel";
+import { IUser } from "../../interface/User";
 import { addMember, removeMember, updateMember } from "../../redux/chat";
 import { useAppDispatch, useAppSelector } from "../../redux/Hook";
 
@@ -11,7 +12,6 @@ export function CheckPassword(props: { trigger: boolean, setTrigger: Function, c
 	const [failed, setFailed] = useState<boolean>(false);
 	const [errorMessage, setErrorMessage] = useState("");
 	const [inputValue, setInputValue] = useState("");
-	const dispatch = useAppDispatch();
 
 	const handleJoinWithPass = () => {
 		socket.emit('joinChannel', { chanid: props.channel.id, channame: props.channel.name, password: password });
@@ -52,7 +52,7 @@ export function JoinChannel(props: { channel: IChannel }) {
 	const [passPopup, setPassPopup] = useState(false);
 	const [errorMessage, setErrorMessage] = useState("");
 	const dispatch = useAppDispatch();
-	const currentUser = useAppSelector(state => state.user.user);
+	const currentUser: IUser | undefined = useAppSelector(state => state.user.user);
 
 	const handleJoin = () => {
 		socket.emit('joinChannel', { chanid: props.channel.id });
@@ -68,10 +68,14 @@ export function JoinChannel(props: { channel: IChannel }) {
 				const fetchChanInfo = async () => {
 					const response = await fetch(`${process.env.REACT_APP_BACK}channel/${chanId}`, {
 						method: 'GET',
+					}).then(async response => {
+						const data = await response.json();
+
+						if (response.ok) {
+							dispatch(updateMember({ id: chanId, chan: data }));
+							dispatch(addMember({ id: chanId, user: currentUser }));
+						}
 					})
-					const data = await response.json();
-					dispatch(updateMember({ id: chanId, chan: data }));
-					dispatch(addMember({ id: chanId, user: currentUser }));
 				}
 				fetchChanInfo();
 				setPassPopup(false);
@@ -109,7 +113,7 @@ export function JoinChannel(props: { channel: IChannel }) {
 
 export function LeaveChannel(props: { channel: IChannel }) {
 	const dispatch = useAppDispatch();
-	const currentUser = useAppSelector(state => state.user.user);
+	const currentUser: IUser | undefined = useAppSelector(state => state.user.user);
 
 	const handleLeave = () => {
 		socket.emit('leaveChannel', { chanid: props.channel.id });

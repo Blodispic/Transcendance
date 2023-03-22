@@ -3,6 +3,8 @@ import { BsFillKeyFill, BsFillPersonFill } from "react-icons/bs";
 import { FaCrown } from "react-icons/fa";
 import { HiLockClosed } from "react-icons/hi2";
 import { useNavigate, useParams } from "react-router-dom";
+import { IChannel } from "../../interface/Channel";
+import { IUser } from "../../interface/User";
 import { setChannels } from "../../redux/chat";
 import { useAppDispatch, useAppSelector } from "../../redux/Hook";
 import { ChannelHeader, ChannelMessages } from "./ChannelMessages";
@@ -11,8 +13,8 @@ import { AddChannel } from "./CreateChannel";
 
 function JoinedChannelList() {
 	const navigate = useNavigate();
-	const currentUser = useAppSelector(state => state.user.user);
-	const channels = useAppSelector(state => state.chat.channels);
+	const currentUser: IUser | undefined = useAppSelector(state => state.user.user);
+	const channels: IChannel[] = useAppSelector(state => state.chat.channels);
 
 
 	return (
@@ -44,7 +46,7 @@ function JoinedChannelList() {
 
 function PublicChannelList() {
 	const navigate = useNavigate();
-	const channels = useAppSelector(state => state.chat.channels);
+	const channels: IChannel[] = useAppSelector(state => state.chat.channels);
 
 	return (
 		<div className="title">
@@ -76,7 +78,7 @@ function ChannelMemberList(props: { page: Function }) {
 	const currentUser = useAppSelector(state => state.user.user);
 	const { id } = useParams();
 	const [chanId, setChanId] = useState<number | undefined>(undefined);
-	const currentChan = useAppSelector(state =>
+	const currentChan: IChannel | undefined = useAppSelector(state =>
 		state.chat.channels.find(chan => chan.id === chanId));
 
 	useEffect(() => {
