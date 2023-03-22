@@ -120,3 +120,11 @@ label {
       }
     }
 }
+
+.queu {
+    display: flex;
+    flex-flow: column;
+    .button {
+        display:flex !important;
+    }
+}
