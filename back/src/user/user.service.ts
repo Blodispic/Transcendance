@@ -18,7 +18,6 @@ import { Server } from "http";
 import { userList } from "src/app.gateway";
 import { Channel } from "src/chat/channel/entities/channel.entity";
 import { isNumber } from "class-validator";
-import { channel } from "diagnostics_channel";
 // import { userList } from "src/app.gateway";
 
 @Injectable()
@@ -109,7 +108,7 @@ export class UserService {
         friends: true,
         results: true,
         channels: true,
-        // owned: true,
+        owned: true,
         blocked: true,
       },
       where: { id: id }
@@ -518,24 +517,13 @@ export class UserService {
     return user ? user.blocked: [];
   }
 
-  async getBlockedid(id: number) { // a modifier, pour manu
-    const user = await this.usersRepository.findOne({
-      relations : {
-        blocked: true,
-      },
-      where: { id: id},
-      select: {id: true},
-    });
-    return user ? user.blocked: [];
-  }
-
   async addBlock(id: number, blockedid: number) {
     const user = await this.usersRepository.findOne({
       relations: {
         blocked: true,
       },
       where: {id: id}
-    });
+    });    
     if (user === null)
       throw new BadRequestException("No such User");
     const blocked = await this.usersRepository.findOne({
@@ -583,7 +571,7 @@ export class UserService {
     
     return await this.usersRepository.save(user);
   }
-  
+
   async checkRelations(friendId: number, userId: number) { 
     const realUser = await this.usersRepository.findOne({
       relations: {

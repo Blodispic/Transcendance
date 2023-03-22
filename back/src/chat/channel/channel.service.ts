@@ -13,7 +13,6 @@ import { CreateChannelDto } from '../dto/create-channel.dto';
 import { GiveAdminDto } from '../dto/give-admin.dto';
 import { BanUserDto } from '../dto/ban-user.dto';
 import { RmAdminDto } from '../dto/rm-admin.dto';
-import { find } from 'rxjs';
 var bcrypt = require('bcryptjs');
 
 
@@ -109,8 +108,8 @@ export class ChannelService {
 		return 'There is no channel to update';
 	  }
 
-	getById(id: number) {
-		return this.channelRepository.findOne({
+	async getById(id: number) {
+		return await this.channelRepository.findOne({
 			relations: {
 				admin: true,
 				users: true,
@@ -124,8 +123,29 @@ export class ChannelService {
 		});
 	  }
 
-	  getByName(name: string) {
-		return this.channelRepository.findOne({
+	  async getPwById(id: number) {
+		return (await this.channelRepository.findOne({
+			relations: {
+				admin: true,
+				users: true,
+				muted: true,
+				banned: true,
+				owner: true,
+			},
+			where: {
+				id: id
+			},
+			select: {
+				id: true,
+				password: true,
+			}	
+		}))?.password;
+		// if (channel != null)
+		// 	return channel.password;
+	  }
+
+	  async getByName(name: string) {
+		return await this.channelRepository.findOne({
 			relations: {
 				users: true,
 				muted: true,
@@ -156,6 +176,7 @@ export class ChannelService {
 			where: { id: banUserDto.chanid }
 		});
 		const user = await this.userService.getById(banUserDto.userid);
+		// check user is admin, banned is not admin
 		if (channel === null || user === null)
 			throw new BadRequestException("No such Channel or User");
 		channel.banned.push(user);

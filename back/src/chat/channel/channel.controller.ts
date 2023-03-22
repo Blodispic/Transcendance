@@ -1,4 +1,4 @@
-import { BadRequestException, Body, Controller, Get, Param, ParseIntPipe, Patch, Post } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Get, Param, ParseIntPipe, Patch, Post, UseGuards } from '@nestjs/common';
 import { CreateUserDto } from 'src/user/dto/create-user.dto';
 import { ChannelService } from './channel.service';
 import { Channel } from './entities/channel.entity';
@@ -9,6 +9,7 @@ import { BanUserDto } from '../dto/ban-user.dto';
 import { MuteUserDto } from '../dto/mute-user.dto';
 import { User } from 'src/user/entities/user.entity';
 import { CreateChannelDto } from '../dto/create-channel.dto';
+import { JwtGuard } from 'src/Oauth/jwt-auth.guard';
 
 @Controller('channel')
 export class ChannelController {
@@ -24,7 +25,6 @@ export class ChannelController {
 		return await this.channelService.getById(id);
 	}
 	
-	
 	@Get()
 	async getAll() {
 		return await this.channelService.getAll();
@@ -36,6 +36,7 @@ export class ChannelController {
     }
 
 	@Post()
+	@UseGuards(JwtGuard)
 	async create(@Body() createChannelDto: CreateChannelDto, user: User): Promise<Channel> {
 		try {
 			return await this.channelService.create(createChannelDto, user);
@@ -45,21 +46,25 @@ export class ChannelController {
 	}
 
 	@Post('addUser')
+	@UseGuards(JwtGuard)
 	async add(@Body() addUserDto: AddUserDto) {
 		return await this.channelService.add(addUserDto);
 	}
 
 	@Post('rmUser')
+	@UseGuards(JwtGuard)
 	async rm(@Body() rmUserDto: RmUserDto) {
 		return await this.channelService.rm(rmUserDto);
 	}
 
 	@Post('banUser')
+	@UseGuards(JwtGuard)
 	async banUser(@Body() banUserDto: BanUserDto) {
 		return await this.channelService.banUser(banUserDto);
 	}
 
 	@Post('muteUser')
+	@UseGuards(JwtGuard)
 	async muteUser(@Body() muteUserDto: MuteUserDto) {
 		return await this.channelService.muteUser(muteUserDto);
 	}

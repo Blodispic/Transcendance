@@ -20,16 +20,12 @@ export class Channel {
 	@Column('int', {default: 0})
 	chanType: ChanType
 
-	@Column({ nullable: true, })
+	@Column({ nullable: true, select: false})
 	password: string;
 
-	// @IsOptional()
+	@IsOptional()
 	@ManyToOne(() => User, user => user.channels, {cascade: true} )
 	owner?: User
-
-	// @OneToOne(() => User, { createForeignKeyConstraints: false, nullable: true })
-	// @JoinColumn()
-	// owner?: User
 	
 	@ManyToMany(() => User, user => user.channels, { cascade: true })
 	@JoinTable()

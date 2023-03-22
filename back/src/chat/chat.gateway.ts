@@ -87,18 +87,20 @@ async handleSendMessageChannel(@ConnectedSocket() client: Socket, @MessageBody()
     message: sendmessageChannelDto.message,
     sendtime: sendmessageChannelDto.sendtime,
   });
-  
 }
 
 @SubscribeMessage('joinChannel')
 async handleJoinChannel(@ConnectedSocket() client: Socket, @MessageBody() joinChannelDto: JoinChannelDto) {    
-  const channel = await this.channelService.getById(joinChannelDto.chanid);
+  const channel = await this.channelService.getById(joinChannelDto.chanid); // plutot faire un service pour recuperer uniquement le password
   if (channel === null)
     throw new BadRequestException("No such Channel"); // no such channel
+  
   const user = await this.userService.getById(client.handshake.auth.user.id);
+  console.log("pw : ", await this.channelService.getPwById(channel.id));
+  
   if (user === null)
     throw new BadRequestException("No such user");  
-  if (channel.password && !(await bcrypt.compare(joinChannelDto.password, channel.password)))
+  if (channel.password && !(await bcrypt.compare(joinChannelDto.password, await this.channelService.getPwById(channel.id)))) // don't work, i am on it
   {
     client.emit("joinChannelFailed", "Wrong password");
     throw new BadRequestException("Bad password"); // wrong password
@@ -207,16 +209,12 @@ async handleBanUser(@ConnectedSocket() client: Socket, @MessageBody() banUserDto
   if (channel === null || user === null || userBan === null)
     throw new BadRequestException("No such Channel or User"); // no such channel or user
   if (!(await this.channelService.isUserAdmin({chanid: channel.id, userid: user.id})))
-    throw new BadRequestException("You are not Admin on this Channel");
-  console.log("owner : ", channel.owner, "user : ", user);
-  
+    throw new BadRequestException("You are not Admin on this Channel");  
   if (channel.owner?.id != user.id && await this.channelService.isUserAdmin({chanid: channel.id, userid: userBan.id}))
     throw new BadRequestException("You can not Ban an Admin")
   this.channelService.banUser(banUserDto);
   this.channelService.rm({user: userBan, chanid: channel.id});
-
   this.findSocketFromUser(userBan)?.leave("chan" + channel.id);
-  // client.leave("chan" + channel.id);  
   let timer = 30000;
   if (banUserDto.timeout)
     timer = banUserDto.timeout;
