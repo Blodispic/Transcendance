@@ -31,7 +31,7 @@ function DMList(props: { currentdm: IUser | undefined; setCurrentDm: Function })
 
 	return (
 		<div className="title"> Direct Messages <hr />
-			{alluser != undefined &&
+			{alluser !== undefined &&
 				<>
 					{alluser && alluser.map(user => (
 						<ul key={user.username} onClick={_ => {props.setCurrentDm(user); navigate(`/Chat/dm/${user.id}`)}} >
@@ -242,7 +242,7 @@ export function DmMessages(props: { id: number; currentdm: IUser | undefined; se
 
 	const handleSubmitNewMessage = (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
-		if (newInput != "") {
+		if (newInput !== "") {
 			const sendtime = new Date().toLocaleString('en-US');
 			socket.emit('sendDM', { IdReceiver: props.id, message: newInput, sendtime: sendtime });
 		}
@@ -252,7 +252,7 @@ export function DmMessages(props: { id: number; currentdm: IUser | undefined; se
 	return (
 		<div className="chat-body">
 			<div className="body-header">
-				<img className="user-avatar" src={`${process.env.REACT_APP_BACK}user/${props.currentdm?.id}/avatar`} />
+				<img className="user-avatar" src={`${process.env.REACT_APP_BACK}user/${props.currentdm?.id}/avatar`} alt="user avatar" />
 				{props.currentdm?.username}
 			</div>
 			<div className="chat-messages">
@@ -265,7 +265,7 @@ export function DmMessages(props: { id: number; currentdm: IUser | undefined; se
 								myUser?.blocked?.find(obj => obj.id === props.currentdm?.id) === undefined &&
 									<div className="__wrap">
 										<div className="message-info">
-											<img className="user-avatar" src={`${process.env.REACT_APP_BACK}user/${message.sender?.id}/avatar`} />
+											<img className="user-avatar" src={`${process.env.REACT_APP_BACK}user/${message.sender?.id}/avatar`} alt="user avatar" />
 											{message.sender?.username}
 											<span className="timestamp">{message.sendtime}</span>
 										</div>

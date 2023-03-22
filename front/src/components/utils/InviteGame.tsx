@@ -11,7 +11,7 @@ export default function InviteGame(props : {infoGame: any, setTrigger: Function}
     const myUser = useAppSelector(state => state.user);
 
     const accept = () => {
-        if (swal && swal.close != undefined && swal.stopLoading != undefined)
+        if (swal && swal.close !== undefined && swal.stopLoading !== undefined)
         {
             swal("Success", "You've been added to the custom room.", "success");
             swal.stopLoading();

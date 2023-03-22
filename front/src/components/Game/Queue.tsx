@@ -32,7 +32,7 @@ export default function Queue() {
         if (socket)
         {
             socket.on("RoomStart", (roomId: number, player: Player) => {
-                if (swal && swal.close != undefined && swal.stopLoading != undefined)
+                if (swal && swal.close !== undefined && swal.stopLoading !== undefined)
                 {
                     swal("Success", "You've been added to the custom room.", "success");
                     swal.stopLoading();

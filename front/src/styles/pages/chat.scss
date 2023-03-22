@@ -63,10 +63,18 @@ $tab-color: rgba(var(--primary-color), 0.5); //rgb(121, 121, 121);
 			font-size: 20px;
 		}
 
+		.upper {
+			height: 40%;
+			width: 90%;
+			position: absolute;
+			top: 1%;
+		}
+
 		.bottom {
 			height:40%;
+			width: 90%;
 			position: absolute;
-			top: 50%;
+			top: 43%;
 		}
 		.add-icon {
 			width: 90%;
@@ -77,13 +85,13 @@ $tab-color: rgba(var(--primary-color), 0.5); //rgb(121, 121, 121);
 			margin: auto;
 			background: var(--sub-color2);
 			border-radius: 3px;
+			top: 40%;
 
 			.add-button {
 				cursor: pointer;
 			}
 
 		}
-
 	}
 
 

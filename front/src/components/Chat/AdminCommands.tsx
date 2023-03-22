@@ -15,7 +15,7 @@ export function BanUser(props: { chanid: any, userid: any, trigger: boolean, set
 		else
 			socket.emit('BanUser', { chanid: props.chanid, userid: props.userid, timeout: parseInt(timeout) * 1000 });
 	}
-
+	
 	useEffect(() => {
 		socket.on("banUserOK", (data) => {
 			props.setTrigger(false);

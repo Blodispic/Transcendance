@@ -103,7 +103,7 @@ export function ChannelMessages() {
 									{(message.chanid === currentChan.id && message.sender !== undefined) &&
 										<div className="__wrap">
 											<div className="message-info">
-												<img className="user-avatar" src={`${process.env.REACT_APP_BACK}user/${message.sender?.id}/avatar`} />
+												<img className="user-avatar" src={`${process.env.REACT_APP_BACK}user/${message.sender?.id}/avatar`} alt="sender avatar" />
 												<p>{message.sender?.username}</p>
 												<p className="timestamp">{message.sendtime}</p>
 											</div>
@@ -130,5 +130,6 @@ export function ChannelMessages() {
 				</>
 			}
 		</>
+
 	) : <></>;
 }

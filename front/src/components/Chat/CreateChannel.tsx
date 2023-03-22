@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { HiOutlineXMark, HiPlus } from "react-icons/hi2";
-import { useNavigate } from "react-router-dom";
 import { socket } from "../../App";
 import { IUser } from "../../interface/User";
 import { addChannel } from "../../redux/chat";
@@ -14,7 +13,6 @@ export function PopupCreateChannel(props: { trigger: boolean, setTrigger: Functi
 	const [friend, setFriend] = useState<IUser[]>([]);
 	const [myVar, setMyvar] = useState<boolean>(false);
 	const [failed, setFailed] = useState<boolean>(false);
-	const navigate = useNavigate();
 	const dispatch = useAppDispatch();
 
 	const handlePublic = () => {
@@ -66,9 +64,9 @@ export function PopupCreateChannel(props: { trigger: boolean, setTrigger: Functi
 	});
 
 	return (props.trigger) ? (
-		<div className="chat-form-popup" onClick={_ => (props.setTrigger(false), setChanMode(0), setFailed(false))} >
+		<div className="chat-form-popup" onClick={_ => {props.setTrigger(false); setChanMode(0); setFailed(false)}} >
 			<div className="chat-form-inner" onClick={e => e.stopPropagation()}>
-				<HiOutlineXMark className="close-icon" onClick={_ => (props.setTrigger(false), setChanMode(0), setFailed(false))} /> <br />
+				<HiOutlineXMark className="close-icon" onClick={_ => {props.setTrigger(false); setChanMode(0); setFailed(false)}} /> <br />
 				<h3>Channel Name</h3>
 				<input type="text" id="channel-input" placeholder="Insert channel name"  maxLength={15} onChange={e => { setChanName(e.target.value) }} onSubmit={() => { handleCreateNewChan(); }} />
 				<br />
