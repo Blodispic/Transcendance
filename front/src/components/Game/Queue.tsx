@@ -38,8 +38,11 @@ export default function Queue() {
                 navigate("/game/" + roomId, { state: { Id: roomId } });
             });
 
-            socket.on("WaitingRoomSuccess", () => {
-                swal("Success", "You've been added to the waiting room.", "success");
+            socket.on("WaitingRoomSuccess", (message: string) => {
+                if (message)
+                    swal("Success", message, "success");
+                else
+                    swal("Success", "You've been added to the waiting room.", "success");
             });
 
             socket.on("WaitingRoomFailure", (message: string) => {

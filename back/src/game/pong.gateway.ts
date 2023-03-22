@@ -97,6 +97,16 @@ export class PongGateway implements OnGatewayDisconnect, OnGatewayInit {
 		}
 	}
 
+	@SubscribeMessage("removeFromWaitingRoom")
+	async HandleRemoveFromWaitingRoom(@ConnectedSocket() client: Socket) {
+		if (await this.gameService.removeFromWaitingRoom(client) == 1)
+			this.server.to(client.id).emit("WaitingRoomFailure", "You are not in the waiting room");
+		else
+		{
+			this.server.to(client.id).emit("WaitingRoomSuccess", "You've been removed from the waiting room successfuly");
+		}
+	}
+
 	@SubscribeMessage("spectateGame")
 	async HandleSpectator(@MessageBody() playerId: number, @ConnectedSocket() client: Socket) {
 		
