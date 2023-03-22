@@ -87,8 +87,6 @@ async handleSendMessageChannel(@ConnectedSocket() client: Socket, @MessageBody()
     message: sendmessageChannelDto.message,
     sendtime: sendmessageChannelDto.sendtime,
   });
-
-  console.log("user : ", sender);
   
 }
 
@@ -151,7 +149,6 @@ async handleLeaveChannel(@ConnectedSocket() client: Socket, @MessageBody() leave
   client.leave("chan" + leaveChannelDto.chanid);
   client.emit("leaveChannelOK", channel.id);
   this.server.to("chan" + channel.id).emit("leaveChannel", user);
-  console.log("channel : ", await this.channelService.getById(channel.id));
   
 }
 

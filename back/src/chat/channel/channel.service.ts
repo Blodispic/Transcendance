@@ -13,6 +13,7 @@ import { CreateChannelDto } from '../dto/create-channel.dto';
 import { GiveAdminDto } from '../dto/give-admin.dto';
 import { BanUserDto } from '../dto/ban-user.dto';
 import { RmAdminDto } from '../dto/rm-admin.dto';
+import { find } from 'rxjs';
 var bcrypt = require('bcryptjs');
 
 
@@ -69,15 +70,13 @@ export class ChannelService {
 		const user = await this.userService.getById(rmUserDto.user.id);
 		if (channel === null || user === null)
 			throw new NotFoundException("No such Channel or User");
-		// channel.users = channel.users.filter(elem => elem.id != user.id);		
 		if (channel.owner?.id == user.id){
-			// await this.userService.RmOwned(user.id, channel.id);
+			await this.userService.RmOwned(user.id, channel.id);
 			channel.owner = undefined;
-		}
-		// console.log("owned : ", await this.userService.getById(user.id));		
-		
-		// if (await this.isUserAdmin({chanid: channel.id, userid: user.id}))
-		// 	this.rmAdmin({chanid: channel.id, userid: user.id});	
+		}		
+		if (await this.isUserAdmin({chanid: channel.id, userid: user.id}))		
+			channel = await this.rmAdmin({chanid: channel.id, userid: user.id});
+		channel.users = channel.users.filter(elem => elem.id != user.id);
 		return await this.channelRepository.save(channel);
 	}
 
@@ -264,15 +263,15 @@ export class ChannelService {
 	async rmAdmin(rmAdminDto: RmAdminDto)
 	{
 		const channel = await this.channelRepository.findOne({
-			relations: { admin: true },
+			relations: { admin: true, users: true },
 			where: { id: rmAdminDto.chanid}
 		});
 		if (!channel)
-			throw new BadRequestException("No such Channel");
+		throw new BadRequestException("No such Channel");
 		const user = channel.admin.find(user => user.id === rmAdminDto.userid);
 		if (!user)
 			throw new BadRequestException("No such User in Admin List");
-		channel.admin = channel.admin.filter(elem => elem.id != user.id);
+		channel.admin = channel.admin.filter(elem => elem.id != user.id);		
 		return this.channelRepository.save(channel);		
 	}
 
