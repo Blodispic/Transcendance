@@ -42,6 +42,7 @@ $tab-color: rgba(var(--primary-color), 0.5); //rgb(121, 121, 121);
 		font-size: 20px;
 		padding: 20px;
 		height: 30px;
+		// width: 60%;
 		line-height: 30px;
 		color: black;
 		display: flex;
@@ -216,6 +217,12 @@ $tab-color: rgba(var(--primary-color), 0.5); //rgb(121, 121, 121);
 	
 }
 
+.channel-announce {
+	font-size: 15px;
+	color: gray;
+	text-align: center;
+}
+
 .timestamp {
 	font-size: 10px;
 	margin-left: 50px;
@@ -255,7 +262,7 @@ $tab-color: rgba(var(--primary-color), 0.5); //rgb(121, 121, 121);
 	text-align: center;
 	position: relative;
 	z-index: 1;
-	-webkit-text-fill-color: black !important; 
+	// -webkit-text-fill-color: black !important; 
 
 	#channel-input {
 		font-family: 'Fredoka One', cursive;
@@ -271,6 +278,39 @@ $tab-color: rgba(var(--primary-color), 0.5); //rgb(121, 121, 121);
 		text-align: center;
 	}
 }
+
+
+.clickable-pop-up-inner {
+	background-color: white;
+	border-radius: 5px;
+	width: 300px;
+	height: 250px;
+	color: black;
+	border-color: var(--sub-color1);
+	justify-content: center;
+	align-items: center;
+	text-align: center;
+	position: relative;
+	z-index: 1;
+	-webkit-text-fill-color: black !important; 
+
+
+	#clickable-input {
+		font-family: 'Fredoka One', cursive;
+		font-size: 10px;
+		color: rgb(111, 106, 106);
+		margin-right: 10px;
+		width: 40px;
+		height: 40px;
+		background: rgba($color: lightgray, $alpha: 0.5);
+		border-radius: 5px;
+		border: none;
+		bottom: 0;
+		text-align: center;
+	}
+
+}
+
 
 .close-icon {
 	float: right;

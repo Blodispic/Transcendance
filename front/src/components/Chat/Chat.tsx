@@ -10,26 +10,6 @@ import { Player } from "../Game/Game";
 export default function Chat() {
 	const navigate = useNavigate();
 	const [current, setOnglet] = useState<page>(page.PAGE_1);
-	const { id } = useParams();
-	const [reload, setReload] = useState<boolean>(false);
-		
-
-	useEffect(() => {
-		setReload(false);
-	}, [reload]);
-
-	useEffect(() => {
-		socket.on('leaveChannelOK', (chanid) => {
-			setReload(true);
-		})
-		socket.on('joinChannelOK', (chanid) => {
-			setReload(true);
-		})
-		return () => {
-			socket.off('leaveChannelOK');
-			socket.off('joinChannelOK');
-		}
-	}, []);
 
 	useEffect(() => {
 		socket.on("RoomStart", (roomId: number, player: Player) => {
@@ -37,13 +17,21 @@ export default function Chat() {
         });
 	})
 
+	if (window.location.href.search('channel') !== -1 && current !== page.PAGE_1) {
+		setOnglet(page.PAGE_1);	
+	}
+
+	if (window.location.href.search('dm') !== -1 && current !== page.PAGE_2) {
+		setOnglet(page.PAGE_2);	
+	}
+
 	return (
 		<div className="chat-tab">
 			<div className='onglets Chat-onglets'>
 				<button className={`pointer ${current === page.PAGE_1 ? "" : "not-selected"}`}
 					onClick={e => { setOnglet(page.PAGE_1); navigate(`/Chat/channel/`) }}>
 					<a >
-						Chanels
+						Channels
 					</a>
 				</button>
 				<button className={`pointer ${current === page.PAGE_2 ? "" : "not-selected"}`}
@@ -54,14 +42,13 @@ export default function Chat() {
 				</button>
 			</div>
 			{
-				current == page.PAGE_1 &&
-				// <Channels chanId={id} />
-				<Channels />
+				current === page.PAGE_1 &&
+				<Channels page={setOnglet}/>
 
 			}
 			{
-				current == page.PAGE_2 &&
-				<DirectMessage dmId={id}/>
+				current === page.PAGE_2 &&
+				<DirectMessage />
 			}
 
 		</div>

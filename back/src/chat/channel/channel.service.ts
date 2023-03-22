@@ -158,7 +158,15 @@ export class ChannelService {
 	  }
 
 	  getAll() {
-		return this.channelRepository.find();
+		return this.channelRepository.find({ // added
+			relations: {
+				admin: true,
+				users: true,
+				muted: true,
+				banned: true,
+				owner: true,
+			}
+		});
 	  }
 
 	  getPublic() {		
