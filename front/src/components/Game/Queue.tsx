@@ -24,6 +24,9 @@ export default function Queue() {
         socket.emit("addToWaitingRoom");
         return;
     }
+    const quitWaitingRoom = () => {
+        socket.emit("removeFromWaitingRoom");
+    }
 
     useEffect(() => {
         if (socket)
@@ -67,7 +70,7 @@ export default function Queue() {
 
     return (
         <>
-            <div className='center'>
+            <div className='center queu'>
 
                 <div className='button'>
                     <button className='button pointer color_log' onClick={(e) => addToWaitingRoom()} >
@@ -82,6 +85,7 @@ export default function Queue() {
                         </Link>
                     </button>
                 </div>
+                <button className="button-style" onClick={_ => (quitWaitingRoom())}> Quit Waiting Room </button>
         </div>
         <CustomGamePopup trigger={customPopup} setTrigger={setCustomPopup} friend={undefined} />
         </>

@@ -112,7 +112,6 @@ export function InviteButton(props: { user: any, relation: string, setRelation: 
     const myToken = useAppSelector(state => state.user.myToken);
 
     useEffect( () => {
-        console.log("ca eload?")
         // setRelation(props.relation);
     })
     const sendFriendRequest = async () => {
@@ -166,9 +165,7 @@ export function InviteButton(props: { user: any, relation: string, setRelation: 
             },
         })
             .then(async Response => {
-                console.log(".then")
                 if (Response.ok) {
-                console.log("response ok")
                     swal("", "Friend Remove", "success");
                     socket.emit("RemoveFriend", user.id);
                     props.setRelation("Nobody");
@@ -181,7 +178,7 @@ export function InviteButton(props: { user: any, relation: string, setRelation: 
             {
                 props.relation === "Nobody" &&
                 <button className="reqButton pointer white width_50" onClick={_ => (sendFriendRequest())} >
-                    Add Friend {/*{(props.relation)} */}
+                    Add Friend
                 </button>
             }
             {

@@ -39,7 +39,6 @@ export default function Connection() {
                 })
                     .then(async response => {
                         const data = await response.json();
-                        console.log(data);
                         // check for error response
                         if (response.ok) {
                             dispatch(setUser(data.user));
