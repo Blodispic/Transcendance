@@ -11,6 +11,28 @@ export default function Chat() {
 	const navigate = useNavigate();
 	const [current, setOnglet] = useState<page>(page.PAGE_1);
 	const { id } = useParams();
+	const [reload, setReload] = useState<boolean>(false);
+		
+
+	useEffect(() => {
+		console.log("et je set a false")
+		setReload(false);
+	}, [reload]);
+
+	useEffect(() => {
+		socket.on('leaveChannelOK', (chanid) => {
+			console.log("leavechanles");
+			setReload(true);
+		})
+		socket.on('joinChannelOK', (chanid) => {
+			console.log("join chanels ok");
+			setReload(true);
+		})
+		return () => {
+			socket.off('leaveChannelOK');
+			socket.off('joinChannelOK');
+		}
+	}, []);
 
 	useEffect(() => {
 		socket.on("RoomStart", (roomId: number, player: Player) => {
@@ -36,7 +58,9 @@ export default function Chat() {
 			</div>
 			{
 				current == page.PAGE_1 &&
-				<Channels chatId={id} />
+				// <Channels chanId={id} />
+				<Channels />
+
 			}
 			{
 				current == page.PAGE_2 &&

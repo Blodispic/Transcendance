@@ -13,6 +13,7 @@ export default function Sign() {
     const [avatar, setavatar] = useState<string>('');
     const formData = new FormData();
     const myUser = useAppSelector(state => state.user);
+    const myToken = useAppSelector(state => state.user.myToken);
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
     const [nameExist, SetNameExist] = useState<Boolean>(false);
@@ -24,26 +25,33 @@ export default function Sign() {
             formData.append('file', file);
             await fetch(`${process.env.REACT_APP_BACK}user/${myUser.user.id}/avatar`, {
                 method: 'PATCH',
+                headers: {
+                    'Authorization': `Bearer ${myToken}`,
+                },
                 body: formData,
-                credentials: 'include',
             })
             formData.delete('file');
             dispatch(change_avatar(avatar));
         }
 
         if (newname !== '' && myUser.user) {
+            console.log("token", myToken)
             if (newname) {
                 await fetch(`${process.env.REACT_APP_BACK}user/${myUser.user.id}`, {
                     method: 'PATCH',
                     headers: {
                         'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${myToken}`,
                     },
                     body: JSON.stringify({ username: newname }),
-                    credentials: 'include',
                 })
                     .then(async response => {
+                        console.log("response ?")
                         if (!response.ok)
+                        {
+                            console.log("ca rentre ? ");
                             SetNameExist(true);
+                        }
                         else {
                             SetNameExist(false);
                             dispatch(change_name(newname));
@@ -53,6 +61,9 @@ export default function Sign() {
                             }
                         }
 
+                    })
+                    .catch( () => {
+                        console.log("response ????")
                     })
             }
         }

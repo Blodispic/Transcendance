@@ -20,7 +20,7 @@ export class Channel {
 	@Column('int', {default: 0})
 	chanType: ChanType
 
-	@Column({ nullable: true, select: false })
+	@Column({ nullable: true, })
 	password: string;
 
 	// @IsOptional()

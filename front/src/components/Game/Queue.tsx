@@ -12,13 +12,13 @@ import CustomGamePopup from './CustomGamePopup';
 
 export default function Queue() {
 
-    const myUser = useAppSelector(state => state.user);
+    const myStore  = useAppSelector(state => state);
     const navigate = useNavigate();
     const [customPopup, setCustomPopup] = useState(false);
 
     function addToWaitingRoom() {
         socket.auth = {
-            user: myUser.user,
+            user: myStore.user.user,
         };
         socket.emit("addToWaitingRoom");
         return;
@@ -30,10 +30,12 @@ export default function Queue() {
         });
 
         const fetchuser = async () => {
-            if (myUser.user) {
-                await fetch(`${process.env.REACT_APP_BACK}game/${myUser.user.id}}`, {
+            if (myStore.user.user) {
+                await fetch(`${process.env.REACT_APP_BACK}game/${myStore.user.user.id}}`, {
                     method: 'POST',
-                    credentials: 'include'
+                    headers: {
+                        'Authorization': `Bearer ${myStore.user.myToken}`,
+                    },
                 })
             }
         }

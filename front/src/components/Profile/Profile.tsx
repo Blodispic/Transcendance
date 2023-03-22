@@ -67,17 +67,21 @@ export default function Profile() {
         const navigate = useNavigate();
         let { id } = useParams();
         const [pages, setPages] = useState<page>(page.PAGE_1);
-        const myUser = useAppSelector(state => state.user);
+        const myUser = useAppSelector(state => state);
+        const [updateStatus, setUpdateStatus] = useState(false);
 
         const fetchid = async () => {
                 console.log("ca fetch id ", id);
                 const response = await fetch(`${process.env.REACT_APP_BACK}user/id/${id}`, {
                         method: 'GET',
-                        credentials: 'include',
+                        headers: {
+                                'Authorization': `Bearer ${myUser.user.myToken}`,
+                        }
                 })
                 console.log(response);
                 setCurrentUser(await response.json());
         }
+
         useEffect(() => {
                 socket.on("RoomStart", (roomId: number, player: Player) => {
                         navigate("/game/" + roomId, { state: { Id: roomId } });
@@ -86,28 +90,30 @@ export default function Profile() {
                 if (id)
                         fetchid();
                 setPages(page.PAGE_1);
-                if (myUser.user!.friends)
-                        socket.on('UpdateSomeone', (idChange, idChange2) => {
-                                // if (idChange2 === id || idChange === id)
-                                        fetchid();
-                        })
+                // if (myUser.user.user!.friends)
+                socket.on('UpdateSomeone', (idChange, idChange2) => {
+                        setUpdateStatus(prevFlag => !prevFlag);
+                        // fetchid();
+                })
+
                 socket.on("SpectateStart", (roomId: number, player: Player) => {
                         navigate("/game/" + roomId, { state: { Id: roomId } });
                 });
+                
                 return () => {
                         socket.off('UpdateSomeone');
                         socket.off('SpectateStart');
                 };
-        }, [id])
+        }, [id, updateStatus])
 
         useEffect(() => {
                 console.log("currentuser", currentUser);
-                if (currentUser?.id == myUser.user?.id) {
+                if (currentUser?.id == myUser.user.user?.id) {
                         console.log("In useeffects");
-                        setCurrentUser(myUser.user);
+                        setCurrentUser(myUser.user.user);
 
                 }
-        }, [Onglets, currentUser?.id,  myUser.user?.username, id])
+        }, [Onglets, currentUser?.id,  myUser.user.user?.username, id])
 
 
         if (currentUser === undefined) {

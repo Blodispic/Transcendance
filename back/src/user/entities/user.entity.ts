@@ -12,15 +12,10 @@ export class User {
   @Column({ default: false })
   twoFaEnable: boolean;
 
-
   @Column({ default: "Offline" })
   status: string;
 
-
-  @Column()
-  access_token: string;
-
-  @Column({ unique: true, nullable: true })
+  @Column({ unique: true, nullable: true, length: 16 })
   username: string;
 
   @Column({ unique: true })
@@ -67,11 +62,11 @@ export class User {
   @JoinTable()
   results: Results[];
 
-  @OneToMany(() => FriendRequest, friendRequest => friendRequest.creator)
+  @OneToMany(() => FriendRequest, friendRequest => friendRequest.creator, { onDelete: 'CASCADE' })
   @JoinTable()
   sendFriendRequests: FriendRequest[];
 
-  @OneToMany(() => FriendRequest, friendRequest => friendRequest.receiver)
+  @OneToMany(() => FriendRequest, friendRequest => friendRequest.receiver, { onDelete: 'CASCADE' })
   @JoinTable()
   receiveFriendRequests: FriendRequest[];
 }

@@ -123,7 +123,8 @@ export class UserController {
 
   @Post("friends/accept")
   @UseGuards(JwtGuard)
-  async acceptFriendRequest(@Body() body: { friendId: any, userId: number }) {
+  async acceptFriendRequest(@Body() body: { friendId: number, userId: number }) {
+    console.log(body);
     this.userService.addFriend(body.friendId, body.userId);
     return await this.userService.updateFriendRequestStatus(body.friendId, body.userId, {
       status: "Accepted",
@@ -139,7 +140,6 @@ export class UserController {
   }
 
   @Get(':id/avatar')
-  @UseGuards(JwtGuard)
   async getAvatar(@Param('id', ParseIntPipe) id: number, @Req() req: Request, @Res() res: Response) {
     const user = await this.userService.getById(id);
     if (user) {
@@ -176,7 +176,6 @@ export class UserController {
   }
 
   @Patch(':id')
-  @UseGuards(JwtGuard)
   update(@Param('id', ParseIntPipe) id: string, @Body() user: any) {
     return this.userService.update(+id, user);
   }
@@ -206,5 +205,11 @@ export class UserController {
   @Delete('unblock/:id')
   async RmBlock(@Param('id') id: number, @Body() blockedId: number) {
     return await this.userService.addBlock(id, blockedId);
+  }
+
+  @Post("relations")
+  @UseGuards(JwtGuard)
+  async checkRelations(@Body() body: { friendId: number, userId: number }) {
+    return await this.userService.checkRelations(body.friendId, body.userId);
   }
 }

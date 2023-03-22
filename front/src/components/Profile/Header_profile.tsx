@@ -11,13 +11,16 @@ function Search(props: { currentUser: IUser, setcurrentUser: Function }) {
         const { currentUser, setcurrentUser } = props;
         const navigate = useNavigate();
         const [username, setMan] = useState<string | undefined>(undefined)
+        const myToken = useAppSelector(state => state.user.myToken);
 
         const search_man = async (e: any) => {
                 if (username) {
                         e.preventDefault();
                         const response = await fetch(`${process.env.REACT_APP_BACK}user/username/${username}`, {
                                 method: 'GET',
-                                credentials: 'include',
+                                headers: {
+                                        'Authorization': `Bearer ${myToken}`,
+                                    },
                         })
                         .then(async response => {
                                 if (response.ok){
@@ -90,7 +93,7 @@ export function Header(props: { currentUser: IUser, setCurrentUser: Function }) 
         return (
                 <div className='profile-header'>
 
-
+ch
                         <div className='info-container'>
                                 <div className="left-part">
                                         <div className='avatar'>

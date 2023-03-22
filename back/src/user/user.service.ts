@@ -168,10 +168,13 @@ export class UserService {
     if (user) {
       //Si vous voulez plus de chose a update, mettez le dans le body et faites un iff
       if (userUpdate.username) {
+        console.log("username");
+
         const checkUsername = await this.usersRepository.findOneBy({
           username: userUpdate.username,
         })
         if (checkUsername && checkUsername.id !== user.id) {
+          console.log("username exist"); // ca erntre jusque ici 
           throw new NotFoundException("Username exists");
         }
         else
@@ -445,7 +448,7 @@ export class UserService {
   async SetStatus(user: User, status: string): Promise<User | null> {
     if (!user)
       throw new HttpException(`user doesn't exists`, HttpStatus.BAD_REQUEST);
-
+      
     const users = await this.usersRepository.findOne({where: { id: user.id }});
     if (users) {
       users.status = status;
@@ -483,12 +486,6 @@ export class UserService {
     }
     user.friends = user.friends.filter((f) => f.id !== friend.id);
     return await this.usersRepository.save(user);
-  }
-
-  async removeFriendById(id: number, friendId: number) {
-    const user = await this.usersRepository.findOneBy({ id: id });
-    const friend = await this.usersRepository.findOneBy({ id: friendId });
-    return user;
   }
 
   async checkFriends(myId: number, friendId: number): Promise<Boolean> {
@@ -586,5 +583,51 @@ export class UserService {
     
   //   return await this.usersRepository.save(user);
   // }
+  async checkRelations(friendId: number, userId: number) { 
+    const realUser = await this.usersRepository.findOne({
+      relations: {
+        friends: true,
+        blocked: true,
+        sendFriendRequests: true,
+        receiveFriendRequests: true,
+      },
+      where: { id: userId },
+    });
+  
+    if (!realUser) {
+      throw new NotFoundException("User doesn't exist");
+    }
+  
+    const friend = realUser.friends.find((friend) => friend.id === friendId);
+  
+    if (friend) {
+      return ("Friend");
+    }
+  
+    const blocked = realUser.blocked.find((blocked) => blocked.id === friendId);
+  
+    if (blocked) {
+      return ("Blocked");
+    }
+  
+    const friendRequestSent = realUser.sendFriendRequests.find(
+      (request) => request.receiver.id === friendId
+    );
+  
+    if (friendRequestSent) {
+      return ("friendRequestSent");
+    }
+  
+    const friendRequestReceived = realUser.receiveFriendRequests.find(
+      (request) => request.creator.id === friendId
+    );
+  
+    if (friendRequestReceived) {
+      return ("friendRequestReceived");
+    }
+    
+    return ("Nobody");
+  }
+  
 
 }

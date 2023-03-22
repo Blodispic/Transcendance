@@ -1,85 +1,52 @@
 import { useEffect, useState } from "react";
-import { BsFillKeyFill } from "react-icons/bs";
+import { BsFillKeyFill, BsFillPersonFill } from "react-icons/bs";
 import { FaCrown } from "react-icons/fa";
-import { HiLockClosed } from "react-icons/hi2";
-import { useDispatch } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { HiLockClosed, HiPlusCircle } from "react-icons/hi2";
+import { useNavigate, useParams } from "react-router-dom";
 import { socket } from "../../App";
 import { IChannel } from "../../interface/Channel";
-import { addChannel, channelSlice } from "../../redux/channel";
+import { IUser } from "../../interface/User";
 import { useAppSelector } from "../../redux/Hook";
 import { ChannelMessages } from "./ChannelMessages";
 import CLickableMenu from "./clickableMenu";
 import { AddChannel } from "./CreateChannel";
 
-function GetChannelList() {
-	const channels = useAppSelector(state => state.channel);
+function JoinedChannelList() {
+	const [chanList, setChanList] = useState<IChannel[]>([]);
+	const currentUser = useAppSelector(state => state.user);
 	const navigate = useNavigate();
-	
-	useEffect(() => {
-		const fetchChanList = async () => {
-			const response = await fetch(`${process.env.REACT_APP_BACK}channel/`, {
+
+	const fetchJoined = async () => {
+		const response = await fetch(`${process.env.REACT_APP_BACK}channel/user/${currentUser.user?.id}`, {
 			method: 'GET',
 		})
 		const data = await response.json();
+		setChanList(data);
 	}
-	fetchChanList();
+
+	useEffect(() => {
+		fetchJoined();
 	}, []);
 
-	console.log('chan redux: ', channels.channels);
-	return (
-		<div className="title">
-			<header>All Channels <hr /></header>
-			{channels && channels.channels.map(chan => (
-				<ul key={chan.name}>
-					<li>
-						<div onClick={_ => navigate(`/Chat/channel/${chan.id}`)}>{chan.name}
-							{
-								chan.chanType == 1 &&
-								<HiLockClosed style={{ float: 'right' }} />
-							}
-							{
-								chan.chanType == 2 && 
-								<BsFillKeyFill style={{ float: 'right'}} />
-							}
-						</div>
-					</li>
-				</ul>
-			))}
-		</div>
-	);}
-
-
-function ChannelList(props: any) {
-	const [chanList, setChanList] = useState<IChannel[]>([]);
-	const [chanId, setChanId] = useState("");
-	const navigate = useNavigate();
-
-	
-	const getChanId = (data: any) => {
-		setChanId(data);
-	}
-	
 	useEffect(() => {
-		const fetchAllList = async () => {
-			const response = await fetch(`${process.env.REACT_APP_BACK}channel/`, {
-				method: 'GET',
-			})
-			const data = await response.json();
-			setChanList(data);
-		}
-		fetchAllList();
-		socket.on('createChannelOk', (newChanId) => {
-			getChanId(newChanId);
+		socket.on('joinChannelOK', (data) => {
+			fetchJoined();
 		});
-		return () => {
-			socket.off('createChannelOk');
-		};
-	}, [chanId]);
 
+		socket.on('leaveChannelOK', (data) => {
+			fetchJoined();
+		});
+
+		return () => {
+			socket.off('joinChannelOK');
+			socket.off('leaveChannelOK');
+		}
+	});
+
+	
 	return (
 		<div className="title">
-			<header>All Channels <hr /></header>
+			<header>Joined Channels <hr /></header>
 			{chanList && chanList.map(chan => (
 				<ul key={chan.name}>
 					<li>
@@ -89,8 +56,8 @@ function ChannelList(props: any) {
 								<HiLockClosed style={{ float: 'right' }} />
 							}
 							{
-								chan.chanType == 2 && 
-								<BsFillKeyFill style={{ float: 'right'}} />
+								chan.chanType == 2 &&
+								<BsFillKeyFill style={{ float: 'right' }} />
 							}
 						</div>
 					</li>
@@ -102,62 +69,65 @@ function ChannelList(props: any) {
 
 function PublicChannelList() {
 	const [chanList, setChanList] = useState<IChannel[]>([]);
-	const [chanId, setChanId] = useState("");
+	const currentUser = useAppSelector(state => state.user);
 	const navigate = useNavigate();
 
-
+	const fetchPublic = async () => {
+		const response = await fetch(`${process.env.REACT_APP_BACK}channel/public`, {
+			method: 'GET',
+		})
+		const data = await response.json();
+		setChanList(data);
+	}
 	useEffect(() => {
-		const fetchPublic = async () => {
-			const response = await fetch(`${process.env.REACT_APP_BACK}channel/public`, {
-				method: 'GET',
-			})
-			const data = await response.json();
-			setChanList(data);
-		}
-		// console.log('here');
 		fetchPublic();
 	}, []);
 
-
-	// useEffect(() => {
-	// 	const fetchProtected = async () => {
-	// 		const response = await fetch(`${process.env.REACT_APP_BACK}channel/protected`, {
-	// 			method: 'GET',
-	// 		})
-	// 		const data = await response.json();
-	// 		setChanList(data);
-	// 	}
-	// 	// console.log('here');
-	// 	fetchProtected();
-	// }, []);
+	useEffect(() => {
+		socket.on('createChannelOk', (newChanId) => {
+			const fetchPublic = async () => {
+				const response = await fetch(`${process.env.REACT_APP_BACK}channel/public`, {
+					method: 'GET',
+				})
+				const data = await response.json();
+				setChanList(data);	
+			}
+			fetchPublic();
+		});
+		return () => {
+			socket.off('createChannelOk');
+		};
+	});
 
 	return (
-		<div className="bottom">
-			<header>All Channels <hr /></header>
-			{chanList && chanList.map(chan => (
-				<ul key={chan.name}>
-					<li>
-						<div onClick={_ => navigate(`/Chat/channel/${chan.id}`)}>{chan.name}
-							{
-								chan.chanType == 1 &&
-								<HiLockClosed style={{ float: 'right' }} />
-							}
-							{
-								chan.chanType == 2 && 
-								<BsFillKeyFill style={{ float: 'right'}} />
-							}
-						</div>
-					</li>
-				</ul>
-			))}
+		<div className="title">
+
+			<div className="bottom">
+				<header>All Joinable Channels <hr /></header>
+				{chanList && chanList.map(chan => (
+					<ul key={chan.name} onClick={e => {  }}>
+						<li>
+							<div onClick={_ => navigate(`/Chat/channel/${chan.id}`)}>{chan.name}
+								{
+									chan.chanType == 1 &&
+									<HiLockClosed style={{ float: 'right' }} />
+								}
+								{
+									chan.chanType == 2 &&
+									<BsFillKeyFill style={{ paddingLeft: '10px' }} />
+								}
+							</div>
+						</li>
+					</ul>
+				))}
+			</div>
 		</div>
 	);
 }
 
-function ChannelMemberList(props: { id: any }) {
-	const [currentChan, setCurrentChan] = useState<IChannel | undefined>(undefined)
-	// const currentChan = useAppSelector(state => state.channel);
+function ChannelMemberList(props: { chanId: any }) {
 	const [currentId, setCurrentId] = useState<number | undefined>(undefined);
+	const [currentChan, setCurrentChan] = useState<IChannel>();
 
 	const changeId = (id: number) => {
 		if (id == currentId)
@@ -166,19 +136,43 @@ function ChannelMemberList(props: { id: any }) {
 			setCurrentId(id);
 	}
 
+	
 	useEffect(() => {
 		const getChannel = async () => {
-			const response = await fetch(`${process.env.REACT_APP_BACK}channel/${props.id}`, {
+			const response = await fetch(`${process.env.REACT_APP_BACK}channel/${props.chanId}`, {
 				method: 'GET',
 			})
 			const data = await response.json();
 			setCurrentChan(data);
 		}
-		if (props.id)
 		getChannel();
 	}, [props]);
-	
-	if (currentChan?.users === undefined) {
+
+
+	useEffect(() => {
+		const getChannel = async () => {
+			const response = await fetch(`${process.env.REACT_APP_BACK}channel/${props.chanId}`, {
+				method: 'GET',
+			})
+			const data = await response.json();
+			setCurrentChan(data);
+		}
+		socket.on('joinChannel', (data) => {
+			getChannel();
+		});
+
+		socket.on('leaveChannel', (data) => {
+			getChannel();
+		});
+
+		return () => {
+			socket.off('joinChannel');
+			socket.off('leaveChannel');
+		}
+	});
+
+
+	if (props.chanId === undefined) {
 		return (
 			<div className="title"> Members <hr />
 			</div>
@@ -187,20 +181,25 @@ function ChannelMemberList(props: { id: any }) {
 
 	return (
 		<div className="title"> Members <hr />
-			{currentChan && currentChan.users.map(user => (
-				<div className="user-list" key={user.id}>
+			{currentChan && currentChan.users?.map(user => (
+				<div key={user.id} className="user-list">
 					<ul onClick={e => { changeId(user.id) }}>
-						<li >
+						<li>
 							{user.username}
 							{
-								currentChan.admin?.find(obj => obj === user) &&
+								currentChan.owner.id === user.id &&
 								<FaCrown />
+							}
+							{
+								currentChan.owner.id !== user.id &&
+									currentChan.admin?.find(obj => obj.id === user.id) &&
+									<BsFillPersonFill />
 							}
 						</li>
 					</ul>
 					{
-						 currentId == user.id && 
-							<CLickableMenu user={user} chan={currentChan}/>
+						currentId == user.id &&
+						<CLickableMenu user={user} chan={currentChan} />
 					}
 				</div>
 			))
@@ -209,24 +208,32 @@ function ChannelMemberList(props: { id: any }) {
 	);
 }
 
-export function Channels(props: any) {
+export function Channels() {
 	const [currentChan, setCurrentChan] = useState<IChannel | undefined>(undefined);
+	const currentUser = useAppSelector(state => state.user);
+	const { id } = useParams();
 
 	return (
 		<div id="chat-container">
 			<div className="sidebar left-sidebar">
-				{/* <JoinedChannelList /> */}
-				<ChannelList />
-				{/* <GetChannelList /> */}
+				<JoinedChannelList />
 				<AddChannel />
 				<PublicChannelList />
 			</div>
-	
-					<ChannelMessages id={props.chatId} />
-				<div className="sidebar right-sidebar">
-					<ChannelMemberList id={props.chatId} />
-				</div>
+			{
+				id !== undefined &&
+				<>
+					{/* <ChannelMessages channel={currentChan} /> */}
+					<ChannelMessages chanId={id} />
 
+					{
+						// currentChan.users.find(obj => obj.id === currentUser.user?.id) &&
+						<div className="sidebar right-sidebar">
+							<ChannelMemberList chanId={id} />
+						</div>
+					}
+				</>
+			}
 		</div>
 	);
 }

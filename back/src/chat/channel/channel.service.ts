@@ -15,6 +15,7 @@ import { BanUserDto } from '../dto/ban-user.dto';
 import { RmAdminDto } from '../dto/rm-admin.dto';
 var bcrypt = require('bcryptjs');
 
+
 @Injectable()
 export class ChannelService {
 	constructor(
@@ -112,11 +113,11 @@ export class ChannelService {
 	getById(id: number) {
 		return this.channelRepository.findOne({
 			relations: {
+				admin: true,
 				users: true,
 				muted: true,
 				banned: true,
 				owner: true,
-				admin: true,
 			},
 			where: {
 				id: id
