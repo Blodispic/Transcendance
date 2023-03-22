@@ -9,7 +9,7 @@ import { page } from "../../interface/enum";
 import { socket } from "../../App";
 import { addAdmin } from "../../redux/chat";
 
-export default function CLickableMenu(props: { user: IUser, chan: IChannel, page: Function }) {
+export default function ClickableMenu(props: { user: IUser, chan: IChannel, page: Function }) {
 
     const user: IUser = props.user;
     const [myVar, setMyvar] = useState<boolean>(false);
@@ -48,7 +48,7 @@ export default function CLickableMenu(props: { user: IUser, chan: IChannel, page
                                 Invite Game
                             </li>
                             <li>
-                                <a onClick={e => {props.page(page.PAGE_2); navigate(`/Chat/dm/${user.id}`)}}>
+                                <a onClick={e => { props.page(page.PAGE_2); navigate(`/Chat/dm/${user.id}`) }}>
                                     DM
                                 </a>
                             </li>

@@ -3,11 +3,10 @@ import { BsFillKeyFill, BsFillPersonFill } from "react-icons/bs";
 import { FaCrown } from "react-icons/fa";
 import { HiLockClosed } from "react-icons/hi2";
 import { useNavigate, useParams } from "react-router-dom";
-import { IChannel } from "../../interface/Channel";
 import { setChannels } from "../../redux/chat";
 import { useAppDispatch, useAppSelector } from "../../redux/Hook";
 import { ChannelHeader, ChannelMessages } from "./ChannelMessages";
-import CLickableMenu from "./clickableMenu";
+import ClickableMenu from "./clickableMenu";
 import { AddChannel } from "./CreateChannel";
 
 function JoinedChannelList() {
@@ -21,22 +20,22 @@ function JoinedChannelList() {
 			<header>Joined Channels <hr /></header>
 			{channels && channels.map(chan => (
 				<ul key={chan.name}>
-				{
-					chan.users.find(obj => obj.id === currentUser?.id) &&
-					<li>
-						<div onClick={_ => navigate(`/Chat/channel/${chan.id}`)}>{chan.name}
-							{
-								chan.chanType === 1 &&
-								<HiLockClosed style={{ float: 'right' }} />
-							}
-							{
-								chan.chanType === 2 &&
-								<BsFillKeyFill style={{ float: 'right' }} />
-							}
-						</div>
-					</li>
-				}	
-				
+					{
+						chan.users.find(obj => obj.id === currentUser?.id) &&
+						<li>
+							<div onClick={_ => navigate(`/Chat/channel/${chan.id}`)}>{chan.name}
+								{
+									chan.chanType === 1 &&
+									<HiLockClosed style={{ float: 'right' }} />
+								}
+								{
+									chan.chanType === 2 &&
+									<BsFillKeyFill style={{ float: 'right' }} />
+								}
+							</div>
+						</li>
+					}
+
 				</ul>
 			))}
 		</div>
@@ -57,13 +56,13 @@ function PublicChannelList() {
 						{
 							chan.chanType !== 1 &&
 							<li>
-							<div onClick={_ => navigate(`/Chat/channel/${chan.id}`)}>{chan.name}
-								{
-									chan.chanType === 2 &&
-									<BsFillKeyFill style={{ paddingLeft: '10px' }} />
-								}
-							</div>
-						</li>
+								<div onClick={_ => navigate(`/Chat/channel/${chan.id}`)}>{chan.name}
+									{
+										chan.chanType === 2 &&
+										<BsFillKeyFill style={{ paddingLeft: '10px' }} />
+									}
+								</div>
+							</li>
 						}
 					</ul>
 				))}
@@ -120,7 +119,7 @@ function ChannelMemberList(props: { page: Function }) {
 					</ul>
 					{
 						currentId === user.id &&
-						<CLickableMenu user={user} chan={currentChan} page={props.page} />
+						<ClickableMenu user={user} chan={currentChan} page={props.page} />
 					}
 				</div>
 			))
@@ -129,17 +128,17 @@ function ChannelMemberList(props: { page: Function }) {
 	);
 }
 
-export function Channels(props: {page: Function}) {
+export function Channels(props: { page: Function }) {
 	const { id } = useParams();
 	const dispatch = useAppDispatch();
 
 	useEffect(() => {
-		const get_channels = async() => {
+		const get_channels = async () => {
 			const response = await fetch(`${process.env.REACT_APP_BACK}channel`, {
 				method: 'GET',
 			}).then(async response => {
 				const data = await response.json();
-				
+
 				if (response.ok) {
 					dispatch(setChannels(data));
 				}
@@ -160,7 +159,7 @@ export function Channels(props: {page: Function}) {
 				<ChannelMessages />
 			</div>
 			<div className="sidebar right-sidebar">
-				<ChannelMemberList page={props.page}/>
+				<ChannelMemberList page={props.page} />
 			</div>
 		</div>
 	) : (

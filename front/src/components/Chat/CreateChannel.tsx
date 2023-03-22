@@ -3,24 +3,24 @@ import { HiOutlineXMark, HiPlus } from "react-icons/hi2";
 import { useNavigate } from "react-router-dom";
 import { socket } from "../../App";
 import { IUser } from "../../interface/User";
-import { addChannel, setPass } from "../../redux/chat";
+import { addChannel } from "../../redux/chat";
 import { useAppDispatch } from "../../redux/Hook";
 import AllPeople from "../utils/Allpeople";
 
-export function PopupCreateChannel(props: {trigger: boolean, setTrigger: Function}) {
+export function PopupCreateChannel(props: { trigger: boolean, setTrigger: Function }) {
 	const [chanName, setChanName] = useState("");
 	const [password, setPassword] = useState("");
 	const [chanMode, setChanMode] = useState(0);
-    const [friend, setFriend] = useState<IUser[] >([]);
-	const [myVar, setMyvar] = useState<boolean> (false);
-	const [failed, setFailed] = useState<boolean> (false);
+	const [friend, setFriend] = useState<IUser[]>([]);
+	const [myVar, setMyvar] = useState<boolean>(false);
+	const [failed, setFailed] = useState<boolean>(false);
 	const navigate = useNavigate();
 	const dispatch = useAppDispatch();
 
 	const handlePublic = () => {
 		setChanMode(0);
 	}
-	
+
 	const handlePrivate = () => {
 		setChanMode(1);
 	}
@@ -28,9 +28,6 @@ export function PopupCreateChannel(props: {trigger: boolean, setTrigger: Functio
 	const handleProtected = () => {
 		setChanMode(2);
 	}
-
-	// useEffect( () => {
-	// }, [friend] )
 
 	const handleCreateNewChan = () => {
 		if (chanName !== "")
@@ -66,9 +63,9 @@ export function PopupCreateChannel(props: {trigger: boolean, setTrigger: Functio
 	});
 
 	return (props.trigger) ? (
-		<div className="chat-form-popup" onClick={_ => (props.setTrigger(false), setChanMode(0), setFailed(false)) } >
+		<div className="chat-form-popup" onClick={_ => (props.setTrigger(false), setChanMode(0), setFailed(false))} >
 			<div className="chat-form-inner" onClick={e => e.stopPropagation()}>
-				<HiOutlineXMark className="close-icon" onClick={_ => (props.setTrigger(false), setChanMode(0), setFailed(false)) } /> <br />
+				<HiOutlineXMark className="close-icon" onClick={_ => (props.setTrigger(false), setChanMode(0), setFailed(false))} /> <br />
 				<h3>Channel Name</h3>
 				<input type="text" id="channel-input" maxLength={20} placeholder="Insert channel name" onChange={e => { setChanName(e.target.value) }} onSubmit={() => { handleCreateNewChan(); }} />
 				<br />
@@ -76,7 +73,7 @@ export function PopupCreateChannel(props: {trigger: boolean, setTrigger: Functio
 					failed === true &&
 					<span className="channel-error">Channel name already exists</span>
 				}
-				
+
 				<h3>Channel Mode</h3>
 				<input type="radio" name="chanMode" value={0} onChange={_ => handlePublic()} defaultChecked />Public
 				<input type="radio" name="chanMode" value={1} onChange={_ => handlePrivate()} />Private
@@ -88,7 +85,7 @@ export function PopupCreateChannel(props: {trigger: boolean, setTrigger: Functio
 				{
 					chanMode === 1 &&
 					<div className="allpoeple">
-					<AllPeople friend={undefined} setFriend={setFriend} myVar={myVar} setMyvar={setMyvar}  />
+						<AllPeople friend={undefined} setFriend={setFriend} myVar={myVar} setMyvar={setMyvar} />
 					</div>
 				}
 				<button onClick={() => handleCreateNewChan()}>Create Channel</button><span></span>

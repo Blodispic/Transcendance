@@ -158,7 +158,7 @@ export class ChannelService {
 	  }
 
 	  getAll() {
-		return this.channelRepository.find({ // need to check with beco if this is ok to do
+		return this.channelRepository.find({ // added
 			relations: {
 				admin: true,
 				users: true,

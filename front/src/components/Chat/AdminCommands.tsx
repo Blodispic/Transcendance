@@ -29,7 +29,7 @@ export function BanUser(props: { chanid: any, userid: any, trigger: boolean, set
 	return (props.trigger) ? (
 		<div className="chat-form-popup" onClick={_ => (props.setTrigger(false))}>
 			<div className="clickable-pop-up-inner" onClick={e => e.stopPropagation()}>
-				<HiOutlineXMark className="close-icon" onClick={_ => (props.setTrigger(false))} /> 
+				<HiOutlineXMark className="close-icon" onClick={_ => (props.setTrigger(false))} />
 				<br />
 				<h3>Ban User</h3>
 				<h4>Set time (optional)</h4>
@@ -64,7 +64,7 @@ export function MuteUser(props: { chanid: any, userid: any, trigger: boolean, se
 	return (props.trigger) ? (
 		<div className="chat-form-popup" onClick={_ => (props.setTrigger(false))}>
 			<div className="clickable-pop-up-inner" onClick={e => e.stopPropagation()}>
-				<HiOutlineXMark className="close-icon" onClick={_ => (props.setTrigger(false))} /> 
+				<HiOutlineXMark className="close-icon" onClick={_ => (props.setTrigger(false))} />
 				<br />
 				<h3>Mute User</h3>
 				<h4>Set time (optional)</h4>
@@ -76,14 +76,14 @@ export function MuteUser(props: { chanid: any, userid: any, trigger: boolean, se
 	) : <></>;
 }
 
-export function AddAdmin(props: {chanid: any, user: IUser}) {
+export function AddAdmin(props: { chanid: any, user: IUser }) {
 	const dispatch = useAppDispatch();
 
-	socket.emit('GiveAdmin', {chanid: props.chanid, userid: props.user.id});
+	socket.emit('GiveAdmin', { chanid: props.chanid, userid: props.user.id });
 
 	useEffect(() => {
-		socket.on("giveAdminOK", ({userId, chanId}) =>{
-			dispatch(addAdmin({id: chanId, user: props.user}));
+		socket.on("giveAdminOK", ({ userId, chanId }) => {
+			dispatch(addAdmin({ id: chanId, user: props.user }));
 		});
 		return () => {
 			socket.off("giveAdminOK");
@@ -95,9 +95,9 @@ export function KickUser(chanid: any, userid: any) {
 	socket.emit('BanUser', { chanid: chanid, userid: userid, timeout: 1 });
 }
 
-export function ConfigureChannel(props: {trigger: boolean, setTrigger: Function, channel: IChannel}) {
+export function ConfigureChannel(props: { trigger: boolean, setTrigger: Function, channel: IChannel }) {
 	const [newPassword, setNewPassword] = useState("");
-	
+
 	const setPassword = () => {
 		if (props.channel.chanType === 0 && newPassword !== undefined) {
 			socket.emit('addPassword', { chanid: props.channel.id, password: newPassword });
@@ -106,7 +106,7 @@ export function ConfigureChannel(props: {trigger: boolean, setTrigger: Function,
 			try {
 				socket.emit('changePassword', { chanid: props.channel.id, password: newPassword });
 			}
-			catch (e){ console.log(e)};
+			catch (e) { console.log(e) };
 		}
 		props.setTrigger(false);
 	}
@@ -123,17 +123,17 @@ export function ConfigureChannel(props: {trigger: boolean, setTrigger: Function,
 				{
 					props.channel.chanType === 0 &&
 					<>
-					<h3>Set Password</h3>
-					<input type="password" id="channel-input" placeholder="Insert password" onChange={e => { setNewPassword(e.target.value); }} /><br />
+						<h3>Set Password</h3>
+						<input type="password" id="channel-input" placeholder="Insert password" onChange={e => { setNewPassword(e.target.value); }} /><br />
 					</>
 				}
 				{
 					props.channel.chanType === 2 &&
 					<>
-					<h3> Remove Password </h3>
-					<button style={{background:'#B33A3A'}} onClick={removePassword}> Remove Password </button> 
-					<h3>Change Password</h3>
-					<input type="password" id="channel-input" placeholder="Insert new password" onChange={e => { setNewPassword(e.target.value); }} /><br />
+						<h3> Remove Password </h3>
+						<button style={{ background: '#B33A3A' }} onClick={removePassword}> Remove Password </button>
+						<h3>Change Password</h3>
+						<input type="password" id="channel-input" placeholder="Insert new password" onChange={e => { setNewPassword(e.target.value); }} /><br />
 					</>
 				}
 				<button onClick={setPassword}> Save Setting </button>
