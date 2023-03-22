@@ -99,7 +99,7 @@ export class PongGateway implements OnGatewayDisconnect, OnGatewayInit {
 
 	@SubscribeMessage("removeFromWaitingRoom")
 	async HandleRemoveFromWaitingRoom(@ConnectedSocket() client: Socket) {
-		if (await this.gameService.removeFromWaitingRoom(client) == 1)
+		if (this.gameService.removeFromWaitingRoom(client.id) == 1)
 			this.server.to(client.id).emit("WaitingRoomFailure", "You are not in the waiting room");
 		else
 		{
