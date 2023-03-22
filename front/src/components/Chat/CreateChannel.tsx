@@ -35,9 +35,8 @@ export function PopupCreateChannel(props: any) {
 			socket.emit('createChannel', { chanName: chanName, password: password, chanType: chanMode, users: friend });
 		setChanName("");
 		setPassword("");
-		setChanMode(0);
 	}
-
+	
 	useEffect(() => {
 		socket.on("createChannelFailed", (error_message) => {
 			setFailed(true);
@@ -46,6 +45,7 @@ export function PopupCreateChannel(props: any) {
 			setFailed(false);
 			props.setTrigger(false);
 			navigate(`/Chat/channel/${new_chanid}`)
+			setChanMode(0);
 		});
 
 		return () => {
