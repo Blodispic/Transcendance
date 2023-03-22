@@ -23,6 +23,14 @@ export default function Chat() {
         });
 	})
 
+	if (window.location.href.search('channel') !== -1 && current !== page.PAGE_1) {
+		setOnglet(page.PAGE_1);	
+	}
+
+	if (window.location.href.search('dm') !== -1 && current !== page.PAGE_2) {
+		setOnglet(page.PAGE_2);	
+	}
+
 	return (
 		<div className="chat-tab">
 			<div className='onglets Chat-onglets'>
