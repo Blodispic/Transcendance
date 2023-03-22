@@ -120,7 +120,6 @@ function InfoFriend(props: { user: IUser }) {
 	};
 
 	const removeFriend = async () => {
-		console.log("delete frined en front ", user.id, myUser.user!.id)
 		const response = await fetch(`${process.env.REACT_APP_BACK}user/deletefriend/${myUser.user?.id}`, {
 			method: 'DELETE',
 			body: JSON.stringify({ friendId: user.id }),
@@ -130,9 +129,7 @@ function InfoFriend(props: { user: IUser }) {
 			},
 		})
 			.then(async Response => {
-				console.log(".then")
 				if (Response.ok) {
-					console.log("response ok")
 					swal("", "Friend Remove", "success");
 					socket.emit("RemoveFriend", user.id);
 					setRelation("Nobody");
@@ -284,7 +281,7 @@ export function DmMessages(props: { id: number; currentdm: IUser | undefined; se
 			{
 				props.id !== undefined &&
 				<form id="input_form" onSubmit={(e) => { handleSubmitNewMessage(e); }}>
-					<input type="text" onChange={(e) => { setNewInput(e.target.value) }}
+					<input type="text" maxLength={1000} onChange={(e) => { setNewInput(e.target.value) }}
 						placeholder="type message here" value={newInput} />
 				</form>
 			}
@@ -316,7 +313,7 @@ export function DirectMessage() {
 				setCurrentDm(data);
 			}
 		}
-		console.log("getuser");
+		// console.log("getuser");
 		get_user();
 	}, [dmId]);
 

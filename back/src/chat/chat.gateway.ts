@@ -256,6 +256,7 @@ async handleMuteUser(@ConnectedSocket() client: Socket, @MessageBody() muteUserD
 async handleGiveAdmin(@ConnectedSocket() client: Socket, @MessageBody() giveAdminDto: GiveAdminDto) {
   const channel = await this.channelService.getById(giveAdminDto.chanid);
   const user = client.handshake.auth.user;
+  console.log("user: ", user, " | channel: ", channel?.name);
   if (channel === null || user === null)
     throw new BadRequestException("No such channel or User"); // no such channel or user
   if (!(await this.channelService.isUserAdmin(user)))

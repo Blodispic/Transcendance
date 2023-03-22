@@ -22,7 +22,6 @@ export const chatSlice = createSlice({
 
         setChannels: (state, { payload }: PayloadAction<IChannel[]>) => {
             state.channels = payload;
-            console.log("rdx: set all channels");
         },
 
         addChannel: (state, { payload }: PayloadAction<IChannel>) => {
@@ -79,7 +78,7 @@ export const chatSlice = createSlice({
                 else
                     chan.banned = ([payload.user]);
             }
-            console.log(":: redux :: banUser");
+            // console.log(":: redux :: banUser");
         },
 
         unBanUser: (state, { payload }: PayloadAction<{ id: number, user: IUser }>) => {
@@ -88,7 +87,7 @@ export const chatSlice = createSlice({
                 if (chan.banned && chan.banned.find(obj => obj.id === payload.user.id) !== undefined)
                     chan.banned = chan?.banned.filter(obj => obj.id !== payload.user.id);
             }
-            console.log(":: redux :: unBanUser");
+            // console.log(":: redux :: unBanUser");
         },
 
         muteUser: (state, { payload }: PayloadAction<{ id: number, user: IUser }>) => {
@@ -99,7 +98,7 @@ export const chatSlice = createSlice({
                 else
                     chan.muted = ([payload.user]);
             }
-            console.log(":: redux :: muteUser");
+            // console.log(":: redux :: muteUser");
         },
 
         unMuteUser: (state, { payload }: PayloadAction<{ id: number, user: IUser }>) => {
@@ -108,7 +107,7 @@ export const chatSlice = createSlice({
                 if (chan.muted && chan.muted.find(obj => obj.id === payload.user.id) !== undefined)
                     chan.muted = chan?.muted.filter(obj => obj.id !== payload.user.id);
             }
-            console.log(":: redux :: unMuteUser");
+            // console.log(":: redux :: unMuteUser");
         },
 
         setPass: (state, { payload }: PayloadAction<number>) => {
@@ -127,14 +126,6 @@ export const chatSlice = createSlice({
         },
 
         addMessage: (state, { payload }: PayloadAction<IMessage>) => {
-            // const chan = state.channels.find(obj => obj.id === payload.chanid);
-
-            // if (chan) {
-            //     if (chan.messages)
-            //         chan.messages = ([...chan.messages, payload]);
-            //     else
-            //         chan.messages = ([payload]);
-            // }
             state.chanMs = ([...state.chanMs, payload]);
         },
 

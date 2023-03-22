@@ -122,7 +122,7 @@ export function ChannelMessages() {
 					</div>
 
 					<form id="input_form" onSubmit={(e) => { handleSubmitNewMessage(e); }}>
-						<input type="text" onChange={(e) => { setNewInput(e.target.value) }}
+						<input type="text" maxLength={1000} onChange={(e) => { setNewInput(e.target.value) }}
 							placeholder="type message here" value={newInput} />
 					</form>
 				</>
