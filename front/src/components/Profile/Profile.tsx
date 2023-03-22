@@ -71,14 +71,13 @@ export default function Profile() {
         const [updateStatus, setUpdateStatus] = useState(false);
 
         const fetchid = async () => {
-                console.log("ca fetch id ", id);
+                console.log("ca reload ducoup ")
                 const response = await fetch(`${process.env.REACT_APP_BACK}user/id/${id}`, {
                         method: 'GET',
                         headers: {
                                 'Authorization': `Bearer ${myUser.user.myToken}`,
                         }
                 })
-                console.log(response);
                 setCurrentUser(await response.json());
         }
 
@@ -92,7 +91,8 @@ export default function Profile() {
                 setPages(page.PAGE_1);
                 // if (myUser.user.user!.friends)
                 socket.on('UpdateSomeone', (idChange, idChange2) => {
-                        setUpdateStatus(prevFlag => !prevFlag);
+                        console.log("ca passe pas ?");
+                        setUpdateStatus(!updateStatus);
                         // fetchid();
                 })
 
@@ -101,13 +101,12 @@ export default function Profile() {
                 });
                 
                 return () => {
-                        socket.off('UpdateSomeone');
+                        // socket.off('UpdateSomeone');
                         socket.off('SpectateStart');
                 };
         }, [id, updateStatus])
 
         useEffect(() => {
-                console.log("currentuser", currentUser);
                 if (currentUser?.id == myUser.user.user?.id) {
                         setCurrentUser(myUser.user.user);
 
