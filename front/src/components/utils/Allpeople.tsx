@@ -4,10 +4,11 @@ import { IUser, UserStatus } from "../../interface/User";
 import { useAppSelector } from "../../redux/Hook";
 
 
-export default function AllPeople(props: { friend: IUser[] | undefined, setFriend: Function, myVar: boolean, setMyvar: Function }) {
+export default function AllPeople(props: { friend: IUser[] | undefined, setFriend: Function}) {
     const myUser = useAppSelector(state => state);
     const [alluser, setAlluser] = useState<IUser[] | undefined>(undefined);
     const [allfriend, setAllFriend] = useState<IUser[] | undefined>(undefined);
+    const [myVar, setMyvar] = useState<boolean>(false);
 
     const addfriend = (myfriend: IUser) => {
         if (allfriend !== undefined && allfriend.find(allfriend => allfriend.id === myfriend.id) === undefined)
@@ -47,12 +48,15 @@ export default function AllPeople(props: { friend: IUser[] | undefined, setFrien
     return (
         <div>
             <div className='avatar-inpopup'>
+               { 
+                props.friend && props.friend.length < 2 &&
                 <img className='avatar avatar-manu' src={`${process.env.REACT_APP_BACK}user/${myUser.user.user!.id}/avatar`} />
+                }
                 {
                     <>
 
                         {
-                            (window.location.href.search('Game') !== -1 || props.friend !== undefined) &&
+                            (window.location.href.search('Game') !== -1 || (props.friend !== undefined && props.friend.length < 2 )) &&
                             <a> Vs </a>
                         }
                         {allfriend && allfriend.map(user => (
@@ -72,19 +76,19 @@ export default function AllPeople(props: { friend: IUser[] | undefined, setFrien
                     </>
                 }
                 {
-                    ((window.location.href.search('Game') !== -1 && allfriend && allfriend?.length < 1)
-                        || (window.location.href.search('Game') === -1 && props.friend == undefined))
+                    ((window.location.href.search('Game') !== -1 && allfriend && allfriend?.length !== 1)
+                        || (window.location.href.search('Game') === -1 && (props.friend === undefined || (props.friend && props.friend.length > 1))))
                     &&
-                    <AiFillPlusCircle className="plus-circle pointer" onClick={_ => props.setMyvar(!props.myVar)} />
+                    <AiFillPlusCircle className="plus-circle pointer" onClick={_ => setMyvar(!myVar)} />
                 }
 
                 {
-                    props.myVar === true &&
+                    myVar === true &&
                     <div className="dropdown-container">
                         <div className=" dropdown people-list hover-style">
                             {alluser && alluser!.map(user_list => (
                                 <ul key={user_list.username} >
-                                    <li onClick={_ => { props.setMyvar(!props.myVar); get_all();  addfriend(user_list) }}>
+                                    <li onClick={_ => { setMyvar(!myVar); get_all();  addfriend(user_list) }}>
                                         {user_list.username}
                                     </li>
                                 </ul>

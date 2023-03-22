@@ -11,7 +11,7 @@ export function PopupCreateChannel(props: any) {
 	const [password, setPassword] = useState("");
 	const [chanMode, setChanMode] = useState(0);
     const [friend, setFriend] = useState<IUser[] >([]);
-	const [myVar, setMyvar] = useState<boolean> (false);
+	// const [myVar, setMyvar] = useState<boolean> (false);
 	const [failed, setFailed] = useState<boolean> (false);
 	const navigate = useNavigate();
 
@@ -77,7 +77,7 @@ export function PopupCreateChannel(props: any) {
 				{
 					chanMode === 1 &&
 					<div className="allpoeple">
-					<AllPeople friend={undefined} setFriend={setFriend} myVar={myVar} setMyvar={setMyvar}  />
+					<AllPeople friend={undefined} setFriend={setFriend}  />
 					</div>
 				}
 				<button onClick={() => handleCreateNewChan()}>Create Channel</button><span></span>
