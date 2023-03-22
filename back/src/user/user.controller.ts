@@ -181,7 +181,7 @@ export class UserController {
   @UseGuards(JwtGuard)
   async addBlock(@Body('blockedId') blockedId: number, @GetUser() user: User) {
     blockedId
-    return await this.userService.addBlock(user, blockedId);
+    return await this.userService.addBlock(user.id, blockedId);
   }
 
   // Removes a block for a user

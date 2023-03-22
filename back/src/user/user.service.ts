@@ -111,6 +111,8 @@ export class UserService {
         friends: true,
         results: true,
         channels: true,
+        owned: true,
+        blocked: true,
       },
       where: { id: id }
     });
@@ -530,7 +532,13 @@ export class UserService {
     return user ? user.blocked : [];
   }
 
-  async addBlock(user: User, blockedid: number) {
+  async addBlock(id: number, blockedid: number) {
+    const user = await this.usersRepository.findOne({
+      relations: {
+        blocked: true,
+      },
+      where: {id: id}
+    });    
     if (user === null)
       throw new BadRequestException("No such User");
     const blocked = await this.usersRepository.findOne({
@@ -541,7 +549,7 @@ export class UserService {
     });
     if (blocked === null)
       throw new BadRequestException("No such User to block");
-    if (user.blocked.find(elem => elem.id === blocked.id) !== undefined)
+    if (user.blocked.find(elem => elem.id === blocked.id))
       throw new BadRequestException("User already blocked");
     await this.removeFriend(user.id, blockedid);
     await this.removeFriend(blockedid, user.id);
@@ -558,7 +566,7 @@ export class UserService {
     });
     if (user === null)
       throw new BadRequestException("No such User");
-    const blocked = user?.blocked.find(elem => elem.id = blockedid)
+    const blocked = user?.blocked.find(elem => elem.id === blockedid)
     if (blocked === undefined)
       throw new BadRequestException("No such User already blocked")
     const index = user.blocked.indexOf(blocked, 0);
@@ -567,7 +575,21 @@ export class UserService {
     return await this.usersRepository.save(user);
   }
 
-  async checkRelations(friendId: number, userId: number) {
+  async RmOwned(id: number, chanid: number) {
+    const user = await this.usersRepository.findOne({
+      relations: { owned: true },
+      where: { id: id },
+    });
+    if (user === null)
+      throw new BadRequestException("No such User");
+    console.log("Rmowned", user.owned);
+    user.owned = user.owned.filter(elem => elem.id != chanid);
+    console.log("Rmowned", user.owned);
+    
+    return await this.usersRepository.save(user);
+  }
+
+  async checkRelations(friendId: number, userId: number) { 
     const realUser = await this.usersRepository.findOne({
       relations: {
         friends: true,
