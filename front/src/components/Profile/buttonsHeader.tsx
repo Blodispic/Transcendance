@@ -23,7 +23,6 @@ export default function HeaderButtons(props: { currentUser: IUser }) {
         await fetch(`${process.env.REACT_APP_BACK}user/relations`, {
             method: 'POST',
             body: JSON.stringify({
-                userId: myUser.user?.id,
                 friendId: currentUser.id,
             }),
             headers: {
@@ -58,6 +57,7 @@ export default function HeaderButtons(props: { currentUser: IUser }) {
 
             })
     }
+
     const UnBlock = async () => {
         await fetch(`${process.env.REACT_APP_BACK}user/unblock/${myUser.user?.id}`, {
             method: 'DELETE',
@@ -112,7 +112,6 @@ export function InviteButton(props: { user: any, relation: string, setRelation: 
     const myToken = useAppSelector(state => state.user.myToken);
 
     useEffect( () => {
-        console.log("ca eload?")
         // setRelation(props.relation);
     })
     const sendFriendRequest = async () => {
@@ -120,7 +119,6 @@ export function InviteButton(props: { user: any, relation: string, setRelation: 
 
         await fetch(`${process.env.REACT_APP_BACK}user/friend-request/send/${user.id}`, {
             method: 'POST',
-            body: JSON.stringify({ userId: myUser.user!.id }),
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${myToken}`,
@@ -139,7 +137,7 @@ export function InviteButton(props: { user: any, relation: string, setRelation: 
     const acceptFriendRequest = async () => {
         const response = await fetch(`${process.env.REACT_APP_BACK}user/friends/accept`, {
             method: 'POST',
-            body: JSON.stringify({ friendId: user.id, userId: myUser.user!.id }),
+            body: JSON.stringify({ friendId: user.id}),
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${myToken}`,
@@ -158,7 +156,6 @@ export function InviteButton(props: { user: any, relation: string, setRelation: 
     };
 
     const removeFriend = async () => {
-        console.log("delete frined en front ", user.id, myUser.user!.id )
         const response = await fetch(`${process.env.REACT_APP_BACK}user/deletefriend/${myUser.user?.id}`, {
             method: 'DELETE',
             body: JSON.stringify({ friendId: user.id}),
@@ -168,9 +165,7 @@ export function InviteButton(props: { user: any, relation: string, setRelation: 
             },
         })
             .then(async Response => {
-                console.log(".then")
                 if (Response.ok) {
-                console.log("response ok")
                     swal("", "Friend Remove", "success");
                     socket.emit("RemoveFriend", user.id);
                     props.setRelation("Nobody");
@@ -183,12 +178,12 @@ export function InviteButton(props: { user: any, relation: string, setRelation: 
             {
                 props.relation === "Nobody" &&
                 <button className="reqButton pointer white width_50" onClick={_ => (sendFriendRequest())} >
-                    Add Friend {(props.relation)}
+                    Add Friend
                 </button>
             }
             {
                 props.relation === "Friend" &&
-                <button className="button-style" onClick={_ => (removeFriend())}> remove Friend </button>
+                <button className="button-style" onClick={_ => (removeFriend())}> Remove Friend </button>
             }
             {
                 props.relation === "friendRequestSent" &&
@@ -196,7 +191,7 @@ export function InviteButton(props: { user: any, relation: string, setRelation: 
             }
             {
                 props.relation === "friendRequestReceived" &&
-                <button className="button-style" onClick={_ => (acceptFriendRequest())}> accept in Friend </button>
+                <button className="button-style" onClick={_ => (acceptFriendRequest())}> Accept in Friend </button>
             }
         </>
     );

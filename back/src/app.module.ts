@@ -23,13 +23,13 @@ import { GatewayExceptionFilter } from './app.exceptionFilter';
   imports: [
     TypeOrmModule.forRoot({
       type: 'postgres',
-      host: 'PostgreSQL',
-      port: 5432,
-      username: 'admin',
-      password: 'admin',
+      host: process.env.POSTGRES_HOST,
+      port: + !process.env.POSTGRES_PORT,
+      username: process.env.POSTGRES_USER,
+      password: process.env.POSTGRES_PASSWORD,
       entities: [User, Results, Channel, FriendRequest],
       synchronize: true,
-      // dropSchema: true,    //A ENLEVER QUAND PLUS BESOIN (ça reset la db a chaque changement)
+      dropSchema: true,    //A ENLEVER QUAND PLUS BESOIN (ça reset la db a chaque changement)
     }),
     MulterModule.register({
       dest: './storage/images',

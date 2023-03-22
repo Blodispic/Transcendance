@@ -26,19 +26,19 @@ export default function AllPeople(props: { friend: IUser[] | undefined, setFrien
             props.setFriend([...allfriend]);
         }
     }, [allfriend])
-    useEffect(() => {
-        const get_all = async () => {
-            const response = await fetch(`${process.env.REACT_APP_BACK}user`, {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${myUser.user.myToken}`,
-                },
-            })
-            const data = await response.json();
-            setAlluser(data.filter((User: { username: string, status: string }) => User.username !== myUser.user.user?.username && User.status === "Online"));
+    const get_all = async () => {
+        const response = await fetch(`${process.env.REACT_APP_BACK}user`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${myUser.user.myToken}`,
+            },
+        })
+        const data = await response.json();
+        setAlluser(data.filter((User: { username: string, status: string }) => User.username !== myUser.user.user?.username && User.status === "Online"));
 
-        }
+    }
+    useEffect(() => {
         get_all();
         if (props.friend)
             setAllFriend(props.friend);
@@ -84,7 +84,7 @@ export default function AllPeople(props: { friend: IUser[] | undefined, setFrien
                         <div className=" dropdown people-list hover-style">
                             {alluser && alluser!.map(user_list => (
                                 <ul key={user_list.username} >
-                                    <li onClick={_ => { props.setMyvar(!props.myVar); addfriend(user_list) }}>
+                                    <li onClick={_ => { props.setMyvar(!props.myVar); get_all();  addfriend(user_list) }}>
                                         {user_list.username}
                                     </li>
                                 </ul>

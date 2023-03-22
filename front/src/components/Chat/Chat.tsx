@@ -20,11 +20,9 @@ export default function Chat() {
 
 	useEffect(() => {
 		socket.on('leaveChannelOK', (chanid) => {
-			console.log("leavechanles");
 			setReload(true);
 		})
 		socket.on('joinChannelOK', (chanid) => {
-			console.log("join chanels ok");
 			setReload(true);
 		})
 		return () => {
