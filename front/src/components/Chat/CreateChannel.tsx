@@ -55,7 +55,7 @@ export function PopupCreateChannel(props: {trigger: boolean, setTrigger: Functio
 			fetchChanInfo();
 			setFailed(false);
 			props.setTrigger(false);
-			navigate(`/Chat/channel/${new_chanid}`)
+			// navigate(`/Chat/channel/${new_chanid}`)
 		});
 
 		return () => {
