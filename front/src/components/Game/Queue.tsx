@@ -24,6 +24,9 @@ export default function Queue() {
         socket.emit("addToWaitingRoom");
         return;
     }
+    const quitWaitingRoom = () => {
+        socket.emit("removeFromWaitingRoom");
+    }
 
     useEffect(() => {
         if (socket)
@@ -38,8 +41,11 @@ export default function Queue() {
                 navigate("/game/" + roomId, { state: { Id: roomId } });
             });
 
-            socket.on("WaitingRoomSuccess", () => {
-                swal("Success", "You've been added to the waiting room.", "success");
+            socket.on("WaitingRoomSuccess", (message: string) => {
+                if (message)
+                    swal("Success", message, "success");
+                else
+                    swal("Success", "You've been added to the waiting room.", "success");
             });
 
             socket.on("WaitingRoomFailure", (message: string) => {
@@ -67,7 +73,7 @@ export default function Queue() {
 
     return (
         <>
-            <div className='center'>
+            <div className='center queu'>
 
                 <div className='button'>
                     <button className='button pointer color_log' onClick={(e) => addToWaitingRoom()} >
@@ -82,6 +88,7 @@ export default function Queue() {
                         </Link>
                     </button>
                 </div>
+                <button className="button-style" onClick={_ => (quitWaitingRoom())}> Quit Waiting Room </button>
         </div>
         <CustomGamePopup trigger={customPopup} setTrigger={setCustomPopup} friend={undefined} />
         </>

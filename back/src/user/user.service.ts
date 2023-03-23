@@ -173,7 +173,6 @@ export class UserService {
     if (user) {
       //Si vous voulez plus de chose a update, mettez le dans le body et faites un iff
       if (userUpdate.username) {
-
         const checkUsername = await this.usersRepository.findOneBy({
           username: userUpdate.username,
         })

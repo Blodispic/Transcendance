@@ -41,9 +41,13 @@ export class GameService {
 		while (i < this.waitingRoom.length)
 		{
 			if (this.waitingRoom[i].id === client)
+			{
 				this.waitingRoom.splice(i, 1);
+				return 0;
+			}
 			i++;
 		}
+		return 1;
 	}
 
 	startGame(server: Server) {
