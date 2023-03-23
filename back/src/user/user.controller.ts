@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post, Req, Request, Res, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Delete, Get, NotFoundException, Param, ParseIntPipe, Patch, Post, Req, Request, Res, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { Response } from 'express';
 import { diskStorage } from 'multer';
@@ -8,12 +8,10 @@ import { User } from './entities/user.entity';
 import { UserService } from './user.service';
 import { authenticator } from 'otplib';
 import { JwtGuard } from 'src/Oauth/jwt-auth.guard';
-import { Server } from "socket.io";
+import { Server, Socket } from "socket.io";
 import { WebSocketServer } from '@nestjs/websockets';
 import { plainToClass } from 'class-transformer';
 import { GetUser } from './getUser';
-
-
 
 @Controller('user')
 export class UserController {
@@ -53,7 +51,6 @@ export class UserController {
 
   // Retrieves a user by their access token
   @Post('access_token')
-  @UseGuards(JwtGuard)
   async GetbyAccessToken(@Body() token: any) {
     return await plainToClass(User, this.userService.GetByAccessToken(token));
   }
@@ -176,6 +173,7 @@ export class UserController {
   @Post('block/:id')
   @UseGuards(JwtGuard)
   async addBlock(@Body('blockedId') blockedId: number, @GetUser() user: User) {
+    blockedId
     return await this.userService.addBlock(user, blockedId);
   }
 
