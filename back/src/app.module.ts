@@ -14,9 +14,7 @@ import { Results } from './results/entities/results.entity';
 import { ChannelModule } from './chat/channel/channel.module';
 import { Channel } from './chat/channel/entities/channel.entity';
 import { FriendRequest } from './user/entities/friend-request.entity';
-import { UserService } from './user/user.service';
-import { APP_FILTER, APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
-import { GatewayExceptionFilter } from './app.exceptionFilter';
+import { APP_INTERCEPTOR } from '@nestjs/core';
 
 @Module({
   imports: [

@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, NotFoundException, Param, ParseIntPipe, Patch, Post, Req, Request, Res, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post, Req, Request, Res, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { Response } from 'express';
 import { diskStorage } from 'multer';
@@ -6,14 +6,9 @@ import { editFileName, imageFilter } from 'src/app.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { User } from './entities/user.entity';
 import { UserService } from './user.service';
-import { user } from 'src/game/game.controller';
-import { FriendRequest } from './entities/friend-request.entity';
 import { authenticator } from 'otplib';
-import { Results } from 'src/results/entities/results.entity';
-import { CreateResultDto } from 'src/results/dto/create-result.dto';
 import { JwtGuard } from 'src/Oauth/jwt-auth.guard';
-import { Server, Socket } from "socket.io";
-import { userList } from 'src/app.gateway';
+import { Server } from "socket.io";
 import { WebSocketServer } from '@nestjs/websockets';
 import { plainToClass } from 'class-transformer';
 import { GetUser } from './getUser';
@@ -70,7 +65,8 @@ export class UserController {
     if (user.twoFaEnable == false) {
       const secret = authenticator.generateSecret();
       this.userService.enable2FA(user, secret);
-      const otpauthURL = authenticator.keyuri('Transcendence', user.email, secret);
+      const twoFactorName = process.env.TWO_FACTOR_NAME || '';
+      const otpauthURL = authenticator.keyuri(twoFactorName, user.email, secret);
       const qrCode = await this.userService.generateQRCode(otpauthURL);
       return { qrCode };
     } else return 'Qr code active';
@@ -110,7 +106,7 @@ export class UserController {
   @Post("friends/accept")
   @UseGuards(JwtGuard)
   async acceptFriendRequest(@GetUser() user: User, @Body('friendId') friendId: number) {
-    const realUser = await this.userService.addFriend(friendId, user);
+    await this.userService.addFriend(friendId, user);
     return await this.userService.DeleteFriendRequest(user, friendId);
   }
 

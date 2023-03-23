@@ -1,4 +1,4 @@
-import { IsArray, IsNotEmpty, IsNumber, IsOptional, isString, IsString } from "class-validator";
+import { IsArray, IsNotEmpty, IsNumber, IsOptional, IsString } from "class-validator";
 import { User } from "src/user/entities/user.entity";
 
 

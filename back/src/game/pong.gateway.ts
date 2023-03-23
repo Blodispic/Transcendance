@@ -1,4 +1,4 @@
-import { ConnectedSocket, MessageBody, OnGatewayConnection, OnGatewayDisconnect, OnGatewayInit, SubscribeMessage, WebSocketGateway, WebSocketServer } from "@nestjs/websockets";
+import { ConnectedSocket, MessageBody, OnGatewayDisconnect, OnGatewayInit, SubscribeMessage, WebSocketGateway, WebSocketServer } from "@nestjs/websockets";
 import { Server, Socket } from "socket.io";
 import { User } from "src/user/entities/user.entity";
 import { GameService } from "./game.service";
@@ -29,11 +29,12 @@ export class PongGateway implements OnGatewayDisconnect, OnGatewayInit {
 	}
 	
 	afterInit(server: Server) {
-	}
+		console.log(`WebSocket server initialized: ${server}`);
+	  }
 	
 	findByID(id: number)
 	{
-		let i: number = 0;
+		let i = 0;
 		while (i < userList.length)
 		{
 			if (userList[i].handshake.auth.user.id === id)
@@ -45,7 +46,7 @@ export class PongGateway implements OnGatewayDisconnect, OnGatewayInit {
 
 	isInInvite(id: number)
 	{
-		let i : number = 0;
+		let i  = 0;
 		while (i < this.inviteList.length)
 		{
 			if (this.inviteList[i] === id)
@@ -57,7 +58,7 @@ export class PongGateway implements OnGatewayDisconnect, OnGatewayInit {
 
 	removeInvite(id: number)
 	{
-		let i : number = 0;
+		const i  = 0;
 		while (i < this.inviteList.length)
 		{
 			if (this.inviteList[i] === id)
@@ -100,8 +101,8 @@ export class PongGateway implements OnGatewayDisconnect, OnGatewayInit {
 	@SubscribeMessage("spectateGame")
 	async HandleSpectator(@MessageBody() playerId: number, @ConnectedSocket() client: Socket) {
 		
-		let i: number = 0;
-		let player: User | null = await this.userService.getById(playerId);
+		let i = 0;
+		const player: User | null = await this.userService.getById(playerId);
 		// let player = this.findByID(playerId);
 		if (player === null)
 			throw new BadRequestException("UserToSpectate not found");
@@ -189,7 +190,7 @@ export class PongGateway implements OnGatewayDisconnect, OnGatewayInit {
 		console.log("Add " + user1.username + " and " + user2.username + " to custom game.");
 		let userSocket1: any = userList[0]; //By default both user are the first user of the list
 		let userSocket2: any = userList[0]; //By default both user are the first user of the list
-		let i: number = 0;
+		let i = 0;
 		while (i < userList.length) {
 			if (userList[i].handshake.auth.user.id === user1.id) {
 				userSocket1 = userList[i];
@@ -218,9 +219,9 @@ export class PongGateway implements OnGatewayDisconnect, OnGatewayInit {
 	}
 
 	@SubscribeMessage("declineCustomGame")
-	DeclineCustomGame(@MessageBody() payload: any, @ConnectedSocket() client: Socket) {
-		let user1: User = payload.user1;
-		let user2: User = payload.user2;
+	DeclineCustomGame(@MessageBody() payload: any) {
+		const user1: User = payload.user1;
+		const user2: User = payload.user2;
 
 		// Remove both users from InviteList, the can now invite and be invited again
 		if (user1.id)
@@ -248,13 +249,13 @@ export class PongGateway implements OnGatewayDisconnect, OnGatewayInit {
 
 	@SubscribeMessage("Move1")
 	HandleMove1(@MessageBody() payload: any, @ConnectedSocket() client: Socket) {
-		let input : Move = {left: payload.input.left, right: payload.input.right};	
+		const input : Move = {left: payload.input.left, right: payload.input.right};	
 		this.gameService.updateMove1(input, client.id, payload.roomId);
 	}
 
 	@SubscribeMessage("Move2")
 	HandleMove2(@MessageBody() payload: any, @ConnectedSocket() client: Socket) {
-		let input : Move = {left: payload.input.left, right: payload.input.right};
+		const input : Move = {left: payload.input.left, right: payload.input.right};
 		this.gameService.updateMove2(input, client.id, payload.roomId);
 	}
 }

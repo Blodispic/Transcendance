@@ -1,29 +1,21 @@
 import { BadRequestException } from "@nestjs/common";
-import { WebSocketGateway, OnGatewayInit, OnGatewayDisconnect, WebSocketServer, SubscribeMessage, ConnectedSocket, MessageBody } from "@nestjs/websockets";
-import { userInfo } from "os";
+import { WebSocketGateway, WebSocketServer, SubscribeMessage, ConnectedSocket, MessageBody } from "@nestjs/websockets";
 import { Server, Socket } from "socket.io";
-import { AppService } from "src/app.service";
 import { ChannelService } from "src/chat/channel/channel.service";
-import { user } from "src/game/game.controller";
 import { User } from "src/user/entities/user.entity";
 import { UserService } from "src/user/user.service";
-import { Chat } from "./chat.entity";
 import { JoinChannelDto } from "./dto/join-channel.dto";
 import { LeaveChannelDto } from "./dto/leave-channel.dto";
 import { SendDmDto } from "./dto/send-dm.dto";
 import { userList } from "src/app.gateway";
-import { AppGateway } from "src/app.gateway";
 import { CreateChannelDto } from "./dto/create-channel.dto";
 import { ChanPasswordDto } from "./dto/chan-password.dto";
 import { BanUserDto } from "./dto/ban-user.dto";
 import { MuteUserDto } from "./dto/mute-user.dto";
-import { Channel } from "./channel/entities/channel.entity";
 import { GiveAdminDto } from "./dto/give-admin.dto";
 import { InviteDto } from "./dto/invite-user.dto";
-import { Any } from "typeorm";
 import { SendMessageChannelDto } from "./dto/send-message-channel.dto";
-import { BlockDto } from "./dto/block-user.dto";
-var bcrypt = require('bcryptjs');
+const bcrypt = require('bcryptjs');
 
 @WebSocketGateway({
 	cors: {
@@ -272,7 +264,7 @@ async inviteToChan(users: User[], chanid: number)
 {
   
   users.forEach(user => {
-    let socketIdToWho = this.findSocketFromUser(user);
+    const socketIdToWho = this.findSocketFromUser(user);
     if (socketIdToWho)
       this.server.to(socketIdToWho.id).emit("invited", chanid);
     socketIdToWho?.join("chan" + chanid);
@@ -280,10 +272,9 @@ async inviteToChan(users: User[], chanid: number)
   });  
 }
 
- afterInit(server: Server) {
-
-   //Do stuffs
- }
+afterInit(server: Server) {
+  console.log(`WebSocket server initialized: ${server}`);
+}
  
 //  handleDisconnect(client: Socket) {
 

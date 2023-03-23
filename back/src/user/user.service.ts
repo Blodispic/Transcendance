@@ -8,17 +8,12 @@ import { User } from "./entities/user.entity";
 import { FriendRequest } from "./entities/friend-request.entity";
 import { FriendRequestDto } from "./dto/friend-request.dto";
 import { JwtService } from "@nestjs/jwt";
-import { FriendRequestStatus, FriendRequest_Status } from "./interface/friend-request.interface";
-import { request } from "http";
-import { sign } from 'jsonwebtoken';
+import { FriendRequestStatus } from "./interface/friend-request.interface";
 import { authenticator } from "otplib";
 import * as QRCode from 'qrcode';
 import { CreateResultDto } from "src/results/dto/create-result.dto";
 import { Server } from "http";
 import { userList } from "src/app.gateway";
-import { Channel } from "src/chat/channel/entities/channel.entity";
-import { isNumber } from "class-validator";
-// import { userList } from "src/app.gateway";
 
 @Injectable()
 export class UserService {
@@ -501,7 +496,7 @@ export class UserService {
     return this.usersRepository.save(user);
   }
 
-  async checkFriends(myId: number, friendId: number): Promise<Boolean> {
+  async checkFriends(myId: number, friendId: number): Promise<boolean> {
     const myUser = await this.usersRepository.findOne({
       relations: ['friends'],
       where: { id: myId },
