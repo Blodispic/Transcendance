@@ -488,9 +488,6 @@ export class UserService {
     if (!user) {
       throw new NotFoundException("UserNotFound");
     }
-
-    console.log("Block: id= ", id, " friendid = ", friendid);
-    
     user.friends = user.friends.filter((f) => f.id != friendid);
     return this.usersRepository.save(user);
   }

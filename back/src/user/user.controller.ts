@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, NotFoundException, Param, ParseIntPipe, Patch, Post, Req, Request, Res, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post, Req, Request, Res, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { Response } from 'express';
 import { diskStorage } from 'multer';
@@ -8,7 +8,7 @@ import { User } from './entities/user.entity';
 import { UserService } from './user.service';
 import { authenticator } from 'otplib';
 import { JwtGuard } from 'src/Oauth/jwt-auth.guard';
-import { Server, Socket } from "socket.io";
+import { Server } from "socket.io";
 import { WebSocketServer } from '@nestjs/websockets';
 import { plainToClass } from 'class-transformer';
 import { GetUser } from './getUser';
