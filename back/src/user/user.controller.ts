@@ -173,7 +173,10 @@ export class UserController {
   @Post('block/:id')
   @UseGuards(JwtGuard)
   async addBlock(@Body('blockedId') blockedId: number, @GetUser() user: User) {
-    blockedId
+    const blocked = await this.userService.getById(blockedId);
+    if (blocked)
+      await this.userService.DeleteFriendRequest(blocked, user.id);
+    await this.userService.DeleteFriendRequest(user, blockedId);
     return await this.userService.addBlock(user, blockedId);
   }
 
