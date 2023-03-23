@@ -1,12 +1,11 @@
-import * as React from 'react';
 import { IUser } from '../../interface/User';
 import { useState, useEffect } from 'react';
 import { useAppSelector } from '../../redux/Hook';
 
 
-export default function Fetchid(id: number) {
+export default function Fetchid() {
 
-    let [user, setUser] = useState<IUser>();
+    const [user, setUser] = useState<IUser>();
     const myToken = useAppSelector(state => state.user.myToken);
 
     useEffect(() => {
@@ -20,12 +19,12 @@ export default function Fetchid(id: number) {
                 },
             })
 
-            let user: IUser = await response.json();
+            const user: IUser = await response.json();
             setUser(user);
 
         }
         fetchid()
-    }, [])
+    })
     return user;
 
 }

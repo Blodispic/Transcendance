@@ -4,7 +4,7 @@ import { Link, useNavigate } from 'react-router-dom';
 
 export function ResultPopup(props: any) {
 	const navigate = useNavigate();
-	let message: string = "";
+	let message = "";
 
 	if (props.win == true)
 		message = "You won!";

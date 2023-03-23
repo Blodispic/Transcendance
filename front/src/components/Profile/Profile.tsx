@@ -1,3 +1,4 @@
+import * as React from 'react';
 import { useEffect, useState } from 'react';
 import { Navigate, useNavigate, useParams } from "react-router-dom";
 import { IUser } from '../../interface/User';
@@ -63,9 +64,9 @@ function Onglets(props: { currentUser: IUser, current: page, setOnglets: Functio
 
 export default function Profile() {
         const [currentUser, setCurrentUser] = useState<IUser | undefined>(undefined);
-        let avatar: string = "";
+        const avatar = "";
         const navigate = useNavigate();
-        let { id } = useParams();
+        const { id } = useParams();
         const [pages, setPages] = useState<page>(page.PAGE_1);
         const myUser = useAppSelector(state => state);
         const [updateStatus, setUpdateStatus] = useState(false);

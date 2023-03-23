@@ -1,3 +1,4 @@
+import * as React from 'react';
 import react, { useEffect, useState } from "react";
 import { ImCheckmark, ImCross } from "react-icons/im";
 import { IUser } from "../../interface/User";
@@ -82,7 +83,7 @@ export function Friends() {
         });
         const data = await response.json();
         setFriendReq((prevFriendReq) => prevFriendReq.filter((req) => req.id !== id));
-        let str : string = "They" + " are now your friend!";
+        const str : string = "They" + " are now your friend!";
         swal("Congrats", str, "success");
         socket.emit("RequestAccepted", data.id);
         setUpdateFriend(prevFlag => !prevFlag);
@@ -100,7 +101,7 @@ export function Friends() {
         const data = await response.json();
         setUpdateFriend(prevFlag => !prevFlag);
         console.log("data = ", data)
-        let str : string = "You declined " + "their" + " friend request!"
+        const str : string = "You declined " + "their" + " friend request!"
         swal("Congrats", str, "success");
         socket.emit("RequestDeclined", data.id);
         setUpdateFriend(prevFlag => !prevFlag);

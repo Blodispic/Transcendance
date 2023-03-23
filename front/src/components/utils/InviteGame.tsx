@@ -1,17 +1,16 @@
+import * as React from 'react';
 import { HiOutlineXMark } from "react-icons/hi2";
 import { socket } from "../../App";
-import { IUser } from "../../interface/User";
 import { useAppSelector } from "../../redux/Hook";
 import swal from "sweetalert";
 
 
-export default function InviteGame(props : {infoGame: any, setTrigger: Function}) {
-
-
-    const myUser = useAppSelector(state => state.user);
+export default function InviteGame(props: { infoGame: any, setTrigger: (value: boolean) => void }) {
+    
+    useAppSelector(state => state.user);
 
     const accept = () => {
-        if (swal && swal.close != undefined && swal.stopLoading != undefined)
+        if (swal && swal.close !== undefined && swal.stopLoading !== undefined)
         {
             swal("Success", "You've been added to the custom room.", "success");
             swal.stopLoading();
@@ -29,13 +28,13 @@ export default function InviteGame(props : {infoGame: any, setTrigger: Function}
     return (
         <div className='chat-form-popup'>
             <div className='chat-form-inner'>
-                <HiOutlineXMark className="close-icon" onClick={_ => props.setTrigger(false)} /> <br />
+                <HiOutlineXMark className="close-icon" onClick={() => props.setTrigger(false)} /> <br />
 
                 <h3>{props.infoGame.user1.username} Invite you in Game</h3>
                 <div className='avatar-inpopup'>
-                    <img className='avatar avatar-manu' src={`${process.env.REACT_APP_BACK}user/${props.infoGame.user1.id}/avatar`} />
+                    <img className='avatar avatar-manu' src={`${process.env.REACT_APP_BACK}user/${props.infoGame.user1.id}/avatar`} alt="" />
                     <a> Vs </a>
-                    <img className='avatar avatar-manu' src={`${process.env.REACT_APP_BACK}user/${props.infoGame.user2.id}/avatar`} />
+                    <img className='avatar avatar-manu' src={`${process.env.REACT_APP_BACK}user/${props.infoGame.user2.id}/avatar` } alt="" />
                 </div>
                 {
                     props.infoGame.extra === true &&
@@ -46,8 +45,9 @@ export default function InviteGame(props : {infoGame: any, setTrigger: Function}
                     <h3>without Extra Mode</h3>
                 }
                 <h3>Score to win : {props.infoGame.scoreMax} </h3>
-                <button className="button-style" onClick={_ => { accept(); props.setTrigger(false) }}> Accept </button>
-                <button className="button-style" style={{background:'#B33A3A'}} onClick={_ => {decline(); props.setTrigger(false)}}> Decline </button>
+                <button className="button-style" onClick={() => { accept(); props.setTrigger(false) }}> Accept </button>
+                <button className="button-style" style={{background:'#B33A3A'}} onClick={() => {decline(); props.setTrigger(false)}}> Decline </button>
+
 
             </div>
         </div>

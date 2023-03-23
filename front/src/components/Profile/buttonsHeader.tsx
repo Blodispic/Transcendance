@@ -1,3 +1,4 @@
+import * as React from 'react';
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import swal from "sweetalert";
@@ -99,7 +100,7 @@ export default function HeaderButtons(props: { currentUser: IUser }) {
         </>
     )
 
-};
+}
 
 
 export function InviteButton(props: { user: any, relation: string, setRelation: Function}) {
@@ -146,7 +147,7 @@ export function InviteButton(props: { user: any, relation: string, setRelation: 
         .then ( async Response => {
             if (Response.ok)
             {
-                let str : string = "They" + " are now your friend!";
+                const str : string = "They" + " are now your friend!";
                 swal("Congrats", str, "success");
                 socket.emit("RequestAccepted", user.id);
                 props.setRelation("Friend");

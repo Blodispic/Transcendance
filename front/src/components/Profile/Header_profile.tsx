@@ -1,3 +1,4 @@
+import * as React from 'react';
 import { useEffect, useState } from "react";
 import { HiOutlineMagnifyingGlassCircle } from "react-icons/hi2";
 import { useNavigate } from "react-router-dom";
@@ -58,7 +59,7 @@ export function Header(props: { currentUser: IUser, setCurrentUser: Function }) 
         const { currentUser, setCurrentUser } = props;
         const myUser = useAppSelector(state => state.user);
         const totalGames = currentUser.win + currentUser.lose;
-        const [relation, setRelation] = useState<String>("none");
+        const [relation, setRelation] = useState<string>("none");
         const dispatch = useAppDispatch();
 
         let winPercentage = 0;
@@ -149,4 +150,4 @@ export function Header(props: { currentUser: IUser, setCurrentUser: Function }) 
                 </div>
         )
 
-};
+}

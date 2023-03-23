@@ -1,6 +1,6 @@
+import * as React from 'react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { socket } from '../../App';
 import { UserStatus } from '../../interface/User';
 import { useAppDispatch, useAppSelector } from '../../redux/Hook';
 import { change_avatar, change_name, set_status } from "../../redux/user";
@@ -16,7 +16,7 @@ export default function Sign() {
     const myToken = useAppSelector(state => state.user.myToken);
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
-    const [nameExist, SetNameExist] = useState<Boolean>(false);
+    const [nameExist, SetNameExist] = useState<boolean>(false);
 
 
     const fetch_name_avatar = async (e: any) => {
@@ -60,9 +60,6 @@ export default function Sign() {
                         }
 
                     })
-                    .catch( () => {
-                        ;
-                    })
             }
         }
     }
@@ -103,4 +100,4 @@ export default function Sign() {
         </div>
         </div>
     );
-};
+}

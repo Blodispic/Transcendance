@@ -1,3 +1,4 @@
+import * as React from 'react';
 import { useEffect, useState } from "react";
 import { IUser } from "../../interface/User";
 import { GiCrossedSwords } from "react-icons/gi";

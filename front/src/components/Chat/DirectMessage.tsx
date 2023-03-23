@@ -110,7 +110,7 @@ function InfoFriend(props: { user: IUser }) {
 		})
 			.then(async Response => {
 				if (Response.ok) {
-					let str: string = "They" + " are now your friend!";
+					const str: string = "They" + " are now your friend!";
 					swal("Congrats", str, "success");
 					socket.emit("RequestAccepted", user.id);
 					setRelation("Friend");

@@ -1,6 +1,7 @@
+import * as React from 'react';
 import { useEffect, useState } from "react";
 import { AiFillPlusCircle } from "react-icons/ai";
-import { IUser, UserStatus } from "../../interface/User";
+import { IUser } from "../../interface/User";
 import { useAppSelector } from "../../redux/Hook";
 
 
@@ -26,6 +27,7 @@ export default function AllPeople(props: { friend: IUser[] | undefined, setFrien
             props.setFriend([...allfriend]);
         }
     }, [allfriend])
+    
     const get_all = async () => {
         const response = await fetch(`${process.env.REACT_APP_BACK}user`, {
             method: 'GET',
@@ -42,12 +44,12 @@ export default function AllPeople(props: { friend: IUser[] | undefined, setFrien
         get_all();
         if (props.friend)
             setAllFriend(props.friend);
-    }, [])
+    })
 
     return (
         <div>
             <div className='avatar-inpopup'>
-                <img className='avatar avatar-manu' src={`${process.env.REACT_APP_BACK}user/${myUser.user.user!.id}/avatar`} />
+                <img className='avatar avatar-manu' src={`${process.env.REACT_APP_BACK}user/${myUser.user.user!.id}/avatar`} alt="" />
                 {
                     <>
 
@@ -60,12 +62,12 @@ export default function AllPeople(props: { friend: IUser[] | undefined, setFrien
                             <div key={user.username}>
                                 {
                                     (window.location.href.search('Game') === -1 && props.friend !== undefined) &&
-                                    <img className='avatar avatar-manu' src={`${process.env.REACT_APP_BACK}user/${user.id}/avatar`} />
+                                    <img className='avatar avatar-manu' src={`${process.env.REACT_APP_BACK}user/${user.id}/avatar`} alt="" />
                                 }
                                 {
 
                                     (window.location.href.search('Game') !== -1 || props.friend === undefined) &&
-                                    <img className='cursor-onsomoene avatar avatar-manu' src={`${process.env.REACT_APP_BACK}user/${user.id}/avatar`} onClick={_ => removeFriend(user)} />
+                                    <img className='cursor-onsomoene avatar avatar-manu' src={`${process.env.REACT_APP_BACK}user/${user.id}/avatar`} onClick={() => removeFriend(user)} alt="" />
                                 }
                             </div>
                         ))}
@@ -73,9 +75,9 @@ export default function AllPeople(props: { friend: IUser[] | undefined, setFrien
                 }
                 {
                     ((window.location.href.search('Game') !== -1 && allfriend && allfriend?.length < 1)
-                        || (window.location.href.search('Game') === -1 && props.friend == undefined))
+                        || (window.location.href.search('Game') === -1 && props.friend === undefined))
                     &&
-                    <AiFillPlusCircle className="plus-circle pointer" onClick={_ => props.setMyvar(!props.myVar)} />
+                    <AiFillPlusCircle className="plus-circle pointer" onClick={() => props.setMyvar(!props.myVar)} />
                 }
 
                 {
@@ -84,7 +86,7 @@ export default function AllPeople(props: { friend: IUser[] | undefined, setFrien
                         <div className=" dropdown people-list hover-style">
                             {alluser && alluser!.map(user_list => (
                                 <ul key={user_list.username} >
-                                    <li onClick={_ => { props.setMyvar(!props.myVar); get_all();  addfriend(user_list) }}>
+                                    <li onClick={() => { props.setMyvar(!props.myVar); get_all();  addfriend(user_list) }}>
                                         {user_list.username}
                                     </li>
                                 </ul>
