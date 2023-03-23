@@ -1,6 +1,6 @@
 
-import { User } from "src/user/entities/user.entity";
-import { Column, Entity, JoinTable, ManyToMany, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { User } from 'src/user/entities/user.entity';
+import { Column, Entity, JoinTable, ManyToMany, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 
 enum ChanType {
 	Public,
@@ -17,27 +17,27 @@ export class Channel {
 	name: string;
 
 	@Column('int', {default: 0})
-	chanType: ChanType
+	chanType: ChanType;
 
-	@Column({ nullable: true, })
+	@Column({ nullable: true })
 	password: string;
 
 	@ManyToOne(() => User, user => user.channels)
-	owner: User
+	owner: User;
 	
 	@ManyToMany(() => User, user => user.channels, { cascade: true })
 	@JoinTable()
-	admin: User[]
+	admin: User[];
 
 	@ManyToMany(() => User, user => user.channels, { cascade: true })
 	@JoinTable()
-	users: User[]
+	users: User[];
 
 	@ManyToMany(() => User, user => user.channels, { cascade: true })
 	@JoinTable()
-	banned: User[]
+	banned: User[];
 
 	@ManyToMany(() => User, user => user.channels, { cascade: true })
 	@JoinTable()
-	muted: User[]
+	muted: User[];
 }

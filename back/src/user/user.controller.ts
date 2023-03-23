@@ -8,7 +8,7 @@ import { User } from './entities/user.entity';
 import { UserService } from './user.service';
 import { authenticator } from 'otplib';
 import { JwtGuard } from 'src/Oauth/jwt-auth.guard';
-import { Server } from "socket.io";
+import { Server } from 'socket.io';
 import { WebSocketServer } from '@nestjs/websockets';
 import { plainToClass } from 'class-transformer';
 import { GetUser } from './getUser';
@@ -88,7 +88,7 @@ export class UserController {
   @Get('friends')
   @UseGuards(JwtGuard)
   GetFriends(@GetUser() user: User) {
-    console.log("User = ", user);
+    console.log('User = ', user);
     return this.userService.GetFriends(user.id);
   }
 
@@ -100,7 +100,7 @@ export class UserController {
   }
 
   // Accepts a friend request
-  @Post("friends/accept")
+  @Post('friends/accept')
   @UseGuards(JwtGuard)
   async acceptFriendRequest(@GetUser() user: User, @Body('friendId') friendId: number) {
     await this.userService.addFriend(friendId, user);
@@ -108,7 +108,7 @@ export class UserController {
   }
 
   // Declines a friend request
-  @Post("friends/decline")
+  @Post('friends/decline')
   @UseGuards(JwtGuard)
   async declineFriendRequest(@GetUser() user: User, @Body('friendId') friendId: number) {
     return await this.userService.DeleteFriendRequest(user, friendId);
@@ -122,7 +122,7 @@ export class UserController {
       if (user.avatar) {
         return res.sendFile(user.avatar, { root: './storage/images/' });
       } else {
-        return res.redirect(user.intra_avatar)
+        return res.redirect(user.intra_avatar);
       }
     } else {
       return null;
@@ -158,14 +158,14 @@ export class UserController {
   @UseGuards(JwtGuard)
   sendFriendRequest(
     @Param('id', ParseIntPipe) id: number, @GetUser() user: User) {
-    return this.userService.sendFriendRequest(id, user)
+    return this.userService.sendFriendRequest(id, user);
   }
 
   // Deletes a friend for a user
   @Delete('deletefriend/:id')
   @UseGuards(JwtGuard)
   async deleteFriend(@GetUser() user: User, @Body('friendId') friendId: number) {
-    await this.userService.removeFriend(friendId, user.id)
+    await this.userService.removeFriend(friendId, user.id);
     return plainToClass(User, await this.userService.removeFriend(user.id, friendId));
   }
 
@@ -188,7 +188,7 @@ export class UserController {
   }
 
   // Checks the relationship between two users
-  @Post("relations")
+  @Post('relations')
   @UseGuards(JwtGuard)
   async checkRelations(@GetUser() user: User, @Body('friendId') friendId: number) {
     return await this.userService.checkRelations(friendId, user.id);

@@ -1,5 +1,5 @@
-import { Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
-import { User } from "src/user/entities/user.entity";
+import { Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { User } from 'src/user/entities/user.entity';
 
 @Entity()
 export class GameInfo {

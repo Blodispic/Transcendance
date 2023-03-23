@@ -47,12 +47,12 @@ export class ChannelService {
 		const channel: Channel | null = await this.channelRepository.findOne({
 			relations: { users: true, banned: true, muted: true },
 			where: {
-				id: addUserDto.chanId
-			}
+				id: addUserDto.chanId,
+			},
 			});
 		const user = addUserDto.user;		
 		if (channel == null || user == null)
-		throw new NotFoundException("No such Channel or User");
+		throw new NotFoundException('No such Channel or User');
 		channel.users.push(user);
 		return this.channelRepository.save(channel);
 	}	
@@ -61,12 +61,12 @@ export class ChannelService {
 		const channel: Channel | null = await this.channelRepository.findOne({
 			relations: { users: true, banned: true, muted: true, admin: true, owner: true},
 			where: {
-				id: rmUserDto.chanid
-			}
+				id: rmUserDto.chanid,
+			},
 			});
-		const user = channel?.users.find(elem => elem.id == rmUserDto.user.id)
+		const user = channel?.users.find(elem => elem.id == rmUserDto.user.id);
 		if (channel == null || user == null)
-			throw new NotFoundException("No such Channel or User");
+			throw new NotFoundException('No such Channel or User');
 		const index = channel.users.indexOf(user, 0);		
 		if (index != -1)
 			channel.users.splice(index, 1);
@@ -78,7 +78,7 @@ export class ChannelService {
 			relations: { users: true },
 			where: {
 				id,
-			}
+			},
 		});
 		if (channel) {
 			if (channelUpdate.channame)
@@ -92,7 +92,7 @@ export class ChannelService {
 				channel.password = hashPassword;
 			}
 			if (channelUpdate.rmPassword) {
-				channel.password = ""; // for now
+				channel.password = ''; // for now
 				channel.chanType = 0;
 			}
 			if (channelUpdate.chanType)
@@ -112,8 +112,8 @@ export class ChannelService {
 				owner: true,
 			},
 			where: {
-				id: id
-			}
+				id: id,
+			},
 		});
 	  }
 
@@ -125,19 +125,19 @@ export class ChannelService {
 				banned: true,
 			},
 			where: {
-				name: name
-			}
+				name: name,
+			},
 		});
 	  }
 
 	  async muteUser(muteUserDto: MuteUserDto) {
 		const channel: Channel | null = await this.channelRepository.findOne({
-			relations: { users: true, muted: true, },
-			where: { id: muteUserDto.chanid }
+			relations: { users: true, muted: true },
+			where: { id: muteUserDto.chanid },
 		});
 		const user = await this.userService.getById(muteUserDto.userid);
 		if (channel === null || user === null)
-			throw new BadRequestException("No such Channel or User");
+			throw new BadRequestException('No such Channel or User');
 		channel.muted.push(user);
 		
 		return this.channelRepository.save(channel);
@@ -146,11 +146,11 @@ export class ChannelService {
 	  async banUser(banUserDto: BanUserDto) {
 		const channel: Channel | null = await this.channelRepository.findOne({
 			relations: { users: true, banned: true },
-			where: { id: banUserDto.chanid }
+			where: { id: banUserDto.chanid },
 		});
 		const user = await this.userService.getById(banUserDto.userid);
 		if (channel === null || user === null)
-			throw new BadRequestException("No such Channel or User");
+			throw new BadRequestException('No such Channel or User');
 		channel.banned.push(user);
 		return this.channelRepository.save(channel);
 	  }
@@ -163,7 +163,7 @@ export class ChannelService {
 				muted: true,
 				banned: true,
 				owner: true,
-			}
+			},
 		});
 	  }
 
@@ -172,7 +172,7 @@ export class ChannelService {
 			where: [
 				{chanType: 0},
 				{chanType: 2},
-				]
+				],
 			});
 
 	  }
@@ -180,16 +180,16 @@ export class ChannelService {
 	  getUserChannel (id: number) {
 		return this.channelRepository.find({
 			where:
-				{ users: { id : id} }
-		})
+				{ users: { id : id} },
+		});
 	  }
 
 	  async unmuteUser(muteUserDto: MuteUserDto) {
 		const channel: Channel | null = await this.channelRepository.findOne({
 			relations: { users: true, muted: true },
-			where: { id: muteUserDto.chanid }
+			where: { id: muteUserDto.chanid },
 		});
-		const user = channel?.muted.find(elem => elem.id == muteUserDto.userid)
+		const user = channel?.muted.find(elem => elem.id == muteUserDto.userid);
 		if (channel === null || user === null || user === undefined)
 			throw new BadRequestException();		
 		const index = channel.muted.indexOf(user, 0);		
@@ -201,11 +201,11 @@ export class ChannelService {
 	async unbanUser(muteUserDto: MuteUserDto) {
 		const channel: Channel | null = await this.channelRepository.findOne({
 			relations: { users: true, banned: true },
-			where: { id: muteUserDto.chanid }
+			where: { id: muteUserDto.chanid },
 		});
-		const user = channel?.banned.find(elem => elem.id == muteUserDto.userid)
+		const user = channel?.banned.find(elem => elem.id == muteUserDto.userid);
 		if (channel === null || user === null || user === undefined)
-			throw new BadRequestException("No such Channel or User");		
+			throw new BadRequestException('No such Channel or User');		
 		const index = channel.banned.indexOf(user, 0);		
 		if (index != -1)
 			channel.banned.splice(index, 1);
@@ -215,11 +215,11 @@ export class ChannelService {
 	async isUserMuted(muteUserDto: MuteUserDto) {
 		const channel: Channel | null = await this.channelRepository.findOne({
 			relations: { users: true, muted: true },
-			where: { id: muteUserDto.chanid }
+			where: { id: muteUserDto.chanid },
 		});
 		const user = await this.userService.getById(muteUserDto.userid);
 		if (channel === null || user === null)
-			throw new BadRequestException("No such Channel or User");
+			throw new BadRequestException('No such Channel or User');
 		if (!channel.muted)
 			return false;		
 		for (const iterator of channel.muted) {
@@ -232,11 +232,11 @@ export class ChannelService {
 	async isUserBanned(muteUserDto: MuteUserDto) {
 		const channel: Channel | null = await this.channelRepository.findOne({
 			relations: { users: true, banned: true },
-			where: { id: muteUserDto.chanid }
+			where: { id: muteUserDto.chanid },
 		});
 		const user = await this.userService.getById(muteUserDto.userid);
 		if (channel === null || user === null)
-			throw new BadRequestException("No such Channel or User");
+			throw new BadRequestException('No such Channel or User');
 		if (!channel.banned)
 			return false;
 		for (const iterator of channel.banned) {
@@ -251,12 +251,12 @@ export class ChannelService {
 		const channel: Channel | null = await this.channelRepository.findOne({
 			relations: { users: true, admin: true },
 			where: {
-				id: giveAdminDto.chanid
-			}
+				id: giveAdminDto.chanid,
+			},
 			});
 		const user = await this.userService.getById(giveAdminDto.userid);
 		if (channel == null || user == null)
-			throw new NotFoundException("No such Channel or User");
+			throw new NotFoundException('No such Channel or User');
 		channel.admin.push(user);
 		return this.channelRepository.save(channel);
 	}
@@ -264,11 +264,11 @@ export class ChannelService {
 	async isUserAdmin(giveAdminDto: GiveAdminDto) {
         const channel: Channel | null = await this.channelRepository.findOne({
                 relations: { users: true, admin: true },
-                where: { id: giveAdminDto.chanid }
+                where: { id: giveAdminDto.chanid },
         });
         const user = await this.userService.getById(giveAdminDto.userid);
         if (channel === null || user === null)
-                throw new BadRequestException("No such Channel or User");
+                throw new BadRequestException('No such Channel or User');
         if (!channel.admin)
                 return false;
 		for (const iterator of channel.admin) {

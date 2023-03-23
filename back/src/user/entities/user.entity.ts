@@ -1,8 +1,8 @@
-import { Results } from "../../results/entities/results.entity";
-import { Column, Entity, PrimaryGeneratedColumn, ManyToMany, JoinTable, OneToMany } from "typeorm";
-import { Channel } from "src/chat/channel/entities/channel.entity";
-import { FriendRequest } from "./friend-request.entity";
-import { Exclude } from "class-transformer";
+import { Results } from '../../results/entities/results.entity';
+import { Column, Entity, PrimaryGeneratedColumn, ManyToMany, JoinTable, OneToMany } from 'typeorm';
+import { Channel } from 'src/chat/channel/entities/channel.entity';
+import { FriendRequest } from './friend-request.entity';
+import { Exclude } from 'class-transformer';
 
 @Entity('user')
 export class User {
@@ -13,7 +13,7 @@ export class User {
   @Column({ default: false })
   twoFaEnable: boolean;
 
-  @Column({ default: "Offline" })
+  @Column({ default: 'Offline' })
   status: string;
 
   @Column({ unique: true, nullable: true, length: 16 })
@@ -40,10 +40,10 @@ export class User {
   friends: User[];
 
   @ManyToMany(() => Channel, channel => channel.users)
-  channels: Channel[]
+  channels: Channel[];
 
   @OneToMany(() => Channel, channel => channel.owner, { onDelete: 'CASCADE' })
-  owned: Channel[]
+  owned: Channel[];
 
   @ManyToMany(() => User, user => user.blocked, { onDelete: 'CASCADE' })
   @JoinTable()
