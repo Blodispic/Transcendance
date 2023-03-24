@@ -113,14 +113,34 @@ export function ChannelMessages() {
 							{messages && messages.map((message, index) => (
 								<div key={index}>
 									{(message.chanid === currentChan.id && message.sender !== undefined) &&
-										<div className="__wrap">
-											<div className="message-info">
-												<img className="user-avatar" src={`${process.env.REACT_APP_BACK}user/${message.sender?.id}/avatar`} />
-												<p>{message.sender?.username}</p>
-												<p className="timestamp">{message.sendtime}</p>
-											</div>
-											{message.message}
-										</div>
+										<>
+											{
+												currentUser.user?.blocked?.find(user => user.id === message.sender?.id) === undefined &&
+												<div className="__wrap">
+													<div className="message-info">
+														<img className="user-avatar" src={`${process.env.REACT_APP_BACK}user/${message.sender?.id}/avatar`} />
+														<p>{message.sender?.username}</p>
+														<p className="timestamp">{message.sendtime}</p>
+
+													</div>
+													{message.message}
+												</div>
+											}
+											{
+												currentUser.user?.blocked?.find(user => user.id === message.sender?.id) !== undefined &&
+												< div className="__wrap message_block">
+													<div className="message-info "  >
+														<img className="user-avatar" src={`${process.env.REACT_APP_BACK}user/${message.sender?.id}/avatar`} />
+														<p>{message.sender?.username}</p>
+														<p className="timestamp">{message.sendtime}</p>
+													</div>
+													<p className="text">
+														you have block this user
+														</p>
+												</div>
+											}
+											
+										</>
 									}
 									{(message.chanid === currentChan.id && message.sender === undefined) &&
 										<div className="channel-announce">
