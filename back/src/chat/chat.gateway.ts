@@ -91,19 +91,18 @@ async handleSendMessageChannel(@ConnectedSocket() client: Socket, @MessageBody()
 
 @SubscribeMessage('joinChannel')
 async handleJoinChannel(@ConnectedSocket() client: Socket, @MessageBody() joinChannelDto: JoinChannelDto) {    
-  const channel = await this.channelService.getById(joinChannelDto.chanid); // plutot faire un service pour recuperer uniquement le password
+  const channel = await this.channelService.getById(joinChannelDto.chanid);
   if (channel === null)
-    throw new BadRequestException("No such Channel"); // no such channel
+    throw new BadRequestException("No such Channel");
   
   const user = await this.userService.getById(client.handshake.auth.user.id);
-  console.log("pw : ", await this.channelService.getPwById(channel.id));
-  
+  const pw = await this.channelService.getPwById(channel.id);  
   if (user === null)
     throw new BadRequestException("No such user");  
-  if (channel.password && !(await bcrypt.compare(joinChannelDto.password, await this.channelService.getPwById(channel.id)))) // don't work, i am on it
+  if (channel.chanType == 2 && !(await bcrypt.compare(joinChannelDto.password, pw)))
   {
     client.emit("joinChannelFailed", "Wrong password");
-    throw new BadRequestException("Bad password"); // wrong password
+    throw new BadRequestException("Bad password");
   }
   if (await this.channelService.isUserBanned({chanid: channel.id, userid: user.id}))
   {
