@@ -31,10 +31,10 @@ export function CheckPassword(props: { trigger: boolean, setTrigger: (value: boo
 	});
 
 	return (props.trigger) ? (
-		<button className="chat-form-popup button-div" onClick={() => (props.setTrigger(false), setFailed(false))}>
+		<button className="chat-form-popup button-div" onClick={() => {props.setTrigger(false); setFailed(false)}}>
 			<button className="chat-form-inner button-div" onClick={e => e.stopPropagation()}>
 
-				<HiOutlineXMark className="close-icon" onClick={() => (props.setTrigger(false), setFailed(false))} /> <br />
+				<HiOutlineXMark className="close-icon" onClick={() => {props.setTrigger(false); setFailed(false)}} /> <br />
 				<h3>Input password for &quot; {props.channel.name} &quot;</h3>
 				<input type="password" id="channel-input" placeholder="Input password" value={password} onChange={e => { setPassword(e.target.value); }} /><br />
 				{
