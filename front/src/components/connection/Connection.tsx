@@ -62,7 +62,7 @@ export default function Connection() {
             }
             fetchcode();
         }
-    })
+    }, [])
 
     return (
         <div className='container'>

@@ -36,9 +36,9 @@ export function History(props: { user: IUser }) {
           matchReq.map((match) => (
             <div className="match-block" key={match.id + match.winner.username + match.loser.username}>
               <div className="winner">
-                <div className="winner-img pointer" onClick={_ => navigate(`../Profile/${match.winner.id}`)} >
+                <button className="winner-img pointer" onClick={() => navigate(`../Profile/${match.winner.id}`)} >
                   <img src={`${process.env.REACT_APP_BACK}user/${match.winner.id}/avatar`} alt={match.winner.username} />
-                </div>
+                </button>
                 <div className="match-info">
                   <div className="match-name">{match.winner.username}</div>
                   <div className="match-elo">{match.winner_elo} <span style={{ color: '#357E3B' }}>(+50)</span></div>
@@ -55,9 +55,9 @@ export function History(props: { user: IUser }) {
                   <div className="match-elo">{match.loser_elo} <span style={{ color: '#A83349' }}>(-50)</span></div>
 
                 </div>
-                <div className="loser-img pointer" onClick={_ => navigate(`../Profile/${match.loser.id}`)}>
+                <button className="loser-img pointer" onClick={() => navigate(`../Profile/${match.loser.id}`)}>
                   <img src={`${process.env.REACT_APP_BACK}user/${match.loser.id}/avatar`} alt={match.loser.username} />
-                </div>
+                </button>
               </div>
             </div>
           ))

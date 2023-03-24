@@ -57,10 +57,9 @@ function Search(props: { currentUser: IUser, setcurrentUser: Function }) {
 export function Header(props: { currentUser: IUser, setCurrentUser: Function }) {
 
         const { currentUser, setCurrentUser } = props;
-        const myUser = useAppSelector(state => state.user);
+        useAppSelector(state => state.user);
         const totalGames = currentUser.win + currentUser.lose;
-        const [relation, setRelation] = useState<string>("none");
-        const dispatch = useAppDispatch();
+        useAppDispatch();
 
         let winPercentage = 0;
 
@@ -101,7 +100,7 @@ export function Header(props: { currentUser: IUser, setCurrentUser: Function }) 
                         <div className='info-container'>
                                 <div className="left-part">
                                         <div className='avatar'>
-                                                <img className='logo' src={`${process.env.REACT_APP_BACK}user/${currentUser.id}/avatar`} />
+                                                <img className='logo' src={`${process.env.REACT_APP_BACK}user/${currentUser.id}/avatar`} alt="" />
                                         </div>
                                         <HeaderButtons currentUser={currentUser} />
                                 </div>

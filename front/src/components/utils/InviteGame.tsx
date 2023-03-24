@@ -33,7 +33,7 @@ export default function InviteGame(props: { infoGame: any, setTrigger: (value: b
                 <h3>{props.infoGame.user1.username} Invite you in Game</h3>
                 <div className='avatar-inpopup'>
                     <img className='avatar avatar-manu' src={`${process.env.REACT_APP_BACK}user/${props.infoGame.user1.id}/avatar`} alt="" />
-                    <a> Vs </a>
+                    <div> Vs </div>
                     <img className='avatar avatar-manu' src={`${process.env.REACT_APP_BACK}user/${props.infoGame.user2.id}/avatar` } alt="" />
                 </div>
                 {

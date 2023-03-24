@@ -16,7 +16,7 @@ export default function Home() {
                 navigate("/game/" + roomId, { state: { Id: roomId } });
             });
         }
-	})
+	}, [])
 
     return (
         <div className='scroll'>
