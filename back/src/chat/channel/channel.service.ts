@@ -27,11 +27,13 @@ export class ChannelService {
 	) {}
 
 	async create(createChannelDto: CreateChannelDto, user: User) {		
-		if (createChannelDto.password) {
+		if (createChannelDto.password && createChannelDto.chanType == 2) {
 			const salt = await bcrypt.genSalt();
 			const hashPassword = await bcrypt.hash(createChannelDto.password, salt);
 			createChannelDto.password = hashPassword;
 		}
+		else
+			createChannelDto.password = undefined;
 		const channel: Channel = this.channelRepository.create({
 			name: createChannelDto.chanName,
 			password: createChannelDto.password,
@@ -52,7 +54,7 @@ export class ChannelService {
 			});
 		const user = addUserDto.user;		
 		if (channel == null || user == null)
-		throw new NotFoundException("No such Channel or User");
+			throw new NotFoundException("No such Channel or User");
 		channel.users.push(user);
 		return this.channelRepository.save(channel);
 	}	

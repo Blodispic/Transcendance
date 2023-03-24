@@ -7,7 +7,4 @@ export class SendMessageChannelDto {
 	@IsString()
 	@IsNotEmpty()
 	message: string; 
-
-	@IsNotEmpty()
-	sendtime: string;
 }

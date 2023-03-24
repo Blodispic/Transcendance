@@ -1,8 +1,6 @@
 import { BadRequestException, Body, Controller, Get, Param, ParseIntPipe, Patch, Post, UseGuards } from '@nestjs/common';
-import { CreateUserDto } from 'src/user/dto/create-user.dto';
 import { ChannelService } from './channel.service';
 import { Channel } from './entities/channel.entity';
-// import { CreateChannelDto } from './dto/create-channel.dto';
 import { AddUserDto } from './dto/add-user.dto';
 import { RmUserDto } from './dto/rm-user.dto';
 import { BanUserDto } from '../dto/ban-user.dto';

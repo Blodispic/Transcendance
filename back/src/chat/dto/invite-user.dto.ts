@@ -3,7 +3,7 @@ import { User } from "src/user/entities/user.entity";
 
 export class InviteDto {
     @IsNotEmpty()
-    user: User;
+    users: User[];
 
     @IsNumber()
     chanid: number;

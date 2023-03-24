@@ -1,4 +1,4 @@
-import { BadRequestException } from "@nestjs/common";
+import { BadRequestException, UseFilters, UsePipes, ValidationPipe } from "@nestjs/common";
 import { WebSocketGateway, WebSocketServer, SubscribeMessage, ConnectedSocket, MessageBody } from "@nestjs/websockets";
 import { Server, Socket } from "socket.io";
 import { ChannelService } from "src/chat/channel/channel.service";
@@ -15,8 +15,11 @@ import { MuteUserDto } from "./dto/mute-user.dto";
 import { GiveAdminDto } from "./dto/give-admin.dto";
 import { InviteDto } from "./dto/invite-user.dto";
 import { SendMessageChannelDto } from "./dto/send-message-channel.dto";
+import { GatewayExceptionFilter } from "src/app.exceptionFilter";
 const bcrypt = require('bcryptjs');
 
+@UseFilters(new GatewayExceptionFilter())
+@UsePipes(new ValidationPipe())
 @WebSocketGateway({
 	cors: {
 	  origin: '*',
@@ -32,7 +35,7 @@ export class ChatGateway
  
   @WebSocketServer() server: Server;
   
- @SubscribeMessage('sendDM')
+ @SubscribeMessage('sendDM') // check if block, a venir
  async handleSendMessageUser(@ConnectedSocket() client: Socket, @MessageBody() sendDmDto: SendDmDto)/* : Promise<any> */ {
    console.log("ok", sendDmDto);
   const receiver = await this.userService.getById(sendDmDto.IdReceiver);
@@ -48,7 +51,7 @@ export class ChatGateway
   this.server.to(socketReceiver.id).emit("ReceiveDM", {
     sender: sender,
     message: sendDmDto.message,
-    sendtime: sendDmDto.sendtime, //added by selee
+    sendtime: new Date().toLocaleString('en-US')
   });
  }
 
@@ -80,7 +83,7 @@ async handleSendMessageChannel(@ConnectedSocket() client: Socket, @MessageBody()
     chanid: channel.id,
     sender: sender,
     message: sendmessageChannelDto.message,
-    sendtime: sendmessageChannelDto.sendtime,
+    sendtime: new Date().toLocaleString('en-US'),
   });
 }
 
@@ -122,8 +125,12 @@ async handleCreateChannel(@ConnectedSocket() client: Socket, @MessageBody() crea
   const channel = await this.channelService.getByName(createChannelDto.chanName);
 
   if (channel != null) {
-    client.emit("createChannelFailed", "An existing channel already have this name");
+    client.emit("createChannelFailed", "Channel name already exists");
     throw new BadRequestException("An existing channel already have this name"); //channame already exist, possible ? if private/protected possible ?
+  }
+  if (createChannelDto.chanType == 2 && !createChannelDto.password) {
+    client.emit("createChannelFailed", "Password needed");
+    throw new BadRequestException("Password needed");
   }
   const user = await this.userService.getById(client.handshake.auth.user.id);
   if (user === null)
@@ -261,7 +268,7 @@ async handleGiveAdmin(@ConnectedSocket() client: Socket, @MessageBody() giveAdmi
   client.emit("giveAdminOK", user.id, channel.id);
 }
 
-@SubscribeMessage('Invite')
+@SubscribeMessage('AddPeoplePrivate')
 async handleInvite(@ConnectedSocket() client: Socket, @MessageBody() inviteDto: InviteDto)
 {
   const channel = await this.channelService.getById(inviteDto.chanid);
@@ -270,18 +277,15 @@ async handleInvite(@ConnectedSocket() client: Socket, @MessageBody() inviteDto: 
     throw new BadRequestException("No such Channel or User");
   if (!(await this.channelService.isUserAdmin(user)))
     throw new BadRequestException("You are not Admin on this channel");
-  const socketIdToWho = this.findSocketFromUser(inviteDto.user);
-  if (socketIdToWho)
-    this.server.to(socketIdToWho.id).emit('invited', channel);
-  socketIdToWho?.join("chan" + channel.id);
-  this.channelService.add({user: inviteDto.user, chanId: inviteDto.chanid});
+  this.inviteToChan(inviteDto.users, channel.id);
   client.emit('inviteOK');
 }
 
 async inviteToChan(users: User[], chanid: number)
 {
-  
   users.forEach(user => {
+    // if (this.channelService.isUserinChan(channel.id, user.id)) // a venir
+      // return;
     const socketIdToWho = this.findSocketFromUser(user);
     if (socketIdToWho)
       this.server.to(socketIdToWho.id).emit("invited", chanid);
