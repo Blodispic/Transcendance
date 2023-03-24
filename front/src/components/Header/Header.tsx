@@ -55,7 +55,7 @@ export default function Header() {
         {
           myUser.user !== undefined &&
           <div className='dropdown-container'>
-            <button className="icon-header" onClick={() => dropdownClick()} >
+            <button className="icon-header button-div" onClick={() => dropdownClick()} >
               <FaUserAlt />
             </button>
             {
@@ -67,10 +67,10 @@ export default function Header() {
                       profile
                     </Link>
                   </li>
-                  <button onClick={() => { logout(); setDropdown(false); }} >
-                    <div>
+                  <button className='button-li dropdown' onClick={() => { logout(); setDropdown(false); }} >
+                    <li>
                       logout
-                    </div>
+                    </li>
                   </button>
                 </ul>
               </div>

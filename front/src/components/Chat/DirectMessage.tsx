@@ -35,7 +35,7 @@ function DMList(props: { currentdm: IUser | undefined; setCurrentDm: (user: IUse
 			{alluser !== undefined &&
 				<>
 					{alluser && alluser.map(user => (
-						<button key={user.username} onClick={() => {props.setCurrentDm(user); navigate(`/Chat/dm/${user.id}`)}} >
+						<button className='button-div' key={user.username} onClick={() => {props.setCurrentDm(user); navigate(`/Chat/dm/${user.id}`)}} >
 							<li >
 								{user.username}
 							</li>
@@ -188,13 +188,13 @@ function InfoFriend(props: { user: IUser }) {
 					<>
 						{
 							relation === "Nobody" &&
-							<button onClick={() => (sendFriendRequest())} >
+							<button className='button-li' onClick={() => (sendFriendRequest())} >
 								Add Friend
 							</button>
 						}
 						{
 							relation === "Friend" &&
-							<button onClick={() => (removeFriend())}> Remove Friend </button>
+							<button className='button-li' onClick={() => (removeFriend())}> Remove Friend </button>
 						}
 						{
 							relation === "friendRequestSent" &&
@@ -202,11 +202,11 @@ function InfoFriend(props: { user: IUser }) {
 						}
 						{
 							relation === "friendRequestReceived" &&
-							<button onClick={() => (acceptFriendRequest())}> accept in Friend </button>
+							<button className='button-li' onClick={() => (acceptFriendRequest())}> accept in Friend </button>
 						}
 
 
-						<button onClick={() => setMyvar(true)}>
+						<button className='button-li' onClick={() => setMyvar(true)}>
 							Invite Game
 						</button>
 
@@ -214,14 +214,14 @@ function InfoFriend(props: { user: IUser }) {
 							((myUser.user && (myUser.user.blocked === undefined
 								|| myUser.user.blocked.find(block => block.id === user.id) === undefined))
 								&& user.username !== myUser.user!.username) &&
-							<button onClick={() => Block()}>
+							<button className='button-li' onClick={() => Block()}>
 								Block
 							</button>
 						}
 
 						{
 							((myUser.user && (myUser.user.blocked !== undefined && myUser.user.blocked.find(block => block.id === user.id) !== undefined)) && user.username !== myUser.user!.username) &&
-							<button onClick={() => UnBlock()}>
+							<button className='button-div' onClick={() => UnBlock()}>
 								Unblock
 							</button>
 						}

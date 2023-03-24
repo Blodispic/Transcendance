@@ -60,7 +60,7 @@ export function Log() {
                     }
                     {
                         isValid === false &&
-                        <div>code fuseeffectaux ou expirer retenter</div>
+                        <div>code faux ou expirer retenter</div>
                     }
                 </form>
             </div>

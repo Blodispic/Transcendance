@@ -62,8 +62,8 @@ export function PopupCreateChannel(props: { trigger: boolean, setTrigger: (value
 	});
 
 	return (props.trigger) ? (
-		<button className="chat-form-popup" onClick={() => (props.setTrigger(false), setChanMode(0), setFailed(false))} >
-			<button className="chat-form-inner" onClick={e => e.stopPropagation()}>
+		<button className="chat-form-popup button-div" onClick={() => (props.setTrigger(false), setChanMode(0), setFailed(false))} >
+			<button className="chat-form-inner button-div" onClick={e => e.stopPropagation()}>
 				<HiOutlineXMark className="close-icon" onClick={() => (props.setTrigger(false), setChanMode(0), setFailed(false))} /> <br />
 				<h3>Channel Name</h3>
 				<input type="text" id="channel-input" placeholder="Insert channel name"  maxLength={15} onChange={e => { setChanName(e.target.value) }} onSubmit={() => { handleCreateNewChan(); }} />
@@ -97,7 +97,7 @@ export function AddChannel() {
 	const [buttonPopup, setButtonPopup] = useState(false);
 
 	return (
-		<button className="add-icon" onClick={() => setButtonPopup(true)}>
+		<button className="add-icon button-div" onClick={() => setButtonPopup(true)}>
 			<HiPlus className="add-button" />
 			<PopupCreateChannel trigger={buttonPopup} setTrigger={setButtonPopup} />
 		</button>

@@ -25,7 +25,7 @@ function JoinedChannelList() {
 					{
 						chan.users.find(obj => obj.id === currentUser?.id) &&
 						<li>
-							<button onClick={() => navigate(`/Chat/channel/${chan.id}`)}>{chan.name}
+							<button className='button-div' onClick={() => navigate(`/Chat/channel/${chan.id}`)}>{chan.name}
 								{
 									chan.chanType === 1 &&
 									<HiLockClosed style={{ float: 'right' }} />
@@ -58,7 +58,7 @@ function PublicChannelList() {
 						{
 							chan.chanType !== 1 &&
 							<li>
-								<button onClick={() => navigate(`/Chat/channel/${chan.id}`)}>{chan.name}
+								<button className='button-div' onClick={() => navigate(`/Chat/channel/${chan.id}`)}>{chan.name}
 									{
 										chan.chanType === 2 &&
 										<BsFillKeyFill style={{ paddingLeft: '10px' }} />
@@ -105,7 +105,7 @@ function ChannelMemberList(props: { page: (page: page) => void }) {
 		<div className="title"> Members <hr />
 			{currentChan && currentChan.users?.map(user => (
 				<div key={user.id} className="user-list">
-					<button onClick={() => changeId(user.id)}>
+					<button className='button-ul' onClick={() => changeId(user.id)}>
 						<li>
 							{user.username}
 							{

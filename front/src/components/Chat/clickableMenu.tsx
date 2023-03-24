@@ -45,11 +45,11 @@ export default function ClickableMenu(props: { user: IUser, chan: IChannel, page
                     {
                         user.id !== myUser?.id &&
                         <>
-                            <button onClick={() => setMyvar(true)}>
+                            <button className='button-li' onClick={() => setMyvar(true)}>
                                 Invite Game
                             </button>
                             <li>
-                                <button onClick={() => { props.page(page.PAGE_2); navigate(`/Chat/dm/${user.id}`) }}>
+                                <button className='button-li' onClick={() => { props.page(page.PAGE_2); navigate(`/Chat/dm/${user.id}`) }}>
                                     DM
                                 </button>
                             </li>
@@ -60,7 +60,7 @@ export default function ClickableMenu(props: { user: IUser, chan: IChannel, page
                                         props.chan.admin?.find(obj => obj.id === props.user.id) === undefined &&
                                         <>
                                             <li>
-                                                <button onClick={() => handleAddAdmin()}>
+                                                <button className='button-li' onClick={() => handleAddAdmin()}>
                                                     Add to Admin
                                                 </button>
                                             </li>
@@ -72,7 +72,7 @@ export default function ClickableMenu(props: { user: IUser, chan: IChannel, page
                                             {
                                                 props.chan.muted?.find(obj => obj.id === props.user.id) === undefined &&
                                                 <li>
-                                                    <button onClick={() => setTimeMute(true)}>
+                                                    <button className='button-li' onClick={() => setTimeMute(true)}>
                                                         Mute
                                                         <MuteUser chanid={props.chan.id} userid={user.id} trigger={timeMute} setTrigger={setTimeMute} />
                                                     </button>
@@ -82,7 +82,7 @@ export default function ClickableMenu(props: { user: IUser, chan: IChannel, page
                                             {
                                                 props.chan.banned?.find(obj => obj.id === props.user.id) === undefined &&
                                                 <li>
-                                                    <button onClick={() => setTimeBan(true)}>
+                                                    <button className='button-li' onClick={() => setTimeBan(true)}>
                                                         Ban
                                                         <BanUser chanid={props.chan.id} userid={user.id} trigger={timeBan} setTrigger={setTimeBan} />
                                                     </button>
@@ -90,7 +90,7 @@ export default function ClickableMenu(props: { user: IUser, chan: IChannel, page
                                             }
 
                                             <li>
-                                                <button onClick={() => KickUser(props.chan.id, user.id)}>
+                                                <button className='button-li' onClick={() => KickUser(props.chan.id, user.id)}>
                                                     Kick
                                                 </button>
                                             </li>

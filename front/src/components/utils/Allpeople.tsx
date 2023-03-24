@@ -66,8 +66,8 @@ export default function AllPeople(props: { friend: IUser[] | undefined, setFrien
                                 {
 
                                     (window.location.href.search('Game') !== -1 || props.friend === undefined) &&
-                                    <button type="button" className="cursor-onsomoene avatar avatar-manu" onClick={() => removeFriend(user)}>
-                                          <img src={`${process.env.REACT_APP_BACK}user/${user.id}/avatar`} alt=""/>
+                                    <button className="cursor-onsomoene avatar avatar-manu button-img" onClick={() => removeFriend(user)}>
+                                          <img className="cursor-onsomoene avatar avatar-manu" src={`${process.env.REACT_APP_BACK}user/${user.id}/avatar`} alt=""/>
                                     </button>
                                 }
                             </div>
@@ -87,7 +87,7 @@ export default function AllPeople(props: { friend: IUser[] | undefined, setFrien
                         <div className=" dropdown people-list hover-style">
                             {alluser && alluser!.map(user_list => (
                                 <ul key={user_list.username} >
-                                        <button onClick={() => { props.setMyvar(!props.myVar); get_all();  addfriend(user_list) }}>
+                                        <button className='button-li' onClick={() => { props.setMyvar(!props.myVar); get_all();  addfriend(user_list) }}>
                                             {user_list.username}
                                         </button>
                                 </ul>

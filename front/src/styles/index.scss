@@ -2,6 +2,51 @@ body {
     margin: 0;
 }
 
+.button-li {
+    background: none;
+    font: inherit;
+    border: none;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    cursor: pointer;
+    @extend li
+}
+
+.button-div {
+    display: inline-block;
+    border: none;
+    margin: 0;
+    padding: 0;
+    text-decoration: none;
+    background-color: transparent;
+    color: inherit;
+    font: inherit;
+    cursor: pointer;
+    outline: inherit;
+}
+
+.button-ul {
+    display: block;
+    width: 100%;
+    text-align: left;
+    background: none;
+    border: none;
+    padding: 0;
+    margin: 0;
+    list-style-type: none;
+    @extend ul
+}
+
+.button-img {
+    border: none;
+    background: transparent;
+    padding: 0;
+    margin: 0;
+}
+  
+  
+
 @import "pages/chat.scss";
 @import "pages/connection.scss";
 @import "pages/game.scss";
