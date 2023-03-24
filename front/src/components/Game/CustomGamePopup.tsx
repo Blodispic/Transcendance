@@ -1,11 +1,9 @@
 import { useEffect, useState } from "react";
 import { HiOutlineXMark } from "react-icons/hi2";
 
-import { AiFillPlusCircle } from "react-icons/ai";
 import { socket } from "../../App";
 import { useAppSelector } from "../../redux/Hook";
 import { IUser } from "../../interface/User";
-import { useSearchParams } from "react-router-dom";
 import AllPeople from "../utils/Allpeople";
 import swal from 'sweetalert';
 

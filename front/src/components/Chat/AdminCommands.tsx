@@ -96,9 +96,10 @@ export function KickUser(chanid: any, userid: any) {
 
 export function ConfigureChannelPrivate(props: {trigger: boolean, setTrigger: Function, channel: IChannel}) {
     const [friend, setFriend] = useState<IUser[] >(props.channel.users);
+	
 	const AddPeoplePrivate = () => {
 		if (friend.length > 0)
-			socket.emit('AddPeoplePrivate', { chanName: props.channel.name, users: friend });
+			socket.emit('AddPeoplePrivate', { chanId: props.channel.id, users: friend });
 	}
 	
 	useEffect(() => {
@@ -116,10 +117,10 @@ export function ConfigureChannelPrivate(props: {trigger: boolean, setTrigger: Fu
 				{
 					
 					<div className="allpoeple">
-					<AllPeople friend={undefined} setFriend={setFriend} />
+					<AllPeople friend={friend} setFriend={setFriend} />
 					</div>
 				}
-				<button> Save Setting </button>
+				<button onClick={() => {AddPeoplePrivate(); props.setTrigger(false)}}> Save Setting </button>
 			</div>
 		</div>
 	) : <></>;

@@ -79,7 +79,7 @@ export default function AllPeople(props: { friend: IUser[] | undefined, setFrien
                     ((window.location.href.search('Game') !== -1 && allfriend && allfriend?.length !== 1)
                         || (window.location.href.search('Game') === -1 && (props.friend === undefined || (props.friend && props.friend.length > 1))))
                     &&
-                    <AiFillPlusCircle className="plus-circle pointer" onClick={_ => setMyvar(!myVar)} />
+                    <AiFillPlusCircle className="plus-circle pointer" onClick={_ =>  {get_all(); setMyvar(!myVar)}} />
                 }
 
                 {
@@ -88,7 +88,7 @@ export default function AllPeople(props: { friend: IUser[] | undefined, setFrien
                         <div className=" dropdown people-list hover-style">
                             {alluser && alluser!.map(user_list => (
                                 <ul key={user_list.username} >
-                                    <li onClick={_ => { setMyvar(!myVar); get_all();  addfriend(user_list) }}>
+                                    <li onClick={_ => { setMyvar(!myVar); addfriend(user_list) }}>
                                         {user_list.username}
                                     </li>
                                 </ul>

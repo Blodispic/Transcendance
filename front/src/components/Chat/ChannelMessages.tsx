@@ -135,8 +135,8 @@ export function ChannelMessages() {
 														<p className="timestamp">{message.sendtime}</p>
 													</div>
 													<p className="text">
-														you have block this user
-														</p>
+														message from blocked user
+													</p>
 												</div>
 											}
 											

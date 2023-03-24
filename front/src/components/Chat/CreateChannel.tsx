@@ -30,6 +30,7 @@ export function PopupCreateChannel(props: { trigger: boolean, setTrigger: Functi
 	}
 
 	const handleCreateNewChan = () => {
+		console.log("userlist", friend)
 		if (chanName !== "")
 			socket.emit('createChannel', { chanName: chanName, password: password, chanType: chanMode, users: friend });
 		setChanName("");
@@ -38,7 +39,6 @@ export function PopupCreateChannel(props: { trigger: boolean, setTrigger: Functi
 	
 	useEffect(() => {
 		socket.on("createChannelFailed", (error_message) => {
-			setChanMode(0);
 			setFailed(true);
 		});
 		socket.on("createChannelOk", (new_chanid) => {
