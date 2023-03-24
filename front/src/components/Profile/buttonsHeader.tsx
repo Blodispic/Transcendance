@@ -10,12 +10,12 @@ import { addBlockedUser, unBlockUser } from "../../redux/user";
 export default function HeaderButtons(props: { currentUser: IUser }) {
     const currentUser: IUser = props.currentUser;
     const myUser = useAppSelector(state => state.user);
-    const [relation, setRelation] = useState<string>("none");
+    const [relation, setRelation] = useState<string>("");
     const dispatch = useAppDispatch();
 
     useEffect(() => {
         Relations();
-    }, [])
+    })
     const spectate = () => {
         socket.emit("spectateGame", currentUser.id);
     }
@@ -108,9 +108,6 @@ export function InviteButton(props: { user: any, relation: string, setRelation: 
     const myUser = useAppSelector(state => state.user);
     const myToken = useAppSelector(state => state.user.myToken);
 
-    useEffect(() => {
-        // setRelation(props.relation);
-    })
     const sendFriendRequest = async () => {
         await new Promise((resolve) => setTimeout(resolve, 1000));
 
