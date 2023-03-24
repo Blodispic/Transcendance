@@ -173,8 +173,8 @@ function App() {
 
       if (response.ok && data.username !== "") {
         dispatch(setUser(data))
-        dispatch(set_status(UserStatus.ONLINE));
         dispatch(setToken(token));
+        dispatch(set_status(UserStatus.ONLINE));
 
         // setCookie('Token', data.access_token, { path: '/' });
         // socket.emit("UpdateSomeone", { idChange: myUser.user?.id, idChange2: 0 })

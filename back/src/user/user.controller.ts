@@ -58,7 +58,6 @@ export class UserController {
 
   // Retrieves a user by their access token
   @Post('access_token')
-  @UseGuards(JwtGuard)
   async GetbyAccessToken(@Body() token: any) {
     return await plainToClass(User, this.userService.GetByAccessToken(token));
   }
