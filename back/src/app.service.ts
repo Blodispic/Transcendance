@@ -3,9 +3,6 @@ import { extname } from 'path';
 
 @Injectable()
 export class AppService {
-  getHello(): string {
-    return 'Hello World!';
-  }
 }
 
 export const imageFilter = (req: any, file: any, callback: any) => {
