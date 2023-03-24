@@ -1,18 +1,16 @@
 import { BadRequestException, forwardRef, Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { CreateUserDto } from 'src/user/dto/create-user.dto';
 import { User } from 'src/user/entities/user.entity';
 import { Repository } from 'typeorm';
 import { AddUserDto } from './dto/add-user.dto';
 import { Channel } from './entities/channel.entity';
 import { UserService } from 'src/user/user.service';
-import { UserController } from 'src/user/user.controller';
 import { RmUserDto } from './dto/rm-user.dto';
 import { MuteUserDto } from '../dto/mute-user.dto';
 import { CreateChannelDto } from '../dto/create-channel.dto';
 import { GiveAdminDto } from '../dto/give-admin.dto';
 import { BanUserDto } from '../dto/ban-user.dto';
-var bcrypt = require('bcryptjs');
+const bcrypt = require('bcryptjs');
 
 
 @Injectable()

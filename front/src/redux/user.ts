@@ -25,6 +25,7 @@ export const userSlice = createSlice({
         },
         setToken: (state, { payload }: PayloadAction<string>) => {
             state.myToken = payload;
+
         },
         change_name: (state, { payload }: PayloadAction<string>) => {
             state.user!.username = payload;
