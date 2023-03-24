@@ -1,3 +1,4 @@
+import { IMessage } from "./Message";
 import { IUser } from "./User";
 
 export interface IChannel {

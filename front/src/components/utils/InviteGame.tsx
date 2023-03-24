@@ -2,6 +2,7 @@ import { HiOutlineXMark } from "react-icons/hi2";
 import { socket } from "../../App";
 import { IUser } from "../../interface/User";
 import { useAppSelector } from "../../redux/Hook";
+import swal from "sweetalert";
 
 
 export default function InviteGame(props : {infoGame: any, setTrigger: Function}) {
@@ -10,11 +11,20 @@ export default function InviteGame(props : {infoGame: any, setTrigger: Function}
     const myUser = useAppSelector(state => state.user);
 
     const accept = () => {
+        if (swal && swal.close != undefined && swal.stopLoading != undefined)
+        {
+            swal("Success", "You've been added to the custom room.", "success");
+            swal.stopLoading();
+            swal.close();
+        }
         socket.emit("acceptCustomGame", props.infoGame);
     }
     const decline = () => {
         socket.emit("declineCustomGame", props.infoGame);
     }
+
+    // console.log(props.infoGame.user1.id);
+    // console.log(props.infoGame.user2.id);
 
     return (
         <div className='chat-form-popup'>

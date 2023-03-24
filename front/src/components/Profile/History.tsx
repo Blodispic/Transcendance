@@ -12,7 +12,6 @@ export function History(props: { user: IUser }) {
     const myToken = useAppSelector(state => state.user.myToken);
 
     useEffect(() => {
-      console.log("ca passe pas la ");
         const checkMatchRequest = async () => {
             const response = await fetch(`${process.env.REACT_APP_BACK}user/matches`, {
                 method: 'POST',
@@ -72,7 +71,7 @@ export function History(props: { user: IUser }) {
 
   return (
     <div>
-      <div className='MatchHeader'>
+      <div className='MatchHeader scrollWesh'>
         <MatchesReq />
         <div className='MatchRequestBlock'>
         </div>

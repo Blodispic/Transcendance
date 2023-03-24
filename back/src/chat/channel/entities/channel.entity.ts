@@ -1,7 +1,7 @@
+
 import { IsOptional } from "class-validator";
-import { channel } from "diagnostics_channel";
 import { User } from "src/user/entities/user.entity";
-import { Column, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinTable, ManyToMany, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 
 enum ChanType {
 	Public,

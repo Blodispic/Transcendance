@@ -29,7 +29,6 @@ export function Log() {
                 'Authorization': `Bearer ${myStore.user.myToken}`,
             },
             body: JSON.stringify({
-                userId: myStore.user.user?.id,
                 code: code,
             }),
         })

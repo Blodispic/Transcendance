@@ -3,8 +3,9 @@ import { HiOutlineMagnifyingGlassCircle } from "react-icons/hi2";
 import { useNavigate } from "react-router-dom";
 import { socket } from "../../App";
 import { IUser, UserStatus } from "../../interface/User";
-import { useAppSelector } from "../../redux/Hook";
-import { InviteButton } from "./friend_request";
+import { useAppDispatch, useAppSelector } from "../../redux/Hook";
+import { addBlockedUser, unBlockUser } from "../../redux/user";
+import HeaderButtons from "./buttonsHeader";
 
 function Search(props: { currentUser: IUser, setcurrentUser: Function }) {
 
@@ -20,15 +21,15 @@ function Search(props: { currentUser: IUser, setcurrentUser: Function }) {
                                 method: 'GET',
                                 headers: {
                                         'Authorization': `Bearer ${myToken}`,
-                                    },
+                                },
                         })
-                        .then(async response => {
-                                if (response.ok){
-                                        const data = await response.json()
-                                        setcurrentUser(data);       
-                                        navigate(`../Profile/${data.id}`);
-                                }
-                        })
+                                .then(async response => {
+                                        if (response.ok) {
+                                                const data = await response.json()
+                                                setcurrentUser(data);
+                                                navigate(`../Profile/${data.id}`);
+                                        }
+                                })
                 }
 
         }
@@ -57,17 +58,21 @@ export function Header(props: { currentUser: IUser, setCurrentUser: Function }) 
         const { currentUser, setCurrentUser } = props;
         const myUser = useAppSelector(state => state.user);
         const totalGames = currentUser.win + currentUser.lose;
+        const [relation, setRelation] = useState<String>("none");
+        const dispatch = useAppDispatch();
 
         let winPercentage = 0;
 
+        useEffect(() => {
+                // Relations();
+
+        }, [currentUser])
         if (totalGames > 0)
                 winPercentage = (currentUser.win / totalGames) * 100
 
         const formattedPercentage = winPercentage.toFixed(2) + '%';
 
-        const spectate = () => {
-                socket.emit("spectateGame", currentUser.id);
-        }
+  
         const rank = () => {
                 if (currentUser.elo >= 1900)
                         return 'DIAMOND';
@@ -89,34 +94,15 @@ export function Header(props: { currentUser: IUser, setCurrentUser: Function }) 
                 }
                 return rankNames[rankNames.length - 1];
         };
-
+      
         return (
                 <div className='profile-header'>
-
-ch
                         <div className='info-container'>
                                 <div className="left-part">
                                         <div className='avatar'>
                                                 <img className='logo' src={`${process.env.REACT_APP_BACK}user/${currentUser.id}/avatar`} />
                                         </div>
-                                        {
-                                                currentUser.username !== myUser.user!.username &&
-                                                <>
-                                                        {
-                                                               ( myUser.user!.friends === undefined || myUser.user!.friends.find(allfriend => allfriend.id === currentUser.id) === undefined )&&
-                                                                // myUser.user!.friends !== undefined && myUser.user!.friends.find(allfriend => allfriend.id === currentUser.id) === undefined &&
-                                                                <InviteButton user={myUser.user} />
-                                                        }
-                                                        {
-                                                                currentUser.status === UserStatus.INGAME &&
-                                                                <button className="button-style" onClick={_ => spectate()}> Spectate </button>
-                                                        }
-                                                        {
-                                                                //  comment check si le user est blocked ? on met userblock: IUser[] dans l'interface user ? ou je fetch(/user/id/blockedList) pour avoir la list des user que moi j'ai blocker ?
-                                                                <button className="button-style" style={{ background: '#B33A3A' }} onClick={_ => (_)}> Block </button>
-                                                        }
-                                                </>
-                                        }
+                                        <HeaderButtons currentUser={currentUser} />
                                 </div>
 
                                 <div className='info-header'>
@@ -151,10 +137,9 @@ ch
 
                                                 <div className=' block'>
                                                         <>
-
-                                                        <span className={"color-status " + currentUser.status}>{currentUser.status}</span>
+                                                                <span className={"color-status " + currentUser.status}>{currentUser.status}</span>
                                                         </>
-      
+
                                                 </div>
                                         </div>
                                 </div>

@@ -10,6 +10,7 @@
     margin: auto;
     align-self: center;
     overflow: hidden;
+    object-fit: cover;
     .logo {
         width: 100%;
         height: 100%;
@@ -49,6 +50,7 @@
                 .logo {
                     width: 100%;
                     height: 100%;
+                    object-fit: cover;
                 }
             }
         }
@@ -291,7 +293,10 @@
     height: 100%;
 }
 
-
+.scrollWesh {
+    height:calc(100vh - 500px);
+    overflow-y: auto;
+}
 
 .accept-button,
 .refuse-button {

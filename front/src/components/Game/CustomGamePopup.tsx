@@ -7,6 +7,8 @@ import { useAppSelector } from "../../redux/Hook";
 import { IUser } from "../../interface/User";
 import { useSearchParams } from "react-router-dom";
 import AllPeople from "../utils/Allpeople";
+import swal from 'sweetalert';
+
 
 export default function CustomGamePopup(props: {trigger: boolean; setTrigger: Function; friend: IUser | undefined} ) {
     const [extra, setExtra] = useState<boolean>(false);
@@ -29,7 +31,6 @@ export default function CustomGamePopup(props: {trigger: boolean; setTrigger: Fu
         if ( window.location.href.search('Game') == -1 ) {
             setInpage(true);
         }
-
     }, [props])
 
     const changeScore = (event: any) => {
@@ -41,12 +42,14 @@ export default function CustomGamePopup(props: {trigger: boolean; setTrigger: Fu
     };
 
     function CreateCustomRoom(extra: any, Max: any) {         
-        if (!myUser.user || !friend)
+        if (!myUser.user || !friend || !friend[0])
         {
-            console.log("Error: User doesn't exists");
+            swal("Error", "User doesn't exist", "error");
             return ;
         }
-        socket.emit("createCustomGame", { user1: myUser.user?.id, user2: friend[0], extra: extra, scoreMax: Max });
+        socket.emit("createCustomGame", { user1: myUser.user, user2: friend[0], extra: extra, scoreMax: Max });
+        props.setTrigger(false);
+        setMyvar(false);
         return;
     }
 

@@ -3,6 +3,7 @@ import { Circle, Layer, Rect, Stage, Text } from "react-konva";
 import { useBeforeUnload } from "react-router-dom";
 import { socket } from "../../App";
 import { ResultPopup } from "./Result";
+import swal from "sweetalert";
 
 export interface Vec2 {
 	x: number;
@@ -160,6 +161,8 @@ export default function GameApp() {
 			document.removeEventListener("keydown", keyEvent);
 			document.removeEventListener("keyup", keyEvent);
 			socket.off("UpdateState");
+			socket.off('GameEnd');
+
 			socket.emit("PlayerLeft");
 		};
 	}, []);
@@ -290,6 +293,12 @@ function convertState(state: GameState) {
 
 function updateGameState(prev: GameState) {
 	let newState = { ...prev }
+	if (swal && swal.close != undefined && swal.stopLoading != undefined)
+	{
+		// swal("Success", "You've been added to the custom room.", "success");
+		// swal.stopLoading();
+		swal.close();
+	}
 
 	if (window.innerHeight > GAME_RATIO * window.innerWidth)
 	{

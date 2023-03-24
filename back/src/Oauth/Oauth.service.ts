@@ -17,6 +17,7 @@ export class OauthService {
     const api_key = process.env.API42_UID;
     const private_key = process.env.API42_SECRET;
     const redirect_uri = process.env.REDIRECT_URI;
+    
     const body = {
       grant_type: "authorization_code",
       client_id: api_key,
@@ -34,12 +35,8 @@ export class OauthService {
       
     });
     const data = await response.json();
-    console.log("data = ", data);
-    
-
 
     if (!data.access_token) {
-      console.log("No access Token");
       throw new HttpException(`AuthService getToken failed, HTTP status ${response.status}`, HttpStatus.BAD_REQUEST);
     } else
       return this.getInfo(data.access_token);
@@ -60,7 +57,7 @@ export class OauthService {
     const payload = { username: data.login, }
     const access_token = await this.jwtService.signAsync(payload, {
       secret: jwtConstants.secret,
-      expiresIn: '900s',
+      expiresIn: '3600s',
     });
     if (user)
     {
@@ -79,7 +76,6 @@ export class OauthService {
       intra_avatar: data.image.link,
     }
     const realUser = await this.usersService.create(userDto);
-    console.log(realUser);
     return ( {user: realUser, access_token});
   }
 }

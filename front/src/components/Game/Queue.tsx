@@ -8,6 +8,7 @@ import { debug } from 'console';
 import { logDOM } from '@testing-library/react';
 import { HiOutlineXMark } from 'react-icons/hi2';
 import CustomGamePopup from './CustomGamePopup';
+import swal from 'sweetalert';
 
 
 export default function Queue() {
@@ -23,11 +24,34 @@ export default function Queue() {
         socket.emit("addToWaitingRoom");
         return;
     }
+    const quitWaitingRoom = () => {
+        socket.emit("removeFromWaitingRoom");
+    }
 
     useEffect(() => {
-        socket.on("RoomStart", (roomId: number, player: Player) => {
-            navigate("/game/" + roomId, { state: { Id: roomId } });
-        });
+        if (socket)
+        {
+            socket.on("RoomStart", (roomId: number, player: Player) => {
+                if (swal && swal.close != undefined && swal.stopLoading != undefined)
+                {
+                    swal("Success", "You've been added to the custom room.", "success");
+                    swal.stopLoading();
+                    swal.close();
+                }
+                navigate("/game/" + roomId, { state: { Id: roomId } });
+            });
+
+            socket.on("WaitingRoomSuccess", (message: string) => {
+                if (message)
+                    swal("Success", message, "success");
+                else
+                    swal("Success", "You've been added to the waiting room.", "success");
+            });
+
+            socket.on("WaitingRoomFailure", (message: string) => {
+                swal("Failure", message, "error");
+            });
+        }
 
         const fetchuser = async () => {
             if (myStore.user.user) {
@@ -40,11 +64,16 @@ export default function Queue() {
             }
         }
         fetchuser()
+        return () => {
+            socket.off("RoomStart");
+            socket.off("WaitingRoomSuccess");
+            socket.off("WaitingRoomFailure");
+          }
     }, [])
 
     return (
         <>
-            <div className='center'>
+            <div className='center queu'>
 
                 <div className='button'>
                     <button className='button pointer color_log' onClick={(e) => addToWaitingRoom()} >
@@ -59,6 +88,7 @@ export default function Queue() {
                         </Link>
                     </button>
                 </div>
+                <button className="button-style" onClick={_ => (quitWaitingRoom())}> Quit Waiting Room </button>
         </div>
         <CustomGamePopup trigger={customPopup} setTrigger={setCustomPopup} friend={undefined} />
         </>

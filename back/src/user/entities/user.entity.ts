@@ -2,6 +2,7 @@ import { Results } from "../../results/entities/results.entity";
 import { Column, Entity, PrimaryGeneratedColumn, ManyToMany, JoinTable, OneToMany } from "typeorm";
 import { Channel } from "src/chat/channel/entities/channel.entity";
 import { FriendRequest } from "./friend-request.entity";
+import { Exclude } from "class-transformer";
 
 @Entity('user')
 export class User {
@@ -25,6 +26,7 @@ export class User {
   email: string;
 
   @Column({ nullable: true })
+  @Exclude()
   two_factor_secret: string;
 
   @Column({ nullable: true })
@@ -33,17 +35,17 @@ export class User {
   @Column()
   intra_avatar: string;
 
-  @ManyToMany(() => User, user => user.friends)
+  @ManyToMany(() => User, user => user.friends, { onDelete: 'CASCADE' })
   @JoinTable()
   friends: User[];
 
   @ManyToMany(() => Channel, channel => channel.users)
   channels: Channel[]
 
-  @OneToMany(() => Channel, channel => channel.owner)
+  @OneToMany(() => Channel, channel => channel.owner, { onDelete: 'CASCADE' })
   owned: Channel[]
 
-  @ManyToMany(() => User, user => user.blocked)
+  @ManyToMany(() => User, user => user.blocked, { onDelete: 'CASCADE' })
   @JoinTable()
   blocked: User[];
 

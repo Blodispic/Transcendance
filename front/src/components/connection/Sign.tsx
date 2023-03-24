@@ -26,6 +26,7 @@ export default function Sign() {
             await fetch(`${process.env.REACT_APP_BACK}user/${myUser.user.id}/avatar`, {
                 method: 'PATCH',
                 headers: {
+                    // 'Content-Type': 'application/json',
                     'Authorization': `Bearer ${myToken}`,
                 },
                 body: formData,
@@ -35,7 +36,6 @@ export default function Sign() {
         }
 
         if (newname !== '' && myUser.user) {
-            console.log("token", myToken)
             if (newname) {
                 await fetch(`${process.env.REACT_APP_BACK}user/${myUser.user.id}`, {
                     method: 'PATCH',
@@ -46,10 +46,8 @@ export default function Sign() {
                     body: JSON.stringify({ username: newname }),
                 })
                     .then(async response => {
-                        console.log("response ?")
                         if (!response.ok)
                         {
-                            console.log("ca rentre ? ");
                             SetNameExist(true);
                         }
                         else {
@@ -63,7 +61,7 @@ export default function Sign() {
 
                     })
                     .catch( () => {
-                        console.log("response ????")
+                        ;
                     })
             }
         }

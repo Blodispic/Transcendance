@@ -15,7 +15,6 @@ export class GatewayExceptionFilter extends BaseWsExceptionFilter {
 			super.catch(properException, host);
 		} else {
 			console.log("ElseException", exception.message);
-			throw new WsException(exception.message);
 		}
 	}
 }
