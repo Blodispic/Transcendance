@@ -1,34 +1,23 @@
-import React, { useEffect, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../redux/Hook';
 import { FaUserAlt } from "react-icons/fa";
-import { BsChevronRight, BsChevronLeft } from "react-icons/bs";
 import { Cookies } from 'react-cookie';
 import { delete_user } from '../../redux/user';
 import { socket } from '../../App';
-import { Player } from '../Game/Game';
 
 export default function Header() {
 
   const [dropdown, setDropdown] = useState<boolean>(false);
-  const [peopleBool, setPeopleBool] = useState<boolean>(false);
   const cookies = new Cookies();
 
   const dispatch = useAppDispatch();
 
   const dropdownClick = () => {
-    if (dropdown == false)
+    if (dropdown === false)
       setDropdown(true);
     else
       setDropdown(false);
-  }
-
-  const peopleclick = () => {
-
-    if (peopleBool == false)
-      setPeopleBool(true);
-    else
-      setPeopleBool(false);
   }
 
   const logout = () => {
@@ -46,19 +35,19 @@ export default function Header() {
       <div className='navbar-left'>
 
         <Link to="/">
-          <img className='logo' src={require('../../assets/logo.gif')} />
+          <img className='logo' src={require('../../assets/logo.gif')} alt=""/>
         </Link>
 
       </div>
 
       <div className='navbar-right  hover-style' >
-        <Link to="/Game" onClick={_ => setDropdown(false)}>
+        <Link to="/Game" onClick={() => setDropdown(false)}>
           <span className="font-link" >
             Game
           </span>
         </Link>
 
-        <Link to="/Chat" onClick={_ => setDropdown(false)}>
+        <Link to="/Chat" onClick={() => setDropdown(false)}>
           <span className="font-link" >
             Chat
           </span>
@@ -66,23 +55,23 @@ export default function Header() {
         {
           myUser.user !== undefined &&
           <div className='dropdown-container'>
-            <div className="icon-header" onClick={_ => dropdownClick()} >
+            <button className="icon-header" onClick={() => dropdownClick()} >
               <FaUserAlt />
-            </div>
+            </button>
             {
-              dropdown == true &&
+              dropdown === true &&
               <div className="dropdown">
                 <ul >
                   <li>
-                    <Link to={`/Profile/${myUser.user.id}`} onClick={_ => setDropdown(false)}>
+                    <Link to={`/Profile/${myUser.user.id}`} onClick={() => setDropdown(false)}>
                       profile
                     </Link>
                   </li>
-                  <li onClick={_ => { logout(); setDropdown(false); }} >
-                    <a>
+                  <button onClick={() => { logout(); setDropdown(false); }} >
+                    <div>
                       logout
-                    </a>
-                  </li>
+                    </div>
+                  </button>
                 </ul>
               </div>
             }

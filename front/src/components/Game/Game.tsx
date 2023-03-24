@@ -1,10 +1,10 @@
 import * as React from 'react';
 import { useEffect, useState } from "react";
 import { Circle, Layer, Rect, Stage, Text } from "react-konva";
-import { useBeforeUnload } from "react-router-dom";
 import { socket } from "../../App";
 import { ResultPopup } from "./Result";
 import swal from "sweetalert";
+
 
 export interface Vec2 {
 	x: number;
@@ -114,7 +114,6 @@ resetState(gameStateDefault);
 
 export default function GameApp() {
 	const [gameState, setGameState] = useState<GameState>(gameStateDefault);
-	const [isConnected, setIsConnected] = useState(socket.connected);
 	const [result, setResult] = useState<boolean>()
 	const [intervalId, setIntervalId] = useState<NodeJS.Timer>();
 
@@ -294,7 +293,7 @@ function convertState(state: GameState) {
 
 function updateGameState(prev: GameState) {
 	const newState = { ...prev }
-	if (swal && swal.close != undefined && swal.stopLoading != undefined)
+	if (swal && swal.close !== undefined && swal.stopLoading !== undefined)
 	{
 		// swal("Success", "You've been added to the custom room.", "success");
 		// swal.stopLoading();
@@ -370,11 +369,12 @@ function paddleCollision(ball: Ball, player: Player) {
 						ball.previous.y < player.paddle.position.y)
 				)
 					ball.speed.y = ball.speed.y * (Math.random() * (2 - 1.5) + 1.5);
-				else if (
-					player.input.left &&
-					player.input.right &&
-					ball.previous.y > player.paddle.position.y
-				)
+				// ca passe jamais dedans
+				// else if (
+				// 	player.input.left &&
+				// 	player.input.right &&
+				// 	ball.previous.y > player.paddle.position.y
+				// )
 					ball.speed.y = ball.speed.y * (Math.random() * (1 - 0.8) + 0.8);
 			}
 
@@ -390,8 +390,8 @@ function paddleCollision(ball: Ball, player: Player) {
 				else ball.position.y -= 5;
 			}
 			ball.cooldown = 1;
-			const sound = require("../../assets/ponghitside.ogg");
-			new Audio(sound).play();
+			const sound = new Audio(require("../../assets/ponghitside.ogg"));
+			sound.play();
 			return 1;
 		}
 	}

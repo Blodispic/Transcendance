@@ -14,7 +14,9 @@
       "@typescript-eslint/no-non-null-assertion": "off",
       "@typescript-eslint/no-explicit-any": "off",
       "jsx-a11y/alt-text": "warn",
-      "jsx-a11y/anchor-is-valid": "warn"
+      "jsx-a11y/anchor-is-valid": "warn",
+      "react-hooks/exhaustive-deps": "off",
+      "@typescript-eslint/no-var-requires": "off"
     }
   }
   

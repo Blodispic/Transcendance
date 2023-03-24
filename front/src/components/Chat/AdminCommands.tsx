@@ -1,3 +1,4 @@
+import * as React from 'react';
 import { useEffect, useState } from "react";
 import { HiOutlineXMark } from "react-icons/hi2";
 import { socket } from "../../App";
@@ -6,7 +7,7 @@ import { IUser } from "../../interface/User";
 import { addAdmin } from "../../redux/chat";
 import { useAppDispatch } from "../../redux/Hook";
 
-export function BanUser(props: { chanid: any, userid: any, trigger: boolean, setTrigger: Function }) {
+export function BanUser(props: { chanid: any, userid: any, trigger: boolean, setTrigger: (value: boolean) => void }) {
 	const [timeout, setTimeout] = useState<string>("");
 
 	const handleBan = () => {
@@ -17,7 +18,7 @@ export function BanUser(props: { chanid: any, userid: any, trigger: boolean, set
 	}
 
 	useEffect(() => {
-		socket.on("banUserOK", (data) => {
+		socket.on("banUserOK", () => {
 			props.setTrigger(false);
 		});
 		return () => {
@@ -26,21 +27,21 @@ export function BanUser(props: { chanid: any, userid: any, trigger: boolean, set
 	})
 
 	return (props.trigger) ? (
-		<div className="chat-form-popup" onClick={_ => (props.setTrigger(false))}>
-			<div className="clickable-pop-up-inner" onClick={e => e.stopPropagation()}>
-				<HiOutlineXMark className="close-icon" onClick={_ => (props.setTrigger(false))} />
+		<button className="chat-form-popup" onClick={() => (props.setTrigger(false))}>
+			<button className="clickable-pop-up-inner" onClick={e => e.stopPropagation()}>
+				<HiOutlineXMark className="close-icon" onClick={() => (props.setTrigger(false))} />
 				<br />
 				<h3>Ban User</h3>
 				<h4>Set time (optional)</h4>
 				<input type="number" id="clickable-input" min="0" onChange={e => { setTimeout(e.target.value) }} />seconds
 				<br /><br />
-				<button onClick={_ => handleBan()}>Ban User</button>
-			</div>
-		</div>
+				<button onClick={() => handleBan()}>Ban User</button>
+			</button>
+		</button>
 	) : <></>;
 }
 
-export function MuteUser(props: { chanid: any, userid: any, trigger: boolean, setTrigger: Function }) {
+export function MuteUser(props: { chanid: any, userid: any, trigger: boolean, setTrigger: (value: boolean) => void }) {
 	const [timeout, setTimeout] = useState<string>("");
 
 	const handleMute = () => {
@@ -51,7 +52,7 @@ export function MuteUser(props: { chanid: any, userid: any, trigger: boolean, se
 	}
 
 	useEffect(() => {
-		socket.on("muteUserOK", (data) => {
+		socket.on("muteUserOK", () => {
 			props.setTrigger(false);
 		});
 		return () => {
@@ -60,17 +61,17 @@ export function MuteUser(props: { chanid: any, userid: any, trigger: boolean, se
 	})
 
 	return (props.trigger) ? (
-		<div className="chat-form-popup" onClick={_ => (props.setTrigger(false))}>
-			<div className="clickable-pop-up-inner" onClick={e => e.stopPropagation()}>
-				<HiOutlineXMark className="close-icon" onClick={_ => (props.setTrigger(false))} />
+		<button className="chat-form-popup" onClick={() => (props.setTrigger(false))}>
+			<button className="clickable-pop-up-inner" onClick={e => e.stopPropagation()}>
+				<HiOutlineXMark className="close-icon" onClick={() => (props.setTrigger(false))} />
 				<br />
 				<h3>Mute User</h3>
 				<h4>Set time (optional)</h4>
 				<input type="number" id="clickable-input" min="0" onChange={e => { setTimeout(e.target.value) }} />seconds
 				<br /><br />
-				<button onClick={_ => handleMute()}>Mute User</button>
-			</div>
-		</div>
+				<button onClick={() => handleMute()}>Mute User</button>
+			</button>
+		</button>
 	) : <></>;
 }
 
@@ -80,7 +81,7 @@ export function AddAdmin(props: { chanid: any, user: IUser }) {
 	socket.emit('GiveAdmin', { chanid: props.chanid, userid: props.user.id });
 
 	useEffect(() => {
-		socket.on("giveAdminOK", ({ userId, chanId }) => {
+		socket.on("giveAdminOK", ({ chanId }) => {
 			dispatch(addAdmin({ id: chanId, user: props.user }));
 		});
 		return () => {
@@ -93,7 +94,7 @@ export function KickUser(chanid: any, userid: any) {
 	socket.emit('BanUser', { chanid: chanid, userid: userid, timeout: 1 });
 }
 
-export function ConfigureChannel(props: { trigger: boolean, setTrigger: Function, channel: IChannel }) {
+export function ConfigureChannel(props: { trigger: boolean, setTrigger: (value: boolean) => void, channel: IChannel }) {
 	const [newPassword, setNewPassword] = useState("");
 
 	const setPassword = () => {
@@ -112,9 +113,9 @@ export function ConfigureChannel(props: { trigger: boolean, setTrigger: Function
 	}
 
 	return (props.trigger) ? (
-		<div className="chat-form-popup" onClick={_ => props.setTrigger(false)}>
-			<div className="chat-form-inner" onClick={e => e.stopPropagation()}>
-				<HiOutlineXMark className="close-icon" onClick={_ => props.setTrigger(false)} /> <br />
+		<button className="chat-form-popup" onClick={() => props.setTrigger(false)}>
+			<button className="chat-form-inner" onClick={e => e.stopPropagation()}>
+				<HiOutlineXMark className="close-icon" onClick={() => props.setTrigger(false)} /> <br />
 				{
 					props.channel.chanType === 0 &&
 					<>
@@ -132,7 +133,7 @@ export function ConfigureChannel(props: { trigger: boolean, setTrigger: Function
 					</>
 				}
 				<button onClick={setPassword}> Save Setting </button>
-			</div>
-		</div>
+			</button>
+		</button>
 	) : <></>;
 }

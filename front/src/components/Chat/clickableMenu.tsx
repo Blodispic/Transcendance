@@ -1,3 +1,4 @@
+import * as React from 'react';
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { IChannel } from "../../interface/Channel";
@@ -9,7 +10,7 @@ import { page } from "../../interface/enum";
 import { socket } from "../../App";
 import { addAdmin } from "../../redux/chat";
 
-export default function ClickableMenu(props: { user: IUser, chan: IChannel, page: Function }) {
+export default function ClickableMenu(props: { user: IUser, chan: IChannel, page: (page: page) => void }) {
 
     const user: IUser = props.user;
     const [myVar, setMyvar] = useState<boolean>(false);
@@ -24,7 +25,7 @@ export default function ClickableMenu(props: { user: IUser, chan: IChannel, page
     }
 
     useEffect(() => {
-        socket.on("giveAdminOK", ({ userId, chanId }) => {
+        socket.on("giveAdminOK", ({ chanId }) => {
             dispatch(addAdmin({ id: chanId, user: props.user }));
         });
         return () => {
@@ -44,24 +45,24 @@ export default function ClickableMenu(props: { user: IUser, chan: IChannel, page
                     {
                         user.id !== myUser?.id &&
                         <>
-                            <li onClick={_ => setMyvar(true)}>
+                            <button onClick={() => setMyvar(true)}>
                                 Invite Game
-                            </li>
+                            </button>
                             <li>
-                                <a onClick={e => { props.page(page.PAGE_2); navigate(`/Chat/dm/${user.id}`) }}>
+                                <button onClick={() => { props.page(page.PAGE_2); navigate(`/Chat/dm/${user.id}`) }}>
                                     DM
-                                </a>
+                                </button>
                             </li>
                             {
                                 props.chan.admin?.find(obj => obj.id === myUser?.id) &&
                                 <>
                                     {
-                                        props.chan.admin?.find(obj => obj.id === props.user.id) == undefined &&
+                                        props.chan.admin?.find(obj => obj.id === props.user.id) === undefined &&
                                         <>
                                             <li>
-                                                <a onClick={_ => handleAddAdmin()}>
+                                                <button onClick={() => handleAddAdmin()}>
                                                     Add to Admin
-                                                </a>
+                                                </button>
                                             </li>
                                         </>
                                     }
@@ -71,27 +72,27 @@ export default function ClickableMenu(props: { user: IUser, chan: IChannel, page
                                             {
                                                 props.chan.muted?.find(obj => obj.id === props.user.id) === undefined &&
                                                 <li>
-                                                    <a onClick={() => setTimeMute(true)}>
+                                                    <button onClick={() => setTimeMute(true)}>
                                                         Mute
                                                         <MuteUser chanid={props.chan.id} userid={user.id} trigger={timeMute} setTrigger={setTimeMute} />
-                                                    </a>
+                                                    </button>
                                                 </li>
                                             }
 
                                             {
                                                 props.chan.banned?.find(obj => obj.id === props.user.id) === undefined &&
                                                 <li>
-                                                    <a onClick={() => setTimeBan(true)}>
+                                                    <button onClick={() => setTimeBan(true)}>
                                                         Ban
                                                         <BanUser chanid={props.chan.id} userid={user.id} trigger={timeBan} setTrigger={setTimeBan} />
-                                                    </a>
+                                                    </button>
                                                 </li>
                                             }
 
                                             <li>
-                                                <a onClick={() => KickUser(props.chan.id, user.id)}>
+                                                <button onClick={() => KickUser(props.chan.id, user.id)}>
                                                     Kick
-                                                </a>
+                                                </button>
                                             </li>
                                         </>
                                     }

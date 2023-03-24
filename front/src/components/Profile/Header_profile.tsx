@@ -2,15 +2,13 @@ import * as React from 'react';
 import { useEffect, useState } from "react";
 import { HiOutlineMagnifyingGlassCircle } from "react-icons/hi2";
 import { useNavigate } from "react-router-dom";
-import { socket } from "../../App";
-import { IUser, UserStatus } from "../../interface/User";
+import { IUser } from "../../interface/User";
 import { useAppDispatch, useAppSelector } from "../../redux/Hook";
-import { addBlockedUser, unBlockUser } from "../../redux/user";
 import HeaderButtons from "./buttonsHeader";
 
-function Search(props: { currentUser: IUser, setcurrentUser: Function }) {
+function Search(props: { setCurrentUser: (user: IUser) => void }) {
 
-        const { currentUser, setcurrentUser } = props;
+        const { setCurrentUser } = props;
         const navigate = useNavigate();
         const [username, setMan] = useState<string | undefined>(undefined)
         const myToken = useAppSelector(state => state.user.myToken);
@@ -18,7 +16,7 @@ function Search(props: { currentUser: IUser, setcurrentUser: Function }) {
         const search_man = async (e: any) => {
                 if (username) {
                         e.preventDefault();
-                        const response = await fetch(`${process.env.REACT_APP_BACK}user/username/${username}`, {
+                        await fetch(`${process.env.REACT_APP_BACK}user/username/${username}`, {
                                 method: 'GET',
                                 headers: {
                                         'Authorization': `Bearer ${myToken}`,
@@ -27,7 +25,7 @@ function Search(props: { currentUser: IUser, setcurrentUser: Function }) {
                                 .then(async response => {
                                         if (response.ok) {
                                                 const data = await response.json()
-                                                setcurrentUser(data);
+                                                setCurrentUser(data);
                                                 navigate(`../Profile/${data.id}`);
                                         }
                                 })
@@ -43,9 +41,9 @@ function Search(props: { currentUser: IUser, setcurrentUser: Function }) {
 
         return (
                 <div className="search">
-                        <div className="icon-search" onClick={(e) => search_man(e)} >
+                        <button className="icon-search" onClick={(e) => search_man(e)} >
                                 <HiOutlineMagnifyingGlassCircle />
-                        </div>
+                        </button>
                         <div className="input">
                                 <input type="text" onKeyDown={handleKeyDown} onChange={e => setMan(e.target.value)} placeholder="Search..." />
                         </div>
@@ -53,8 +51,7 @@ function Search(props: { currentUser: IUser, setcurrentUser: Function }) {
         )
 }
 
-
-export function Header(props: { currentUser: IUser, setCurrentUser: Function }) {
+export function Header(props: { currentUser: IUser, setCurrentUser: (user: IUser) => void }) {
 
         const { currentUser, setCurrentUser } = props;
         useAppSelector(state => state.user);
@@ -106,7 +103,7 @@ export function Header(props: { currentUser: IUser, setCurrentUser: Function }) 
                                 </div>
 
                                 <div className='info-header'>
-                                        <Search currentUser={currentUser} setcurrentUser={setCurrentUser} />
+                                        <Search setCurrentUser={setCurrentUser} />
                                         <div className='stat-header'>
                                                 <div className='stat'>
                                                         <span>Win</span>
