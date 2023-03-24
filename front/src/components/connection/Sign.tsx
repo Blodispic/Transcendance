@@ -26,7 +26,7 @@ export default function Sign() {
             await fetch(`${process.env.REACT_APP_BACK}user/${myUser.user.id}/avatar`, {
                 method: 'PATCH',
                 headers: {
-                    'Content-Type': 'application/json',
+                    // 'Content-Type': 'application/json',
                     'Authorization': `Bearer ${myToken}`,
                 },
                 body: formData,
