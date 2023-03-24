@@ -56,7 +56,7 @@ export default function CustomGamePopup(props: {trigger: boolean; setTrigger: Fu
     return (props.trigger) ? (
         <div className='custom-popup'>
             <div className='custom-popup-inner'>
-            {/* ; setFriend(undefined) */}
+            {/* ; setFriend(undefined)beute */}
                 <HiOutlineXMark className="close-icon" onClick={_ => {props.setTrigger(false); setMyvar(false); canErase() }} /> <br /> 
                 Create Custom Game
                 <AllPeople friend={friend} setFriend={setFriend} myVar={myVar} setMyvar={setMyvar} />
