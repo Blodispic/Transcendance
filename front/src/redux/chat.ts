@@ -31,7 +31,13 @@ export const chatSlice = createSlice({
                 state.channels = ([payload]);
         },
 
-        updateMember: (state, { payload }: PayloadAction<{id: number, chan: IChannel}>) => {
+        removeChanMessage: (state, {payload}: PayloadAction<number>) => {
+            if (state.channels && state.channels.find(obj => obj.id === payload !== undefined)){
+                state.chanMs = state.chanMs.filter(obj => obj.chanid !== payload);
+            }
+        },
+
+        joinChannel: (state, { payload }: PayloadAction<{id: number, chan: IChannel, user: IUser}>) => {
             let chan = state.channels.find(obj => obj.id === payload.id);
             if (chan) {
                 chan.owner = payload.chan.owner;
@@ -39,6 +45,9 @@ export const chatSlice = createSlice({
                 chan.admin = payload.chan.admin;
                 chan.banned = payload.chan.banned;
                 chan.muted = payload.chan.muted;
+                console.log("here!!: ", chan.users);
+                if (chan?.users.find(obj => obj.id === payload.user.id) === undefined)
+                    chan.users = ([...chan.users, payload.user])
             }
         },
 
@@ -46,9 +55,15 @@ export const chatSlice = createSlice({
             const chan = state.channels.find(obj => obj.id === payload.id);
             if (chan) {
                 if (chan.users !== undefined && chan.users.find(obj => obj.id === payload.user.id) === undefined)
+                {
                     chan.users = ([...chan.users, payload.user]);
-                else
+                    console.log("addMem (1): ", payload.id);
+                }
+                else {
                     chan.users = ([payload.user]);
+                    console.log("addMem (2): ", payload.id);
+                }
+                console.log("redux add user: ", chan.users);
             }
         },
 
@@ -136,5 +151,5 @@ export const chatSlice = createSlice({
     },
 });
 
-export const { setChannels, addChannel, updateMember, addMember, removeMember, addAdmin, banUser, muteUser, setPass, removePass, addMessage, addDM } = chatSlice.actions;
+export const { setChannels, addChannel, removeChanMessage, joinChannel, addMember, removeMember, addAdmin, banUser, muteUser, setPass, removePass, addMessage, addDM } = chatSlice.actions;
 export default chatSlice.reducer;

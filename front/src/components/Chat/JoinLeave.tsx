@@ -4,7 +4,7 @@ import swal from "sweetalert";
 import { socket } from "../../App";
 import { IChannel } from "../../interface/Channel";
 import { IUser } from "../../interface/User";
-import { addMember, removeMember, updateMember } from "../../redux/chat";
+import { addMember, removeChanMessage, removeMember, joinChannel } from "../../redux/chat";
 import { useAppDispatch, useAppSelector } from "../../redux/Hook";
 
 export function CheckPassword(props: { trigger: boolean, setTrigger: Function, channel: IChannel }) {
@@ -72,8 +72,7 @@ export function JoinChannel(props: { channel: IChannel }) {
 						const data = await response.json();
 
 						if (response.ok) {
-							dispatch(updateMember({ id: chanId, chan: data }));
-							dispatch(addMember({ id: chanId, user: currentUser }));
+							dispatch(joinChannel({ id: chanId, chan: data, user: currentUser }));
 						}
 					})
 				}
@@ -122,6 +121,7 @@ export function LeaveChannel(props: { channel: IChannel }) {
 		socket.on("leaveChannelOK", (chanId) => {
 			if (currentUser !== undefined) {
 				dispatch(removeMember({ id: chanId, user: currentUser }));
+				dispatch(removeChanMessage(chanId));
 				swal("You left " + props.channel.name, "success");
 			}
 		})

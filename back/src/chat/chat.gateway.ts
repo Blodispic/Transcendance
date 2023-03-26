@@ -163,7 +163,7 @@ async handleLeaveChannel(@ConnectedSocket() client: Socket, @MessageBody() leave
   await this.channelService.rm( { user, chanid: leaveChannelDto.chanid});
   client.leave("chan" + leaveChannelDto.chanid);
   client.emit("leaveChannelOK", channel.id);
-  this.server.to("chan" + channel.id).emit("leaveChannel", user);
+  this.server.to("chan" + channel.id).emit("leaveChannel", {chanid: channel.id, user: user});
   
 }
 
