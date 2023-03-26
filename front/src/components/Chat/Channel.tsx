@@ -3,9 +3,10 @@ import { BsFillKeyFill, BsFillPersonFill } from "react-icons/bs";
 import { FaCrown } from "react-icons/fa";
 import { HiLockClosed } from "react-icons/hi2";
 import { useNavigate, useParams } from "react-router-dom";
+import { socket } from "../../App";
 import { IChannel } from "../../interface/Channel";
 import { IUser } from "../../interface/User";
-import { setChannels } from "../../redux/chat";
+import { addAdmin, setChannels } from "../../redux/chat";
 import { useAppDispatch, useAppSelector } from "../../redux/Hook";
 import { ChannelHeader, ChannelMessages } from "./ChannelMessages";
 import ClickableMenu from "./clickableMenu";
@@ -148,6 +149,17 @@ export function Channels(props: { page: Function }) {
 		}
 		get_channels();
 	}, []);
+
+    useEffect(() => {
+        socket.on("giveAdminOK", ({ userid, chanid }) => {
+            console.log("giveadminOK - chanid: ", chanid, " | userid: ", userid);
+            dispatch(addAdmin({ id: chanid, userid: userid }));
+        });
+        return () => {
+            socket.off("giveAdminOK");
+        }
+    })
+
 
 	return (id) ? (
 		<div id="chat-container">

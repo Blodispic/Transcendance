@@ -17,20 +17,11 @@ export default function ClickableMenu(props: { user: IUser, chan: IChannel, page
     const [timeMute, setTimeMute] = useState(false);
     const [timeBan, setTimeBan] = useState(false);
     const navigate = useNavigate();
-    const dispatch = useAppDispatch();
 
     const handleAddAdmin = () => {
+        console.log("addAdmin:" , props.chan.id, " |" , props.user.id, " | ", props.user.username);
         socket.emit('GiveAdmin', { chanid: props.chan.id, userid: props.user.id });
     }
-
-    useEffect(() => {
-        socket.on("giveAdminOK", ({ userId, chanId }) => {
-            dispatch(addAdmin({ id: chanId, user: props.user }));
-        });
-        return () => {
-            socket.off("giveAdminOK");
-        }
-    })
 
     return (
         <div className="dropdown-container">

@@ -55,15 +55,9 @@ export const chatSlice = createSlice({
             const chan = state.channels.find(obj => obj.id === payload.id);
             if (chan) {
                 if (chan.users !== undefined && chan.users.find(obj => obj.id === payload.user.id) === undefined)
-                {
                     chan.users = ([...chan.users, payload.user]);
-                    console.log("addMem (1): ", payload.id);
-                }
-                else {
+                else
                     chan.users = ([payload.user]);
-                    console.log("addMem (2): ", payload.id);
-                }
-                console.log("redux add user: ", chan.users);
             }
         },
 
@@ -79,13 +73,17 @@ export const chatSlice = createSlice({
             }
         },
 
-        addAdmin: (state, { payload }: PayloadAction<{ id: number, user: IUser }>) => {
+        addAdmin: (state, { payload }: PayloadAction<{ id: number, userid: number }>) => {
             const chan = state.channels.find(obj => obj.id === payload.id);
+            console.log("redux -- addAmin - chan: ", chan?.id, " | payload chanid: ", payload.id);
             if (chan) {
-                if (chan.admin && chan.admin.find(obj => obj.id === payload.user.id) === undefined)
-                    chan.admin = ([...chan.admin, payload.user]);
-                else
-                    chan.admin = ([payload.user]);
+                const user = chan.users.find(obj => obj.id === payload.userid);
+                if (user) {
+                    if (chan.admin && chan.admin.find(obj => obj.id === user.id) === undefined)
+                    chan.admin = ([...chan.admin, user]);
+                    else
+                    chan.admin = ([user]);
+                }
             }
         },
 

@@ -74,20 +74,19 @@ export function MuteUser(props: { chanid: any, userid: any, trigger: boolean, se
 	) : <></>;
 }
 
-export function AddAdmin(props: { chanid: any, user: IUser }) {
-	const dispatch = useAppDispatch();
+// export function AddAdmin(props: { chanid: any, user: IUser }) {
+// 	const dispatch = useAppDispatch();
+// 	socket.emit('GiveAdmin', { chanid: props.chanid, userid: props.user.id });
 
-	socket.emit('GiveAdmin', { chanid: props.chanid, userid: props.user.id });
-
-	useEffect(() => {
-		socket.on("giveAdminOK", ({ userId, chanId }) => {
-			dispatch(addAdmin({ id: chanId, user: props.user }));
-		});
-		return () => {
-			socket.off("giveAdminOK");
-		}
-	})
-}
+// 	useEffect(() => {
+// 		socket.on("giveAdminOK", ({ userId, chanId }) => {
+// 			dispatch(addAdmin({ id: chanId, user: props.user }));
+// 		});
+// 		return () => {
+// 			socket.off("giveAdminOK");
+// 		}
+// 	})
+// }
 
 export function KickUser(chanid: any, userid: any) {
 	socket.emit('BanUser', { chanid: chanid, userid: userid, timeout: 1 });

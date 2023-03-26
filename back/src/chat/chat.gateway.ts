@@ -173,7 +173,7 @@ async handleAddPassword(@ConnectedSocket() client: Socket, @MessageBody() chanPa
   const user = client.handshake.auth.user;
   if (channel === null || user === null)
     throw new BadRequestException("No such Channel or User"); // no such channel or user
-  if (!(await this.channelService.isUserAdmin(user))) // for now only the real owner/admin, soon any owner/admin
+  if (!(await this.channelService.isUserAdmin({chanid: channel.id, userid: user.id}))) // selee - argument changed from user to chanid & userid
     throw new BadRequestException("you are not Admin on this channel"); // user willing to change password isn't admin/owner
   this.channelService.update(channel.id, {
     password: chanPasswordDto.password,
@@ -189,7 +189,7 @@ async handleRmPassword(@ConnectedSocket() client: Socket, @MessageBody() chanPas
   const user = client.handshake.auth.user;
   if (channel === null || user === null)
     throw new BadRequestException("No such Channel or User"); // no such channel or user
-  if (!(await this.channelService.isUserAdmin(user))) // for now only the real owner/admin, soon any owner/admin
+  if (!(await this.channelService.isUserAdmin({chanid: channel.id, userid: user.id}))) // selee - argument changed from user to chanid & userid
     throw new BadRequestException("You are not Admin on this Channel"); // user willing to change password isn't admin/owner
   this.channelService.update(channel.id, {
     rmPassword: 1,
@@ -205,7 +205,7 @@ async handleChangePassword(@ConnectedSocket() client: Socket, @MessageBody() cha
   const user = client.handshake.auth.user;
   if (channel === null || user === null)
     throw new BadRequestException("No such Channel or User"); // no such channel or user
-  if (!(await this.channelService.isUserAdmin(user))) // for now only the real owner/admin, soon any owner/admin
+  if (!(await this.channelService.isUserAdmin({chanid: channel.id, userid: user.id}))) // selee - argument changed from user to chanid & userid
     throw new BadRequestException("You are not Admin on this Channel"); // user willing to change password isn't admin/owner
   if (channel.password === null)
     throw new BadRequestException("Channel does not already have a password"); // chan doesn't already have password
@@ -265,12 +265,14 @@ async handleMuteUser(@ConnectedSocket() client: Socket, @MessageBody() muteUserD
 async handleGiveAdmin(@ConnectedSocket() client: Socket, @MessageBody() giveAdminDto: GiveAdminDto) {
   const channel = await this.channelService.getById(giveAdminDto.chanid);
   const user = client.handshake.auth.user;
+  // console.log("giveAdmin - client: ", user.id, " | chanId: ", channel?.name, " | newAdmin: ", giveAdminDto.userid);
   if (channel === null || user === null)
     throw new BadRequestException("No such channel or User"); // no such channel or user
-  if (!(await this.channelService.isUserAdmin(user)))
+  if (!(await this.channelService.isUserAdmin({chanid: channel.id, userid: user.id}))) // selee - argument changed from user to chanid & userid
     throw new BadRequestException("You are not Admin on this channel");
   this.channelService.addAdmin(giveAdminDto);
-  client.emit("giveAdminOK", user.id, channel.id);
+  // client.emit("giveAdminOK", {userid: giveAdminDto.userid, chanid: channel.id}); //selee - added {}
+  this.server.to("chan" + channel.id).emit("giveAdminOK", {userid: giveAdminDto.userid, chanid: channel.id}); //selee - added {}
 }
 
 @SubscribeMessage('Invite')
