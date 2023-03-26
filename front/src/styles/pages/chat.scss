@@ -114,7 +114,6 @@ $tab-color: rgba(var(--primary-color), 0.5); //rgb(121, 121, 121);
 
 		form input {
 			position: absolute;
-			bottom: 0;
 			font-family: 'Fredoka One', cursive;
 			font-size: 20px;
 			color: white;
@@ -146,7 +145,7 @@ $tab-color: rgba(var(--primary-color), 0.5); //rgb(121, 121, 121);
 		font-size: small;
 		text-align: center;
 		cursor: pointer;
-		padding: 5px 5px;
+		padding: 5px;
 		background: var(--primary-color);
 		color: white;
 		transition: .3s;
@@ -172,7 +171,7 @@ $tab-color: rgba(var(--primary-color), 0.5); //rgb(121, 121, 121);
 		font-size: small;
 		text-align: center;
 		cursor: pointer;
-		padding: 5px 5px;
+		padding: 5px;
 		background: var(--primary-color);
 		color: white;
 		transition: .3s;
