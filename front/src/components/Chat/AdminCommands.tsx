@@ -4,6 +4,7 @@ import { HiOutlineXMark } from "react-icons/hi2";
 import { socket } from "../../App";
 import { IChannel } from "../../interface/Channel";
 import { IUser } from "../../interface/User";
+import AllPeople from "../utils/Allpeople";
 import { addAdmin } from "../../redux/chat";
 import { useAppDispatch } from "../../redux/Hook";
 
@@ -94,7 +95,39 @@ export function KickUser(chanid: any, userid: any) {
 	socket.emit('BanUser', { chanid: chanid, userid: userid, timeout: 1 });
 }
 
-export function ConfigureChannel(props: { trigger: boolean, setTrigger: (value: boolean) => void, channel: IChannel }) {
+export function ConfigureChannelPrivate(props: {trigger: boolean, setTrigger: (value: boolean) => void, channel: IChannel}) {
+    const [friend, setFriend] = useState<IUser[] >(props.channel.users);
+	
+	const AddPeoplePrivate = () => {
+		if (friend.length > 0)
+			socket.emit('AddPeoplePrivate', { chanId: props.channel.id, users: friend });
+	}
+	
+	useEffect(() => {
+		socket.on("AddPeoplePrivateOk", (error_message) => {
+		});
+		return () => {
+			socket.off("AddPeoplePrivateOk");
+		}
+	});
+
+	return (props.trigger) ? (
+		<div className="chat-form-popup" onClick={_ => props.setTrigger(false)}>
+			<div className="chat-form-inner" onClick={e => e.stopPropagation()}>
+				<HiOutlineXMark className="close-icon" onClick={_ => props.setTrigger(false)} /> <br />
+				{
+					
+					<div className="allpoeple">
+					<AllPeople friend={friend} setFriend={setFriend} />
+					</div>
+				}
+				<button onClick={() => {AddPeoplePrivate(); props.setTrigger(false)}}> Save Setting </button>
+			</div>
+		</div>
+	) : <></>;
+}
+
+export function ConfigureChannel(props: {trigger: boolean, setTrigger: Function, channel: IChannel}) {
 	const [newPassword, setNewPassword] = useState("");
 
 	const setPassword = () => {

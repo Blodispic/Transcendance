@@ -12,7 +12,7 @@ import swal from 'sweetalert';
 export default function CustomGamePopup(props: {trigger: boolean; setTrigger: (arg: boolean) => void; friend: IUser | undefined} ) {
     const [extra, setExtra] = useState<boolean>(false);
     const [maxScore, setMaxScore] = useState(1);
-    const [myVar, setMyvar] = useState<boolean>(false);
+    // const [myVar, setMyvar] = useState<boolean>(false);
 
     const myUser = useAppSelector(state => state.user);
     const [friend, setFriend] = useState<IUser[]  >([]);
@@ -48,7 +48,7 @@ export default function CustomGamePopup(props: {trigger: boolean; setTrigger: (a
         }
         socket.emit("createCustomGame", { user1: myUser.user, user2: friend[0], extra: extra, scoreMax: Max });
         props.setTrigger(false);
-        setMyvar(false);
+        // setMyvar(false);
         return;
     }
 
@@ -56,9 +56,9 @@ export default function CustomGamePopup(props: {trigger: boolean; setTrigger: (a
         <div className='custom-popup'>
             <div className='custom-popup-inner'>
             {/* ; setFriend(undefined) */}
-                <HiOutlineXMark className="close-icon" onClick={() => {props.setTrigger(false); setMyvar(false); canErase() }} /> <br /> 
+                <HiOutlineXMark className="close-icon" onClick={() => {props.setTrigger(false);  canErase() }} /> <br /> 
                 Create Custom Game
-                <AllPeople friend={friend} setFriend={setFriend} myVar={myVar} setMyvar={setMyvar} />
+                <AllPeople friend={friend} setFriend={setFriend} />
 
                 <div className='sub-element'>Set Extra Mode <br />
                     <label> <input type="checkbox" onChange={changeExtra} /> Extra mode </label>
