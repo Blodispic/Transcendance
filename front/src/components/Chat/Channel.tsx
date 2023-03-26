@@ -1,3 +1,4 @@
+import * as React from 'react';
 import { useEffect, useState } from "react";
 import { BsFillKeyFill, BsFillPersonFill } from "react-icons/bs";
 import { FaCrown } from "react-icons/fa";
@@ -8,6 +9,7 @@ import { useAppDispatch, useAppSelector } from "../../redux/Hook";
 import { ChannelHeader, ChannelMessages } from "./ChannelMessages";
 import ClickableMenu from "./clickableMenu";
 import { AddChannel } from "./CreateChannel";
+import { page } from '../../interface/enum';
 
 function JoinedChannelList() {
 	const navigate = useNavigate();
@@ -23,7 +25,7 @@ function JoinedChannelList() {
 					{
 						chan.users.find(obj => obj.id === currentUser?.id) &&
 						<li>
-							<div onClick={_ => navigate(`/Chat/channel/${chan.id}`)}>{chan.name}
+							<div onClick={() => navigate(`/Chat/channel/${chan.id}`)}>{chan.name}
 								{
 									chan.chanType === 1 &&
 									<HiLockClosed style={{ float: 'right' }} />
@@ -56,7 +58,7 @@ function PublicChannelList() {
 						{
 							chan.chanType !== 1 &&
 							<li>
-								<div onClick={_ => navigate(`/Chat/channel/${chan.id}`)}>{chan.name}
+								<div onClick={() => navigate(`/Chat/channel/${chan.id}`)}>{chan.name}
 									{
 										chan.chanType === 2 &&
 										<BsFillKeyFill style={{ paddingLeft: '10px' }} />
@@ -71,7 +73,7 @@ function PublicChannelList() {
 	);
 }
 
-function ChannelMemberList(props: { page: Function }) {
+function ChannelMemberList(props: { page: (page: page) => void }) {
 	const [currentId, setCurrentId] = useState<number | undefined>(undefined);
 	const currentUser = useAppSelector(state => state.user.user);
 	const { id } = useParams();
@@ -103,7 +105,7 @@ function ChannelMemberList(props: { page: Function }) {
 		<div className="title"> Members <hr />
 			{currentChan && currentChan.users?.map(user => (
 				<div key={user.id} className="user-list">
-					<ul onClick={e => changeId(user.id)}>
+					<ul onClick={() => changeId(user.id)}>
 						<li>
 							{user.username}
 							{
@@ -128,13 +130,13 @@ function ChannelMemberList(props: { page: Function }) {
 	);
 }
 
-export function Channels(props: { page: Function }) {
+export function Channels(props: { page: (page: page) => void }) {
 	const { id } = useParams();
 	const dispatch = useAppDispatch();
 
 	useEffect(() => {
 		const get_channels = async () => {
-			const response = await fetch(`${process.env.REACT_APP_BACK}channel`, {
+			await fetch(`${process.env.REACT_APP_BACK}channel`, {
 				method: 'GET',
 			}).then(async response => {
 				const data = await response.json();

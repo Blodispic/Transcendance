@@ -1,9 +1,9 @@
-import { forwardRef, Inject, UseFilters, UsePipes, ValidationPipe } from "@nestjs/common";
-import { MessageBody, OnGatewayConnection, OnGatewayDisconnect, SubscribeMessage, WebSocketGateway, WebSocketServer } from "@nestjs/websockets";
-import { Server, Socket } from "socket.io";
-import { UserService } from "./user/user.service";
-import { GatewayExceptionFilter } from "./app.exceptionFilter";
-import { ChannelService } from "./chat/channel/channel.service";
+import { forwardRef, Inject, UseFilters, UsePipes, ValidationPipe } from '@nestjs/common';
+import { MessageBody, OnGatewayConnection, OnGatewayDisconnect, SubscribeMessage, WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
+import { Server, Socket } from 'socket.io';
+import { UserService } from './user/user.service';
+import { GatewayExceptionFilter } from './app.exceptionFilter';
+import { ChannelService } from './chat/channel/channel.service';
 
 export const userList: Socket[] = [];
 
@@ -35,10 +35,10 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		userList.push(client);
 		const channels = await this.channelService.getUserChannel(client.handshake.auth.user.id);
 		channels.forEach(channel => {
-			client.join("chan" + channel.id);
+			client.join('chan' + channel.id);
 		});
 
-		this.server.emit("UpdateSomeone", { idChange: client.handshake.auth.user.id, idChange2: 0 })
+		this.server.emit('UpdateSomeone', { idChange: client.handshake.auth.user.id, idChange2: 0 });
 	}
 
 	async handleDisconnect(client: any) {
@@ -48,7 +48,7 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
 			console.log(error);
 		}
 		userList.splice(userList.indexOf(client), 1);
-		this.server.emit("UpdateSomeone", { idChange: client.handshake.auth.user.id, idChange2: 0 })
+		this.server.emit('UpdateSomeone', { idChange: client.handshake.auth.user.id, idChange2: 0 });
 	}
 	
 	findSocketById(userId: number) {
@@ -61,30 +61,30 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		return null;
 	}
 
-	@SubscribeMessage("RequestSent")
+	@SubscribeMessage('RequestSent')
 	HandleRequestSent(@MessageBody() playerId: number) {
 		const socket = this.findSocketById(playerId);
 		if (socket != null && socket.id != null)// && socket.handshake.auth.user.status == "Online")
 		{
-    	    this.server.to(socket.id).emit("RequestSent");
+    	    this.server.to(socket.id).emit('RequestSent');
 		}
 	}
 
-	@SubscribeMessage("RequestAccepted")
+	@SubscribeMessage('RequestAccepted')
 	HandleRequestAccepted(@MessageBody() playerId: number) {
 		const socket = this.findSocketById(playerId);
 		if (socket != null && socket.id != null)// && socket.handshake.auth.user.status == "Online")
 		{
-    	    this.server.to(socket.id).emit("RequestAccepted");
+    	    this.server.to(socket.id).emit('RequestAccepted');
 		}
 	}
 
-	@SubscribeMessage("RequestDeclined")
+	@SubscribeMessage('RequestDeclined')
 	HandleRequestDeclined(@MessageBody() playerId: number) {
 		const socket = this.findSocketById(playerId);
 		if (socket != null && socket.id != null)// && socket.handshake.auth.user.status == "Online")
 		{
-    	    this.server.to(socket.id).emit("RequestAccepted");
+    	    this.server.to(socket.id).emit('RequestAccepted');
 		}
 	}
 }
