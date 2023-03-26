@@ -52,7 +52,7 @@ export function ChannelHeader() {
 							{
 								currentChan.users?.find(obj => obj.id === currentUser?.id) &&
 								<>
-									{currentChan.owner.id === currentUser?.id &&
+									{currentChan.owner?.id === currentUser?.id &&
 										<>
 											<ImCog className="config-icon" onClick={_ => setPopup(true)} />
 											<ConfigureChannel trigger={popup} setTrigger={setPopup} channel={currentChan} />

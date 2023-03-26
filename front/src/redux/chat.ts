@@ -72,6 +72,10 @@ export const chatSlice = createSlice({
             if (chan) {
                 if (chan.users && chan.users.find(obj => obj.id === payload.user.id) !== undefined)
                     chan.users = chan.users.filter(obj => obj.id !== payload.user.id);
+                if (chan.admin && chan.admin.find(obj => obj.id === payload.user.id) !== undefined)
+                    chan.admin = chan.admin.filter(obj => obj.id !== payload.user.id);
+                if (chan.owner && chan.owner.id === payload.user.id)
+                    chan.owner = undefined;
             }
         },
 
