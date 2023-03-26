@@ -188,13 +188,13 @@ function InfoFriend(props: { user: IUser }) {
 					<>
 						{
 							relation === "Nobody" &&
-							<span onClick={() => (sendFriendRequest())} >
+							<li onClick={() => (sendFriendRequest())} >
 								Add Friend
-							</span>
+							</li>
 						}
 						{
 							relation === "Friend" &&
-							<span onClick={() => (removeFriend())}> Remove Friend </span>
+							<li onClick={() => (removeFriend())}> Remove Friend </li>
 						}
 						{
 							relation === "friendRequestSent" &&
@@ -202,13 +202,13 @@ function InfoFriend(props: { user: IUser }) {
 						}
 						{
 							relation === "friendRequestReceived" &&
-							<span onClick={() => (acceptFriendRequest())}> accept in Friend </span>
+							<li onClick={() => (acceptFriendRequest())}> accept in Friend </li>
 						}
 
 
-						<span onClick={() => setMyvar(true)}>
+						<li onClick={() => setMyvar(true)}>
 							Invite Game
-						</span>
+						</li>
 
 						{
 							((myUser.user && (myUser.user.blocked === undefined
