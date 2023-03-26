@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useEffect } from 'react';
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { useAppDispatch, useAppSelector } from "../../redux/Hook";
+import { useAppDispatch } from "../../redux/Hook";
 import { oauth, setUser, set_status, change_avatar, setToken } from "../../redux/user";
 import { useCookies } from "react-cookie";
 import { UserStatus } from '../../interface/User';
@@ -22,7 +22,6 @@ export default function Connection() {
     const [, setCookie] = useCookies(['Token']);
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
-    useAppSelector(state => state.user);
 
     useEffect(() => {
         const oauthCode = searchParams.get('code'); // Tu lui dit de recuperer le parametre "code" dans l'url
