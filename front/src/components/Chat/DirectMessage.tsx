@@ -35,11 +35,11 @@ function DMList(props: { currentdm: IUser | undefined; setCurrentDm: (user: IUse
 			{alluser !== undefined &&
 				<>
 					{alluser && alluser.map(user => (
-						<div key={user.username} onClick={() => {props.setCurrentDm(user); navigate(`/Chat/dm/${user.id}`)}} >
+						<ul key={user.username} onClick={() => {props.setCurrentDm(user); navigate(`/Chat/dm/${user.id}`)}} >
 							<li >
 								{user.username}
 							</li>
-						</div>
+						</ul>
 					))}
 				</>
 			}
