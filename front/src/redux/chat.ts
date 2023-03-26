@@ -45,7 +45,6 @@ export const chatSlice = createSlice({
                 chan.admin = payload.chan.admin;
                 chan.banned = payload.chan.banned;
                 chan.muted = payload.chan.muted;
-                console.log("here!!: ", chan.users);
                 if (chan?.users.find(obj => obj.id === payload.user.id) === undefined)
                     chan.users = ([...chan.users, payload.user])
             }
@@ -75,7 +74,6 @@ export const chatSlice = createSlice({
 
         addAdmin: (state, { payload }: PayloadAction<{ id: number, userid: number }>) => {
             const chan = state.channels.find(obj => obj.id === payload.id);
-            console.log("redux -- addAmin - chan: ", chan?.id, " | payload chanid: ", payload.id);
             if (chan) {
                 const user = chan.users.find(obj => obj.id === payload.userid);
                 if (user) {
@@ -94,8 +92,8 @@ export const chatSlice = createSlice({
                     chan.banned = ([...chan.banned, payload.user]);
                 else
                     chan.banned = ([payload.user]);
+                console.log(":: redux :: banUser");
             }
-            // console.log(":: redux :: banUser");
         },
 
         unBanUser: (state, { payload }: PayloadAction<{ id: number, user: IUser }>) => {
@@ -114,8 +112,8 @@ export const chatSlice = createSlice({
                     chan.muted = ([...chan.muted, payload.user]);
                 else
                     chan.muted = ([payload.user]);
+                console.log(":: redux :: muteUser");
             }
-            // console.log(":: redux :: muteUser");
         },
 
         unMuteUser: (state, { payload }: PayloadAction<{ id: number, user: IUser }>) => {
