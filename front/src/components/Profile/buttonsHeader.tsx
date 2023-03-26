@@ -139,7 +139,7 @@ export function InviteButton(props: { user: any, relation: string, setRelation: 
         })
             .then(async Response => {
                 if (Response.ok) {
-                    const str: string = "They" + " are now your friend!";
+                    const str: string = "They are now your friend!";
                     swal("Congrats", str, "success");
                     socket.emit("RequestAccepted", user.id);
                     props.setRelation("Friend");
