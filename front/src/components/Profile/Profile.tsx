@@ -68,13 +68,17 @@ export default function Profile() {
 
         const fetchid = async () => {
                 console.log("ca reload ducoup ")
-                const response = await fetch(`${process.env.REACT_APP_BACK}user/id/${id}`, {
+                await fetch(`${process.env.REACT_APP_BACK}user/id/${id}`, {
                         method: 'GET',
                         headers: {
                                 'Authorization': `Bearer ${myUser.user.myToken}`,
                         }
                 })
-                setCurrentUser(await response.json());
+                .then(async response => {
+                        if (response.ok)
+                                setCurrentUser(await response.json());
+
+                })
         }
 
         useEffect(() => {
