@@ -7,7 +7,8 @@ import { socket } from "../../App";
 import { IChannel } from "../../interface/Channel";
 import { IMessage } from "../../interface/Message";
 import { IUser } from "../../interface/User";
-import { useAppSelector } from "../../redux/Hook";
+import { addMessage } from "../../redux/chat";
+import { useAppDispatch, useAppSelector } from "../../redux/Hook";
 import { ConfigureChannel } from "./AdminCommands";
 import { JoinChannel, LeaveChannel } from "./JoinLeave";
 
@@ -75,12 +76,26 @@ export function ChannelMessages() {
 	const currentChan: IChannel | undefined = useAppSelector(state =>
 		state.chat.channels.find(chan => chan.id === chanId));
 	const messages: IMessage[] = useAppSelector(state => state.chat.chanMs.filter(obj => obj.chanid === chanId));
+	const dispatch = useAppDispatch();
 
 	useEffect(() => {
 		if (id !== undefined) {
 			setChanId(parseInt(id));
 		}
 	}, [id]);
+
+	useEffect(() => {
+		socket.on("sendMessageChannelFailed", (errorMessage) => {
+			console.log("messagechanfailed: ", errorMessage);
+			const newMessage: IMessage = {
+				chanid: currentChan?.id,
+				message: errorMessage, 
+			  }
+			  dispatch(addMessage(newMessage));
+		});
+		return () => {
+			socket.off("sendMessageChannelFailed");
+		}})
 
 	const handleSubmitNewMessage = (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();

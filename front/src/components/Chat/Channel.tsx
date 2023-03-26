@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
+import { AiOutlineStop } from "react-icons/ai";
 import { BsFillKeyFill, BsFillPersonFill } from "react-icons/bs";
-import { FaCrown } from "react-icons/fa";
+import { FaCrown, FaVolumeMute } from "react-icons/fa";
 import { HiLockClosed } from "react-icons/hi2";
 import { useNavigate, useParams } from "react-router-dom";
 import { socket } from "../../App";
@@ -117,6 +118,14 @@ function ChannelMemberList(props: { page: Function }) {
 								currentChan.owner?.id !== user.id &&
 								currentChan.admin?.find(obj => obj.id === user.id) &&
 								<BsFillPersonFill />
+							}
+							{
+								currentChan.banned && currentChan.banned.find(obj => obj.id === user.id) &&
+								<AiOutlineStop />
+							}
+							{
+								currentChan.muted && currentChan.muted.find(obj => obj.id === user.id) &&
+								<FaVolumeMute />
 							}
 						</li>
 					</ul>

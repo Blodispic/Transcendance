@@ -78,12 +78,15 @@ async handleSendMessageChannel(@ConnectedSocket() client: Socket, @MessageBody()
   const sender = await this.userService.getById(client.handshake.auth.user.id);
   if (sender == null)
     throw new BadRequestException("No such user");
-  if (!(await this.channelService.isUserinChan(channel, sender)))
+  if (!(await this.channelService.isUserinChan(channel, sender))) {
+    client.emit("sendMessageChannelFailed", "You are not in this channel"); // added by selee for test
     throw new BadRequestException("You are not in this Channel");
+  }
   if (await this.channelService.isUserMuted({chanid: channel.id, userid: sender.id}) || 
-  await this.channelService.isUserBanned({chanid: channel.id, userid: sender.id })) // ban to remove soon
+  await this.channelService.isUserBanned({chanid: channel.id, userid: sender.id })) {  // ban to remove soon
+    client.emit("sendMessageChannelFailed", "You are muted or banned on this channel"); //added by selee for test
     throw new BadRequestException("you are muted for now on this channel"); // user is ban or mute from this channel
-  
+  }
   this.server.to("chan" + sendmessageChannelDto.chanid).emit("sendMessageChannelOK", {
     chanid: channel.id,
     sender: sender,
