@@ -221,9 +221,9 @@ function InfoFriend(props: { user: IUser }) {
 
 						{
 							((myUser.user && (myUser.user.blocked !== undefined && myUser.user.blocked.find(block => block.id === user.id) !== undefined)) && user.username !== myUser.user!.username) &&
-							<div onClick={() => UnBlock()}>
+							<li onClick={() => UnBlock()}>
 								Unblock
-							</div>
+							</li>
 						}
 
 					</>
