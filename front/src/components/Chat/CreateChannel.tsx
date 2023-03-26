@@ -11,9 +11,9 @@ export function PopupCreateChannel(props: { trigger: boolean, setTrigger: Functi
 	const [chanName, setChanName] = useState("");
 	const [password, setPassword] = useState("");
 	const [chanMode, setChanMode] = useState(0);
-	const [friend, setFriend] = useState<IUser[]>([]);
-	const [myVar, setMyvar] = useState<boolean>(false);
-	const [failed, setFailed] = useState<boolean>(false);
+    const [friend, setFriend] = useState<IUser[] >([]);
+	// const [myVar, setMyvar] = useState<boolean> (false);
+	const [failed, setFailed] = useState<boolean> (false);
 	const navigate = useNavigate();
 	const dispatch = useAppDispatch();
 
@@ -30,16 +30,15 @@ export function PopupCreateChannel(props: { trigger: boolean, setTrigger: Functi
 	}
 
 	const handleCreateNewChan = () => {
+		console.log("userlist", friend)
 		if (chanName !== "")
 			socket.emit('createChannel', { chanName: chanName, password: password, chanType: chanMode, users: friend });
 		setChanName("");
 		setPassword("");
-		setChanMode(0);
 	}
-
+	
 	useEffect(() => {
 		socket.on("createChannelFailed", (error_message) => {
-			setChanMode(0);
 			setFailed(true);
 		});
 		socket.on("createChannelOk", (new_chanid) => {
@@ -53,6 +52,7 @@ export function PopupCreateChannel(props: { trigger: boolean, setTrigger: Functi
 			fetchChanInfo();
 			setFailed(false);
 			props.setTrigger(false);
+			setChanMode(0);
 			// navigate(`/Chat/channel/${new_chanid}`)
 		});
 
@@ -85,7 +85,7 @@ export function PopupCreateChannel(props: { trigger: boolean, setTrigger: Functi
 				{
 					chanMode === 1 &&
 					<div className="allpoeple">
-						<AllPeople friend={undefined} setFriend={setFriend} myVar={myVar} setMyvar={setMyvar} />
+					<AllPeople friend={undefined} setFriend={setFriend}  />
 					</div>
 				}
 				<button onClick={() => handleCreateNewChan()}>Create Channel</button><span></span>
