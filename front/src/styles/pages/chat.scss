@@ -397,3 +397,14 @@ $tab-color: rgba(var(--primary-color), 0.5); //rgb(121, 121, 121);
 	color: #B33A3A;
 	font-size: smaller;
 }
+
+
+.message_block {
+	background-color: #9da6b7;
+	.text {
+		margin-top: 10px;
+		margin-bottom: 10px;
+		color: #757575;
+		font-size: initial;
+	}
+}

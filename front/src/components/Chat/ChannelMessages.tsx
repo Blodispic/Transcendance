@@ -5,7 +5,7 @@ import { ImCog } from "react-icons/im";
 import { useParams } from "react-router-dom";
 import { socket } from "../../App";
 import { useAppSelector } from "../../redux/Hook";
-import { ConfigureChannel } from "./AdminCommands";
+import { ConfigureChannel, ConfigureChannelPrivate } from "./AdminCommands";
 import { JoinChannel, LeaveChannel } from "./JoinLeave";
 
 export function ChannelHeader() {
@@ -58,6 +58,21 @@ export function ChannelHeader() {
 							}
 						</>
 					}
+					{
+						currentChan.chanType === 1 &&
+						<>
+							{
+								currentChan.users.find(obj => obj.id == currentUser?.id) &&
+								<>
+									{currentChan.admin.find(obj => obj.id == currentUser?.id) &&
+										<>
+											<ImCog className="config-icon" onClick={() => setPopup(true)} />
+											<ConfigureChannelPrivate trigger={popup} setTrigger={setPopup} channel={currentChan} />
+										</>}
+								</>
+							}
+						</>
+					}
 				</>
 			}
 		</div>
@@ -98,14 +113,34 @@ export function ChannelMessages() {
 							{messages && messages.map((message, index) => (
 								<div key={index}>
 									{(message.chanid === currentChan.id && message.sender !== undefined) &&
-										<div className="__wrap">
-											<div className="message-info">
-												<img className="user-avatar" src={`${process.env.REACT_APP_BACK}user/${message.sender?.id}/avatar`} />
-												<p>{message.sender?.username}</p>
-												<p className="timestamp">{message.sendtime}</p>
-											</div>
-											{message.message}
-										</div>
+										<>
+											{
+												currentUser.user?.blocked?.find(user => user.id === message.sender?.id) === undefined &&
+												<div className="__wrap">
+													<div className="message-info">
+														<img className="user-avatar" src={`${process.env.REACT_APP_BACK}user/${message.sender?.id}/avatar`} />
+														<p>{message.sender?.username}</p>
+														<p className="timestamp">{message.sendtime}</p>
+
+													</div>
+													{message.message}
+												</div>
+											}
+											{
+												currentUser.user?.blocked?.find(user => user.id === message.sender?.id) !== undefined &&
+												< div className="__wrap message_block">
+													<div className="message-info "  >
+														<img className="user-avatar" src={`${process.env.REACT_APP_BACK}user/${message.sender?.id}/avatar`} />
+														<p>{message.sender?.username}</p>
+														<p className="timestamp">{message.sendtime}</p>
+													</div>
+													<p className="text">
+														message from blocked user
+													</p>
+												</div>
+											}
+											
+										</>
 									}
 									{(message.chanid === currentChan.id && message.sender === undefined) &&
 										<div className="channel-announce">
