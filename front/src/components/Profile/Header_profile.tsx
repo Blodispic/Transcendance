@@ -54,9 +54,7 @@ function Search(props: { setCurrentUser: (user: IUser) => void }) {
 export function Header(props: { currentUser: IUser, setCurrentUser: (user: IUser) => void }) {
 
         const { currentUser, setCurrentUser } = props;
-        useAppSelector(state => state.user);
         const totalGames = currentUser.win + currentUser.lose;
-        useAppDispatch();
 
         let winPercentage = 0;
 
