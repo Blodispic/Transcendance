@@ -1,10 +1,10 @@
+import * as React from 'react';
 import { useEffect, useState } from "react";
 import { AiFillPlusCircle } from "react-icons/ai";
-import { IUser, UserStatus } from "../../interface/User";
+import { IUser } from "../../interface/User";
 import { useAppSelector } from "../../redux/Hook";
 
-
-export default function AllPeople(props: { friend: IUser[] | undefined, setFriend: Function}) {
+export default function AllPeople(props: { friend: IUser[] | undefined, setFriend: (users: IUser[]) => void }) {
     const myUser = useAppSelector(state => state);
     const [alluser, setAlluser] = useState<IUser[] | undefined>(undefined);
     const [allfriend, setAllFriend] = useState<IUser[] | undefined>(undefined);
@@ -50,26 +50,28 @@ export default function AllPeople(props: { friend: IUser[] | undefined, setFrien
             <div className='avatar-inpopup'>
                { 
                 props.friend && props.friend.length < 2 &&
-                <img className='avatar avatar-manu' src={`${process.env.REACT_APP_BACK}user/${myUser.user.user!.id}/avatar`} />
+                <img className='avatar avatar-manu' src={`${process.env.REACT_APP_BACK}user/${myUser.user.user!.id}/avatar`} alt="" />
                 }
                 {
                     <>
 
                         {
                             (window.location.href.search('Game') !== -1 || (props.friend !== undefined && props.friend.length < 2 )) &&
-                            <a> Vs </a>
+                            <div> Vs </div>
                         }
                         {allfriend && allfriend.map(user => (
 
                             <div key={user.username}>
                                 {
                                     (window.location.href.search('Game') === -1 && props.friend !== undefined) &&
-                                    <img className='avatar avatar-manu' src={`${process.env.REACT_APP_BACK}user/${user.id}/avatar`} />
+                                    <img className='avatar avatar-manu' src={`${process.env.REACT_APP_BACK}user/${user.id}/avatar`} alt="" />
                                 }
                                 {
 
                                     (window.location.href.search('Game') !== -1 || props.friend === undefined) &&
-                                    <img className='cursor-onsomoene avatar avatar-manu' src={`${process.env.REACT_APP_BACK}user/${user.id}/avatar`} onClick={_ => removeFriend(user)} />
+                                    <button className="cursor-onsomoene avatar avatar-manu button-img" onClick={() => removeFriend(user)}>
+                                          <img className="cursor-onsomoene avatar avatar-manu" src={`${process.env.REACT_APP_BACK}user/${user.id}/avatar`} alt=""/>
+                                    </button>
                                 }
                             </div>
                         ))}
@@ -79,7 +81,7 @@ export default function AllPeople(props: { friend: IUser[] | undefined, setFrien
                     ((window.location.href.search('Game') !== -1 && allfriend && allfriend?.length !== 1)
                         || (window.location.href.search('Game') === -1 && (props.friend === undefined || (props.friend && props.friend.length > 1))))
                     &&
-                    <AiFillPlusCircle className="plus-circle pointer" onClick={_ =>  {get_all(); setMyvar(!myVar)}} />
+                    <AiFillPlusCircle className="plus-circle pointer" onClick={() =>  {get_all(); setMyvar(!myVar)}} />
                 }
 
                 {
@@ -88,9 +90,9 @@ export default function AllPeople(props: { friend: IUser[] | undefined, setFrien
                         <div className=" dropdown people-list hover-style">
                             {alluser && alluser!.map(user_list => (
                                 <ul key={user_list.username} >
-                                    <li onClick={_ => { setMyvar(!myVar); addfriend(user_list) }}>
+                                    <button className='button-li' onClick={() => { setMyvar(!myVar); addfriend(user_list) }}>
                                         {user_list.username}
-                                    </li>
+                                    </button>
                                 </ul>
                             ))}
                         </div>

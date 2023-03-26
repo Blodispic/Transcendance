@@ -1,23 +1,14 @@
-import react, { useEffect, useState } from "react";
+import * as React from 'react';
+import { useEffect, useState } from "react";
 import { ImCheckmark, ImCross } from "react-icons/im";
-import { IUser } from "../../interface/User";
 import { socket } from "../../App";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useAppSelector } from '../../redux/Hook';
 import swal from 'sweetalert';
 
-
-
-
-
-
-
-
-
-
 export function Friends() {
 
-    const myUser = useAppSelector(state => state.user);
+    useAppSelector(state => state.user);
     const [friendReq, setFriendReq] = useState<{ name: string, avatar: string, id: number, ReqStatus: string, UserStatus: string }[]>([]);
     const [friend, setFriend] = useState<{ name: string, avatar: string, id: number, ReqStatus: string, UserStatus: string }[]>([]);
     const [updateFriend, setUpdateFriend] = useState(false);
@@ -82,7 +73,7 @@ export function Friends() {
         });
         const data = await response.json();
         setFriendReq((prevFriendReq) => prevFriendReq.filter((req) => req.id !== id));
-        let str : string = "They" + " are now your friend!";
+        const str : string = "They" + " are now your friend!";
         swal("Congrats", str, "success");
         socket.emit("RequestAccepted", data.id);
         setUpdateFriend(prevFlag => !prevFlag);
@@ -100,7 +91,7 @@ export function Friends() {
         const data = await response.json();
         setUpdateFriend(prevFlag => !prevFlag);
         console.log("data = ", data)
-        let str : string = "You declined " + "their" + " friend request!"
+        const str : string = "You declined " + "their" + " friend request!"
         swal("Congrats", str, "success");
         socket.emit("RequestDeclined", data.id);
         setUpdateFriend(prevFlag => !prevFlag);
@@ -112,9 +103,9 @@ export function Friends() {
                 {props.friends && props.friends.length > 0 ? (
                     props.friends.map((friend) => (
                         <li className="friend-block" key={friend.name}>
-                            <div className="friend-img pointer" onClick={_ => navigate(`../Profile/${friend.id}`)}>
+                            <button className="friend-img pointer button-div" onClick={() => navigate(`../Profile/${friend.id}`)}>
                                 <img src={`${process.env.REACT_APP_BACK}user/${friend.id}/avatar`} alt={friend.name} />
-                            </div>
+                            </button>
                             <div className="friend-info">
                                 <div className="friend-name">{friend.name}</div>
                                 <div className={"color-status " + friend.UserStatus}>{friend.UserStatus}</div>
@@ -149,9 +140,9 @@ export function Friends() {
                 {props.friends && props.friends.length > 0 ? (
                     props.friends.map((friend) => (
                         <li className="friend-block" key={friend.name}>
-                            <div className="friend-img pointer" onClick={_ => navigate(`../Profile/${friend.id}`)}>
+                            <button className="friend-img pointer button-div" onClick={() => navigate(`../Profile/${friend.id}`)}>
                                 <img src={`${process.env.REACT_APP_BACK}user/${friend.id}/avatar`} alt={friend.name} />
-                            </div>
+                            </button>
                             <div className="friend-info">
                                 <div className="friend-name">{friend.name}</div>
                                 <div className={"color-status " + friend.UserStatus}>{friend.UserStatus}</div>

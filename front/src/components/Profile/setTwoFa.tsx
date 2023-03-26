@@ -1,3 +1,4 @@
+import * as React from 'react';
 import { useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../redux/Hook";
 import { enableTwoFa } from "../../redux/user";
@@ -88,12 +89,12 @@ export default function TwoFa() {
     return (
         <div className="container">
             {
-                isValid !== true && myStore.user?.twoFaEnable == false  && 
+                isValid !== true && myStore.user?.twoFaEnable === false  && 
                 <div className='form-qrcode'>
                     <div className=''>
                         <div>
                             <div className=''>
-                                <img className='' src={qrcode} />
+                                <img className='' src={qrcode} alt='' />
                             </div>
                             <label >
                                 Code:
@@ -102,22 +103,22 @@ export default function TwoFa() {
                             {
                                 code &&
                                 <button onClick={e => fetchCodeForQr(e)}>
-                                    <a>ok</a>
+                                    <div>ok</div>
                                 </button>
                             }
                             {
                                 isValid === false &&
-                                <a>code faux ou expirer retenter</a>
+                                <div>code faux ou expirer retenter</div>
                             }
                         </div>
                     </div>
                 </div>
             }
             {
-                myStore.user?.twoFaEnable == true && 
+                myStore.user?.twoFaEnable === true && 
                 <div className="center2" >
                     <button onClick={(e) => {disable2fa(e)}}>
-                        <a>Disable 2fa</a>
+                        <div>Disable 2fa</div>
                     </button>
                 </div>
             }

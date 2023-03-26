@@ -1,11 +1,10 @@
-import { useState, useEffect } from 'react';
-import { Navigate, useNavigate, useSearchParams } from "react-router-dom";
-import NameForm from "./Sign"
+import * as React from 'react';
+import { useEffect } from 'react';
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../redux/Hook";
 import { oauth, setUser, set_status, change_avatar, setToken } from "../../redux/user";
 import { useCookies } from "react-cookie";
-import { IUser, UserStatus } from '../../interface/User';
-import { socket } from '../../App';
+import { UserStatus } from '../../interface/User';
 
 
 
@@ -23,7 +22,7 @@ export default function Connection() {
     const [, setCookie] = useCookies(['Token']);
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
-    const myUser = useAppSelector(state => state.user);
+    useAppSelector(state => state.user);
 
     useEffect(() => {
         const oauthCode = searchParams.get('code'); // Tu lui dit de recuperer le parametre "code" dans l'url
@@ -48,7 +47,7 @@ export default function Connection() {
                             dispatch(setToken(data.access_token));
                             if (!data.user.username)
                                 navigate("./sign")
-                            else if (data.user.twoFaEnable == true)
+                            else if (data.user.twoFaEnable === true)
                                 navigate("./log")
                             else {
                                 dispatch(set_status(UserStatus.ONLINE));

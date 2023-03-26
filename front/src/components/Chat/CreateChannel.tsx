@@ -1,13 +1,13 @@
+import * as React from 'react';
 import { useEffect, useState } from "react";
 import { HiOutlineXMark, HiPlus } from "react-icons/hi2";
-import { useNavigate } from "react-router-dom";
 import { socket } from "../../App";
 import { IUser } from "../../interface/User";
 import { addChannel } from "../../redux/chat";
 import { useAppDispatch } from "../../redux/Hook";
 import AllPeople from "../utils/Allpeople";
 
-export function PopupCreateChannel(props: { trigger: boolean, setTrigger: Function }) {
+export function PopupCreateChannel(props: { trigger: boolean, setTrigger: (value: boolean) => void }) {
 	const [chanName, setChanName] = useState("");
 	const [password, setPassword] = useState("");
 	const [chanMode, setChanMode] = useState(0);
@@ -38,7 +38,7 @@ export function PopupCreateChannel(props: { trigger: boolean, setTrigger: Functi
 	}
 	
 	useEffect(() => {
-		socket.on("createChannelFailed", (error_message) => {
+		socket.on("createChannelFailed", () => {
 			setFailed(true);
 		});
 		socket.on("createChannelOk", (new_chanid) => {
@@ -63,9 +63,9 @@ export function PopupCreateChannel(props: { trigger: boolean, setTrigger: Functi
 	});
 
 	return (props.trigger) ? (
-		<div className="chat-form-popup" onClick={_ => (props.setTrigger(false), setChanMode(0), setFailed(false))} >
-			<div className="chat-form-inner" onClick={e => e.stopPropagation()}>
-				<HiOutlineXMark className="close-icon" onClick={_ => (props.setTrigger(false), setChanMode(0), setFailed(false))} /> <br />
+		<button className="chat-form-popup button-div" onClick={() => (props.setTrigger(false), setChanMode(0), setFailed(false))} >
+			<button className="chat-form-inner button-div" onClick={e => e.stopPropagation()}>
+				<HiOutlineXMark className="close-icon" onClick={() => (props.setTrigger(false), setChanMode(0), setFailed(false))} /> <br />
 				<h3>Channel Name</h3>
 				<input type="text" id="channel-input" placeholder="Insert channel name"  maxLength={15} onChange={e => { setChanName(e.target.value) }} onSubmit={() => { handleCreateNewChan(); }} />
 				<br />
@@ -75,9 +75,9 @@ export function PopupCreateChannel(props: { trigger: boolean, setTrigger: Functi
 				}
 
 				<h3>Channel Mode</h3>
-				<input type="radio" name="chanMode" value={0} onChange={_ => handlePublic()} defaultChecked />Public
-				<input type="radio" name="chanMode" value={1} onChange={_ => handlePrivate()} />Private
-				<input type="radio" name="chanMode" value={2} onChange={_ => handleProtected()} />Protected <br />
+				<input type="radio" name="chanMode" value={0} onChange={() => handlePublic()} defaultChecked />Public
+				<input type="radio" name="chanMode" value={1} onChange={() => handlePrivate()} />Private
+				<input type="radio" name="chanMode" value={2} onChange={() => handleProtected()} />Protected <br />
 				{
 					chanMode === 2 &&
 					<><input type="password" id="channel-input" placeholder="Insert password" onChange={e => { setPassword(e.target.value); }} /><br /></>
@@ -89,8 +89,8 @@ export function PopupCreateChannel(props: { trigger: boolean, setTrigger: Functi
 					</div>
 				}
 				<button onClick={() => handleCreateNewChan()}>Create Channel</button><span></span>
-			</div>
-		</div>
+			</button>
+		</button>
 	) : <></>;
 }
 
@@ -98,9 +98,9 @@ export function AddChannel() {
 	const [buttonPopup, setButtonPopup] = useState(false);
 
 	return (
-		<div className="add-icon" onClick={() => setButtonPopup(true)}>
+		<button className="add-icon button-div" onClick={() => setButtonPopup(true)}>
 			<HiPlus className="add-button" />
 			<PopupCreateChannel trigger={buttonPopup} setTrigger={setButtonPopup} />
-		</div>
+		</button>
 	);
 }

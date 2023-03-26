@@ -1,3 +1,4 @@
+import * as React from 'react';
 import { useEffect, useState } from "react";
 import { BsKeyFill } from "react-icons/bs";
 import { HiLockClosed } from "react-icons/hi2";
@@ -51,7 +52,7 @@ export function ChannelHeader() {
 								<>
 									{currentChan.owner.id === currentUser?.id &&
 										<>
-											<ImCog className="config-icon" onClick={_ => setPopup(true)} />
+											<ImCog className="config-icon" onClick={() => setPopup(true)} />
 											<ConfigureChannel trigger={popup} setTrigger={setPopup} channel={currentChan} />
 										</>}
 								</>
@@ -118,7 +119,7 @@ export function ChannelMessages() {
 												currentUser.user?.blocked?.find(user => user.id === message.sender?.id) === undefined &&
 												<div className="__wrap">
 													<div className="message-info">
-														<img className="user-avatar" src={`${process.env.REACT_APP_BACK}user/${message.sender?.id}/avatar`} />
+														<img className="user-avatar" src={`${process.env.REACT_APP_BACK}user/${message.sender?.id}/avatar`} alt ="" />
 														<p>{message.sender?.username}</p>
 														<p className="timestamp">{message.sendtime}</p>
 
@@ -130,7 +131,7 @@ export function ChannelMessages() {
 												currentUser.user?.blocked?.find(user => user.id === message.sender?.id) !== undefined &&
 												< div className="__wrap message_block">
 													<div className="message-info "  >
-														<img className="user-avatar" src={`${process.env.REACT_APP_BACK}user/${message.sender?.id}/avatar`} />
+														<img className="user-avatar" src={`${process.env.REACT_APP_BACK}user/${message.sender?.id}/avatar`} alt="" />
 														<p>{message.sender?.username}</p>
 														<p className="timestamp">{message.sendtime}</p>
 													</div>

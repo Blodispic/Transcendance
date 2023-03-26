@@ -1,3 +1,4 @@
+import * as React from 'react';
 
 export default function PageNotfound() {
 
@@ -25,7 +26,7 @@ export default function PageNotfound() {
                 <div className="error__content">
                     <div className="error__message message">
                         <h1 className="message__title">Page Not Found</h1>
-                        <p className="message__text">We're sorry, the page you were looking for isn't found here. The link you followed may either be broken or no longer exists. Please try again, or take a look at our.</p>
+                        <p className="message__text">We&apos;re sorry, the page you were looking for isn&apos;t found here. The link you followed may either be broken or no longer exists. Please try again, or take a look at our.</p>
                     </div>
 
                 </div>

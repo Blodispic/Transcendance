@@ -12,7 +12,6 @@ import { useAppSelector } from './redux/Hook';
 import Sign from './components/connection/Sign';
 import { Log } from './components/connection/Log';
 import Home from './components/Home/Home';
-import { Channels } from './components/Chat/Channel';
 import { DirectMessage } from './components/Chat/DirectMessage';
 import PageNotfound from './components/404/PageNotFound';
 
@@ -24,7 +23,7 @@ const Layout = () => (
 );
 
 function ErrorBoundary() {
-  let error = useRouteError();
+  const error = useRouteError();
   console.error(error);
   // Uncaught ReferenceError: path is not defined
   return <div>Dang!</div>;
@@ -34,7 +33,7 @@ function ErrorBoundary() {
 const ProtectedRoute = (props: { children: any }) => {
   const user = useAppSelector(state => state.user);
 
-  if (user.isLog === false && user.isOauth == false) {
+  if (user.isLog === false && user.isOauth === false) {
     // user is not authenticated
     return <Navigate to="/" />;
   }

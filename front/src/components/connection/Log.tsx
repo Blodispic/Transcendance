@@ -1,6 +1,6 @@
+import * as React from 'react';
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { socket } from "../../App";
 import { UserStatus } from "../../interface/User";
 import { useAppDispatch, useAppSelector } from "../../redux/Hook";
 import { set_status } from "../../redux/user";
@@ -55,12 +55,12 @@ export function Log() {
                     {
                         code &&
                         <button onClick={e => fetchCodeForQr(e)}>
-                            <a>ok</a>
+                            <div>ok</div>
                         </button>
                     }
                     {
                         isValid === false &&
-                        <a>code faux ou expirer retenter</a>
+                        <div>code faux ou expirer retenter</div>
                     }
                 </form>
             </div>
