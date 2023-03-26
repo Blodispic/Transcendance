@@ -369,12 +369,11 @@ function paddleCollision(ball: Ball, player: Player) {
 						ball.previous.y < player.paddle.position.y)
 				)
 					ball.speed.y = ball.speed.y * (Math.random() * (2 - 1.5) + 1.5);
-				// ca passe jamais dedans
-				// else if (
-				// 	player.input.left &&
-				// 	player.input.right &&
-				// 	ball.previous.y > player.paddle.position.y
-				// )
+				else if (
+					player.input.left &&
+					player.input.right &&
+					ball.previous.y > player.paddle.position.y
+				)
 					ball.speed.y = ball.speed.y * (Math.random() * (1 - 0.8) + 0.8);
 			}
 
