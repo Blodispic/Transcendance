@@ -103,9 +103,9 @@ export function Friends() {
                 {props.friends && props.friends.length > 0 ? (
                     props.friends.map((friend) => (
                         <li className="friend-block" key={friend.name}>
-                            <button className="friend-img pointer button-div" onClick={() => navigate(`../Profile/${friend.id}`)}>
+                            <div className="friend-img pointer" onClick={() => navigate(`../Profile/${friend.id}`)}>
                                 <img src={`${process.env.REACT_APP_BACK}user/${friend.id}/avatar`} alt={friend.name} />
-                            </button>
+                            </div>
                             <div className="friend-info">
                                 <div className="friend-name">{friend.name}</div>
                                 <div className={"color-status " + friend.UserStatus}>{friend.UserStatus}</div>
@@ -140,9 +140,9 @@ export function Friends() {
                 {props.friends && props.friends.length > 0 ? (
                     props.friends.map((friend) => (
                         <li className="friend-block" key={friend.name}>
-                            <button className="friend-img pointer button-div" onClick={() => navigate(`../Profile/${friend.id}`)}>
+                            <div className="friend-img pointer" onClick={() => navigate(`../Profile/${friend.id}`)}>
                                 <img src={`${process.env.REACT_APP_BACK}user/${friend.id}/avatar`} alt={friend.name} />
-                            </button>
+                            </div>
                             <div className="friend-info">
                                 <div className="friend-name">{friend.name}</div>
                                 <div className={"color-status " + friend.UserStatus}>{friend.UserStatus}</div>

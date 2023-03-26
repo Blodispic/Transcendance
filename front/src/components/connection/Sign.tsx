@@ -87,12 +87,12 @@ export default function Sign() {
                     {
                        ( newname || (file && window.location.href.search('Profile') !== -1 )) &&
                         <button onClick={(e) => fetch_name_avatar(e)}>
-                            <div>ok</div>
+                            <span>ok</span>
                         </button>
                     }
                     {
                         nameExist && 
-                        <div> this username already use</div>
+                        <span> this username already use</span>
                     }
                 </form >
             </div >

@@ -45,13 +45,13 @@ export default function ClickableMenu(props: { user: IUser, chan: IChannel, page
                     {
                         user.id !== myUser?.id &&
                         <>
-                            <button className='button-li' onClick={() => setMyvar(true)}>
+                            <li onClick={() => setMyvar(true)}>
                                 Invite Game
-                            </button>
+                            </li>
                             <li>
-                                <button className='button-li' onClick={() => { props.page(page.PAGE_2); navigate(`/Chat/dm/${user.id}`) }}>
+                                <span onClick={() => { props.page(page.PAGE_2); navigate(`/Chat/dm/${user.id}`) }}>
                                     DM
-                                </button>
+                                </span>
                             </li>
                             {
                                 props.chan.admin?.find(obj => obj.id === myUser?.id) &&
@@ -60,9 +60,9 @@ export default function ClickableMenu(props: { user: IUser, chan: IChannel, page
                                         props.chan.admin?.find(obj => obj.id === props.user.id) === undefined &&
                                         <>
                                             <li>
-                                                <button className='button-li' onClick={() => handleAddAdmin()}>
+                                                <span onClick={() => handleAddAdmin()}>
                                                     Add to Admin
-                                                </button>
+                                                </span>
                                             </li>
                                         </>
                                     }
@@ -72,27 +72,27 @@ export default function ClickableMenu(props: { user: IUser, chan: IChannel, page
                                             {
                                                 props.chan.muted?.find(obj => obj.id === props.user.id) === undefined &&
                                                 <li>
-                                                    <button className='button-li' onClick={() => setTimeMute(true)}>
+                                                    <span onClick={() => setTimeMute(true)}>
                                                         Mute
                                                         <MuteUser chanid={props.chan.id} userid={user.id} trigger={timeMute} setTrigger={setTimeMute} />
-                                                    </button>
+                                                    </span>
                                                 </li>
                                             }
 
                                             {
                                                 props.chan.banned?.find(obj => obj.id === props.user.id) === undefined &&
                                                 <li>
-                                                    <button className='button-li' onClick={() => setTimeBan(true)}>
+                                                    <span onClick={() => setTimeBan(true)}>
                                                         Ban
                                                         <BanUser chanid={props.chan.id} userid={user.id} trigger={timeBan} setTrigger={setTimeBan} />
-                                                    </button>
+                                                    </span>
                                                 </li>
                                             }
 
                                             <li>
-                                                <button className='button-li' onClick={() => KickUser(props.chan.id, user.id)}>
+                                                <span onClick={() => KickUser(props.chan.id, user.id)}>
                                                     Kick
-                                                </button>
+                                                </span>
                                             </li>
                                         </>
                                     }

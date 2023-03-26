@@ -14,7 +14,7 @@ export function PopupCreateChannel(props: { trigger: boolean, setTrigger: (value
     const [friend, setFriend] = useState<IUser[] >([]);
 	// const [myVar, setMyvar] = useState<boolean> (false);
 	const [failed, setFailed] = useState<boolean> (false);
-	const navigate = useNavigate();
+	// const navigate = useNavigate();
 	const dispatch = useAppDispatch();
 
 	const handlePublic = () => {
@@ -38,7 +38,7 @@ export function PopupCreateChannel(props: { trigger: boolean, setTrigger: (value
 	}
 	
 	useEffect(() => {
-		socket.on("createChannelFailed", () => {
+		socket.on("createChannelFailed", (error_message) => {
 			setFailed(true);
 		});
 		socket.on("createChannelOk", (new_chanid) => {
@@ -63,8 +63,8 @@ export function PopupCreateChannel(props: { trigger: boolean, setTrigger: (value
 	});
 
 	return (props.trigger) ? (
-		<button className="chat-form-popup button-div" onClick={() => (props.setTrigger(false), setChanMode(0), setFailed(false))} >
-			<button className="chat-form-inner button-div" onClick={e => e.stopPropagation()}>
+		<div className="chat-form-popup" onClick={() => (props.setTrigger(false), setChanMode(0), setFailed(false))} >
+			<div className="chat-form-inner" onClick={e => e.stopPropagation()}>
 				<HiOutlineXMark className="close-icon" onClick={() => (props.setTrigger(false), setChanMode(0), setFailed(false))} /> <br />
 				<h3>Channel Name</h3>
 				<input type="text" id="channel-input" placeholder="Insert channel name"  maxLength={15} onChange={e => { setChanName(e.target.value) }} onSubmit={() => { handleCreateNewChan(); }} />
@@ -89,8 +89,8 @@ export function PopupCreateChannel(props: { trigger: boolean, setTrigger: (value
 					</div>
 				}
 				<button onClick={() => handleCreateNewChan()}>Create Channel</button><span></span>
-			</button>
-		</button>
+			</div>
+		</div>
 	) : <></>;
 }
 
@@ -98,9 +98,9 @@ export function AddChannel() {
 	const [buttonPopup, setButtonPopup] = useState(false);
 
 	return (
-		<button className="add-icon button-div" onClick={() => setButtonPopup(true)}>
+		<div className="add-icon" onClick={() => setButtonPopup(true)}>
 			<HiPlus className="add-button" />
 			<PopupCreateChannel trigger={buttonPopup} setTrigger={setButtonPopup} />
-		</button>
+		</div>
 	);
 }

@@ -25,7 +25,7 @@ function JoinedChannelList() {
 					{
 						chan.users.find(obj => obj.id === currentUser?.id) &&
 						<li>
-							<button className='button-div' onClick={() => navigate(`/Chat/channel/${chan.id}`)}>{chan.name}
+							<div onClick={() => navigate(`/Chat/channel/${chan.id}`)}>{chan.name}
 								{
 									chan.chanType === 1 &&
 									<HiLockClosed style={{ float: 'right' }} />
@@ -34,7 +34,7 @@ function JoinedChannelList() {
 									chan.chanType === 2 &&
 									<BsFillKeyFill style={{ float: 'right' }} />
 								}
-							</button>
+							</div>
 						</li>
 					}
 
@@ -58,12 +58,12 @@ function PublicChannelList() {
 						{
 							chan.chanType !== 1 &&
 							<li>
-								<button className='button-div' onClick={() => navigate(`/Chat/channel/${chan.id}`)}>{chan.name}
+								<div onClick={() => navigate(`/Chat/channel/${chan.id}`)}>{chan.name}
 									{
 										chan.chanType === 2 &&
 										<BsFillKeyFill style={{ paddingLeft: '10px' }} />
 									}
-								</button>
+								</div>
 							</li>
 						}
 					</ul>
@@ -105,7 +105,7 @@ function ChannelMemberList(props: { page: (page: page) => void }) {
 		<div className="title"> Members <hr />
 			{currentChan && currentChan.users?.map(user => (
 				<div key={user.id} className="user-list">
-					<button className='button-ul' onClick={() => changeId(user.id)}>
+					<ul onClick={() => changeId(user.id)}>
 						<li>
 							{user.username}
 							{
@@ -118,7 +118,7 @@ function ChannelMemberList(props: { page: (page: page) => void }) {
 								<BsFillPersonFill />
 							}
 						</li>
-					</button>
+					</ul>
 					{
 						currentId === user.id &&
 						<ClickableMenu user={user} chan={currentChan} page={props.page} />

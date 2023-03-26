@@ -41,9 +41,9 @@ function Search(props: { setCurrentUser: (user: IUser) => void }) {
 
         return (
                 <div className="search">
-                        <button className="icon-search button-div" onClick={(e) => search_man(e)} >
+                        <div className="icon-search" onClick={(e) => search_man(e)} >
                                 <HiOutlineMagnifyingGlassCircle />
-                        </button>
+                        </div>
                         <div className="input">
                                 <input type="text" onKeyDown={handleKeyDown} onChange={e => setMan(e.target.value)} placeholder="Search..." />
                         </div>

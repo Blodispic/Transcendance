@@ -57,7 +57,7 @@ export default function AllPeople(props: { friend: IUser[] | undefined, setFrien
 
                         {
                             (window.location.href.search('Game') !== -1 || (props.friend !== undefined && props.friend.length < 2 )) &&
-                            <div> Vs </div>
+                            <span> Vs </span>
                         }
                         {allfriend && allfriend.map(user => (
 
@@ -69,9 +69,7 @@ export default function AllPeople(props: { friend: IUser[] | undefined, setFrien
                                 {
 
                                     (window.location.href.search('Game') !== -1 || props.friend === undefined) &&
-                                    <button className="cursor-onsomoene avatar avatar-manu button-img" onClick={() => removeFriend(user)}>
-                                          <img className="cursor-onsomoene avatar avatar-manu" src={`${process.env.REACT_APP_BACK}user/${user.id}/avatar`} alt=""/>
-                                    </button>
+                                    <img className="cursor-onsomoene avatar avatar-manu" src={`${process.env.REACT_APP_BACK}user/${user.id}/avatar`} alt="" onClick={() => removeFriend(user)}/>
                                 }
                             </div>
                         ))}
@@ -90,9 +88,9 @@ export default function AllPeople(props: { friend: IUser[] | undefined, setFrien
                         <div className=" dropdown people-list hover-style">
                             {alluser && alluser!.map(user_list => (
                                 <ul key={user_list.username} >
-                                    <button className='button-li' onClick={() => { setMyvar(!myVar); addfriend(user_list) }}>
+                                    <li onClick={() => { setMyvar(!myVar); addfriend(user_list) }}>
                                         {user_list.username}
-                                    </button>
+                                    </li>
                                 </ul>
                             ))}
                         </div>

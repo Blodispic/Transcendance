@@ -103,12 +103,12 @@ export default function TwoFa() {
                             {
                                 code &&
                                 <button onClick={e => fetchCodeForQr(e)}>
-                                    <div>ok</div>
+                                    <span>ok</span>
                                 </button>
                             }
                             {
                                 isValid === false &&
-                                <div>code faux ou expirer retenter</div>
+                                <span>code faux ou expirer retenter</span>
                             }
                         </div>
                     </div>
@@ -118,7 +118,7 @@ export default function TwoFa() {
                 myStore.user?.twoFaEnable === true && 
                 <div className="center2" >
                     <button onClick={(e) => {disable2fa(e)}}>
-                        <div>Disable 2fa</div>
+                        <span>Disable 2fa</span>
                     </button>
                 </div>
             }

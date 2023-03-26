@@ -35,11 +35,11 @@ function DMList(props: { currentdm: IUser | undefined; setCurrentDm: (user: IUse
 			{alluser !== undefined &&
 				<>
 					{alluser && alluser.map(user => (
-						<button className='button-div' key={user.username} onClick={() => {props.setCurrentDm(user); navigate(`/Chat/dm/${user.id}`)}} >
+						<div key={user.username} onClick={() => {props.setCurrentDm(user); navigate(`/Chat/dm/${user.id}`)}} >
 							<li >
 								{user.username}
 							</li>
-						</button>
+						</div>
 					))}
 				</>
 			}
@@ -188,13 +188,13 @@ function InfoFriend(props: { user: IUser }) {
 					<>
 						{
 							relation === "Nobody" &&
-							<button className='button-li' onClick={() => (sendFriendRequest())} >
+							<span onClick={() => (sendFriendRequest())} >
 								Add Friend
-							</button>
+							</span>
 						}
 						{
 							relation === "Friend" &&
-							<button className='button-li' onClick={() => (removeFriend())}> Remove Friend </button>
+							<span onClick={() => (removeFriend())}> Remove Friend </span>
 						}
 						{
 							relation === "friendRequestSent" &&
@@ -202,28 +202,28 @@ function InfoFriend(props: { user: IUser }) {
 						}
 						{
 							relation === "friendRequestReceived" &&
-							<button className='button-li' onClick={() => (acceptFriendRequest())}> accept in Friend </button>
+							<span onClick={() => (acceptFriendRequest())}> accept in Friend </span>
 						}
 
 
-						<button className='button-li' onClick={() => setMyvar(true)}>
+						<span onClick={() => setMyvar(true)}>
 							Invite Game
-						</button>
+						</span>
 
 						{
 							((myUser.user && (myUser.user.blocked === undefined
 								|| myUser.user.blocked.find(block => block.id === user.id) === undefined))
 								&& user.username !== myUser.user!.username) &&
-							<button className='button-li' onClick={() => Block()}>
+							<li onClick={() => Block()}>
 								Block
-							</button>
+							</li>
 						}
 
 						{
 							((myUser.user && (myUser.user.blocked !== undefined && myUser.user.blocked.find(block => block.id === user.id) !== undefined)) && user.username !== myUser.user!.username) &&
-							<button className='button-div' onClick={() => UnBlock()}>
+							<div onClick={() => UnBlock()}>
 								Unblock
-							</button>
+							</div>
 						}
 
 					</>

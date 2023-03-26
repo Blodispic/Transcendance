@@ -30,15 +30,15 @@ export default function Chat() {
 			<div className='onglets Chat-onglets'>
 				<button className={`pointer ${current === page.PAGE_1 ? "" : "not-selected"}`}
 					onClick={() => { setOnglet(page.PAGE_1); navigate(`/Chat/channel/`) }}>
-					<div>
+					<span>
 						Channels
-					</div>
+					</span>
 				</button>
 				<button className={`pointer ${current === page.PAGE_2 ? "" : "not-selected"}`}
 					onClick={() => { setOnglet(page.PAGE_2); navigate(`/Chat/dm/`) }}>
-					<div>
+					<span>
 						DM
-					</div>
+					</span>
 				</button>
 			</div>
 			{

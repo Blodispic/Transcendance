@@ -55,12 +55,12 @@ export function Log() {
                     {
                         code &&
                         <button onClick={e => fetchCodeForQr(e)}>
-                            <div>ok</div>
+                            <span>ok</span>
                         </button>
                     }
                     {
                         isValid === false &&
-                        <div>code faux ou expirer retenter</div>
+                        <span>code faux ou expirer retenter</span>
                     }
                 </form>
             </div>

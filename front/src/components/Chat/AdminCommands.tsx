@@ -28,8 +28,8 @@ export function BanUser(props: { chanid: any, userid: any, trigger: boolean, set
 	})
 
 	return (props.trigger) ? (
-		<button className="chat-form-popup button-div" onClick={() => (props.setTrigger(false))}>
-			<button className="clickable-pop-up-inner button-div" onClick={e => e.stopPropagation()}>
+		<div className="chat-form-popup" onClick={() => (props.setTrigger(false))}>
+			<div className="clickable-pop-up-inner" onClick={e => e.stopPropagation()}>
 				<HiOutlineXMark className="close-icon" onClick={() => (props.setTrigger(false))} />
 				<br />
 				<h3>Ban User</h3>
@@ -37,8 +37,8 @@ export function BanUser(props: { chanid: any, userid: any, trigger: boolean, set
 				<input type="number" id="clickable-input" min="0" onChange={e => { setTimeout(e.target.value) }} />seconds
 				<br /><br />
 				<button onClick={() => handleBan()}>Ban User</button>
-			</button>
-		</button>
+			</div>
+		</div>
 	) : <></>;
 }
 
@@ -62,8 +62,8 @@ export function MuteUser(props: { chanid: any, userid: any, trigger: boolean, se
 	})
 
 	return (props.trigger) ? (
-		<button className="chat-form-popup button-div" onClick={() => (props.setTrigger(false))}>
-			<button className="clickable-pop-up-inner button-div" onClick={e => e.stopPropagation()}>
+		<div className="chat-form-popup" onClick={() => (props.setTrigger(false))}>
+			<div className="clickable-pop-up-inner" onClick={e => e.stopPropagation()}>
 				<HiOutlineXMark className="close-icon" onClick={() => (props.setTrigger(false))} />
 				<br />
 				<h3>Mute User</h3>
@@ -71,8 +71,8 @@ export function MuteUser(props: { chanid: any, userid: any, trigger: boolean, se
 				<input type="number" id="clickable-input" min="0" onChange={e => { setTimeout(e.target.value) }} />seconds
 				<br /><br />
 				<button onClick={() => handleMute()}>Mute User</button>
-			</button>
-		</button>
+			</div>
+		</div>
 	) : <></>;
 }
 
@@ -127,7 +127,7 @@ export function ConfigureChannelPrivate(props: {trigger: boolean, setTrigger: (v
 	) : <></>;
 }
 
-export function ConfigureChannel(props: {trigger: boolean, setTrigger: Function, channel: IChannel}) {
+export function ConfigureChannel(props: {trigger: boolean, setTrigger: (value: boolean) => void, channel: IChannel}) {
 	const [newPassword, setNewPassword] = useState("");
 
 	const setPassword = () => {
@@ -146,8 +146,8 @@ export function ConfigureChannel(props: {trigger: boolean, setTrigger: Function,
 	}
 
 	return (props.trigger) ? (
-		<button className="chat-form-popup button-div" onClick={() => props.setTrigger(false)}>
-			<button className="chat-form-inner button-div" onClick={e => e.stopPropagation()}>
+		<div className="chat-form-popup" onClick={() => props.setTrigger(false)}>
+			<div className="chat-form-inner" onClick={e => e.stopPropagation()}>
 				<HiOutlineXMark className="close-icon" onClick={() => props.setTrigger(false)} /> <br />
 				{
 					props.channel.chanType === 0 &&
@@ -166,7 +166,7 @@ export function ConfigureChannel(props: {trigger: boolean, setTrigger: Function,
 					</>
 				}
 				<button onClick={setPassword}> Save Setting </button>
-			</button>
-		</button>
+			</div>
+		</div>
 	) : <></>;
 }

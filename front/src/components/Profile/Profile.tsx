@@ -23,35 +23,35 @@ function Onglets(props: { currentUser: IUser, current: page, setOnglets: (page: 
                 <div className='onglets'>
                         <button className={`pointer ${current === page.PAGE_1 ? "" : "not-selected"}`}
                                 onClick={() => setOnglets(page.PAGE_1)}>
-                                <div>
+                                <span>
                                         History
-                                </div>
+                                </span>
                         </button>
                         {
                                 currentUser.login === myUser.user?.login &&
                                 <button className={`pointer ${current === page.PAGE_2 ? "" : "not-selected"}`}
                                         onClick={() => setOnglets(page.PAGE_2)} >
-                                        <div>
+                                        <span>
                                                 Friends
-                                        </div>
+                                        </span>
                                 </button>
                         }
                         {
                                 currentUser.login === myUser.user?.login &&
                                 <button className={`pointer ${current === page.PAGE_3 ? "" : "not-selected"}`}
                                         onClick={() => setOnglets(page.PAGE_3)}>
-                                        <div>
+                                        <span>
                                                 2FA
-                                        </div>
+                                        </span>
                                 </button>
                         }
                         {
                                 currentUser.login === myUser.user?.login &&
                                 <button className={`pointer ${current === page.PAGE_4 ? "" : "not-selected"}`}
                                         onClick={() => setOnglets(page.PAGE_4)} >
-                                        <div>
+                                        <span>
                                                 Settings
-                                        </div>
+                                        </span>
                                 </button>
                         }
                 </div>
