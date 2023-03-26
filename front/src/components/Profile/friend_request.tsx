@@ -8,7 +8,6 @@ import swal from 'sweetalert';
 
 export function Friends() {
 
-    useAppSelector(state => state.user);
     const [friendReq, setFriendReq] = useState<{ name: string, avatar: string, id: number, ReqStatus: string, UserStatus: string }[]>([]);
     const [friend, setFriend] = useState<{ name: string, avatar: string, id: number, ReqStatus: string, UserStatus: string }[]>([]);
     const [updateFriend, setUpdateFriend] = useState(false);
