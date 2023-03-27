@@ -46,7 +46,7 @@ export function ChannelHeader() {
 				<LeaveChannel channel={currentChan} />
 			}
 			{
-				currentChan.id &&
+				currentChan.id !== undefined &&
 				<>
 					{
 						currentChan.chanType !== 1 &&
