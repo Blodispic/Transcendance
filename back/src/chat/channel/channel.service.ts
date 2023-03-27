@@ -18,6 +18,7 @@ export class ChannelService {
 	constructor(
 		@InjectRepository(Channel)
 		private channelRepository: Repository<Channel>,
+
 		@Inject(forwardRef(() => UserService))
 		private userService: UserService,
 		// @InjectRepository(User)
@@ -57,23 +58,19 @@ export class ChannelService {
 	}	
 
 	async rm(rmUserDto: RmUserDto) {
-		let channel: Channel | null = await this.channelRepository.findOne({
+		const channel: Channel | null = await this.channelRepository.findOne({
 			relations: { users: true, banned: true, muted: true, admin: true, owner: true},
 			where: {
 				id: rmUserDto.chanid,
 			},
 			});
-		const user = await this.userService.getById(rmUserDto.user.id);
-		if (channel === null || user === null)
-			throw new NotFoundException("No such Channel or User");
-		if (channel.owner?.id == user.id){
-			await this.userService.RmOwned(user.id, channel.id);
-			channel.owner = undefined;
-		}		
-		if (await this.isUserAdmin({chanid: channel.id, userid: user.id}))		
-			channel = await this.rmAdmin({chanid: channel.id, userid: user.id});
-		channel.users = channel.users.filter(elem => elem.id != user.id);
-		return await this.channelRepository.save(channel);
+		const user = channel?.users.find(elem => elem.id == rmUserDto.user.id);
+		if (channel == null || user == null)
+			throw new NotFoundException('No such Channel or User');
+		const index = channel.users.indexOf(user, 0);		
+		if (index != -1)
+			channel.users.splice(index, 1);
+		return this.channelRepository.save(channel);
 	}
 
 	async update(id: number, channelUpdate: any) {		
@@ -105,8 +102,8 @@ export class ChannelService {
 		return 'There is no channel to update';
 	  }
 
-	async getById(id: number) {
-		return await this.channelRepository.findOne({
+	getById(id: number) {
+		return this.channelRepository.findOne({
 			relations: {
 				admin: true,
 				users: true,
@@ -120,29 +117,8 @@ export class ChannelService {
 		});
 	  }
 
-	  async getPwById(id: number) {
-		return (await this.channelRepository.findOne({
-			relations: {
-				admin: true,
-				users: true,
-				muted: true,
-				banned: true,
-				owner: true,
-			},
-			where: {
-				id: id
-			},
-			select: {
-				id: true,
-				password: true,
-			}	
-		}))?.password;
-		// if (channel != null)
-		// 	return channel.password;
-	  }
-
-	  async getByName(name: string) {
-		return await this.channelRepository.findOne({
+	  getByName(name: string) {
+		return this.channelRepository.findOne({
 			relations: {
 				users: true,
 				muted: true,
@@ -173,7 +149,6 @@ export class ChannelService {
 			where: { id: banUserDto.chanid },
 		});
 		const user = await this.userService.getById(banUserDto.userid);
-		// check user is admin, banned is not admin
 		if (channel === null || user === null)
 			throw new BadRequestException('No such Channel or User');
 		channel.banned.push(user);
@@ -284,21 +259,6 @@ export class ChannelService {
 			throw new NotFoundException('No such Channel or User');
 		channel.admin.push(user);
 		return this.channelRepository.save(channel);
-	}
-
-	async rmAdmin(rmAdminDto: RmAdminDto)
-	{
-		const channel = await this.channelRepository.findOne({
-			relations: { admin: true, users: true },
-			where: { id: rmAdminDto.chanid}
-		});
-		if (!channel)
-		throw new BadRequestException("No such Channel");
-		const user = channel.admin.find(user => user.id === rmAdminDto.userid);
-		if (!user)
-			throw new BadRequestException("No such User in Admin List");
-		channel.admin = channel.admin.filter(elem => elem.id != user.id);		
-		return this.channelRepository.save(channel);		
 	}
 
 	async isUserAdmin(giveAdminDto: GiveAdminDto) {

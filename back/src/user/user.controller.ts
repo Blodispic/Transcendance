@@ -177,7 +177,7 @@ export class UserController {
     if (blocked)
       await this.userService.DeleteFriendRequest(blocked, user.id);
     await this.userService.DeleteFriendRequest(user, blockedId);
-    return await this.userService.addBlock(user.id, blockedId);
+    return await this.userService.addBlock(user, blockedId);
   }
 
   // Removes a block for a user

@@ -106,8 +106,6 @@ export class UserService {
         friends: true,
         results: true,
         channels: true,
-        owned: true,
-        blocked: true,
       },
       where: { id: id },
     });
@@ -523,13 +521,7 @@ export class UserService {
     return user ? user.blocked : [];
   }
 
-  async addBlock(id: number, blockedid: number) {
-    const user = await this.usersRepository.findOne({
-      relations: {
-        blocked: true,
-      },
-      where: {id: id}
-    });    
+  async addBlock(user: User, blockedid: number) {
     if (user === null)
       throw new BadRequestException('No such User');
     const blocked = await this.usersRepository.findOne({
@@ -566,21 +558,7 @@ export class UserService {
     return await this.usersRepository.save(user);
   }
 
-  async RmOwned(id: number, chanid: number) {
-    const user = await this.usersRepository.findOne({
-      relations: { owned: true },
-      where: { id: id },
-    });
-    if (user === null)
-      throw new BadRequestException("No such User");
-    console.log("Rmowned", user.owned);
-    user.owned = user.owned.filter(elem => elem.id != chanid);
-    console.log("Rmowned", user.owned);
-    
-    return await this.usersRepository.save(user);
-  }
-
-  async checkRelations(friendId: number, userId: number) { 
+  async checkRelations(friendId: number, userId: number) {
     const realUser = await this.usersRepository.findOne({
       relations: {
         friends: true,
