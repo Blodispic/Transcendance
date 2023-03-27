@@ -13,6 +13,7 @@ export function PopupCreateChannel(props: { trigger: boolean, setTrigger: (value
 	const [password, setPassword] = useState("");
 	const [chanMode, setChanMode] = useState(0);
 	const [friend, setFriend] = useState<IUser[]>([]);
+	const [error, setError] = useState<string>("");
 	// const [myVar, setMyvar] = useState<boolean>(false);
 	const [failed, setFailed] = useState<boolean>(false);
 	const currentUser: IUser | undefined = useAppSelector(state => state.user.user);
@@ -32,9 +33,12 @@ export function PopupCreateChannel(props: { trigger: boolean, setTrigger: (value
 	}
 
 	const handleCreateNewChan = () => {
-		console.log("userlist", friend)
-		if (chanName !== "")
-			socket.emit('createChannel', { chanName: chanName, password: password, chanType: chanMode, users: friend });
+		if (chanName !== "") {
+			if (password && password.length)
+				socket.emit('createChannel', { chanName: chanName, password: password, chanType: chanMode, users: friend });
+			else
+				socket.emit('createChannel', { chanName: chanName, chanType: chanMode, users: friend });
+		}
 		setChanName("");
 		setPassword("");
 	}
@@ -42,6 +46,7 @@ export function PopupCreateChannel(props: { trigger: boolean, setTrigger: (value
 	useEffect(() => {
 		socket.on("createChannelFailed", (error_message) => {
 			setFailed(true);
+			setError(error_message);
 		});
 		socket.on("createChannelOk", (new_chanid) => {
 			const fetchChanInfo = async () => {
@@ -78,7 +83,7 @@ export function PopupCreateChannel(props: { trigger: boolean, setTrigger: (value
 				<br />
 				{
 					failed === true &&
-					<span className="channel-error">Channel name already exists</span>
+					<span className="channel-error">{error}</span>
 				}
 
 				<h3>Channel Mode</h3>
