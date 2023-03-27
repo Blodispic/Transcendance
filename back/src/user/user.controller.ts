@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, NotFoundException, Param, ParseIntPipe, Patch, Post, Req, Request, Res, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post, Req, Request, Res, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { Response } from 'express';
 import { diskStorage } from 'multer';
@@ -6,19 +6,12 @@ import { editFileName, imageFilter } from 'src/app.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { User } from './entities/user.entity';
 import { UserService } from './user.service';
-import { user } from 'src/game/game.controller';
-import { FriendRequest } from './entities/friend-request.entity';
 import { authenticator } from 'otplib';
-import { Results } from 'src/results/entities/results.entity';
-import { CreateResultDto } from 'src/results/dto/create-result.dto';
 import { JwtGuard } from 'src/Oauth/jwt-auth.guard';
-import { Server, Socket } from "socket.io";
-import { userList } from 'src/app.gateway';
+import { Server } from 'socket.io';
 import { WebSocketServer } from '@nestjs/websockets';
 import { plainToClass } from 'class-transformer';
 import { GetUser } from './getUser';
-
-
 
 @Controller('user')
 export class UserController {
@@ -58,7 +51,6 @@ export class UserController {
 
   // Retrieves a user by their access token
   @Post('access_token')
-  @UseGuards(JwtGuard)
   async GetbyAccessToken(@Body() token: any) {
     return await plainToClass(User, this.userService.GetByAccessToken(token));
   }
@@ -70,7 +62,8 @@ export class UserController {
     if (user.twoFaEnable == false) {
       const secret = authenticator.generateSecret();
       this.userService.enable2FA(user, secret);
-      const otpauthURL = authenticator.keyuri(process.env.TWO_FACTOR_NAME!, user.email, secret);
+      const twoFactorName = process.env.TWO_FACTOR_NAME || '';
+      const otpauthURL = authenticator.keyuri(twoFactorName, user.email, secret);
       const qrCode = await this.userService.generateQRCode(otpauthURL);
       return { qrCode };
     } else return 'Qr code active';
@@ -95,7 +88,7 @@ export class UserController {
   @Get('friends')
   @UseGuards(JwtGuard)
   GetFriends(@GetUser() user: User) {
-    console.log("User = ", user);
+    console.log('User = ', user);
     return this.userService.GetFriends(user.id);
   }
 
@@ -107,15 +100,15 @@ export class UserController {
   }
 
   // Accepts a friend request
-  @Post("friends/accept")
+  @Post('friends/accept')
   @UseGuards(JwtGuard)
   async acceptFriendRequest(@GetUser() user: User, @Body('friendId') friendId: number) {
-    const realUser = await this.userService.addFriend(friendId, user);
+    await this.userService.addFriend(friendId, user);
     return await this.userService.DeleteFriendRequest(user, friendId);
   }
 
   // Declines a friend request
-  @Post("friends/decline")
+  @Post('friends/decline')
   @UseGuards(JwtGuard)
   async declineFriendRequest(@GetUser() user: User, @Body('friendId') friendId: number) {
     return await this.userService.DeleteFriendRequest(user, friendId);
@@ -129,7 +122,7 @@ export class UserController {
       if (user.avatar) {
         return res.sendFile(user.avatar, { root: './storage/images/' });
       } else {
-        return res.redirect(user.intra_avatar)
+        return res.redirect(user.intra_avatar);
       }
     } else {
       return null;
@@ -165,14 +158,14 @@ export class UserController {
   @UseGuards(JwtGuard)
   sendFriendRequest(
     @Param('id', ParseIntPipe) id: number, @GetUser() user: User) {
-    return this.userService.sendFriendRequest(id, user)
+    return this.userService.sendFriendRequest(id, user);
   }
 
   // Deletes a friend for a user
   @Delete('deletefriend/:id')
   @UseGuards(JwtGuard)
   async deleteFriend(@GetUser() user: User, @Body('friendId') friendId: number) {
-    await this.userService.removeFriend(friendId, user.id)
+    await this.userService.removeFriend(friendId, user.id);
     return plainToClass(User, await this.userService.removeFriend(user.id, friendId));
   }
 
@@ -180,7 +173,10 @@ export class UserController {
   @Post('block/:id')
   @UseGuards(JwtGuard)
   async addBlock(@Body('blockedId') blockedId: number, @GetUser() user: User) {
-    blockedId
+    const blocked = await this.userService.getById(blockedId);
+    if (blocked)
+      await this.userService.DeleteFriendRequest(blocked, user.id);
+    await this.userService.DeleteFriendRequest(user, blockedId);
     return await this.userService.addBlock(user.id, blockedId);
   }
 
@@ -192,7 +188,7 @@ export class UserController {
   }
 
   // Checks the relationship between two users
-  @Post("relations")
+  @Post('relations')
   @UseGuards(JwtGuard)
   async checkRelations(@GetUser() user: User, @Body('friendId') friendId: number) {
     return await this.userService.checkRelations(friendId, user.id);

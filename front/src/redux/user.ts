@@ -1,6 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { IUser, UserStatus } from '../interface/User';
-import { socket } from "../App";
 
 interface StateTest {
     user: IUser | undefined,
@@ -25,6 +24,7 @@ export const userSlice = createSlice({
         },
         setToken: (state, { payload }: PayloadAction<string>) => {
             state.myToken = payload;
+
         },
         change_name: (state, { payload }: PayloadAction<string>) => {
             state.user!.username = payload;
@@ -52,7 +52,7 @@ export const userSlice = createSlice({
             else
                 state.isLog = true;
             // socket.emit("UpdateSomeone", {idChange : state.user?.id})
-            const response = fetch(`${process.env.REACT_APP_BACK}user/${state.user?.id}`, {
+            fetch(`${process.env.REACT_APP_BACK}user/${state.user?.id}`, {
                 method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json',
@@ -70,7 +70,7 @@ export const userSlice = createSlice({
             state.isOauth = false;
         },
         enableTwoFa: (state) => {
-            if (state.user!.twoFaEnable == false)
+            if (state.user!.twoFaEnable === false)
                 state.user!.twoFaEnable = true;
             else
                 state.user!.twoFaEnable = false;

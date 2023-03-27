@@ -1,3 +1,4 @@
+import * as React from 'react';
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { IChannel } from "../../interface/Channel";
@@ -9,7 +10,7 @@ import { page } from "../../interface/enum";
 import { socket } from "../../App";
 import { addAdmin } from "../../redux/chat";
 
-export default function ClickableMenu(props: { user: IUser, chan: IChannel, page: Function }) {
+export default function ClickableMenu(props: { user: IUser, chan: IChannel, page: (page: page) => void }) {
 
     const user: IUser = props.user;
     const [myVar, setMyvar] = useState<boolean>(false);
@@ -34,24 +35,24 @@ export default function ClickableMenu(props: { user: IUser, chan: IChannel, page
                     {
                         user.id !== myUser?.id &&
                         <>
-                            <li onClick={_ => setMyvar(true)}>
+                            <li onClick={() => setMyvar(true)}>
                                 Invite Game
                             </li>
                             <li>
-                                <a onClick={e => { props.page(page.PAGE_2); navigate(`/Chat/dm/${user.id}`) }}>
+                                <span onClick={() => { props.page(page.PAGE_2); navigate(`/Chat/dm/${user.id}`) }}>
                                     DM
-                                </a>
+                                </span>
                             </li>
                             {
                                 props.chan.admin?.find(obj => obj.id === myUser?.id) &&
                                 <>
                                     {
-                                        props.chan.admin?.find(obj => obj.id === props.user.id) == undefined &&
+                                        props.chan.admin?.find(obj => obj.id === props.user.id) === undefined &&
                                         <>
                                             <li>
-                                                <a onClick={_ => handleAddAdmin()}>
+                                                <span onClick={() => handleAddAdmin()}>
                                                     Add to Admin
-                                                </a>
+                                                </span>
                                             </li>
                                         </>
                                     }
@@ -61,27 +62,27 @@ export default function ClickableMenu(props: { user: IUser, chan: IChannel, page
                                             {
                                                 props.chan.muted?.find(obj => obj.id === props.user.id) === undefined &&
                                                 <li>
-                                                    <a onClick={() => setTimeMute(true)}>
+                                                    <span onClick={() => setTimeMute(true)}>
                                                         Mute
                                                         <MuteUser chanid={props.chan.id} userid={user.id} trigger={timeMute} setTrigger={setTimeMute} />
-                                                    </a>
+                                                    </span>
                                                 </li>
                                             }
 
                                             {
                                                 props.chan.banned?.find(obj => obj.id === props.user.id) === undefined &&
                                                 <li>
-                                                    <a onClick={() => setTimeBan(true)}>
+                                                    <span onClick={() => setTimeBan(true)}>
                                                         Ban
                                                         <BanUser chanid={props.chan.id} userid={user.id} trigger={timeBan} setTrigger={setTimeBan} />
-                                                    </a>
+                                                    </span>
                                                 </li>
                                             }
 
                                             <li>
-                                                <a onClick={() => KickUser(props.chan.id, user.id)}>
+                                                <span onClick={() => KickUser(props.chan.id, user.id)}>
                                                     Kick
-                                                </a>
+                                                </span>
                                             </li>
                                         </>
                                     }

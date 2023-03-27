@@ -1,13 +1,13 @@
-import { RouterProvider, useNavigate } from "react-router-dom";
+import * as React from 'react';
+import { RouterProvider } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from './redux/Hook';
 import { io, Socket } from 'socket.io-client';
 import router from './router';
-import { Cookies, useCookies } from 'react-cookie';
+import { Cookies } from 'react-cookie';
 import { setToken, setUser, set_status } from './redux/user';
 import { useEffect, useState } from "react";
-import { IUser, UserStatus } from "./interface/User";
+import { UserStatus } from "./interface/User";
 import InviteGame from "./components/utils/InviteGame";
-import { Player } from "./components/Game/Game";
 import swal from "sweetalert";
 import { addDM, addMember, addMessage, removeMember, removePass, setChannels, setPass } from "./redux/chat";
 import { IMessage } from "./interface/Message";
@@ -16,8 +16,6 @@ export let socket: Socket;
 
 function App() {
   const myUser = useAppSelector(state => state.user);
-  const myToken = useAppSelector(state => state.user.myToken);
-  const [, setCookie] = useCookies(['Token']);
 
   const dispatch = useAppDispatch();
   const cookies = new Cookies();
@@ -29,7 +27,7 @@ function App() {
 
 
   useEffect(() => {
-    if (myUser.isLog == true && token != undefined && myUser.user && myUser.user.username) {
+    if (myUser.isLog === true && token !== undefined && myUser.user && myUser.user.username) {
       socket = io(`${process.env.REACT_APP_BACK}`, {
         auth: {
           token: token,
@@ -39,30 +37,30 @@ function App() {
       socket.emit("UpdateSomeone", { idChange: myUser.user?.id, idChange2: 0 })
 
       if (socket) {
-        socket.on("RoomStart", (roomId: number, player: Player) => {
+        socket.on("RoomStart", () => {
           if (timeOutId)
             clearTimeout(timeOutId);
         });
 
         socket.on("RequestSent", () => {
-          if (myUser && myUser.user && myUser.user.status != UserStatus.INGAME)
+          if (myUser && myUser.user && myUser.user.status !== UserStatus.INGAME)
             swal("Friend Request Received", "You can accept or refuse it from your profile page");
         });
 
         socket.on("RequestAccepted", () => {
-          if (myUser && myUser.user && myUser.user.status != UserStatus.INGAME)
+          if (myUser && myUser.user && myUser.user.status !== UserStatus.INGAME)
             swal("Friend Request Accepted", "One of your friend request has been accepted", "success");
         });
 
         socket.on("RequestDeclined", () => {
-          if (myUser && myUser.user && myUser.user.status != UserStatus.INGAME)
+          if (myUser && myUser.user && myUser.user.status !== UserStatus.INGAME)
             swal("Friend Request Declined", "One of your friend request has been declined", "error");
         });
 
         socket.on("GameDeclined", (username: string) => {
           if (timeOutId)
             clearTimeout(timeOutId);
-          if (username != "You")
+          if (username !== "You")
             swal("Invitation Declined", username + " declined your game", "error");
         });
 
@@ -147,7 +145,7 @@ function App() {
   }, [myUser.isLog])
 
   const get_channels = async() => {
-    const response = await fetch(`${process.env.REACT_APP_BACK}channel`, {
+    await fetch(`${process.env.REACT_APP_BACK}channel`, {
       method: 'GET',
     }).then(async response => {
       const data = await response.json();
@@ -159,7 +157,7 @@ function App() {
   }
 
   const get_user = async () => {
-    const response = await fetch(`${process.env.REACT_APP_BACK}user/access_token`, {
+    await fetch(`${process.env.REACT_APP_BACK}user/access_token`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -173,8 +171,8 @@ function App() {
 
       if (response.ok && data.username !== "") {
         dispatch(setUser(data))
-        dispatch(set_status(UserStatus.ONLINE));
         dispatch(setToken(token));
+        dispatch(set_status(UserStatus.ONLINE));
 
         // setCookie('Token', data.access_token, { path: '/' });
         // socket.emit("UpdateSomeone", { idChange: myUser.user?.id, idChange2: 0 })

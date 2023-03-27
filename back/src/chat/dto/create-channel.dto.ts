@@ -1,5 +1,5 @@
-import { IsArray, IsNotEmpty, IsNumber, IsOptional, isString, IsString } from "class-validator";
-import { User } from "src/user/entities/user.entity";
+import { IsArray, IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
+import { User } from 'src/user/entities/user.entity';
 
 
 export class CreateChannelDto {

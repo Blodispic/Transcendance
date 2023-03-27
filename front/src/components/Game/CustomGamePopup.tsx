@@ -1,19 +1,18 @@
+import * as React from 'react';
 import { useEffect, useState } from "react";
 import { HiOutlineXMark } from "react-icons/hi2";
 
-import { AiFillPlusCircle } from "react-icons/ai";
 import { socket } from "../../App";
 import { useAppSelector } from "../../redux/Hook";
 import { IUser } from "../../interface/User";
-import { useSearchParams } from "react-router-dom";
 import AllPeople from "../utils/Allpeople";
 import swal from 'sweetalert';
 
 
-export default function CustomGamePopup(props: {trigger: boolean; setTrigger: Function; friend: IUser | undefined} ) {
+export default function CustomGamePopup(props: {trigger: boolean; setTrigger: (arg: boolean) => void; friend: IUser | undefined} ) {
     const [extra, setExtra] = useState<boolean>(false);
     const [maxScore, setMaxScore] = useState(1);
-    const [myVar, setMyvar] = useState<boolean>(false);
+    // const [myVar, setMyvar] = useState<boolean>(false);
 
     const myUser = useAppSelector(state => state.user);
     const [friend, setFriend] = useState<IUser[]  >([]);
@@ -28,7 +27,7 @@ export default function CustomGamePopup(props: {trigger: boolean; setTrigger: Fu
     useEffect(() => {
         if (props.friend !== undefined)
             setFriend([props.friend])
-        if ( window.location.href.search('Game') == -1 ) {
+        if ( window.location.href.search('Game') === -1 ) {
             setInpage(true);
         }
     }, [props])
@@ -49,7 +48,7 @@ export default function CustomGamePopup(props: {trigger: boolean; setTrigger: Fu
         }
         socket.emit("createCustomGame", { user1: myUser.user, user2: friend[0], extra: extra, scoreMax: Max });
         props.setTrigger(false);
-        setMyvar(false);
+        // setMyvar(false);
         return;
     }
 
@@ -57,9 +56,9 @@ export default function CustomGamePopup(props: {trigger: boolean; setTrigger: Fu
         <div className='custom-popup'>
             <div className='custom-popup-inner'>
             {/* ; setFriend(undefined) */}
-                <HiOutlineXMark className="close-icon" onClick={_ => {props.setTrigger(false); setMyvar(false); canErase() }} /> <br /> 
+                <HiOutlineXMark className="close-icon" onClick={() => {props.setTrigger(false);  canErase() }} /> <br /> 
                 Create Custom Game
-                <AllPeople friend={friend} setFriend={setFriend} myVar={myVar} setMyvar={setMyvar} />
+                <AllPeople friend={friend} setFriend={setFriend} />
 
                 <div className='sub-element'>Set Extra Mode <br />
                     <label> <input type="checkbox" onChange={changeExtra} /> Extra mode </label>

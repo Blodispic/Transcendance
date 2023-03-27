@@ -12,12 +12,9 @@ import { AppGateway } from './app.gateway';
 import { MulterModule } from '@nestjs/platform-express';
 import { Results } from './results/entities/results.entity';
 import { ChannelModule } from './chat/channel/channel.module';
-import { ResultModule } from './results/results.module';
 import { Channel } from './chat/channel/entities/channel.entity';
 import { FriendRequest } from './user/entities/friend-request.entity';
-import { UserService } from './user/user.service';
-import { APP_FILTER, APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
-import { GatewayExceptionFilter } from './app.exceptionFilter';
+import { APP_INTERCEPTOR } from '@nestjs/core';
 
 @Module({
   imports: [
@@ -29,7 +26,7 @@ import { GatewayExceptionFilter } from './app.exceptionFilter';
       password: process.env.POSTGRES_PASSWORD,
       entities: [User, Results, Channel, FriendRequest],
       synchronize: true,
-      dropSchema: true,    //A ENLEVER QUAND PLUS BESOIN (ça reset la db a chaque changement)
+      // dropSchema: true,    //A ENLEVER QUAND PLUS BESOIN (ça reset la db a chaque changement)
     }),
     MulterModule.register({
       dest: './storage/images',
@@ -39,7 +36,6 @@ import { GatewayExceptionFilter } from './app.exceptionFilter';
     GameModule,
     OauthModule,
     ChannelModule,
-    ResultModule,
   ],
   controllers: [AppController],
   providers: [AppService, ChatGateway, AppGateway,

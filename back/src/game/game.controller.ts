@@ -1,8 +1,8 @@
-import { Body, Controller, Param, Post, UseGuards } from '@nestjs/common';
+import { Controller, Param, Post, UseGuards } from '@nestjs/common';
 import { GameService } from './game.service';
 import { JwtGuard } from 'src/Oauth/jwt-auth.guard';
 
-export let user = [];
+export const user = [];
 
 @Controller('game')
 export class GameController {

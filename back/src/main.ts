@@ -2,7 +2,6 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import * as cookieParser from 'cookie-parser';
 import * as dotenv from 'dotenv';
-import { GatewayExceptionFilter } from './app.exceptionFilter';
 
 async function bootstrap() {
   dotenv.config();

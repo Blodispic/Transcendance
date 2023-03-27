@@ -1,3 +1,4 @@
+import * as React from 'react';
 import { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import swal from "sweetalert";
@@ -8,7 +9,7 @@ import { useAppDispatch, useAppSelector } from "../../redux/Hook";
 import { addBlockedUser, unBlockUser } from "../../redux/user";
 import CustomGamePopup from "../Game/CustomGamePopup";
 
-function DMList(props: { currentdm: IUser | undefined; setCurrentDm: Function }) {
+function DMList(props: { currentdm: IUser | undefined; setCurrentDm: (user: IUser | undefined) => void }) {
 	const [alluser, setAlluser] = useState<IUser[] | undefined>(undefined);
 	const myStore = useAppSelector(state => state);
 	const navigate = useNavigate();
@@ -34,7 +35,7 @@ function DMList(props: { currentdm: IUser | undefined; setCurrentDm: Function })
 			{alluser !== undefined &&
 				<>
 					{alluser && alluser.map(user => (
-						<ul key={user.username} onClick={_ => {props.setCurrentDm(user); navigate(`/Chat/dm/${user.id}`)}} >
+						<ul key={user.username} onClick={() => {props.setCurrentDm(user); navigate(`/Chat/dm/${user.id}`)}} >
 							<li >
 								{user.username}
 							</li>
@@ -100,7 +101,7 @@ function InfoFriend(props: { user: IUser }) {
 	}
 
 	const acceptFriendRequest = async () => {
-		const response = await fetch(`${process.env.REACT_APP_BACK}user/friends/accept`, {
+		await fetch(`${process.env.REACT_APP_BACK}user/friends/accept`, {
 			method: 'POST',
 			body: JSON.stringify({ friendId: user.id, userId: myUser.user!.id }),
 			headers: {
@@ -110,7 +111,7 @@ function InfoFriend(props: { user: IUser }) {
 		})
 			.then(async Response => {
 				if (Response.ok) {
-					let str: string = "They" + " are now your friend!";
+					const str: string = "They are now your friend!";
 					swal("Congrats", str, "success");
 					socket.emit("RequestAccepted", user.id);
 					setRelation("Friend");
@@ -120,7 +121,7 @@ function InfoFriend(props: { user: IUser }) {
 	};
 
 	const removeFriend = async () => {
-		const response = await fetch(`${process.env.REACT_APP_BACK}user/deletefriend/${myUser.user?.id}`, {
+		await fetch(`${process.env.REACT_APP_BACK}user/deletefriend/${myUser.user?.id}`, {
 			method: 'DELETE',
 			body: JSON.stringify({ friendId: user.id }),
 			headers: {
@@ -187,25 +188,25 @@ function InfoFriend(props: { user: IUser }) {
 					<>
 						{
 							relation === "Nobody" &&
-							<li onClick={_ => (sendFriendRequest())} >
+							<li onClick={() => (sendFriendRequest())} >
 								Add Friend
 							</li>
 						}
 						{
 							relation === "Friend" &&
-							<li onClick={_ => (removeFriend())}> Remove Friend </li>
+							<li onClick={() => (removeFriend())}> Remove Friend </li>
 						}
 						{
 							relation === "friendRequestSent" &&
-							<li onClick={_ => (_)}> Request already sent </li>
+							<li> Request already sent </li>
 						}
 						{
 							relation === "friendRequestReceived" &&
-							<li onClick={_ => (acceptFriendRequest())}> accept in Friend </li>
+							<li onClick={() => (acceptFriendRequest())}> accept in Friend </li>
 						}
 
 
-						<li onClick={_ => setMyvar(true)}>
+						<li onClick={() => setMyvar(true)}>
 							Invite Game
 						</li>
 
@@ -213,14 +214,14 @@ function InfoFriend(props: { user: IUser }) {
 							((myUser.user && (myUser.user.blocked === undefined
 								|| myUser.user.blocked.find(block => block.id === user.id) === undefined))
 								&& user.username !== myUser.user!.username) &&
-							<li onClick={_ => Block()}>
+							<li onClick={() => Block()}>
 								Block
 							</li>
 						}
 
 						{
 							((myUser.user && (myUser.user.blocked !== undefined && myUser.user.blocked.find(block => block.id === user.id) !== undefined)) && user.username !== myUser.user!.username) &&
-							<li onClick={_ => UnBlock()}>
+							<li onClick={() => UnBlock()}>
 								Unblock
 							</li>
 						}
@@ -235,7 +236,7 @@ function InfoFriend(props: { user: IUser }) {
 	);
 }
 
-export function DmMessages(props: { id: number; currentdm: IUser | undefined; setCurrentDm: Function }) {
+export function DmMessages(props: { id: number; currentdm: IUser | undefined; setCurrentDm: (user: IUser | undefined) => void }) {
 	const [newInput, setNewInput] = useState("");
 	const myUser: IUser | undefined = useAppSelector(state => state.user.user);
 	const messages: IMessage[] = useAppSelector(state => state.chat.DMs.filter(obj => obj.chanid === props.id));
@@ -252,7 +253,7 @@ export function DmMessages(props: { id: number; currentdm: IUser | undefined; se
 	return (
 		<div className="chat-body">
 			<div className="body-header">
-				<img className="user-avatar" src={`${process.env.REACT_APP_BACK}user/${props.currentdm?.id}/avatar`} alt="user avatar" />
+				<img className="user-avatar" src={`${process.env.REACT_APP_BACK}user/${props.currentdm?.id}/avatar`} alt="" />
 				{props.currentdm?.username}
 			</div>
 			<div className="chat-messages">
@@ -265,7 +266,7 @@ export function DmMessages(props: { id: number; currentdm: IUser | undefined; se
 								myUser?.blocked?.find(obj => obj.id === props.currentdm?.id) === undefined &&
 									<div className="__wrap">
 										<div className="message-info">
-											<img className="user-avatar" src={`${process.env.REACT_APP_BACK}user/${message.sender?.id}/avatar`} alt="user avatar" />
+											<img className="user-avatar" src={`${process.env.REACT_APP_BACK}user/${message.sender?.id}/avatar`} alt="" />
 											{message.sender?.username}
 											<span className="timestamp">{message.sendtime}</span>
 										</div>

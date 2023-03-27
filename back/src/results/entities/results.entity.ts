@@ -1,12 +1,12 @@
-import { User } from "src/user/entities/user.entity";
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { User } from 'src/user/entities/user.entity';
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
 export class Results {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne(type => User, user => user.results)
+  @ManyToOne(() => User, user => user.results)
   user: User;
 
   @Column()
