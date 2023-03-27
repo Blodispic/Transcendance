@@ -124,7 +124,7 @@ async handleJoinChannel(@ConnectedSocket() client: Socket, @MessageBody() joinCh
 async handleCreateChannel(@ConnectedSocket() client: Socket, @MessageBody() createChannelDto: CreateChannelDto) {
   const channel = await this.channelService.getByName(createChannelDto.chanName);  
   if (channel != null) {
-    client.emit('createChannelFailed', 'An existing channel already have this name');
+    client.emit('createChannelFailed', 'Channel name already exists');
     throw new BadRequestException('An existing channel already have this name'); //channame already exist, possible ? if private/protected possible ?
   }
   if (createChannelDto.chanType == 2 && !createChannelDto.password) {
