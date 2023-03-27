@@ -11,7 +11,7 @@ import { CreateChannelDto } from '../dto/create-channel.dto';
 import { GiveAdminDto } from '../dto/give-admin.dto';
 import { BanUserDto } from '../dto/ban-user.dto';
 import { RmAdminDto } from '../dto/rm-admin.dto';
-var bcrypt = require('bcryptjs');
+const bcrypt = require('bcryptjs');
 
 
 @Injectable()
@@ -27,7 +27,7 @@ export class ChannelService {
 	) {}
 
 	async create(createChannelDto: CreateChannelDto, user: User) {		
-		if (createChannelDto.password && createChannelDto.chanType == 2) {
+		if (createChannelDto.password && createChannelDto.chanType === 2) {
 			const salt = await bcrypt.genSalt();
 			const hashPassword = await bcrypt.hash(createChannelDto.password, salt);
 			createChannelDto.password = hashPassword;

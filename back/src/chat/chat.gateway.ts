@@ -100,7 +100,7 @@ async handleJoinChannel(@ConnectedSocket() client: Socket, @MessageBody() joinCh
     client.emit('joinChannelFailed', 'Invalid User'); 
     throw new BadRequestException('No such user');
   }
-  if (channel.chanType == 2 && !(await bcrypt.compare(joinChannelDto.password, pw)))
+  if (channel.chanType === 2 && !(await bcrypt.compare(joinChannelDto.password, pw)))
   {
     client.emit('joinChannelFailed', 'Wrong password');
     throw new BadRequestException('Bad password');
