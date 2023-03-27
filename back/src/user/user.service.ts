@@ -106,6 +106,8 @@ export class UserService {
         friends: true,
         results: true,
         channels: true,
+        owned: true,
+        blocked: true,
       },
       where: { id: id },
     });

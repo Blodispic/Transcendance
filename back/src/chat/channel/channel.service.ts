@@ -109,8 +109,8 @@ export class ChannelService {
 		return 'There is no channel to update';
 	  }
 
-	getById(id: number) {
-		return this.channelRepository.findOne({
+	async getById(id: number) {
+		return await this.channelRepository.findOne({
 			relations: {
 				admin: true,
 				users: true,

@@ -243,7 +243,7 @@ export function DmMessages(props: { id: number; currentdm: IUser | undefined; se
 
 	const handleSubmitNewMessage = (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
-		if (newInput != "") {
+		if (newInput !== "") {
 			socket.emit('sendDM', { IdReceiver: props.id, message: newInput});
 		}
 		setNewInput("");
