@@ -67,6 +67,15 @@ export default function ClickableMenu(props: { user: IUser, chan: IChannel, page
                                                     </span>
                                                 </li>
                                             }
+                                            { // Do we need unmute?
+                                                props.chan.muted?.find(obj => obj.id === props.user.id) !== undefined &&
+                                                <li>
+                                                    <span onClick={() => setTimeMute(true)}>
+                                                        Unmute
+                                                        {/* <MuteUser chanid={props.chan.id} userid={user.id} trigger={timeMute} setTrigger={setTimeMute} /> */}
+                                                    </span>
+                                                </li>
+                                            }
 
                                             {
                                                 props.chan.banned?.find(obj => obj.id === props.user.id) === undefined &&
@@ -74,6 +83,16 @@ export default function ClickableMenu(props: { user: IUser, chan: IChannel, page
                                                     <span onClick={() => setTimeBan(true)}>
                                                         Ban
                                                         <BanUser chanid={props.chan.id} userid={user.id} trigger={timeBan} setTrigger={setTimeBan} />
+                                                    </span>
+                                                </li>
+                                            }
+
+                                            { // Do we need unban?
+                                                props.chan.banned?.find(obj => obj.id === props.user.id) !== undefined &&
+                                                <li>
+                                                    <span onClick={() => setTimeBan(true)}>
+                                                        Unban
+                                                        {/* <BanUser chanid={props.chan.id} userid={user.id} trigger={timeBan} setTrigger={setTimeBan} /> */}
                                                     </span>
                                                 </li>
                                             }
@@ -86,7 +105,6 @@ export default function ClickableMenu(props: { user: IUser, chan: IChannel, page
                                         </>
                                     }
                                 </>
-
                             }
                         </>
                     }
