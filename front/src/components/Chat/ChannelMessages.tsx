@@ -67,9 +67,9 @@ export function ChannelHeader() {
 						currentChan.chanType === 1 &&
 						<>
 							{
-								currentChan.users.find(obj => obj.id == currentUser?.id) &&
+								currentChan.users.find(obj => obj.id === currentUser?.id) &&
 								<>
-									{currentChan.admin.find(obj => obj.id == currentUser?.id) &&
+									{currentChan.admin.find(obj => obj.id === currentUser?.id) &&
 										<>
 											<ImCog className="config-icon" onClick={() => setPopup(true)} />
 											<ConfigureChannelPrivate trigger={popup} setTrigger={setPopup} channel={currentChan} />

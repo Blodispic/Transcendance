@@ -1,14 +1,13 @@
 import * as React from 'react';
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { IChannel } from "../../interface/Channel";
 import { IUser } from "../../interface/User";
-import { useAppDispatch, useAppSelector } from "../../redux/Hook";
+import { useAppSelector } from "../../redux/Hook";
 import CustomGamePopup from "../Game/CustomGamePopup";
 import { BanUser, KickUser, MuteUser } from "./AdminCommands";
 import { page } from "../../interface/enum";
 import { socket } from "../../App";
-import { addAdmin } from "../../redux/chat";
 
 export default function ClickableMenu(props: { user: IUser, chan: IChannel, page: (page: page) => void }) {
 

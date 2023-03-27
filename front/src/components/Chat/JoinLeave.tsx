@@ -67,7 +67,7 @@ export function JoinChannel(props: { channel: IChannel }) {
 		socket.on("joinChannelOK", (chanId) => {
 			if (currentUser !== undefined) {
 				const fetchChanInfo = async () => {
-					const response = await fetch(`${process.env.REACT_APP_BACK}channel/${chanId}`, {
+					await fetch(`${process.env.REACT_APP_BACK}channel/${chanId}`, {
 						method: 'GET',
 					}).then(async response => {
 						const data = await response.json();

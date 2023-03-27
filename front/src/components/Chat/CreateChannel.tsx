@@ -45,7 +45,7 @@ export function PopupCreateChannel(props: { trigger: boolean, setTrigger: (value
 		});
 		socket.on("createChannelOk", (new_chanid) => {
 			const fetchChanInfo = async () => {
-				const response = await fetch(`${process.env.REACT_APP_BACK}channel/${new_chanid}`, {
+				await fetch(`${process.env.REACT_APP_BACK}channel/${new_chanid}`, {
 					method: 'GET',
 				}).then(async response => {
 					const data = await response.json();
