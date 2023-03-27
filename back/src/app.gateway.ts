@@ -84,7 +84,7 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		const socket = this.findSocketById(playerId);
 		if (socket != null && socket.id != null)// && socket.handshake.auth.user.status == "Online")
 		{
-    	    this.server.to(socket.id).emit('RequestAccepted');
+    	    this.server.to(socket.id).emit('RequestDeclined');
 		}
 	}
 }
