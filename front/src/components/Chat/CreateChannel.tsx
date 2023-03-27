@@ -1,21 +1,23 @@
 import * as React from 'react';
 import { useEffect, useState } from "react";
 import { HiOutlineXMark, HiPlus } from "react-icons/hi2";
+import { useNavigate } from 'react-router-dom';
 import { socket } from "../../App";
 import { IUser } from "../../interface/User";
 import { addChannel } from "../../redux/chat";
-import { useAppDispatch } from "../../redux/Hook";
+import { useAppDispatch, useAppSelector } from "../../redux/Hook";
 import AllPeople from "../utils/Allpeople";
 
 export function PopupCreateChannel(props: { trigger: boolean, setTrigger: (value: boolean) => void }) {
 	const [chanName, setChanName] = useState("");
 	const [password, setPassword] = useState("");
 	const [chanMode, setChanMode] = useState(0);
-    const [friend, setFriend] = useState<IUser[] >([]);
-	// const [myVar, setMyvar] = useState<boolean> (false);
-	const [failed, setFailed] = useState<boolean> (false);
-	// const navigate = useNavigate();
+	const [friend, setFriend] = useState<IUser[]>([]);
+	// const [myVar, setMyvar] = useState<boolean>(false);
+	const [failed, setFailed] = useState<boolean>(false);
+	const currentUser: IUser | undefined = useAppSelector(state => state.user.user);
 	const dispatch = useAppDispatch();
+	const navigate = useNavigate();
 
 	const handlePublic = () => {
 		setChanMode(0);
@@ -43,17 +45,22 @@ export function PopupCreateChannel(props: { trigger: boolean, setTrigger: (value
 		});
 		socket.on("createChannelOk", (new_chanid) => {
 			const fetchChanInfo = async () => {
-				const response = await fetch(`${process.env.REACT_APP_BACK}channel/${new_chanid}`, {
+				await fetch(`${process.env.REACT_APP_BACK}channel/${new_chanid}`, {
 					method: 'GET',
+				}).then(async response => {
+					const data = await response.json();
+					
+					if (response.ok) {
+						dispatch(addChannel(data));
+						if (data.owner.id === currentUser?.id)
+							navigate(`/Chat/channel/${new_chanid}`);
+					}
 				})
-				const data = await response.json();
-				dispatch(addChannel(data));
+					
 			}
 			fetchChanInfo();
 			setFailed(false);
 			props.setTrigger(false);
-			setChanMode(0);
-			// navigate(`/Chat/channel/${new_chanid}`)
 		});
 
 		return () => {

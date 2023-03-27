@@ -4,12 +4,13 @@ import { HiOutlineXMark } from "react-icons/hi2";
 import { socket } from "../../App";
 import { IChannel } from "../../interface/Channel";
 import { IUser } from "../../interface/User";
-import { addAdmin } from "../../redux/chat";
-import { useAppDispatch, useAppSelector } from "../../redux/Hook";
+import { useAppSelector } from "../../redux/Hook";
 import { AiFillPlusCircle } from 'react-icons/ai';
 
 export function BanUser(props: { chanid: any, userid: any, trigger: boolean, setTrigger: (value: boolean) => void }) {
 	const [timeout, setTimeout] = useState<string>("");
+	const [failed, setFailed] = useState<boolean>(false);
+	const [errorMessage, setError] = useState<string>("");
 
 	const handleBan = () => {
 		if (timeout === "")
@@ -17,12 +18,18 @@ export function BanUser(props: { chanid: any, userid: any, trigger: boolean, set
 		else
 			socket.emit('BanUser', { chanid: props.chanid, userid: props.userid, timeout: parseInt(timeout) * 1000 });
 	}
-
+	
 	useEffect(() => {
-		socket.on("banUserOK", () => {
+		socket.on("banUserFailed", (errorMessage) => {
+			setFailed(true);
+			setError(errorMessage);
+		});
+		socket.on("banUserOK", ({chanid, userid}) => {
 			props.setTrigger(false);
+			setFailed(false);
 		});
 		return () => {
+			socket.off("banUserFailed");
 			socket.off("banUserOK");
 		}
 	})
@@ -36,6 +43,10 @@ export function BanUser(props: { chanid: any, userid: any, trigger: boolean, set
 				<h4>Set time (optional)</h4>
 				<input type="number" id="clickable-input" min="0" onChange={e => { setTimeout(e.target.value) }} />seconds
 				<br /><br />
+				{
+					failed === true &&
+					<span className="channel-error"> {errorMessage}</span>
+				}
 				<button onClick={() => handleBan()}>Ban User</button>
 			</div>
 		</div>
@@ -44,6 +55,8 @@ export function BanUser(props: { chanid: any, userid: any, trigger: boolean, set
 
 export function MuteUser(props: { chanid: any, userid: any, trigger: boolean, setTrigger: (value: boolean) => void }) {
 	const [timeout, setTimeout] = useState<string>("");
+	const [failed, setFailed] = useState<boolean>(false);
+	const [errorMessage, setError] = useState<string>("");
 
 	const handleMute = () => {
 		if (timeout === "")
@@ -52,11 +65,18 @@ export function MuteUser(props: { chanid: any, userid: any, trigger: boolean, se
 			socket.emit('MuteUser', { chanid: props.chanid, userid: props.userid, timeout: parseInt(timeout) * 1000 });
 	}
 
+
 	useEffect(() => {
-		socket.on("muteUserOK", () => {
+		socket.on("muteUserFailed", (errorMessage) => {
+			setFailed(true);
+			setError(errorMessage);
+		});
+		socket.on("muteUserOK", ({chanid, userid}) => {
 			props.setTrigger(false);
+			setFailed(false);
 		});
 		return () => {
+			socket.off("muteUserFailed");
 			socket.off("muteUserOK");
 		}
 	})
@@ -70,25 +90,14 @@ export function MuteUser(props: { chanid: any, userid: any, trigger: boolean, se
 				<h4>Set time (optional)</h4>
 				<input type="number" id="clickable-input" min="0" onChange={e => { setTimeout(e.target.value) }} />seconds
 				<br /><br />
-				<button onClick={() => handleMute()}>Mute User</button>
+				{
+					failed === true &&
+					<span className="channel-error"> {errorMessage}</span>
+				}
+				<button onClick={_ => handleMute()}>Mute User</button>
 			</div>
 		</div>
 	) : <></>;
-}
-
-export function AddAdmin(props: { chanid: any, user: IUser }) {
-	const dispatch = useAppDispatch();
-
-	socket.emit('GiveAdmin', { chanid: props.chanid, userid: props.user.id });
-
-	useEffect(() => {
-		socket.on("giveAdminOK", ({ chanId }) => {
-			dispatch(addAdmin({ id: chanId, user: props.user }));
-		});
-		return () => {
-			socket.off("giveAdminOK");
-		}
-	})
 }
 
 export function KickUser(chanid: any, userid: any) {
