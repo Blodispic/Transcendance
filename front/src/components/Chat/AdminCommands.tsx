@@ -4,7 +4,6 @@ import { HiOutlineXMark } from "react-icons/hi2";
 import { socket } from "../../App";
 import { IChannel } from "../../interface/Channel";
 import { IUser } from "../../interface/User";
-import AllPeople from "../utils/Allpeople";
 import { addAdmin } from "../../redux/chat";
 import { useAppDispatch, useAppSelector } from "../../redux/Hook";
 import { AiFillPlusCircle } from 'react-icons/ai';
@@ -131,7 +130,7 @@ export function ConfigureChannelPrivate(props: { trigger: boolean, setTrigger: (
 		return () => {
 			socket.off("AddPeoplePrivateOk");
 		}
-	});
+	}, []);
 	const get_all = async () => {
 		const response = await fetch(`${process.env.REACT_APP_BACK}user`, {
 			method: 'GET',
