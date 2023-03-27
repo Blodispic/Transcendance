@@ -46,7 +46,7 @@ export class ChatGateway
   const socketReceiver = this.findSocketFromUser(receiver);
   if (socketReceiver === null)
     throw new BadRequestException('Receiver is not connected');
-  if ((await this.userService.checkRelations(sender.id, receiver.id)).relation === 'Blocked')
+  if ((await this.userService.checkRelations(receiver.id, sender.id)).relation === 'Blocked')
     throw new BadRequestException('User blocked'); // do we want an emit ?
   client.emit('sendDmOK', sendDmDto); // added by selee
   this.server.to(socketReceiver.id).emit('ReceiveDM', {
