@@ -126,13 +126,6 @@ export class ChannelService {
 
 	  async getPwById(id: number) {
 		return (await this.channelRepository.findOne({
-			relations: {
-				admin: true,
-				users: true,
-				muted: true,
-				banned: true,
-				owner: true,
-			},
 			where: {
 				id: id
 			},
