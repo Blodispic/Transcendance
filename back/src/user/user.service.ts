@@ -567,10 +567,7 @@ export class UserService {
     });
     if (user === null)
       throw new BadRequestException("No such User");
-    console.log("Rmowned", user.owned);
-    user.owned = user.owned.filter(elem => elem.id != chanid);
-    console.log("Rmowned", user.owned);
-    
+    user.owned = user.owned.filter(elem => elem.id != chanid);    
     return await this.usersRepository.save(user);
   }
 

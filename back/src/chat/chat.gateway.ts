@@ -303,7 +303,7 @@ async inviteToChan(users: User[], chanid: number)
       this.server.to(socketIdToWho.id).emit('invited', chanid);
     socketIdToWho?.join("chan" + chanid);
     this.channelService.add({user: user, chanId: chanid});
-  };
+  }
 }
 
 afterInit(server: Server) {
