@@ -18,8 +18,7 @@
 	}
 
 	.result-popup{
-	z-index: 2;
-
+		z-index: 2;
 		position: fixed;
 		top: 0;
 		left: 0;
@@ -33,8 +32,6 @@
 	}
 
 	.result-popup-inner {
-	z-index: 2;
-
 		font-family: 'Fredoka One', cursive;
 		font-size: 50px;
 		background-color: white;

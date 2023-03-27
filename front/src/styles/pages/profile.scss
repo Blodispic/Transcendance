@@ -76,10 +76,7 @@
 
                 .block {
                     height: 80%;
-                    background-color: rgba(32, 32, 38, 0.85);
-
                     margin: 0 20px 0 0;
-                    border-radius: 4px;
                     flex: 1;
                     display: flex;
                     justify-content: space-around;
@@ -165,10 +162,9 @@
     .search {
         width: 50%;
         height: 60px;
-        border-radius: 20px;
         background-color: rgba(32, 32, 38, 0.82);
         border-radius: 60px;
-        margin: 30px auto 0 auto;
+        margin: 30px auto 0;
 
         .icon-search {
             width: 60px;
@@ -352,7 +348,7 @@
         border-bottom-left-radius: 5px;
         padding: 10px 20px 5px;
 
-        div {
+        span {
             font-size: 24px;
             width: 100%;
             height: 100%;
@@ -387,7 +383,6 @@
     flex-direction: column-reverse;
     overflow: hidden;
     list-style: none;
-    display: flex;
     flex-wrap: wrap;
     justify-content: center;
     align-content: center;
@@ -396,8 +391,6 @@
 
 .match-block {
     position: relative;
-    display: flex;
-    align-items: center;
     justify-content: center;
     border-radius: 4.5px;
     overflow: hidden;

@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { HiOutlineMagnifyingGlassCircle } from "react-icons/hi2";
 import { useNavigate } from "react-router-dom";
 import { IUser } from "../../interface/User";
-import { useAppDispatch, useAppSelector } from "../../redux/Hook";
+import { useAppSelector } from "../../redux/Hook";
 import HeaderButtons from "./buttonsHeader";
 
 function Search(props: { setCurrentUser: (user: IUser) => void }) {
