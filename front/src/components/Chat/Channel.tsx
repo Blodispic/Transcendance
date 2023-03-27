@@ -172,7 +172,6 @@ export function Channels(props: { page: Function }) {
 
 		});
 		socket.on("banUser", ({chanid, userid, timer}) => {
-			console.log("banUser timer: ", timer);
 			dispatch(banUser({chanid: chanid, userid: userid}));
 
 			setTimeout(() => {

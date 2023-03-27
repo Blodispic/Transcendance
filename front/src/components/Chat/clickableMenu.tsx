@@ -19,7 +19,6 @@ export default function ClickableMenu(props: { user: IUser, chan: IChannel, page
     const navigate = useNavigate();
 
     const handleAddAdmin = () => {
-        console.log("addAdmin:" , props.chan.id, " |" , props.user.id, " | ", props.user.username);
         socket.emit('GiveAdmin', { chanid: props.chan.id, userid: props.user.id });
     }
 

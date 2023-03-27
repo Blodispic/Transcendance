@@ -86,7 +86,6 @@ export function ChannelMessages() {
 
 	useEffect(() => {
 		socket.on("sendMessageChannelFailed", (errorMessage) => {
-			console.log("messagechanfailed: ", errorMessage);
 			const newMessage: IMessage = {
 				chanid: currentChan?.id,
 				message: errorMessage, 

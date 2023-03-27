@@ -95,7 +95,6 @@ export const chatSlice = createSlice({
                     else
                         chan.banned = ([user]);
                 }
-                console.log(":: redux :: banUser");
             }
         },
 
@@ -106,7 +105,6 @@ export const chatSlice = createSlice({
                 if (user) {
                     if (chan.banned && chan.banned.find(obj => obj.id === user.id) !== undefined)
                     chan.banned = chan?.banned.filter(obj => obj.id !== user.id);
-                    console.log(":: redux :: unBanUser");
                 }
             }
         },

@@ -313,7 +313,6 @@ export function DirectMessage() {
 				setCurrentDm(data);
 			}
 		}
-		// console.log("getuser");
 		get_user();
 	}, [dmId]);
 
