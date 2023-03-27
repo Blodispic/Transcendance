@@ -20,7 +20,6 @@ function JoinedChannelList() {
 	const currentUser: IUser | undefined = useAppSelector(state => state.user.user);
 	const channels: IChannel[] = useAppSelector(state => state.chat.channels);
 
-
 	return (
 		<div className="upper">
 			<header>Joined Channels <hr /></header>
@@ -54,8 +53,6 @@ function PublicChannelList() {
 
 	return (
 		<div className="bottom">
-
-			 {/* <div className="bottom"> */}
 				<header>All Joinable Channels <hr /></header>
 				{channels && channels.map(chan => (
 					<ul key={chan.name}>
@@ -72,7 +69,6 @@ function PublicChannelList() {
 						}
 					</ul>
 				))}
-			 {/* </div> */}
 		</div>
 	);
 }

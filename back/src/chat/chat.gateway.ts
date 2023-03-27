@@ -44,11 +44,11 @@ export class ChatGateway
   if (socketReceiver === null)
     throw new BadRequestException('Receiver is not connected');
 
-  client.emit('sendDmOK', sendDmDto); // added by selee
+  client.emit('sendDmOK', sendDmDto);
   this.server.to(socketReceiver.id).emit('ReceiveDM', {
     sender: sender,
     message: sendDmDto.message,
-    sendtime: sendDmDto.sendtime, //added by selee
+    sendtime: sendDmDto.sendtime,
   });
  }
 
@@ -71,12 +71,12 @@ async handleSendMessageChannel(@ConnectedSocket() client: Socket, @MessageBody()
   if (sender == null)
     throw new BadRequestException('No such user');
   if (!(await this.channelService.isUserinChan(channel, sender))) {
-    client.emit('sendMessageChannelFailed', 'You are not in this channel'); // added by selee for test
+    client.emit('sendMessageChannelFailed', 'You are not in this channel');
     throw new BadRequestException('You are not in this Channel');
   }
   if (await this.channelService.isUserMuted({chanid: channel.id, userid: sender.id}) || 
   await this.channelService.isUserBanned({chanid: channel.id, userid: sender.id })) { // ban to remove soon
-    client.emit('sendMessageChannelFailed', 'You are muted or banned on this channel'); //added by selee for test
+    client.emit('sendMessageChannelFailed', 'You are muted or banned on this channel');
     throw new BadRequestException('you are muted for now on this channel'); // user is ban or mute from this channe
   }
   this.server.to('chan' + sendmessageChannelDto.chanid).emit('sendMessageChannelOK', {
@@ -157,13 +157,13 @@ async handleAddPassword(@ConnectedSocket() client: Socket, @MessageBody() chanPa
   const user = client.handshake.auth.user;
   if (channel === null || user === null)
     throw new BadRequestException('No such Channel or User'); // no such channel or user
-  if (!(await this.channelService.isUserAdmin({chanid: channel.id, userid: user.id}))) // selee - argument changed from user to chanid & userid
+  if (!(await this.channelService.isUserAdmin({chanid: channel.id, userid: user.id})))
     throw new BadRequestException('you are not Admin on this channel'); // user willing to change password isn't admin/owner
   this.channelService.update(channel.id, {
     password: chanPasswordDto.password,
     chanType: 2,
   });
-  this.server.emit('addPasswordOK', channel.id); //selee
+  this.server.emit('addPasswordOK', channel.id);
 }
 
 @SubscribeMessage('rmPassword')
@@ -172,7 +172,7 @@ async handleRmPassword(@ConnectedSocket() client: Socket, @MessageBody() chanPas
   const user = client.handshake.auth.user;
   if (channel === null || user === null)
     throw new BadRequestException('No such Channel or User'); // no such channel or user
-  if (!(await this.channelService.isUserAdmin({chanid: channel.id, userid: user.id}))) // selee - argument changed from user to chanid & userid
+  if (!(await this.channelService.isUserAdmin({chanid: channel.id, userid: user.id})))
     throw new BadRequestException('You are not Admin on this Channel'); // user willing to change password isn't admin/owner
   this.channelService.update(channel.id, {
     rmPassword: 1,
@@ -187,7 +187,7 @@ async handleChangePassword(@ConnectedSocket() client: Socket, @MessageBody() cha
   const user = client.handshake.auth.user;
   if (channel === null || user === null)
     throw new BadRequestException('No such Channel or User'); // no such channel or user
-  if (!(await this.channelService.isUserAdmin({chanid: channel.id, userid: user.id}))) // selee - argument changed from user to chanid & userid
+  if (!(await this.channelService.isUserAdmin({chanid: channel.id, userid: user.id})))
     throw new BadRequestException('You are not Admin on this Channel'); // user willing to change password isn't admin/owner
   if (channel.password === null)
     throw new BadRequestException('Channel does not already have a password'); // chan doesn't already have password
@@ -204,11 +204,11 @@ async handleBanUser(@ConnectedSocket() client: Socket, @MessageBody() banUserDto
   const user = await this.userService.getById(client.handshake.auth.user.id);
   const userBan = await this.userService.getById(banUserDto.userid);
   if (channel === null || user === null || userBan === null) {
-    client.emit('banUserFailed', 'No such Channel or User'); //added by selee
-    throw new BadRequestException('No such Channel or User'); // no such channel or user
+    client.emit('banUserFailed', 'No such Channel or User');
+    throw new BadRequestException('No such Channel or User');
   }
   if (!(await this.channelService.isUserAdmin({chanid: channel.id, userid: user.id}))) {
-    client.emit('banUserFailed', 'You are not Admin on this channel'); // added by selee
+    client.emit('banUserFailed', 'You are not Admin on this channel');
     throw new BadRequestException('You are not Admin on this Channel');
   }
   this.channelService.banUser(banUserDto);
@@ -222,7 +222,7 @@ async handleBanUser(@ConnectedSocket() client: Socket, @MessageBody() banUserDto
     this.channelService.unbanUser(banUserDto);
   }, timer);
   client.emit('banUserOK', user.id, channel.id);
-  this.server.to('chan' + channel.id).emit('banUser', {chanid: channel.id, userid: userBan.id, timer: banUserDto.timeout});//added by selee
+  this.server.to('chan' + channel.id).emit('banUser', {chanid: channel.id, userid: userBan.id, timer: banUserDto.timeout});
 }
 
 @SubscribeMessage('MuteUser')
@@ -230,11 +230,11 @@ async handleMuteUser(@ConnectedSocket() client: Socket, @MessageBody() muteUserD
   const channel = await this.channelService.getById(muteUserDto.chanid);
   const user = await this.userService.getById(client.handshake.auth.user.id);
   if (channel === null || user === null) {
-    client.emit('muteUserFailed', 'No such Channel or User'); //added by selee
-    throw new BadRequestException('No such Channel or User'); // no such channel or user
+    client.emit('muteUserFailed', 'No such Channel or User');
+    throw new BadRequestException('No such Channel or User');
   }
   if (!(await this.channelService.isUserAdmin({chanid: channel.id, userid: user.id}))) {
-    client.emit('muteUserFailed', 'You are not Admin on this channel'); // added by selee
+    client.emit('muteUserFailed', 'You are not Admin on this channel');
     throw new BadRequestException('You are not Admin on this channel');
   }
   await this.channelService.muteUser(muteUserDto);  
@@ -255,11 +255,10 @@ async handleGiveAdmin(@ConnectedSocket() client: Socket, @MessageBody() giveAdmi
   const user = client.handshake.auth.user;
   if (channel === null || user === null)
     throw new BadRequestException('No such channel or User'); // no such channel or user
-  if (!(await this.channelService.isUserAdmin({chanid: channel.id, userid: user.id}))) // selee - argument changed from user to chanid & userid
+  if (!(await this.channelService.isUserAdmin({chanid: channel.id, userid: user.id})))
     throw new BadRequestException('You are not Admin on this channel');
   this.channelService.addAdmin(giveAdminDto);
-  // client.emit('giveAdminOK', user.id, channel.id);
-  this.server.to("chan" + channel.id).emit('giveAdminOK', {userid: giveAdminDto.userid, chanid: channel.id}); //selee - added {}
+  this.server.to("chan" + channel.id).emit('giveAdminOK', {userid: giveAdminDto.userid, chanid: channel.id});
 }
 
 @SubscribeMessage('Invite')
