@@ -1,3 +1,4 @@
+import * as React from 'react';
 import { useEffect, useState } from "react";
 import { HiOutlineXMark } from "react-icons/hi2";
 import swal from "sweetalert";
@@ -6,12 +7,11 @@ import { IChannel } from "../../interface/Channel";
 import { addMember, removeMember, updateMember } from "../../redux/chat";
 import { useAppDispatch, useAppSelector } from "../../redux/Hook";
 
-export function CheckPassword(props: { trigger: boolean, setTrigger: Function, channel: IChannel }) {
+export function CheckPassword(props: { trigger: boolean, setTrigger: (value: boolean) => void, channel: IChannel }) {
 	const [password, setPassword] = useState("");
 	const [failed, setFailed] = useState<boolean>(false);
 	const [errorMessage, setErrorMessage] = useState("");
-	const [inputValue, setInputValue] = useState("");
-	const dispatch = useAppDispatch();
+	const [, setInputValue] = useState("");
 
 	const handleJoinWithPass = () => {
 		socket.emit('joinChannel', { chanid: props.channel.id, channame: props.channel.name, password: password }); // can we remove channame ? don't remember why we had it
@@ -31,18 +31,18 @@ export function CheckPassword(props: { trigger: boolean, setTrigger: Function, c
 	});
 
 	return (props.trigger) ? (
-		<div className="chat-form-popup" onClick={_ => (props.setTrigger(false), setFailed(false))}>
+		<div className="chat-form-popup" onClick={() => {props.setTrigger(false); setFailed(false)}}>
 			<div className="chat-form-inner" onClick={e => e.stopPropagation()}>
 
-				<HiOutlineXMark className="close-icon" onClick={_ => (props.setTrigger(false), setFailed(false))} /> <br />
-				<h3>Input password for " {props.channel.name} "</h3>
+				<HiOutlineXMark className="close-icon" onClick={() => {props.setTrigger(false); setFailed(false)}} /> <br />
+				<h3>Input password for &quot; {props.channel.name} &quot;</h3>
 				<input type="password" id="channel-input" placeholder="Input password" value={password} onChange={e => { setPassword(e.target.value); }} /><br />
 				{
 					failed === true &&
 					<span className="channel-error">{errorMessage}</span>
 				}
 				<br />
-				<button onClick={_ => handleJoinWithPass()}>Enter Channel</button>
+				<button onClick={() => handleJoinWithPass()}>Enter Channel</button>
 			</div>
 		</div>
 	) : <></>;
@@ -92,7 +92,7 @@ export function JoinChannel(props: { channel: IChannel }) {
 				<div>
 					{
 						props.channel.chanType === 0 &&
-						<button style={{ float: 'right' }} onClick={e => { handleJoin() }}>Join Channel</button>
+						<button style={{ float: 'right' }} onClick={() => { handleJoin() }}>Join Channel</button>
 					}
 					{
 						props.channel.chanType === 2 &&
@@ -138,7 +138,7 @@ export function LeaveChannel(props: { channel: IChannel }) {
 			{
 				props.channel.id !== undefined &&
 				<div>
-					<button onClick={e => { handleLeave() }}>Leave Channel</button>
+					<button onClick={() => { handleLeave() }}>Leave Channel</button>
 				</div>
 			}
 		</>

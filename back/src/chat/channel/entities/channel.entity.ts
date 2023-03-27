@@ -18,7 +18,7 @@ export class Channel {
 	name: string;
 
 	@Column('int', {default: 0})
-	chanType: ChanType
+	chanType: ChanType;
 
 	@Column({ nullable: true, select: false})
 	password: string;
@@ -29,17 +29,17 @@ export class Channel {
 	
 	@ManyToMany(() => User, user => user.channels, { cascade: true })
 	@JoinTable()
-	admin: User[]
+	admin: User[];
 
 	@ManyToMany(() => User, user => user.channels, { cascade: true })
 	@JoinTable()
-	users: User[]
+	users: User[];
 
 	@ManyToMany(() => User, user => user.channels, { cascade: true })
 	@JoinTable()
-	banned: User[]
+	banned: User[];
 
 	@ManyToMany(() => User, user => user.channels, { cascade: true })
 	@JoinTable()
-	muted: User[]
+	muted: User[];
 }

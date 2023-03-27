@@ -1,9 +1,10 @@
+import * as React from 'react';
 import { useEffect, useState } from "react";
 import { Circle, Layer, Rect, Stage, Text } from "react-konva";
-import { useBeforeUnload } from "react-router-dom";
 import { socket } from "../../App";
 import { ResultPopup } from "./Result";
 import swal from "sweetalert";
+
 
 export interface Vec2 {
 	x: number;
@@ -54,26 +55,26 @@ export interface GameState {
 const GAME_RATIO = 1.5;
 const GAME_INTERNAL_WIDTH = 700;
 
-let inputdefault: Move = { right: false, left: false };
+const inputdefault: Move = { right: false, left: false };
 
-let move1: Move = { ...inputdefault };
-let move2: Move = { ...inputdefault };
-let paddleDimensions: Vec2 = { x: 100, y: 10 };
-let ballRadius: number = 10;
+const move1: Move = { ...inputdefault };
+const move2: Move = { ...inputdefault };
+const paddleDimensions: Vec2 = { x: 100, y: 10 };
+const ballRadius = 10;
 
-let selfID: number = 0;
-let roomId: number = 0;
+let selfID = 0;
+let roomId = 0;
 
 const vector_zero = (): Vec2 => ({ x: 0, y: 0 });
 
-let balldefault: Ball = {
+const balldefault: Ball = {
 	position: vector_zero(),
 	speed: vector_zero(),
 	previous: vector_zero(),
 	cooldown: 0,
 };
 
-let gameStateDefault: GameState = {
+const gameStateDefault: GameState = {
 	area: { x: GAME_INTERNAL_WIDTH, y: GAME_INTERNAL_WIDTH * GAME_RATIO },
 	scale: 1,
 	scoreMax: 3,
@@ -113,7 +114,6 @@ resetState(gameStateDefault);
 
 export default function GameApp() {
 	const [gameState, setGameState] = useState<GameState>(gameStateDefault);
-	const [isConnected, setIsConnected] = useState(socket.connected);
 	const [result, setResult] = useState<boolean>()
 	const [intervalId, setIntervalId] = useState<NodeJS.Timer>();
 
@@ -245,7 +245,7 @@ function convertState(state: GameState) {
 		state.client_area.x = state.client_area.y / GAME_RATIO;
 	}
 
-	let newState: GameState = gameStateDefault;
+	const newState: GameState = gameStateDefault;
 	newState.scale = state.client_area.x / state.area.x;
 
 	newState.ball.position.x = state.ball.position.x;
@@ -292,8 +292,8 @@ function convertState(state: GameState) {
 }
 
 function updateGameState(prev: GameState) {
-	let newState = { ...prev }
-	if (swal && swal.close != undefined && swal.stopLoading != undefined)
+	const newState = { ...prev }
+	if (swal && swal.close !== undefined && swal.stopLoading !== undefined)
 	{
 		// swal("Success", "You've been added to the custom room.", "success");
 		// swal.stopLoading();
@@ -389,8 +389,8 @@ function paddleCollision(ball: Ball, player: Player) {
 				else ball.position.y -= 5;
 			}
 			ball.cooldown = 1;
-			const sound = require("../../assets/ponghitside.ogg");
-			new Audio(sound).play();
+			const sound = new Audio(require("../../assets/ponghitside.ogg"));
+			sound.play();
 			return 1;
 		}
 	}
@@ -509,8 +509,8 @@ function movePlayer(player: Player, state: GameState) {
 }
 
 function keyEvent(event: KeyboardEvent) {
-	let key = event.key;
-	let keyState = event.type === "keydown";
+	const key = event.key;
+	const keyState = event.type === "keydown";
 	if (key === "ArrowLeft" && keyState && selfID === 1) {
 		//move left
 		move1.left = true;

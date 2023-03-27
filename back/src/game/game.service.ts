@@ -1,8 +1,8 @@
-import { Injectable } from "@nestjs/common";
-import { Server } from "socket.io";
-import { UserService } from "src/user/user.service";
-import { Ball, GameState, Move, Player, Vec2 } from "./game.interfaces";
-import { CreateResultDto } from "src/results/dto/create-result.dto";
+import { Injectable } from '@nestjs/common';
+import { Server } from 'socket.io';
+import { UserService } from 'src/user/user.service';
+import { Ball, GameState, Move, Player, Vec2 } from './game.interfaces';
+import { CreateResultDto } from 'src/results/dto/create-result.dto';
 
 @Injectable()
 export class GameService {
@@ -65,7 +65,7 @@ export class GameService {
 					angle: 0,
 				},
 				input: JSON.parse(JSON.stringify(inputdefault)),
-				name: "Player1",
+				name: 'Player1',
 				score: 0,
 				side: 0,
 				socket: socket1.id,
@@ -81,7 +81,7 @@ export class GameService {
 					angle: 0,
 				},
 				input: JSON.parse(JSON.stringify(inputdefault)),
-				name: "Player2",
+				name: 'Player2',
 				score: 0,
 				side: 1,
 				socket: socket2.id,
@@ -93,11 +93,11 @@ export class GameService {
 			player2.id = socket2.handshake.auth.user.id;
 
 			this.gameRoom.push(new Game(this, server, player1, player2, true, 3, socket1, socket2, this.gameRoom.length + 1));
-			server.to(player1.socket).emit("RoomStart", this.gameRoom.length, player1);
-			server.to(player2.socket).emit("RoomStart", this.gameRoom.length, player2);
-			this.userService.SetStatus(socket1.handshake.auth.user, "InGame");
-			this.userService.SetStatus(socket2.handshake.auth.user, "InGame");
-			server.emit("UpdateSomeone", { idChange: socket1.handshake.auth.user.id, idChange2: socket2.handshake.auth.user.id });
+			server.to(player1.socket).emit('RoomStart', this.gameRoom.length, player1);
+			server.to(player2.socket).emit('RoomStart', this.gameRoom.length, player2);
+			this.userService.SetStatus(socket1.handshake.auth.user, 'InGame');
+			this.userService.SetStatus(socket2.handshake.auth.user, 'InGame');
+			server.emit('UpdateSomeone', { idChange: socket1.handshake.auth.user.id, idChange2: socket2.handshake.auth.user.id });
 
 		}
 		else
@@ -118,7 +118,7 @@ export class GameService {
 				angle: 0,
 			},
 			input: JSON.parse(JSON.stringify(inputdefault)),
-			name: "Player1",
+			name: 'Player1',
 			score: 0,
 			side: 0,
 			socket: socket1.id,
@@ -134,7 +134,7 @@ export class GameService {
 				angle: 0,
 			},
 			input: JSON.parse(JSON.stringify(inputdefault)),
-			name: "Player2",
+			name: 'Player2',
 			score: 0,
 			side: 1,
 			socket: socket2.id,
@@ -149,11 +149,11 @@ export class GameService {
 		else if (scoreMax > 10)
 			scoreMax = 10;
 		this.gameRoom.push(new Game(this, server, player1, player2, extra, scoreMax, socket1, socket2, this.gameRoom.length + 1));
-		this.userService.SetStatus(socket1.handshake.auth.user, "InGame");
-		this.userService.SetStatus(socket2.handshake.auth.user, "InGame");
-		server.emit("UpdateSomeone", { idChange: socket1.handshake.auth.user.id, idChange2: socket2.handshake.auth.user.id });
-		server.to(player1.socket).emit("RoomStart", this.gameRoom.length, player1);
-		server.to(player2.socket).emit("RoomStart", this.gameRoom.length, player2);
+		this.userService.SetStatus(socket1.handshake.auth.user, 'InGame');
+		this.userService.SetStatus(socket2.handshake.auth.user, 'InGame');
+		server.emit('UpdateSomeone', { idChange: socket1.handshake.auth.user.id, idChange2: socket2.handshake.auth.user.id });
+		server.to(player1.socket).emit('RoomStart', this.gameRoom.length, player1);
+		server.to(player2.socket).emit('RoomStart', this.gameRoom.length, player2);
 	}
 
 	updateMove1(move1: Move, client: string, roomId: number) {
@@ -205,8 +205,8 @@ export class GameService {
 		  winner_score: results.winner_score,
 		  loser_score: results.loser_score,
 		  winner_elo: winner ? winner.elo : 0,
-		  loser_elo: loser ? loser.elo : 0
-		}
+		  loser_elo: loser ? loser.elo : 0,
+		};
 	  
 		await this.userService.createResult(resultReturn);
 	  }
@@ -216,9 +216,9 @@ export class GameService {
         let roomId = 0;
         while (roomId < this.gameRoom.length && this.gameRoom.length > 0) {
             if (this.gameRoom[roomId].gameState.player1.socket === client || this.gameRoom[roomId].gameState.player2.socket === client) {
-                this.userService.SetStatus(this.gameRoom[roomId].socket1.handshake.auth.user, "Online");  // ACHANGER PAR USERLIST BYY ADAM 
-                this.userService.SetStatus(this.gameRoom[roomId].socket2.handshake.auth.user, "Online");  // ACHANGER PAR USERLIST BYY ADAM 
-                server.emit("UpdateSomeone", { idChange: this.gameRoom[roomId].socket1.handshake.auth.user.id, idChange2: this.gameRoom[roomId].socket2.handshake.auth.user.id });
+                this.userService.SetStatus(this.gameRoom[roomId].socket1.handshake.auth.user, 'Online');  // ACHANGER PAR USERLIST BYY ADAM 
+                this.userService.SetStatus(this.gameRoom[roomId].socket2.handshake.auth.user, 'Online');  // ACHANGER PAR USERLIST BYY ADAM 
+                server.emit('UpdateSomeone', { idChange: this.gameRoom[roomId].socket1.handshake.auth.user.id, idChange2: this.gameRoom[roomId].socket2.handshake.auth.user.id });
                 this.gameRoom.splice(roomId, 1);
                 return;
             }
@@ -258,10 +258,10 @@ const gameStateDefault: GameState = {
 			angle: 0,
 		},
 		input: inputdefault,
-		name: "Player1",
+		name: 'Player1',
 		score: 0,
 		side: 0,
-		socket: "",
+		socket: '',
 		id: 0,
 	},
 	player2: {
@@ -271,10 +271,10 @@ const gameStateDefault: GameState = {
 			angle: 0,
 		},
 		input: inputdefault,
-		name: "Player2",
+		name: 'Player2',
 		score: 0,
 		side: 1,
-		socket: "",
+		socket: '',
 		id: 0,
 	},
 	ball: balldefault,
@@ -333,10 +333,10 @@ class Game {
 				angle: 0,
 			},
 			input: JSON.parse(JSON.stringify(inputdefault)),
-			name: "Player1",
+			name: 'Player1',
 			score: 0,
 			side: 0,
-			socket: "",
+			socket: '',
 			id: 0,
 		};
 		this.gameState.player2 = {
@@ -346,10 +346,10 @@ class Game {
 				angle: 0,
 			},
 			input: JSON.parse(JSON.stringify(inputdefault)),
-			name: "Player2",
+			name: 'Player2',
 			score: 0,
 			side: 1,
-			socket: "",
+			socket: '',
 			id: 0,
 		};
 		this.gameState.ball = balldefault;
@@ -394,14 +394,14 @@ class Game {
 		if (this.gameState.player1.score === this.gameState.scoreMax) {
 			const result: any = { winner: this.gameState.player1.name, winnerId: this.gameState.player1.id, loser: this.gameState.player2.name, loserId: this.gameState.player2.id, winner_score: this.gameState.player1.score.toString(), loser_score: this.gameState.player2.score.toString() };
 			await this.gameService.save(result);
-			this.server.to(this.gameState.player1.socket).emit("GameEnd", result);
-			this.server.to(this.gameState.player2.socket).emit("GameEnd", result);
+			this.server.to(this.gameState.player1.socket).emit('GameEnd', result);
+			this.server.to(this.gameState.player2.socket).emit('GameEnd', result);
 		}
 		else {
 			const result: any = { winner: this.gameState.player2.name, winnerId: this.gameState.player2.id, loser: this.gameState.player1.name, loserId: this.gameState.player1.id, winner_score: this.gameState.player2.score.toString(), loser_score: this.gameState.player1.score.toString() };
 			await this.gameService.save(result);
-			this.server.to(this.gameState.player1.socket).emit("GameEnd", result);
-			this.server.to(this.gameState.player2.socket).emit("GameEnd", result);
+			this.server.to(this.gameState.player1.socket).emit('GameEnd', result);
+			this.server.to(this.gameState.player2.socket).emit('GameEnd', result);
 		}
 	}
 
@@ -540,7 +540,7 @@ class Game {
 				this.resetState(state);
 				if (state.player1.score >= state.scoreMax) {
 					//END THE GAME
-					this.finishGame()
+					this.finishGame();
 				}
 			}
 		}
@@ -634,11 +634,11 @@ class Game {
 
 	updateState(gameState: GameState) {
 		gameState = this.updateGameState({ ...gameState });
-		this.server.to(this.gameState.player1.socket).emit("UpdateState", gameState, 1);
-		this.server.to(this.gameState.player2.socket).emit("UpdateState", gameState, 2);
+		this.server.to(this.gameState.player1.socket).emit('UpdateState', gameState, 1);
+		this.server.to(this.gameState.player2.socket).emit('UpdateState', gameState, 2);
 		let i = 0;
 		while (this.watchList[i]) {
-			this.server.to(this.watchList[i]).emit("UpdateState", gameState, 0);
+			this.server.to(this.watchList[i]).emit('UpdateState', gameState, 0);
 			i++;
 		}
 		return gameState;

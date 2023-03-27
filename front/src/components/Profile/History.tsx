@@ -1,3 +1,4 @@
+import * as React from 'react';
 import { useEffect, useState } from "react";
 import { IUser } from "../../interface/User";
 import { GiCrossedSwords } from "react-icons/gi";
@@ -35,7 +36,7 @@ export function History(props: { user: IUser }) {
           matchReq.map((match) => (
             <div className="match-block" key={match.id + match.winner.username + match.loser.username}>
               <div className="winner">
-                <div className="winner-img pointer" onClick={_ => navigate(`../Profile/${match.winner.id}`)} >
+                <div className="winner-img pointer" onClick={() => navigate(`../Profile/${match.winner.id}`)} >
                   <img src={`${process.env.REACT_APP_BACK}user/${match.winner.id}/avatar`} alt={match.winner.username} />
                 </div>
                 <div className="match-info">
@@ -54,7 +55,7 @@ export function History(props: { user: IUser }) {
                   <div className="match-elo">{match.loser_elo} <span style={{ color: '#A83349' }}>(-50)</span></div>
 
                 </div>
-                <div className="loser-img pointer" onClick={_ => navigate(`../Profile/${match.loser.id}`)}>
+                <div className="loser-img pointer" onClick={() => navigate(`../Profile/${match.loser.id}`)}>
                   <img src={`${process.env.REACT_APP_BACK}user/${match.loser.id}/avatar`} alt={match.loser.username} />
                 </div>
               </div>

@@ -3,7 +3,7 @@ import { JwtService } from '@nestjs/jwt';
 import { CreateUserDto } from 'src/user/dto/create-user.dto';
 import { UserService } from '../user/user.service';
 import { jwtConstants } from './constants';
-import { userList } from '../app.gateway'
+import { userList } from '../app.gateway';
 
 @Injectable()
 export class OauthService {
@@ -19,7 +19,7 @@ export class OauthService {
     const redirect_uri = process.env.REDIRECT_URI;
     
     const body = {
-      grant_type: "authorization_code",
+      grant_type: 'authorization_code',
       client_id: api_key,
       client_secret: private_key,
       code: oauthCode,
@@ -31,7 +31,7 @@ export class OauthService {
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(body)
+      body: JSON.stringify(body),
       
     });
     const data = await response.json();
@@ -54,7 +54,7 @@ export class OauthService {
     
     const data = await response.json();
     const user = await this.usersService.getByLogin(data.login);
-    const payload = { username: data.login, }
+    const payload = { username: data.login };
     const access_token = await this.jwtService.signAsync(payload, {
       secret: jwtConstants.secret,
       expiresIn: '3600s',
@@ -63,7 +63,7 @@ export class OauthService {
     {
       for (const iterator of userList) {
         if (iterator.handshake.auth.user.id === user.id)
-          throw new BadRequestException("t'as deja un tab frero");
+          throw new BadRequestException('t\'as deja un tab frero');
       }
       await this.usersService.save(user);
       return ({user, access_token});
@@ -74,7 +74,7 @@ export class OauthService {
       login: data.login,
       email: data.email,
       intra_avatar: data.image.link,
-    }
+    };
     const realUser = await this.usersService.create(userDto);
     return ( {user: realUser, access_token});
   }
