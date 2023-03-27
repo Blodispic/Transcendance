@@ -240,6 +240,7 @@ async handleBanUser(@ConnectedSocket() client: Socket, @MessageBody() banUserDto
     this.channelService.unbanUser(banUserDto)
   }, timer);
   client.emit("banUserOK", user.id, channel.id);
+  this.server.to("chan" + channel.id).emit("banUser", {chanid: channel.id, userid: user.id, timer: banUserDto.timeout});//added by selee for test
 }
 
 @SubscribeMessage('MuteUser')
@@ -248,11 +249,20 @@ async handleMuteUser(@ConnectedSocket() client: Socket, @MessageBody() muteUserD
   const user = await this.userService.getById(client.handshake.auth.user.id);
   const userMute = await this.userService.getById(muteUserDto.userid);
   if (channel === null || user === null || userMute === null)
+  {
+    client.emit("muteUserFailed", "No such Channel or User"); //added by selee for test
     throw new BadRequestException("No such Channel or User"); // no such channel or user
+  }
   if (!(await this.channelService.isUserAdmin({chanid: channel.id, userid: user.id})))
+  {
+    client.emit("muteUserFailed", "You are not Admin on this channel"); // added by selee for test
     throw new BadRequestException("You are not Admin on this channel");
+  }
   if (channel.owner?.id != user.id && await this.channelService.isUserAdmin({chanid: channel.id, userid: userMute.id}))
-    throw new BadRequestException("You can not Ban an Admin")
+  {
+    client.emit("muteUserFailed", "You cannot Mute an Admin"); // added by selee for test
+    throw new BadRequestException("You can not Ban an Admin");
+  }
   this.channelService.muteUser(muteUserDto);  
   let timer = 30000;
   if (muteUserDto.timeout)
@@ -262,6 +272,7 @@ async handleMuteUser(@ConnectedSocket() client: Socket, @MessageBody() muteUserD
     this.channelService.unmuteUser(muteUserDto)
   }, timer);
   client.emit("muteUserOK", user.id, channel.id);
+  this.server.to("chan" + channel.id).emit("muteUser", {chanid: channel.id, userid: userMute.id, timer: muteUserDto.timeout});
 }
 
 @SubscribeMessage('GiveAdmin')

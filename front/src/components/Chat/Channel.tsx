@@ -7,7 +7,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { socket } from "../../App";
 import { IChannel } from "../../interface/Channel";
 import { IUser } from "../../interface/User";
-import { addAdmin, setChannels } from "../../redux/chat";
+import { addAdmin, banUser, muteUser, setChannels, unBanUser, unMuteUser } from "../../redux/chat";
 import { useAppDispatch, useAppSelector } from "../../redux/Hook";
 import { ChannelHeader, ChannelMessages } from "./ChannelMessages";
 import ClickableMenu from "./clickableMenu";
@@ -161,14 +161,31 @@ export function Channels(props: { page: Function }) {
 
     useEffect(() => {
         socket.on("giveAdminOK", ({ userid, chanid }) => {
-            console.log("giveadminOK - chanid: ", chanid, " | userid: ", userid);
-            dispatch(addAdmin({ id: chanid, userid: userid }));
+            dispatch(addAdmin({ chanid: chanid, userid: userid }));
         });
+		socket.on("muteUser", ({chanid, userid, timer}) => {
+			dispatch(muteUser({chanid: chanid, userid: userid}));
+
+			setTimeout(() => {
+				dispatch(unMuteUser({chanid: chanid, userid: userid}));
+			}, timer);
+
+		});
+		socket.on("banUser", ({chanid, userid, timer}) => {
+			console.log("banUser timer: ", timer);
+			dispatch(banUser({chanid: chanid, userid: userid}));
+
+			setTimeout(() => {
+				dispatch(unBanUser({chanid: chanid, userid: userid}));
+			}, timer);
+
+		});
         return () => {
             socket.off("giveAdminOK");
+			socket.off("muteUser");
+			socket.off("banUser");
         }
     })
-
 
 	return (id) ? (
 		<div id="chat-container">

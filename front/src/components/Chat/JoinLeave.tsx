@@ -8,10 +8,10 @@ import { addMember, removeChanMessage, removeMember, joinChannel } from "../../r
 import { useAppDispatch, useAppSelector } from "../../redux/Hook";
 
 export function CheckPassword(props: { trigger: boolean, setTrigger: Function, channel: IChannel }) {
-	const [password, setPassword] = useState("");
+	const [password, setPassword] = useState<string>("");
 	const [failed, setFailed] = useState<boolean>(false);
-	const [errorMessage, setErrorMessage] = useState("");
-	const [inputValue, setInputValue] = useState("");
+	const [errorMessage, setErrorMessage] = useState<string>("");
+	const [inputValue, setInputValue] = useState<string>("");
 
 	const handleJoinWithPass = () => {
 		socket.emit('joinChannel', { chanid: props.channel.id, channame: props.channel.name, password: password });

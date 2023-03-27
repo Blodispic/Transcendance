@@ -32,13 +32,13 @@ export const chatSlice = createSlice({
         },
 
         removeChanMessage: (state, {payload}: PayloadAction<number>) => {
-            if (state.channels && state.channels.find(obj => obj.id === payload !== undefined)){
+            if (state.channels && state.channels.find(obj => obj.id === payload) !== undefined){
                 state.chanMs = state.chanMs.filter(obj => obj.chanid !== payload);
             }
         },
 
         joinChannel: (state, { payload }: PayloadAction<{id: number, chan: IChannel, user: IUser}>) => {
-            let chan = state.channels.find(obj => obj.id === payload.id);
+            let chan: IChannel | undefined = state.channels.find(obj => obj.id === payload.id);
             if (chan) {
                 chan.owner = payload.chan.owner;
                 chan.users = payload.chan.users;
@@ -51,7 +51,7 @@ export const chatSlice = createSlice({
         },
 
         addMember: (state, { payload }: PayloadAction<{ id: number, user: IUser }>) => {
-            const chan = state.channels.find(obj => obj.id === payload.id);
+            const chan: IChannel | undefined = state.channels.find(obj => obj.id === payload.id);
             if (chan) {
                 if (chan.users !== undefined && chan.users.find(obj => obj.id === payload.user.id) === undefined)
                     chan.users = ([...chan.users, payload.user]);
@@ -61,7 +61,7 @@ export const chatSlice = createSlice({
         },
 
         removeMember: (state, { payload }: PayloadAction<{ id: number, user: IUser }>) => {
-            const chan = state.channels.find(obj => obj.id === payload.id);
+            const chan: IChannel | undefined = state.channels.find(obj => obj.id === payload.id);
             if (chan) {
                 if (chan.users && chan.users.find(obj => obj.id === payload.user.id) !== undefined)
                     chan.users = chan.users.filter(obj => obj.id !== payload.user.id);
@@ -72,10 +72,10 @@ export const chatSlice = createSlice({
             }
         },
 
-        addAdmin: (state, { payload }: PayloadAction<{ id: number, userid: number }>) => {
-            const chan = state.channels.find(obj => obj.id === payload.id);
+        addAdmin: (state, { payload }: PayloadAction<{ chanid: number, userid: number }>) => {
+            const chan: IChannel | undefined = state.channels.find(obj => obj.id === payload.chanid);
             if (chan) {
-                const user = chan.users.find(obj => obj.id === payload.userid);
+                const user: IUser | undefined = chan.users.find(obj => obj.id === payload.userid);
                 if (user) {
                     if (chan.admin && chan.admin.find(obj => obj.id === user.id) === undefined)
                     chan.admin = ([...chan.admin, user]);
@@ -85,55 +85,65 @@ export const chatSlice = createSlice({
             }
         },
 
-        banUser: (state, { payload }: PayloadAction<{ id: number, user: IUser }>) => {
-            const chan = state.channels.find(obj => obj.id === payload.id);
+        banUser: (state, { payload }: PayloadAction<{ chanid: number, userid: number }>) => {
+            const chan: IChannel | undefined = state.channels.find(obj => obj.id === payload.chanid);
             if (chan) {
-                if (chan.banned && chan.banned.find(obj => obj.id === payload.user.id) === undefined)
-                    chan.banned = ([...chan.banned, payload.user]);
-                else
-                    chan.banned = ([payload.user]);
+                const user: IUser | undefined = chan.users.find(obj => obj.id === payload.userid);
+                if (user) {
+                    if (chan.banned && chan.banned.find(obj => obj.id === user.id) === undefined)
+                        chan.banned = ([...chan.banned, user]);
+                    else
+                        chan.banned = ([user]);
+                }
                 console.log(":: redux :: banUser");
             }
         },
 
-        unBanUser: (state, { payload }: PayloadAction<{ id: number, user: IUser }>) => {
-            const chan = state.channels.find(obj => obj.id === payload.id);
+        unBanUser: (state, { payload }: PayloadAction<{ chanid: number, userid: number }>) => {
+            const chan: IChannel | undefined = state.channels.find(obj => obj.id === payload.chanid);
             if (chan) {
-                if (chan.banned && chan.banned.find(obj => obj.id === payload.user.id) !== undefined)
-                    chan.banned = chan?.banned.filter(obj => obj.id !== payload.user.id);
-            }
-            // console.log(":: redux :: unBanUser");
-        },
-
-        muteUser: (state, { payload }: PayloadAction<{ id: number, user: IUser }>) => {
-            const chan = state.channels.find(obj => obj.id === payload.id);
-            if (chan) {
-                if (chan.muted && chan.muted.find(obj => obj.id === payload.user.id) === undefined)
-                    chan.muted = ([...chan.muted, payload.user]);
-                else
-                    chan.muted = ([payload.user]);
-                console.log(":: redux :: muteUser");
+                const user: IUser | undefined = chan.users.find(obj => obj.id === payload.userid);
+                if (user) {
+                    if (chan.banned && chan.banned.find(obj => obj.id === user.id) !== undefined)
+                    chan.banned = chan?.banned.filter(obj => obj.id !== user.id);
+                    console.log(":: redux :: unBanUser");
+                }
             }
         },
 
-        unMuteUser: (state, { payload }: PayloadAction<{ id: number, user: IUser }>) => {
-            const chan = state.channels.find(obj => obj.id === payload.id);
+        muteUser: (state, { payload }: PayloadAction<{ chanid: number, userid: number }>) => {
+            const chan: IChannel | undefined = state.channels.find(obj => obj.id === payload.chanid);
             if (chan) {
-                if (chan.muted && chan.muted.find(obj => obj.id === payload.user.id) !== undefined)
-                    chan.muted = chan?.muted.filter(obj => obj.id !== payload.user.id);
+                const user: IUser | undefined = chan.users.find(obj => obj.id === payload.userid);
+                if (user) {
+                    if (chan.muted && chan.muted.find(obj => obj.id === user?.id) === undefined)
+                        chan.muted = ([...chan.muted, user]);
+                    else
+                        chan.muted = ([user]);
+                }
             }
-            // console.log(":: redux :: unMuteUser");
+        },
+
+        unMuteUser: (state, { payload }: PayloadAction<{ chanid: number, userid: number }>) => {
+            const chan: IChannel | undefined = state.channels.find(obj => obj.id === payload.chanid);
+            if (chan) {
+                const user: IUser | undefined = chan.users.find(obj => obj.id === payload.userid);
+                if (user) {
+                    if (chan.muted && chan.muted.find(obj => obj.id === user.id) !== undefined)
+                        chan.muted = chan?.muted.filter(obj => obj.id !== user.id);
+                }
+            }
         },
 
         setPass: (state, { payload }: PayloadAction<number>) => {
-            const chan = state.channels.find(obj => obj.id === payload);
+            const chan: IChannel | undefined = state.channels.find(obj => obj.id === payload);
             if (chan) {
                 chan.chanType = 2;
             }
         },
 
         removePass: (state, { payload }: PayloadAction<number>) => {
-            const chan = state.channels.find(obj => obj.id === payload);
+            const chan: IChannel | undefined = state.channels.find(obj => obj.id === payload);
             if (chan && chan.chanType === 2) {
                 chan.password = "";
                 chan.chanType = 0;
@@ -151,5 +161,5 @@ export const chatSlice = createSlice({
     },
 });
 
-export const { setChannels, addChannel, removeChanMessage, joinChannel, addMember, removeMember, addAdmin, banUser, muteUser, setPass, removePass, addMessage, addDM } = chatSlice.actions;
+export const { setChannels, addChannel, removeChanMessage, joinChannel, addMember, removeMember, addAdmin, banUser, muteUser, unBanUser, unMuteUser, setPass, removePass, addMessage, addDM } = chatSlice.actions;
 export default chatSlice.reducer;
