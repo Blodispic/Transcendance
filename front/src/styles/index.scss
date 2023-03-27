@@ -1,9 +1,3 @@
-body {
-    margin: 0;
-}
-  
-  
-
 @import "pages/chat.scss";
 @import "pages/connection.scss";
 @import "pages/game.scss";
@@ -11,6 +5,10 @@ body {
 @import "pages/queue.scss";
 @import "pages/home.scss";
 @import "pages/404.scss";
-
 @import "components/nav.scss";
 @import "./styles.scss";
+
+body {
+    margin: 0;
+}
+  

@@ -339,7 +339,6 @@ export class UserService {
           UserStatus: request.creator.status,
         };
       }
-      return {};
     });
   }
 
@@ -368,7 +367,6 @@ export class UserService {
           UserStatus: request.status,
         };
       }
-      return {};
     });
   }
 
