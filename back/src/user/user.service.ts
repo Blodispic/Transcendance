@@ -166,7 +166,7 @@ export class UserService {
       throw new NotFoundException('Username dont exist');
   }
 
-  async update(id: number, userUpdate: any) {
+  async update(id: number, userUpdate: UpdateUserDto) {
     const user = await this.usersRepository.findOneBy({
       id: id,
     });
@@ -208,7 +208,7 @@ export class UserService {
     return `This action removes a #${id} user`;
   }
 
-  async setAvatar(user: User, username: string, file: any) {
+  async setAvatar(user: User, username: string, file: Express.Multer.File) {
     if (user) {
       user.avatar = file.filename;
       user.username = username;

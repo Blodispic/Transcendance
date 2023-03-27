@@ -12,6 +12,7 @@ import { Server } from 'socket.io';
 import { WebSocketServer } from '@nestjs/websockets';
 import { plainToClass } from 'class-transformer';
 import { GetUser } from './getUser';
+import { UpdateUserDto } from './dto/update-user.dto';
 
 @Controller('user')
 export class UserController {
@@ -141,7 +142,7 @@ export class UserController {
       fileFilter: imageFilter,
     }),
   )
-  async setAvatar(@GetUser() user: User, @UploadedFile() file: any, @Body('username') username: string) {
+  async setAvatar(@GetUser() user: User, @UploadedFile() file: Express.Multer.File, @Body('username') username: string) {
     await this.userService.setAvatar(user, username, file);
     return { message: 'Avatar set successfully' };
   }
@@ -149,7 +150,7 @@ export class UserController {
   // Updates a user's information
   @Patch(':id')
   @UseGuards(JwtGuard)
-  update(@GetUser() user: User, @Body() updateUserDto: any) {
+  update(@GetUser() user: User, @Body() updateUserDto: UpdateUserDto) {
     return plainToClass(User, this.userService.update(user.id, updateUserDto));
   }
 
