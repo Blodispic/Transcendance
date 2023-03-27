@@ -1,4 +1,4 @@
-import { BadRequestException, Body, Controller, Get, Param, ParseIntPipe, Patch, Post, UseGuards } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Get, Param, ParseIntPipe, Patch, Post } from '@nestjs/common';
 import { ChannelService } from './channel.service';
 import { Channel } from './entities/channel.entity';
 import { AddUserDto } from './dto/add-user.dto';
