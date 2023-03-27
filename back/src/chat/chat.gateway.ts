@@ -203,10 +203,14 @@ async handleBanUser(@ConnectedSocket() client: Socket, @MessageBody() banUserDto
   const channel = await this.channelService.getById(banUserDto.chanid);
   const user = await this.userService.getById(client.handshake.auth.user.id);
   const userBan = await this.userService.getById(banUserDto.userid);
-  if (channel === null || user === null || userBan === null)
+  if (channel === null || user === null || userBan === null) {
+    client.emit('banUserFailed', 'No such Channel or User'); //added by selee
     throw new BadRequestException('No such Channel or User'); // no such channel or user
-  if (!(await this.channelService.isUserAdmin({chanid: channel.id, userid: user.id})))
+  }
+  if (!(await this.channelService.isUserAdmin({chanid: channel.id, userid: user.id}))) {
+    client.emit('banUserFailed', 'You are not Admin on this channel'); // added by selee
     throw new BadRequestException('You are not Admin on this Channel');
+  }
   this.channelService.banUser(banUserDto);
   this.channelService.rm({user: userBan, chanid: channel.id});
 

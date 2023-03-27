@@ -5,12 +5,12 @@ import { socket } from "../../App";
 import { IChannel } from "../../interface/Channel";
 import { IUser } from "../../interface/User";
 import AllPeople from "../utils/Allpeople";
-import { banUser } from "../../redux/chat";
 import { useAppDispatch } from "../../redux/Hook";
 
 export function BanUser(props: { chanid: any, userid: any, trigger: boolean, setTrigger: (value: boolean) => void }) {
 	const [timeout, setTimeout] = useState<string>("");
-	const dispatch = useAppDispatch();
+	const [failed, setFailed] = useState<boolean>(false);
+	const [errorMessage, setError] = useState<string>("");
 
 	const handleBan = () => {
 		if (timeout === "")
@@ -20,11 +20,16 @@ export function BanUser(props: { chanid: any, userid: any, trigger: boolean, set
 	}
 	
 	useEffect(() => {
+		socket.on("banUserFailed", (errorMessage) => {
+			setFailed(true);
+			setError(errorMessage);
+		});
 		socket.on("banUserOK", ({chanid, userid}) => {
-			dispatch(banUser({chanid: chanid, userid: userid}));
 			props.setTrigger(false);
+			setFailed(false);
 		});
 		return () => {
+			socket.off("banUserFailed");
 			socket.off("banUserOK");
 		}
 	})
@@ -38,6 +43,10 @@ export function BanUser(props: { chanid: any, userid: any, trigger: boolean, set
 				<h4>Set time (optional)</h4>
 				<input type="number" id="clickable-input" min="0" onChange={e => { setTimeout(e.target.value) }} />seconds
 				<br /><br />
+				{
+					failed === true &&
+					<span className="channel-error"> {errorMessage}</span>
+				}
 				<button onClick={() => handleBan()}>Ban User</button>
 			</div>
 		</div>
@@ -48,7 +57,6 @@ export function MuteUser(props: { chanid: any, userid: any, trigger: boolean, se
 	const [timeout, setTimeout] = useState<string>("");
 	const [failed, setFailed] = useState<boolean>(false);
 	const [errorMessage, setError] = useState<string>("");
-	const dispatch = useAppDispatch();
 
 	const handleMute = () => {
 		if (timeout === "")
@@ -57,8 +65,6 @@ export function MuteUser(props: { chanid: any, userid: any, trigger: boolean, se
 			socket.emit('MuteUser', { chanid: props.chanid, userid: props.userid, timeout: parseInt(timeout) * 1000 });
 	}
 
-
-	// check if timeout is valid;
 
 	useEffect(() => {
 		socket.on("muteUserFailed", (errorMessage) => {
