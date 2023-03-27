@@ -3,11 +3,8 @@ import { ChannelService } from './channel.service';
 import { Channel } from './entities/channel.entity';
 import { AddUserDto } from './dto/add-user.dto';
 import { RmUserDto } from './dto/rm-user.dto';
-import { BanUserDto } from '../dto/ban-user.dto';
-import { MuteUserDto } from '../dto/mute-user.dto';
 import { User } from 'src/user/entities/user.entity';
 import { CreateChannelDto } from '../dto/create-channel.dto';
-import { JwtGuard } from 'src/Oauth/jwt-auth.guard';
 
 @Controller('channel')
 export class ChannelController {
@@ -56,10 +53,4 @@ export class ChannelController {
 	update(@Param('id') id: string, @Body() channel: any) {
 	  return this.channelService.update(+id, channel);
 	}
-
-	async unmuteUser(muteUserDto: MuteUserDto)
-	{
-		return await this.channelService.unmuteUser(muteUserDto);
-	}
-
 }
