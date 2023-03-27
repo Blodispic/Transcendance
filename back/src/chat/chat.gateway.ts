@@ -110,7 +110,6 @@ async handleJoinChannel(@ConnectedSocket() client: Socket, @MessageBody() joinCh
     chanId: channel.id,
   });
   client.join('chan' + joinChannelDto.chanid);
-  // client.emit("joinChannelOK", channel); //original
   client.emit('joinChannelOK', channel.id); // + (maybe) list of members
   this.server.to('chan' + channel.id).emit('joinChannel', {chanid: channel.id, user: user});
 }
@@ -131,10 +130,6 @@ async handleCreateChannel(@ConnectedSocket() client: Socket, @MessageBody() crea
   client.join('chan' + new_channel.id);
   if (new_channel.chanType == 1 && createChannelDto.users && createChannelDto.users.length > 0)
     this.inviteToChan(createChannelDto.users, new_channel.id);
-
-  // client.emit("createChannelOk", new_channel.id);
-  // client.emit("joinChannelOK", new_channel.id);
-
   this.server.emit('createChannelOk', new_channel.id);
 }
 
@@ -165,7 +160,6 @@ async handleAddPassword(@ConnectedSocket() client: Socket, @MessageBody() chanPa
     password: chanPasswordDto.password,
     chanType: 2,
   });
-  // client.emit("addPasswordOK", channel.id);
   this.server.emit('addPasswordOK', channel.id); //selee
 }
 
@@ -181,7 +175,6 @@ async handleRmPassword(@ConnectedSocket() client: Socket, @MessageBody() chanPas
     rmPassword: 1,
     chanType: 0,
   });
-  // client.emit("rmPasswordOK", channel.id);
   this.server.emit('rmPasswordOK', channel.id); //selee
   }
 
@@ -215,7 +208,6 @@ async handleBanUser(@ConnectedSocket() client: Socket, @MessageBody() banUserDto
   this.channelService.rm({user: userBan, chanid: channel.id});
 
   this.findSocketFromUser(userBan)?.leave('chan' + channel.id);
-  // client.leave("chan" + channel.id);  
   let timer = 30000;
   if (banUserDto.timeout)
     timer = banUserDto.timeout;
