@@ -94,6 +94,7 @@ export const chatSlice = createSlice({
                         chan.banned = ([...chan.banned, user]);
                     else
                         chan.banned = ([user]);
+                    chan.users = chan.users.filter(obj => obj.id !== user.id);
                 }
             }
         },

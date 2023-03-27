@@ -62,7 +62,7 @@ export function JoinChannel(props: { channel: IChannel }) {
 	useEffect(() => {
 		socket.on("joinChannelFailed", (error_message) => {
 			setErrorMessage(error_message);
-			swal(errorMessage, "error");
+			swal("Error", errorMessage, "error");
 		});
 		socket.on("joinChannelOK", (chanId) => {
 			if (currentUser !== undefined) {
