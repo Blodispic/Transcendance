@@ -240,7 +240,7 @@ async handleBanUser(@ConnectedSocket() client: Socket, @MessageBody() banUserDto
     this.channelService.unbanUser(banUserDto)
   }, timer);
   client.emit("banUserOK", user.id, channel.id);
-  this.server.to("chan" + channel.id).emit("banUser", {chanid: channel.id, userid: user.id, timer: banUserDto.timeout});//added by selee for test
+  this.server.to("chan" + channel.id).emit("banUser", {chanid: channel.id, userid: userBan.id, timer: banUserDto.timeout});//added by selee for test
 }
 
 @SubscribeMessage('MuteUser')
