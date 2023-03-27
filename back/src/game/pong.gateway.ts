@@ -160,7 +160,6 @@ export class PongGateway implements OnGatewayDisconnect, OnGatewayInit {
 			console.log('[CreateCustomGame] One of the two users is currently busy.');
 			this.server.to(client.id).emit('WaitingRoomFailure', 'The person you\'re inviting is busy');
 			throw new UnauthorizedException('One of the two users is currently busy.');
-			return;
 		}
 		else {
 			const socket = this.findSocketFromUser(payload.user2);
