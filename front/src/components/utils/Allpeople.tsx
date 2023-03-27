@@ -37,9 +37,6 @@ export default function AllPeople(props: { friend: IUser[] | undefined, setFrien
             },
         })
         const data = await response.json();
-        // setAlluser(data.filter((User: { username: string, status: string }) => User.username !== myUser.user.user?.username && User.status === "Online"));
-
-        console.log(allfriend);
         if (allfriend !== undefined)
             setAlluser(
                 data

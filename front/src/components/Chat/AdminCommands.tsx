@@ -154,7 +154,6 @@ export function ConfigureChannelPrivate(props: { trigger: boolean, setTrigger: (
 			)
 			
 		  );
-		// setAlluser(data.filter((User: { username: string, status: string }) => User.username !== myUser.user.user?.username && User.status === "Online"));
 	}
 
 	return (props.trigger) ? (
