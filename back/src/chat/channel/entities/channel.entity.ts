@@ -1,7 +1,12 @@
 
+<<<<<<< HEAD
 import { IsOptional } from "class-validator";
 import { User } from "src/user/entities/user.entity";
 import { Column, Entity, JoinTable, ManyToMany, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+=======
+import { User } from 'src/user/entities/user.entity';
+import { Column, Entity, JoinTable, ManyToMany, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+>>>>>>> 999c9a08195526110f505d2c52815a4744e784cd
 
 enum ChanType {
 	Public,
@@ -18,7 +23,7 @@ export class Channel {
 	name: string;
 
 	@Column('int', {default: 0})
-	chanType: ChanType
+	chanType: ChanType;
 
 	@Column({ nullable: true, select: false})
 	password: string;
@@ -29,17 +34,17 @@ export class Channel {
 	
 	@ManyToMany(() => User, user => user.channels, { cascade: true })
 	@JoinTable()
-	admin: User[]
+	admin: User[];
 
 	@ManyToMany(() => User, user => user.channels, { cascade: true })
 	@JoinTable()
-	users: User[]
+	users: User[];
 
 	@ManyToMany(() => User, user => user.channels, { cascade: true })
 	@JoinTable()
-	banned: User[]
+	banned: User[];
 
 	@ManyToMany(() => User, user => user.channels, { cascade: true })
 	@JoinTable()
-	muted: User[]
+	muted: User[];
 }

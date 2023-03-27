@@ -1,23 +1,20 @@
+import * as React from 'react';
 import { useEffect, useState } from 'react';
-import { Navigate, useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { IUser } from '../../interface/User';
-import { HiOutlineMagnifyingGlassCircle } from "react-icons/hi2";
 import { useAppSelector } from '../../redux/Hook';
-import { ImCheckmark, ImCross } from "react-icons/im";
 import { Header } from './Header_profile';
 import { Friends } from './friend_request';
 import { page } from '../../interface/enum';
 import { History } from './History';
 import TwoFa from './setTwoFa';
 import { socket } from '../../App';
-import { UserStatus } from '../../interface/User';
 import Sign from '../connection/Sign';
-import { Player } from '../Game/Game';
 
 
 
 
-function Onglets(props: { currentUser: IUser, current: page, setOnglets: Function }) {
+function Onglets(props: { currentUser: IUser, current: page, setOnglets: (page: page) => void }) {
 
         const myUser = useAppSelector(state => state.user);
         const { currentUser, } = props;
@@ -25,36 +22,36 @@ function Onglets(props: { currentUser: IUser, current: page, setOnglets: Functio
         return (
                 <div className='onglets'>
                         <button className={`pointer ${current === page.PAGE_1 ? "" : "not-selected"}`}
-                                onClick={e => setOnglets(page.PAGE_1)}>
-                                <a >
+                                onClick={() => setOnglets(page.PAGE_1)}>
+                                <span>
                                         History
-                                </a>
+                                </span>
                         </button>
                         {
                                 currentUser.login === myUser.user?.login &&
                                 <button className={`pointer ${current === page.PAGE_2 ? "" : "not-selected"}`}
-                                        onClick={e => setOnglets(page.PAGE_2)} >
-                                        <a >
+                                        onClick={() => setOnglets(page.PAGE_2)} >
+                                        <span>
                                                 Friends
-                                        </a>
+                                        </span>
                                 </button>
                         }
                         {
                                 currentUser.login === myUser.user?.login &&
                                 <button className={`pointer ${current === page.PAGE_3 ? "" : "not-selected"}`}
-                                        onClick={e => setOnglets(page.PAGE_3)}>
-                                        <a >
+                                        onClick={() => setOnglets(page.PAGE_3)}>
+                                        <span>
                                                 2FA
-                                        </a>
+                                        </span>
                                 </button>
                         }
                         {
                                 currentUser.login === myUser.user?.login &&
                                 <button className={`pointer ${current === page.PAGE_4 ? "" : "not-selected"}`}
-                                        onClick={e => setOnglets(page.PAGE_4)} >
-                                        <a >
+                                        onClick={() => setOnglets(page.PAGE_4)} >
+                                        <span>
                                                 Settings
-                                        </a>
+                                        </span>
                                 </button>
                         }
                 </div>
@@ -63,26 +60,29 @@ function Onglets(props: { currentUser: IUser, current: page, setOnglets: Functio
 
 export default function Profile() {
         const [currentUser, setCurrentUser] = useState<IUser | undefined>(undefined);
-        let avatar: string = "";
         const navigate = useNavigate();
-        let { id } = useParams();
+        const { id } = useParams();
         const [pages, setPages] = useState<page>(page.PAGE_1);
         const myUser = useAppSelector(state => state);
         const [updateStatus, setUpdateStatus] = useState(false);
 
         const fetchid = async () => {
                 console.log("ca reload ducoup ")
-                const response = await fetch(`${process.env.REACT_APP_BACK}user/id/${id}`, {
+                await fetch(`${process.env.REACT_APP_BACK}user/id/${id}`, {
                         method: 'GET',
                         headers: {
                                 'Authorization': `Bearer ${myUser.user.myToken}`,
                         }
                 })
-                setCurrentUser(await response.json());
+                .then(async response => {
+                        if (response.ok)
+                                setCurrentUser(await response.json());
+
+                })
         }
 
         useEffect(() => {
-                socket.on("RoomStart", (roomId: number, player: Player) => {
+                socket.on("RoomStart", (roomId: number) => {
                         navigate("/game/" + roomId, { state: { Id: roomId } });
                 });
 
@@ -90,13 +90,13 @@ export default function Profile() {
                         fetchid();
                 setPages(page.PAGE_1);
                 // if (myUser.user.user!.friends)
-                socket.on('UpdateSomeone', (idChange, idChange2) => {
+                socket.on('UpdateSomeone', () => {
                         console.log("ca passe pas ?");
                         setUpdateStatus(!updateStatus);
                         // fetchid();
                 })
 
-                socket.on("SpectateStart", (roomId: number, player: Player) => {
+                socket.on("SpectateStart", (roomId: number) => {
                         navigate("/game/" + roomId, { state: { Id: roomId } });
                 });
                 
@@ -107,7 +107,7 @@ export default function Profile() {
         }, [id, updateStatus])
 
         useEffect(() => {
-                if (currentUser?.id == myUser.user.user?.id) {
+                if (currentUser?.id === myUser.user.user?.id) {
                         setCurrentUser(myUser.user.user);
 
                 }
@@ -117,7 +117,8 @@ export default function Profile() {
         if (currentUser === undefined) {
                 return (
                         <div className='center'>
-                                <h1>USER DOESN'T EXIST </h1>
+                                <h1>USER DOESN&apos;T EXIST </h1>
+
                         </div>
                 );
         }
@@ -130,19 +131,19 @@ export default function Profile() {
                         <div className='container'>
                                 <Onglets currentUser={currentUser} current={pages} setOnglets={setPages} />
                                 {
-                                        pages == page.PAGE_1 &&
+                                        pages === page.PAGE_1 &&
                                         <History user={currentUser} />
                                 }
                                 {
-                                        pages == page.PAGE_2 &&
+                                        pages === page.PAGE_2 &&
                                         <Friends />
                                 }
                                 {
-                                        pages == page.PAGE_3 &&
+                                        pages === page.PAGE_3 &&
                                         <TwoFa />
                                 }
                                 {
-                                        pages == page.PAGE_4 &&
+                                        pages === page.PAGE_4 &&
                                         <Sign />
                                 }
 

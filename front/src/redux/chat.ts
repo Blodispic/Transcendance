@@ -32,7 +32,7 @@ export const chatSlice = createSlice({
         },
 
         updateMember: (state, { payload }: PayloadAction<{id: number, chan: IChannel}>) => {
-            let chan = state.channels.find(obj => obj.id === payload.id);
+            const chan = state.channels.find(obj => obj.id === payload.id);
             if (chan) {
                 chan.owner = payload.chan.owner;
                 chan.users = payload.chan.users;

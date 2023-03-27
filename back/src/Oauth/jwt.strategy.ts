@@ -7,8 +7,7 @@ import { User } from 'src/user/entities/user.entity';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
-  constructor(private readonly userService: UserService,) {
-    console.log("In JWT");
+  constructor(private readonly userService: UserService) {
     super({
       
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
@@ -21,7 +20,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     
     const user = await this.userService.getByLogin(payload.username);
     if (!user)
-      throw new NotFoundException("User not found");
+      throw new NotFoundException('User not found');
     return (user);
   }
 }

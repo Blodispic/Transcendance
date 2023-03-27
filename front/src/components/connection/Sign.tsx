@@ -1,6 +1,6 @@
+import * as React from 'react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { socket } from '../../App';
 import { UserStatus } from '../../interface/User';
 import { useAppDispatch, useAppSelector } from '../../redux/Hook';
 import { change_avatar, change_name, set_status } from "../../redux/user";
@@ -16,7 +16,7 @@ export default function Sign() {
     const myToken = useAppSelector(state => state.user.myToken);
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
-    const [nameExist, SetNameExist] = useState<Boolean>(false);
+    const [nameExist, SetNameExist] = useState<boolean>(false);
 
 
     const fetch_name_avatar = async (e: any) => {
@@ -26,7 +26,6 @@ export default function Sign() {
             await fetch(`${process.env.REACT_APP_BACK}user/${myUser.user.id}/avatar`, {
                 method: 'PATCH',
                 headers: {
-                    // 'Content-Type': 'application/json',
                     'Authorization': `Bearer ${myToken}`,
                 },
                 body: formData,
@@ -60,9 +59,6 @@ export default function Sign() {
                         }
 
                     })
-                    .catch( () => {
-                        ;
-                    })
             }
         }
     }
@@ -91,16 +87,16 @@ export default function Sign() {
                     {
                        ( newname || (file && window.location.href.search('Profile') !== -1 )) &&
                         <button onClick={(e) => fetch_name_avatar(e)}>
-                            <a>ok</a>
+                            <span>ok</span>
                         </button>
                     }
                     {
                         nameExist && 
-                        <a> this username already use</a>
+                        <span> this username already use</span>
                     }
                 </form >
             </div >
         </div>
         </div>
     );
-};
+}

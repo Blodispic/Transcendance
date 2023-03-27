@@ -1,5 +1,5 @@
-import { IsNotEmpty, IsString } from "class-validator";
-import { User } from "src/user/entities/user.entity";
+import { IsNotEmpty, IsString } from 'class-validator';
+import { User } from 'src/user/entities/user.entity';
 
 export class ReceiveDmDto {
 	@IsNotEmpty()
@@ -7,5 +7,5 @@ export class ReceiveDmDto {
 
 	@IsString()
 	@IsNotEmpty()
-	message: string;
+	message: string; 
 }
