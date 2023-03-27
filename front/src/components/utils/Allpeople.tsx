@@ -98,7 +98,7 @@ export default function AllPeople(props: { friend: IUser[] | undefined, setFrien
                     myVar === true && alluser && alluser.length > 0 &&
                     <div className="dropdown-container">
                         <div className=" dropdown people-list hover-style">
-                            {alluser!.map(user_list => (
+                            {alluser.map(user_list => (
                                 <ul key={user_list.username} >
                                     <li onClick={() => { setMyvar(!myVar); addfriend(user_list) }}>
                                         {user_list.username}
