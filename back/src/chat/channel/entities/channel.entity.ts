@@ -1,12 +1,7 @@
 
-<<<<<<< HEAD
 import { IsOptional } from "class-validator";
 import { User } from "src/user/entities/user.entity";
 import { Column, Entity, JoinTable, ManyToMany, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
-=======
-import { User } from 'src/user/entities/user.entity';
-import { Column, Entity, JoinTable, ManyToMany, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
->>>>>>> 999c9a08195526110f505d2c52815a4744e784cd
 
 enum ChanType {
 	Public,

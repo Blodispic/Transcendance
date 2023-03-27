@@ -138,7 +138,7 @@ async handleCreateChannel(@ConnectedSocket() client: Socket, @MessageBody() crea
   const new_channel = await this.channelService.create(createChannelDto, user);
   client.join('chan' + new_channel.id);
   if (new_channel.chanType == 1 && createChannelDto.users && createChannelDto.users.length > 0)
-    this.inviteToChan(createChannelDto.users, new_channel.id);
+    await this.inviteToChan(createChannelDto.users, new_channel.id);
   this.server.emit('createChannelOk', new_channel.id);
 }
 
@@ -286,7 +286,7 @@ async inviteToChan(users: User[], chanid: number)
     if (socketIdToWho)
       this.server.to(socketIdToWho.id).emit('invited', chanid);
     socketIdToWho?.join('chan' + chanid);
-    this.channelService.add({user: user, chanId: chanid});
+    await this.channelService.add({user: user, chanId: chanid});
   };  
 }
 
