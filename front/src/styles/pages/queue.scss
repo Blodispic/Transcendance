@@ -50,7 +50,7 @@
 	z-index: 2;
 display: inline-flex;
         height: 50px;
-        padding: 10px 0 10px 0;
+        padding: 10px 0;
 
         .avatar {
             height: 50px !important;
@@ -76,7 +76,7 @@ display: inline-flex;
     z-index: 100;
 
     .sub-element {
-        padding: 20px 0 0 0;
+        padding: 20px 0 0;
         font-size: 25px;
     }
 }
