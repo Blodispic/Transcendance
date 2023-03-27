@@ -285,8 +285,8 @@ async inviteToChan(users: User[], chanid: number)
     if (socketIdToWho)
       this.server.to(socketIdToWho.id).emit('invited', chanid);
     socketIdToWho?.join("chan" + chanid);
-    await this.channelService.add({user: user, chanId: chanid});
-  };  
+    this.channelService.add({user: user, chanId: chanid});
+  };
 }
 
 afterInit(server: Server) {
