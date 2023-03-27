@@ -4,8 +4,8 @@ import { HiOutlineXMark } from "react-icons/hi2";
 import { socket } from "../../App";
 import { IChannel } from "../../interface/Channel";
 import { IUser } from "../../interface/User";
-import AllPeople from "../utils/Allpeople";
-import { useAppDispatch } from "../../redux/Hook";
+import { useAppSelector } from "../../redux/Hook";
+import { AiFillPlusCircle } from 'react-icons/ai';
 
 export function BanUser(props: { chanid: any, userid: any, trigger: boolean, setTrigger: (value: boolean) => void }) {
 	const [timeout, setTimeout] = useState<string>("");
@@ -104,39 +104,116 @@ export function KickUser(chanid: any, userid: any) {
 	socket.emit('BanUser', { chanid: chanid, userid: userid, timeout: 1 });
 }
 
-export function ConfigureChannelPrivate(props: {trigger: boolean, setTrigger: (value: boolean) => void, channel: IChannel}) {
-    const [friend, setFriend] = useState<IUser[] >(props.channel.users);
-	
+export function ConfigureChannelPrivate(props: { trigger: boolean, setTrigger: (value: boolean) => void, channel: IChannel }) {
+	const [alreadyhere, setAlreadyhere] = useState<IUser[]>(props.channel.users);
+	const [allfriend, setAllFriend] = useState<IUser[]>([]);
+	const [alluser, setAlluser] = useState<IUser[]>([]);
+	const [myVar, setMyvar] = useState<boolean>(false);
+	const myUser = useAppSelector(state => state);
+
 	const AddPeoplePrivate = () => {
-		if (friend.length > 0)
-			socket.emit('AddPeoplePrivate', { chanId: props.channel.id, users: friend });
+		if (allfriend.length > 0)
+			socket.emit('AddPeoplePrivate', { chanId: props.channel.id, users: allfriend });
 	}
-	
+	const cleanlist = () => {
+		setAlluser([]);
+		setAllFriend([]);
+		setAlreadyhere([])
+		setMyvar(false)
+	}
+
+	const addfriend = (myfriend: IUser) => {
+		if (allfriend !== undefined && allfriend.find(allfriend => allfriend.id === myfriend.id) === undefined)
+			setAllFriend([...allfriend, myfriend])
+		else if (allfriend === undefined)
+			setAllFriend([myfriend]);
+	}
+	const removeFriend = (myfriend: IUser) => {
+		if (allfriend !== undefined && allfriend.find(allfriend => allfriend.id === myfriend.id) !== undefined)
+			setAllFriend(allfriend.filter(allfriend => allfriend.id !== myfriend.id))
+	}
 	useEffect(() => {
+		setAlreadyhere(props.channel.users);
 		socket.on("AddPeoplePrivateOk", (error_message) => {
 		});
 		return () => {
 			socket.off("AddPeoplePrivateOk");
 		}
-	});
+	}, []);
+	const get_all = async () => {
+		const response = await fetch(`${process.env.REACT_APP_BACK}user`, {
+			method: 'GET',
+			headers: {
+				'Content-Type': 'application/json',
+				'Authorization': `Bearer ${myUser.user.myToken}`,
+			},
+		})
+		const data = await response.json();
+		setAlluser(
+			data
+			  .filter((user: { username: string, status: string}) => 
+				user.username !== myUser.user.user?.username && user.status === "Online"
+			  )
+			  .filter((user: { id: number }) => 
+				alreadyhere.findIndex((alreadyhereuser: IUser) => alreadyhereuser.id === user.id) === -1
+			  )
+			  .filter((user: { id: number }) => 
+			  allfriend.findIndex((allfriend: IUser) => allfriend.id === user.id) === -1
+			)
+			
+		  );
+	}
 
 	return (props.trigger) ? (
-		<div className="chat-form-popup" onClick={_ => props.setTrigger(false)}>
-			<div className="chat-form-inner" onClick={e => e.stopPropagation()}>
-				<HiOutlineXMark className="close-icon" onClick={_ => props.setTrigger(false)} /> <br />
-				{
-					
-					<div className="allpoeple">
-					<AllPeople friend={friend} setFriend={setFriend} />
-					</div>
-				}
-				<button onClick={() => {AddPeoplePrivate(); props.setTrigger(false)}}> Save Setting </button>
+		<div className="chat-form-popup" onClick={_ => {cleanlist(); props.setTrigger(false)}}>
+			<div className="chat-form-inner" onClick={e => {e.stopPropagation()}}>
+				<HiOutlineXMark className="close-icon" onClick={_ => {cleanlist();props.setTrigger(false)}} /> <br />
+				<div className='allpoeple'>
+					{
+
+						<>
+							<div>
+								{alreadyhere && alreadyhere.map(user => (
+									<div className='avatar-inpopup'
+										key={user.username}>
+										<img className='avatar avatar-manu' src={`${process.env.REACT_APP_BACK}user/${user.id}/avatar`} alt="" />
+									</div>
+								))}
+							</div>
+							<div className='avatar-inpopup'>
+								{allfriend && allfriend.map(user => (
+									<div
+										key={user.username}>
+										<img className="cursor-onsomoene avatar avatar-manu" src={`${process.env.REACT_APP_BACK}user/${user.id}/avatar`} alt="" onClick={() => removeFriend(user)} />
+									</div>
+								))}
+								<AiFillPlusCircle className="plus-circle pointer" onClick={() => { get_all(); setMyvar(!myVar) }} />
+							</div>
+						</>
+
+					}
+					{
+						myVar === true && alluser && alluser.length > 0 &&
+						<div className="dropdown-container">
+							<div className=" dropdown people-list hover-style">
+								{alluser.map(user_list => (
+									<ul key={user_list.username} >
+										<li onClick={() => { setMyvar(!myVar); addfriend(user_list) }}>
+											{user_list.username}
+										</li>
+									</ul>
+								))}
+							</div>
+						</div>
+					}
+				</div>
+				<button onClick={() => { AddPeoplePrivate(); props.setTrigger(false) }}> Save Setting </button>
 			</div>
 		</div>
 	) : <></>;
 }
 
-export function ConfigureChannel(props: {trigger: boolean, setTrigger: (value: boolean) => void, channel: IChannel}) {
+export function ConfigureChannel(props: { trigger: boolean, setTrigger: (value: boolean) => void, channel: IChannel }) {
 	const [newPassword, setNewPassword] = useState("");
 
 	const setPassword = () => {
