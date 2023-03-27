@@ -1,10 +1,14 @@
 import * as React from 'react';
 import { useEffect, useState } from "react";
+import { AiOutlineStop } from "react-icons/ai";
 import { BsFillKeyFill, BsFillPersonFill } from "react-icons/bs";
-import { FaCrown } from "react-icons/fa";
+import { FaCrown, FaVolumeMute } from "react-icons/fa";
 import { HiLockClosed } from "react-icons/hi2";
 import { useNavigate, useParams } from "react-router-dom";
-import { setChannels } from "../../redux/chat";
+import { socket } from "../../App";
+import { IChannel } from "../../interface/Channel";
+import { IUser } from "../../interface/User";
+import { addAdmin, banUser, muteUser, setChannels, unBanUser, unMuteUser } from "../../redux/chat";
 import { useAppDispatch, useAppSelector } from "../../redux/Hook";
 import { ChannelHeader, ChannelMessages } from "./ChannelMessages";
 import ClickableMenu from "./clickableMenu";
@@ -13,12 +17,11 @@ import { page } from '../../interface/enum';
 
 function JoinedChannelList() {
 	const navigate = useNavigate();
-	const currentUser = useAppSelector(state => state.user.user);
-	const channels = useAppSelector(state => state.chat.channels);
-
+	const currentUser: IUser | undefined = useAppSelector(state => state.user.user);
+	const channels: IChannel[] = useAppSelector(state => state.chat.channels);
 
 	return (
-		<div className="title">
+		<div className="upper">
 			<header>Joined Channels <hr /></header>
 			{channels && channels.map(chan => (
 				<ul key={chan.name}>
@@ -46,12 +49,10 @@ function JoinedChannelList() {
 
 function PublicChannelList() {
 	const navigate = useNavigate();
-	const channels = useAppSelector(state => state.chat.channels);
+	const channels: IChannel[] = useAppSelector(state => state.chat.channels);
 
 	return (
-		<div className="title">
-
-			<div className="bottom">
+		<div className="bottom">
 				<header>All Joinable Channels <hr /></header>
 				{channels && channels.map(chan => (
 					<ul key={chan.name}>
@@ -68,7 +69,6 @@ function PublicChannelList() {
 						}
 					</ul>
 				))}
-			</div>
 		</div>
 	);
 }
@@ -78,7 +78,7 @@ function ChannelMemberList(props: { page: (page: page) => void }) {
 	const currentUser = useAppSelector(state => state.user.user);
 	const { id } = useParams();
 	const [chanId, setChanId] = useState<number | undefined>(undefined);
-	const currentChan = useAppSelector(state =>
+	const currentChan: IChannel | undefined = useAppSelector(state =>
 		state.chat.channels.find(chan => chan.id === chanId));
 
 	useEffect(() => {
@@ -117,6 +117,14 @@ function ChannelMemberList(props: { page: (page: page) => void }) {
 								currentChan.admin?.find(obj => obj.id === user.id) &&
 								<BsFillPersonFill />
 							}
+							{
+								currentChan.banned && currentChan.banned.find(obj => obj.id === user.id) &&
+								<AiOutlineStop />
+							}
+							{
+								currentChan.muted && currentChan.muted.find(obj => obj.id === user.id) &&
+								<FaVolumeMute />
+							}
 						</li>
 					</ul>
 					{
@@ -148,6 +156,33 @@ export function Channels(props: { page: (page: page) => void }) {
 		}
 		get_channels();
 	}, []);
+
+    useEffect(() => {
+        socket.on("giveAdminOK", ({ userid, chanid }) => {
+            dispatch(addAdmin({ chanid: chanid, userid: userid }));
+        });
+		socket.on("muteUser", ({chanid, userid, timer}) => {
+			dispatch(muteUser({chanid: chanid, userid: userid}));
+
+			setTimeout(() => {
+				dispatch(unMuteUser({chanid: chanid, userid: userid}));
+			}, timer);
+
+		});
+		socket.on("banUser", ({chanid, userid, timer}) => {
+			dispatch(banUser({chanid: chanid, userid: userid}));
+
+			setTimeout(() => {
+				dispatch(unBanUser({chanid: chanid, userid: userid}));
+			}, timer);
+
+		});
+        return () => {
+            socket.off("giveAdminOK");
+			socket.off("muteUser");
+			socket.off("banUser");
+        }
+    })
 
 	return (id) ? (
 		<div id="chat-container">

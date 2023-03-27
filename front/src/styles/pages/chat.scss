@@ -63,10 +63,18 @@ $tab-color: rgba(var(--primary-color), 0.5); //rgb(121, 121, 121);
 			font-size: 20px;
 		}
 
+		.upper {
+			height: 40%;
+			width: 90%;
+			position: absolute;
+			top: 1%;
+		}
+
 		.bottom {
 			height:40%;
+			width: 90%;
 			position: absolute;
-			top: 50%;
+			top: 43%;
 		}
 		.add-icon {
 			width: 90%;
@@ -74,16 +82,15 @@ $tab-color: rgba(var(--primary-color), 0.5); //rgb(121, 121, 121);
 			align-items: center;
 			justify-content: center;
 			position: absolute;
-			margin: auto;
 			background: var(--sub-color2);
 			border-radius: 3px;
+			top: 38%;
 
 			.add-button {
 				cursor: pointer;
 			}
 
 		}
-
 	}
 
 
@@ -185,11 +192,7 @@ $tab-color: rgba(var(--primary-color), 0.5); //rgb(121, 121, 121);
 	flex: 1;
 	display: flex;
 	flex-direction: column-reverse;
-	.reverse {
-		overflow: auto;
-		display: flex;
-		flex-direction: column-reverse;
-	}
+	
 }
 
 .__wrap {

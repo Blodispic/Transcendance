@@ -20,6 +20,7 @@ export class ChannelController {
 		return await this.channelService.getById(id);
 	}
 	
+	
 	@Get()
 	async getAll() {
 		return await this.channelService.getAll();

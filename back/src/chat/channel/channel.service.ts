@@ -19,6 +19,7 @@ export class ChannelService {
 	constructor(
 		@InjectRepository(Channel)
 		private channelRepository: Repository<Channel>,
+
 		@Inject(forwardRef(() => UserService))
 		private userService: UserService,
 		// @InjectRepository(User)
@@ -108,8 +109,8 @@ export class ChannelService {
 		return 'There is no channel to update';
 	  }
 
-	async getById(id: number) {
-		return await this.channelRepository.findOne({
+	getById(id: number) {
+		return this.channelRepository.findOne({
 			relations: {
 				admin: true,
 				users: true,
@@ -174,7 +175,6 @@ export class ChannelService {
 			where: { id: banUserDto.chanid },
 		});
 		const user = await this.userService.getById(banUserDto.userid);
-		// check user is admin, banned is not admin
 		if (channel === null || user === null)
 			throw new BadRequestException('No such Channel or User');
 		channel.banned.push(user);

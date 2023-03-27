@@ -74,12 +74,15 @@ async handleSendMessageChannel(@ConnectedSocket() client: Socket, @MessageBody()
   const sender = await this.userService.getById(client.handshake.auth.user.id);
   if (sender == null)
     throw new BadRequestException('No such user');
-  if (!(await this.channelService.isUserinChan(channel, sender)))
+  if (!(await this.channelService.isUserinChan(channel, sender))) {
+    client.emit('sendMessageChannelFailed', 'You are not in this channel');
     throw new BadRequestException('You are not in this Channel');
+  }
   if (await this.channelService.isUserMuted({chanid: channel.id, userid: sender.id}) || 
-  await this.channelService.isUserBanned({chanid: channel.id, userid: sender.id })) // ban to remove soon
-    throw new BadRequestException('you are muted for now on this channel'); // user is ban or mute from this channel
-  
+  await this.channelService.isUserBanned({chanid: channel.id, userid: sender.id })) { // ban to remove soon
+    client.emit('sendMessageChannelFailed', 'You are muted or banned on this channel');
+    throw new BadRequestException('you are muted for now on this channel'); // user is ban or mute from this channe
+  }
   this.server.to('chan' + sendmessageChannelDto.chanid).emit('sendMessageChannelOK', {
     chanid: channel.id,
     sender: sender,
@@ -161,14 +164,14 @@ async handleAddPassword(@ConnectedSocket() client: Socket, @MessageBody() chanPa
   const channel = await this.channelService.getById(chanPasswordDto.chanid);
   const user = client.handshake.auth.user;
   if (channel === null || user === null)
-    throw new BadRequestException('No such Channel or User');
-  if (!(await this.channelService.isUserAdmin(user))) // for now only the real owner/admin, soon any owner/admin
+    throw new BadRequestException('No such Channel or User'); // no such channel or user
+  if (!(await this.channelService.isUserAdmin({chanid: channel.id, userid: user.id})))
     throw new BadRequestException('you are not Admin on this channel'); // user willing to change password isn't admin/owner
   this.channelService.update(channel.id, {
     password: chanPasswordDto.password,
     chanType: 2,
   });
-  this.server.emit('addPasswordOK', channel.id); //selee
+  this.server.emit('addPasswordOK', channel.id);
 }
 
 @SubscribeMessage('rmPassword')
@@ -176,8 +179,8 @@ async handleRmPassword(@ConnectedSocket() client: Socket, @MessageBody() chanPas
   const channel = await this.channelService.getById(chanPasswordDto.chanid);
   const user = client.handshake.auth.user;
   if (channel === null || user === null)
-    throw new BadRequestException('No such Channel or User');
-  if (!(await this.channelService.isUserAdmin(user))) // for now only the real owner/admin, soon any owner/admin
+    throw new BadRequestException('No such Channel or User'); // no such channel or user
+  if (!(await this.channelService.isUserAdmin({chanid: channel.id, userid: user.id})))
     throw new BadRequestException('You are not Admin on this Channel'); // user willing to change password isn't admin/owner
   this.channelService.update(channel.id, {
     rmPassword: 1,
@@ -191,8 +194,8 @@ async handleChangePassword(@ConnectedSocket() client: Socket, @MessageBody() cha
   const channel = await this.channelService.getById(chanPasswordDto.chanid);
   const user = client.handshake.auth.user;
   if (channel === null || user === null)
-    throw new BadRequestException('No such Channel or User');
-  if (!(await this.channelService.isUserAdmin(user))) // for now only the real owner/admin, soon any owner/admin
+    throw new BadRequestException('No such Channel or User'); // no such channel or user
+  if (!(await this.channelService.isUserAdmin({chanid: channel.id, userid: user.id})))
     throw new BadRequestException('You are not Admin on this Channel'); // user willing to change password isn't admin/owner
   if (channel.password === null)
     throw new BadRequestException('Channel does not already have a password'); // chan doesn't already have password
@@ -208,14 +211,21 @@ async handleBanUser(@ConnectedSocket() client: Socket, @MessageBody() banUserDto
   const channel = await this.channelService.getById(banUserDto.chanid);
   const user = await this.userService.getById(client.handshake.auth.user.id);
   const userBan = await this.userService.getById(banUserDto.userid);
-  if (channel === null || user === null || userBan === null)
+  if (channel === null || user === null || userBan === null) {
+    client.emit('banUserFailed', 'No such Channel or User');
     throw new BadRequestException('No such Channel or User');
-  if (!(await this.channelService.isUserAdmin({chanid: channel.id, userid: user.id})))
-    throw new BadRequestException('You are not Admin on this Channel');  
-  if (channel.owner?.id != user.id && await this.channelService.isUserAdmin({chanid: channel.id, userid: userBan.id}))
-    throw new BadRequestException('You can not Ban an Admin')
+  }
+  if (!(await this.channelService.isUserAdmin({chanid: channel.id, userid: user.id}))) {
+    client.emit('banUserFailed', 'You are not Admin on this channel');
+    throw new BadRequestException('You are not Admin on this Channel');
+  }
+  if (channel.owner?.id != user.id && await this.channelService.isUserAdmin({chanid: channel.id, userid: userBan.id})) {
+    client.emit('banUserFailed', 'You can not Ban an Admin');
+    throw new BadRequestException('You can not Ban an Admin');
+  }
   this.channelService.banUser(banUserDto);
   this.channelService.rm({user: userBan, chanid: channel.id});
+
   this.findSocketFromUser(userBan)?.leave('chan' + channel.id);
   let timer = 30000;
   if (banUserDto.timeout)
@@ -224,20 +234,26 @@ async handleBanUser(@ConnectedSocket() client: Socket, @MessageBody() banUserDto
     this.channelService.unbanUser(banUserDto);
   }, timer);
   client.emit('banUserOK', user.id, channel.id);
+  this.server.to('chan' + channel.id).emit('banUser', {chanid: channel.id, userid: userBan.id, timer: banUserDto.timeout});
 }
 
-@SubscribeMessage('MuteUser')
+@SubscribeMessage('MuteUser') // check un truc demain ( userMute ?)
 async handleMuteUser(@ConnectedSocket() client: Socket, @MessageBody() muteUserDto: MuteUserDto) {
   const channel = await this.channelService.getById(muteUserDto.chanid);
   const user = await this.userService.getById(client.handshake.auth.user.id);
-  const userMute = await this.userService.getById(muteUserDto.userid);
-  if (channel === null || user === null || userMute === null)
+  if (channel === null || user === null) {
+    client.emit('muteUserFailed', 'No such Channel or User');
     throw new BadRequestException('No such Channel or User');
-  if (!(await this.channelService.isUserAdmin({chanid: channel.id, userid: user.id})))
+  }
+  if (!(await this.channelService.isUserAdmin({chanid: channel.id, userid: user.id}))) {
+    client.emit('muteUserFailed', 'You are not Admin on this channel');
     throw new BadRequestException('You are not Admin on this channel');
-  if (channel.owner?.id != user.id && await this.channelService.isUserAdmin({chanid: channel.id, userid: userMute.id}))
-    throw new BadRequestException('You can not Ban an Admin')
-  this.channelService.muteUser(muteUserDto);  
+  }
+  if (channel.owner?.id != user.id && await this.channelService.isUserAdmin({chanid: channel.id, userid: user.id})) {
+    client.emit('muteUserFailed', 'You can not Mute an Admin');
+    throw new BadRequestException('You can not Mute an Admin')
+  }
+  await this.channelService.muteUser(muteUserDto);  
   let timer = 30000;
   if (muteUserDto.timeout)
     timer = muteUserDto.timeout;
@@ -246,6 +262,7 @@ async handleMuteUser(@ConnectedSocket() client: Socket, @MessageBody() muteUserD
     this.channelService.unmuteUser(muteUserDto);
   }, timer);
   client.emit('muteUserOK', user.id, channel.id);
+  this.server.to('chan' + channel.id).emit('muteUser', {chanid: channel.id, userid: muteUserDto.userid, timer: muteUserDto.timeout});
 }
 
 @SubscribeMessage('GiveAdmin')
@@ -254,10 +271,10 @@ async handleGiveAdmin(@ConnectedSocket() client: Socket, @MessageBody() giveAdmi
   const user = client.handshake.auth.user;
   if (channel === null || user === null)
     throw new BadRequestException('No such channel or User');
-  if (!(await this.channelService.isUserAdmin(user)))
+  if (!(await this.channelService.isUserAdmin({chanid: channel.id, userid: user.id})))
     throw new BadRequestException('You are not Admin on this channel');
   this.channelService.addAdmin(giveAdminDto);
-  client.emit('giveAdminOK', user.id, channel.id);
+  this.server.to("chan" + channel.id).emit('giveAdminOK', {userid: giveAdminDto.userid, chanid: channel.id});
 }
 
 @SubscribeMessage('AddPeoplePrivate')
