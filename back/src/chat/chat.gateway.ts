@@ -35,18 +35,19 @@ export class ChatGateway
  
   @WebSocketServer() server: Server;
   
- @SubscribeMessage('sendDM') // check if block, a venir
+ @SubscribeMessage('sendDM')
  async handleSendMessageUser(@ConnectedSocket() client: Socket, @MessageBody() sendDmDto: SendDmDto)/* : Promise<any> */ {
-   console.log("ok", sendDmDto);
-  const receiver = await this.userService.getById(sendDmDto.IdReceiver);
-  
+  const receiver = await this.userService.getById(sendDmDto.IdReceiver);  
   const sender = await this.userService.getById(client.handshake.auth.user.id);
   if (!receiver)
     throw new BadRequestException("Receiver does not exist");
+  if (!sender)
+    throw new BadRequestException("Sender does not exist");
   const socketReceiver = this.findSocketFromUser(receiver);
   if (socketReceiver === null)
     throw new BadRequestException("Receiver is not connected");
-
+  if ((await this.userService.checkRelations(sender.id, receiver.id)).relation === "Blocked")
+    throw new BadRequestException("User blocked"); // do we want an emit ?
   client.emit("sendDmOK", sendDmDto); // added by selee
   this.server.to(socketReceiver.id).emit("ReceiveDM", {
     sender: sender,
@@ -122,8 +123,7 @@ async handleJoinChannel(@ConnectedSocket() client: Socket, @MessageBody() joinCh
 
 @SubscribeMessage('createChannel')
 async handleCreateChannel(@ConnectedSocket() client: Socket, @MessageBody() createChannelDto: CreateChannelDto) {
-  const channel = await this.channelService.getByName(createChannelDto.chanName);
-
+  const channel = await this.channelService.getByName(createChannelDto.chanName);  
   if (channel != null) {
     client.emit("createChannelFailed", "Channel name already exists");
     throw new BadRequestException("An existing channel already have this name"); //channame already exist, possible ? if private/protected possible ?
@@ -139,11 +139,11 @@ async handleCreateChannel(@ConnectedSocket() client: Socket, @MessageBody() crea
   const new_channel = await this.channelService.create(createChannelDto, user);
   client.join("chan" + new_channel.id);
   if (new_channel.chanType == 1 && createChannelDto.users && createChannelDto.users.length > 0)
-    this.inviteToChan(createChannelDto.users, new_channel.id);
+    await this.inviteToChan(createChannelDto.users, new_channel.id);
 
   // client.emit("createChannelOk", new_channel.id);
   // client.emit("joinChannelOK", new_channel.id);
-
+  
   this.server.emit("createChannelOk", new_channel.id);
 }
 
@@ -240,7 +240,7 @@ async handleMuteUser(@ConnectedSocket() client: Socket, @MessageBody() muteUserD
   const user = await this.userService.getById(client.handshake.auth.user.id);
   const userMute = await this.userService.getById(muteUserDto.userid);
   if (channel === null || user === null || userMute === null)
-    throw new BadRequestException("No such Channel or User"); // no such channel or user
+    throw new BadRequestException("No such Channel or User");
   if (!(await this.channelService.isUserAdmin({chanid: channel.id, userid: user.id})))
     throw new BadRequestException("You are not Admin on this channel");
   if (channel.owner?.id != user.id && await this.channelService.isUserAdmin({chanid: channel.id, userid: userMute.id}))
@@ -261,7 +261,7 @@ async handleGiveAdmin(@ConnectedSocket() client: Socket, @MessageBody() giveAdmi
   const channel = await this.channelService.getById(giveAdminDto.chanid);
   const user = client.handshake.auth.user;
   if (channel === null || user === null)
-    throw new BadRequestException("No such channel or User"); // no such channel or user
+    throw new BadRequestException("No such channel or User");
   if (!(await this.channelService.isUserAdmin(user)))
     throw new BadRequestException("You are not Admin on this channel");
   this.channelService.addAdmin(giveAdminDto);
@@ -283,15 +283,18 @@ async handleInvite(@ConnectedSocket() client: Socket, @MessageBody() inviteDto: 
 
 async inviteToChan(users: User[], chanid: number)
 {
-  users.forEach(user => {
-    // if (this.channelService.isUserinChan(channel.id, user.id)) // a venir
-      // return;
+  const channel = await this.channelService.getById(chanid)
+    if (!channel)
+      return;
+  for (const user of users) {
+    if (await this.channelService.isUserinChan(channel, user))
+      continue;
     const socketIdToWho = this.findSocketFromUser(user);
     if (socketIdToWho)
       this.server.to(socketIdToWho.id).emit("invited", chanid);
     socketIdToWho?.join("chan" + chanid);
-    this.channelService.add({user: user, chanId: chanid});
-  });  
+    await this.channelService.add({user: user, chanId: chanid});
+  };  
 }
 
 afterInit(server: Server) {

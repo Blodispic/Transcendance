@@ -14,7 +14,7 @@ export function CheckPassword(props: { trigger: boolean, setTrigger: Function, c
 	const dispatch = useAppDispatch();
 
 	const handleJoinWithPass = () => {
-		socket.emit('joinChannel', { chanid: props.channel.id, channame: props.channel.name, password: password });
+		socket.emit('joinChannel', { chanid: props.channel.id, channame: props.channel.name, password: password }); // can we remove channame ? don't remember why we had it
 		setPassword("");
 		setInputValue("");
 	}

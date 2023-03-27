@@ -56,7 +56,7 @@ export class ChannelService {
 		if (channel == null || user == null)
 			throw new NotFoundException("No such Channel or User");
 		channel.users.push(user);
-		return this.channelRepository.save(channel);
+		return await this.channelRepository.save(channel);
 	}	
 
 	async rm(rmUserDto: RmUserDto) {
@@ -140,8 +140,6 @@ export class ChannelService {
 				password: true,
 			}	
 		}))?.password;
-		// if (channel != null)
-		// 	return channel.password;
 	  }
 
 	  async getByName(name: string) {
@@ -321,7 +319,9 @@ export class ChannelService {
         return false;
 	}
 
-	async isUserinChan(channel: Channel, user: User) {
+	isUserinChan(channel: Channel, user: User) {
+		if (!channel)
+			return false;
 		if (channel.users.find(elem => elem.id == user.id))
 			return true;
 		return false;

@@ -5,10 +5,6 @@ export class JoinChannelDto {
 	@IsNumber()
 	chanid: number;
 
-	@IsString()
-	@IsNotEmpty()
-    channame: string;
-
 	@IsOptional()
 	@IsString()
 	@IsNotEmpty()

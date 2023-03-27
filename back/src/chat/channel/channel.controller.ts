@@ -34,7 +34,6 @@ export class ChannelController {
     }
 
 	@Post()
-	@UseGuards(JwtGuard)
 	async create(@Body() createChannelDto: CreateChannelDto, user: User): Promise<Channel> {
 		try {
 			return await this.channelService.create(createChannelDto, user);
@@ -44,27 +43,13 @@ export class ChannelController {
 	}
 
 	@Post('addUser')
-	@UseGuards(JwtGuard)
 	async add(@Body() addUserDto: AddUserDto) {
 		return await this.channelService.add(addUserDto);
 	}
 
 	@Post('rmUser')
-	@UseGuards(JwtGuard)
 	async rm(@Body() rmUserDto: RmUserDto) {
 		return await this.channelService.rm(rmUserDto);
-	}
-
-	@Post('banUser')
-	@UseGuards(JwtGuard)
-	async banUser(@Body() banUserDto: BanUserDto) {
-		return await this.channelService.banUser(banUserDto);
-	}
-
-	@Post('muteUser')
-	@UseGuards(JwtGuard)
-	async muteUser(@Body() muteUserDto: MuteUserDto) {
-		return await this.channelService.muteUser(muteUserDto);
 	}
 
 	@Patch(':id')
