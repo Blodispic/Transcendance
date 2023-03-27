@@ -11,7 +11,7 @@ import { CreateChannelDto } from '../dto/create-channel.dto';
 import { GiveAdminDto } from '../dto/give-admin.dto';
 import { BanUserDto } from '../dto/ban-user.dto';
 import { RmAdminDto } from '../dto/rm-admin.dto';
-var bcrypt = require('bcryptjs');
+const bcrypt = require('bcryptjs');
 
 
 @Injectable()

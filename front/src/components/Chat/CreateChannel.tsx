@@ -11,18 +11,11 @@ export function PopupCreateChannel(props: { trigger: boolean, setTrigger: (value
 	const [chanName, setChanName] = useState("");
 	const [password, setPassword] = useState("");
 	const [chanMode, setChanMode] = useState(0);
-<<<<<<< HEAD
-	const [friend, setFriend] = useState<IUser[]>([]);
-	const [myVar, setMyvar] = useState<boolean>(false);
-	const [failed, setFailed] = useState<boolean>(false);
-	const [error, setError] = useState<string>("");
-	const navigate = useNavigate();
-=======
     const [friend, setFriend] = useState<IUser[] >([]);
+	const [error, setError] = useState<string>("");
 	// const [myVar, setMyvar] = useState<boolean> (false);
 	const [failed, setFailed] = useState<boolean> (false);
 	// const navigate = useNavigate();
->>>>>>> 999c9a08195526110f505d2c52815a4744e784cd
 	const dispatch = useAppDispatch();
 
 	const handlePublic = () => {
