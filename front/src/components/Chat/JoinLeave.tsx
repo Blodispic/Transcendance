@@ -79,7 +79,7 @@ export function JoinChannel(props: { channel: IChannel }) {
 				}
 				fetchChanInfo();
 				setPassPopup(false);
-				swal("You joined " + props.channel.name, "success");
+				swal("You joined [ " + props.channel.name + " ] ", " ");
 			}
 		});
 
@@ -123,7 +123,7 @@ export function LeaveChannel(props: { channel: IChannel }) {
 			if (currentUser !== undefined) {
 				dispatch(removeMember({ chanid: chanId, userid: currentUser.id }));
 				dispatch(removeChanMessage(chanId));
-				swal("You left " + props.channel.name, "success");
+				swal("You left [ " + props.channel.name + " ] ", " ");
 			}
 		})
 		socket.on("leaveChannelFailed", (err_message) => {
