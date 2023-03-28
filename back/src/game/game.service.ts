@@ -496,6 +496,7 @@ class Game {
 							ball.speed.x += 3;
 					}
 	            }
+				
 	            if (
 	                (ball.previous.y < player.paddle.position.y && ball.speed.y > 0) ||
 	                (ball.previous.y > player.paddle.position.y && ball.speed.y < 0)

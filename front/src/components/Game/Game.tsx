@@ -351,14 +351,24 @@ function paddleCollision(ball: Ball, player: Player) {
 					(player.input.left === false &&
 						player.input.right === false &&
 						ball.previous.y > player.paddle.position.y)
-				)
-					ball.speed.y = ball.speed.y * (Math.random() * (2 - 1.5) + 1.5);
+				){
+					ball.speed.y = ball.speed.y * 1.7;
+					if (ball.previous.x + (ball.position.x - ball.previous.x) / 2 < player.paddle.position.x + paddleDimensions.x / 2)
+						ball.speed.x -= 3;
+					else
+						ball.speed.x += 3;
+				}
 				else if (
 					player.input.left === false &&
 					player.input.right === false &&
 					ball.previous.y < player.paddle.position.y
-				)
-					ball.speed.y = ball.speed.y * (Math.random() * (1 - 0.8) + 0.8);
+				){
+					ball.speed.y = ball.speed.y * 0.9;
+					if (ball.previous.x + (ball.position.x - ball.previous.x) / 2 < player.paddle.position.x + paddleDimensions.x / 2)
+						ball.speed.x -= 3;
+					else
+						ball.speed.x += 3;
+				}
 			} else {
 				if (
 					(player.input.left &&
@@ -367,14 +377,24 @@ function paddleCollision(ball: Ball, player: Player) {
 					(player.input.left === false &&
 						player.input.right === false &&
 						ball.previous.y < player.paddle.position.y)
-				)
-					ball.speed.y = ball.speed.y * (Math.random() * (2 - 1.5) + 1.5);
+				){
+					ball.speed.y = ball.speed.y * 1.7;
+					if (ball.previous.x + (ball.position.x - ball.previous.x) / 2 < player.paddle.position.x + paddleDimensions.x / 2)
+						ball.speed.x -= 3;
+					else
+						ball.speed.x += 3;
+				}
 				else if (
-					player.input.left &&
-					player.input.right &&
+					player.input.left == false &&
+					player.input.right == false &&
 					ball.previous.y > player.paddle.position.y
-				)
-					ball.speed.y = ball.speed.y * (Math.random() * (1 - 0.8) + 0.8);
+				){
+					ball.speed.y = ball.speed.y * 0.9;
+					if (ball.previous.x + (ball.position.x - ball.previous.x) / 2 < player.paddle.position.x + paddleDimensions.x / 2)
+						ball.speed.x -= 3;
+					else
+						ball.speed.x += 3;
+				}
 			}
 
 			if (
