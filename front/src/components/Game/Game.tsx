@@ -385,8 +385,8 @@ function paddleCollision(ball: Ball, player: Player) {
 						ball.speed.x += 3;
 				}
 				else if (
-					player.input.left == false &&
-					player.input.right == false &&
+					player.input.left === false &&
+					player.input.right === false &&
 					ball.previous.y > player.paddle.position.y
 				){
 					ball.speed.y = ball.speed.y * 0.9;
