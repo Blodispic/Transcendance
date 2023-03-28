@@ -168,6 +168,7 @@ export function ConfigureChannelPrivate(props: { trigger: boolean, setTrigger: (
 		<div className="chat-form-popup" onClick={_ => {cleanlist(); props.setTrigger(false)}}>
 			<div className="chat-form-inner" onClick={e => {e.stopPropagation()}}>
 				<HiOutlineXMark className="close-icon" onClick={_ => {cleanlist();props.setTrigger(false)}} /> <br />
+				<h3>Edit members</h3>
 				<div className='allpoeple'>
 					{
 
@@ -184,10 +185,10 @@ export function ConfigureChannelPrivate(props: { trigger: boolean, setTrigger: (
 								{allfriend && allfriend.map(user => (
 									<div
 										key={user.username}>
-										<img className="cursor-onsomoene avatar avatar-manu" src={`${process.env.REACT_APP_BACK}user/${user.id}/avatar`} alt="" onClick={() => removeFriend(user)} />
+										<img className="cursor-onsomoene avatar avatar-manu" title='Cancel add' src={`${process.env.REACT_APP_BACK}user/${user.id}/avatar`} alt="" onClick={() => removeFriend(user)} />
 									</div>
 								))}
-								<AiFillPlusCircle className="plus-circle pointer" onClick={() => { get_all(); setMyvar(!myVar) }} />
+								<AiFillPlusCircle className="plus-circle pointer" title='Add member' onClick={() => { get_all(); setMyvar(!myVar) }} />
 							</div>
 						</>
 
