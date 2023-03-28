@@ -99,10 +99,11 @@ function App() {
           dispatch(addMessage(messageDto));
         });
 
-        socket.on('sendDmOK', (sendDmDto) => {
+        socket.on('sendDmOK', ({sendDmDto, sendtime }) => {
           const newMessage: IMessage = sendDmDto;
           newMessage.sender = myUser.user;
           newMessage.chanid = sendDmDto.IdReceiver;
+          newMessage.sendtime = sendtime;
           dispatch(addDM(newMessage));
         });
         

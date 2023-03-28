@@ -48,11 +48,12 @@ export class ChatGateway
     throw new BadRequestException('Receiver is not connected');
   if ((await this.userService.checkRelations(receiver.id, sender.id)).relation === 'Blocked')
     throw new BadRequestException('User blocked'); // do we want an emit ?
-  client.emit('sendDmOK', sendDmDto); // added by selee
+  const sendtime = new Date().toLocaleString('en-US');
+  client.emit('sendDmOK', {sendDmDto: sendDmDto, sendtime: sendtime});
   this.server.to(socketReceiver.id).emit('ReceiveDM', {
     sender: sender,
     message: sendDmDto.message,
-    sendtime: new Date().toLocaleString('en-US')
+    sendtime: sendtime
   });
  }
 
