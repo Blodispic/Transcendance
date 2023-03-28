@@ -140,13 +140,6 @@ export class UserService {
       throw new NotFoundException('Token expired');
     }
     else if (user) {
-      // let i : number = 0;
-      // while (i < userList.length)
-      // {
-      //   if (userList[i].handshake.auth.user.id === user.id)
-      //     throw new BadRequestException(); // User already logged in
-      //   i++;
-      // }
       for (const iterator of userList) {
         if (iterator.handshake.auth.user.id === user.id)
           throw new BadRequestException('t\'as deja un tab frero');
@@ -186,12 +179,6 @@ export class UserService {
         else
           user.username = userUpdate.username;
       }
-      // if (userUpdate.status) {
-      //   user.status = userUpdate.status;
-
-      // }
-      // if (userUpdate.status)
-      //   user.status = userUpdate.status;
       if (userUpdate.twoFaEnable != undefined) {
         user.twoFaEnable = userUpdate.twoFaEnable;
       }
