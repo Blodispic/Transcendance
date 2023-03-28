@@ -27,10 +27,10 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
 	server: Server;
 
 	async handleConnection(client: Socket) {
-		client.handshake.auth.user = await this.userService.GetByAccessToken(client.handshake.auth);
-		if (client.handshake.auth.user === null)
-			throw new BadRequestException("No user with such token")
 		try {
+			client.handshake.auth.user = await this.userService.GetByAccessToken(client.handshake.auth);
+			if (client.handshake.auth.user === null)
+				throw new BadRequestException("No user with such token")
 			await this.userService.SetStatus(client.handshake.auth.user, 'Online');
 		} catch (error) {
 			console.log(error);

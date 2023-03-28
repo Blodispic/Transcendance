@@ -52,8 +52,8 @@ export class ChannelService {
 			where: {
 				id: addUserDto.chanId,
 			},
-			});
-		const user = addUserDto.user;		
+		});
+		const user = await this.userService.getById(addUserDto.user.id);
 		if (channel == null || user == null)
 			throw new NotFoundException('No such Channel or User');
 		channel.users.push(user);
@@ -70,14 +70,12 @@ export class ChannelService {
 		const user = await this.userService.getById(rmUserDto.user.id);
 		if (channel === null || user === null)
 			throw new NotFoundException('No such Channel or User');
-		if (channel.owner?.id == user.id){
+		if (channel.owner?.id == user.id)
 			await this.userService.RmOwned(user.id, channel.id);
-			channel.owner = undefined;
-		}		
 		if (await this.isUserAdmin({chanid: channel.id, userid: user.id}))		
 			channel = await this.rmAdmin({chanid: channel.id, userid: user.id});
 		channel.users = channel.users.filter(elem => elem.id != user.id);
-		return await this.channelRepository.save(channel);
+		return this.channelRepository.save(channel);
 	}
 
 	async update(id: number, channelUpdate: any) {		
@@ -171,7 +169,7 @@ export class ChannelService {
 		if (channel === null || user === null)
 			throw new BadRequestException('No such Channel or User');
 		channel.banned.push(user);
-		return this.channelRepository.save(channel);
+		return await this.channelRepository.save(channel);
 	  }
 
 	  getAll() {
@@ -217,12 +215,12 @@ export class ChannelService {
 		return await this.channelRepository.save(channel);
 	}
 
-	async unbanUser(muteUserDto: MuteUserDto) {
+	async unbanUser(banUserDto: BanUserDto) {
 		const channel: Channel | null = await this.channelRepository.findOne({
 			relations: { users: true, banned: true },
-			where: { id: muteUserDto.chanid },
-		});
-		const user = channel?.banned.find(elem => elem.id == muteUserDto.userid);
+			where: { id: banUserDto.chanid },
+		});		
+		const user = channel?.banned.find(elem => elem.id == banUserDto.userid);
 		if (channel === null || user === null || user === undefined)
 			throw new BadRequestException('No such Channel or User');		
 		const index = channel.banned.indexOf(user, 0);		
