@@ -44,6 +44,7 @@ $tab-color: rgba(var(--primary-color), 0.5); //rgb(121, 121, 121);
 		line-height: 30px;
 		color: black;
 		display: flex;
+		align-items: center;
 	}
 
 	.right-sidebar {
@@ -153,10 +154,9 @@ $tab-color: rgba(var(--primary-color), 0.5); //rgb(121, 121, 121);
 		cursor: pointer;
 		padding: 5px;
 		background: var(--primary-color);
-		color: white;
+		color: white !important;
 		transition: .3s;
-		// border: 2px solid var(--primary-color);
-		margin-left: 5px;
+		margin: 0px 10px;
 	}
 
 	button:hover {
@@ -177,7 +177,7 @@ $tab-color: rgba(var(--primary-color), 0.5); //rgb(121, 121, 121);
 		cursor: pointer;
 		padding: 5px;
 		background: var(--primary-color);
-		color: white;
+		color: white !important;
 		transition: .3s;
 		margin-left: 5px;
 
