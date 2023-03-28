@@ -4,7 +4,7 @@ import { Results } from 'src/results/entities/results.entity';
 import { Repository } from 'typeorm';
 import { CreateUserDto } from '../user/dto/create-user.dto';
 import { UpdateUserDto } from '../user/dto/update-user.dto';
-import { User } from './entities/user.entity';
+import { Status, User } from './entities/user.entity';
 import { FriendRequest } from './entities/friend-request.entity';
 import { FriendRequestDto } from './dto/friend-request.dto';
 import { JwtService } from '@nestjs/jwt';
@@ -441,7 +441,7 @@ export class UserService {
     return realUser;
   }
 
-  async SetStatus(user: User, status: string): Promise<User | null> {
+  async SetStatus(user: User, status: Status): Promise<User | null> {
     if (!user)
       throw new HttpException('user doesn\'t exists', HttpStatus.BAD_REQUEST);
 

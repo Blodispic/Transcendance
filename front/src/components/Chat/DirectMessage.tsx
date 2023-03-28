@@ -325,7 +325,7 @@ export function DirectMessage() {
 			{(currentDm !== undefined && dmId !== undefined) &&
 				<>
 					<DmMessages id={dmId} currentdm={currentDm} setCurrentDm={setCurrentDm} />
-					<div className="sidebar left-sidebar">
+					<div className="sidebar right-sidebar">
 						<InfoFriend user={currentDm} />
 					</div>
 				</>

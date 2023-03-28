@@ -96,6 +96,25 @@ export function Friends() {
         setUpdateFriend(prevFlag => !prevFlag);
     };
 
+    const removeFriend = async (id: number) => {
+        await fetch(`${process.env.REACT_APP_BACK}user/deletefriend/0`, {
+            method: 'DELETE',
+            body: JSON.stringify({ friendId: id }),
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${myToken}`,
+            },
+        })
+            .then(async Response => {
+                if (Response.ok) {
+                    swal("", "Friend Remove", "success");
+                    socket.emit("RemoveFriend", id);
+                    setUpdateFriend(!updateFriend);
+                }
+            });
+    };
+
+
     const FriendsReqList = (props: FriendsListProps) => {
         return (
             <ul className="friends-list">
@@ -116,6 +135,7 @@ export function Friends() {
                                 <button className="refuse-button" onClick={() => declineFriendRequest(friend.id)}>
                                     <ImCross />
                                 </button>
+
                             </div>
                         </li>
                     ))
@@ -145,6 +165,8 @@ export function Friends() {
                             <div className="friend-info">
                                 <div className="friend-name">{friend.name}</div>
                                 <div className={"color-status " + friend.UserStatus}>{friend.UserStatus}</div>
+                                <button  onClick={() => (removeFriend(friend.id))}> Remove Friend </button>
+
                             </div>
                         </li>
                     ))

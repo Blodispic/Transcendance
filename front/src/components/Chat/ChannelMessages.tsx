@@ -20,7 +20,9 @@ export function ChannelHeader() {
 	const [chanId, setChanId] = useState<number | undefined>(undefined);
 	const currentChan: IChannel | undefined = useAppSelector(state => state.chat.channels.find(chan => chan.id === chanId));
 
+
 	useEffect(() => {
+	console.log("ca push pas");
 		if (id !== undefined) {
 			setChanId(parseInt(id));
 		}
@@ -172,7 +174,7 @@ export function ChannelMessages() {
 						</div>
 					</div>
 
-					<form id="input_form" onSubmit={(e) => { handleSubmitNewMessage(e); }}>
+					<form onSubmit={(e) => { handleSubmitNewMessage(e); }}>
 						<input type="text" maxLength={1000} onChange={(e) => { setNewInput(e.target.value) }}
 							placeholder="type message here" value={newInput} />
 					</form>

@@ -37,8 +37,8 @@ export const chatSlice = createSlice({
             }
         },
 
-        joinChannel: (state, { payload }: PayloadAction<{id: number, chan: IChannel, user: IUser}>) => {
-            let chan: IChannel | undefined = state.channels.find(obj => obj.id === payload.id);
+        joinChannel: (state, { payload }: PayloadAction<{chanid: number, chan: IChannel, user: IUser}>) => {
+            let chan: IChannel | undefined = state.channels.find(obj => obj.id === payload.chanid);
             if (chan) {
                 chan.owner = payload.chan.owner;
                 chan.users = payload.chan.users;
@@ -50,8 +50,8 @@ export const chatSlice = createSlice({
             }
         },
 
-        addMember: (state, { payload }: PayloadAction<{ id: number, user: IUser }>) => {
-            const chan: IChannel | undefined = state.channels.find(obj => obj.id === payload.id);
+        addMember: (state, { payload }: PayloadAction<{ chanid: number, user: IUser }>) => {
+            const chan: IChannel | undefined = state.channels.find(obj => obj.id === payload.chanid);
             if (chan) {
                 if (chan.users !== undefined && chan.users.find(obj => obj.id === payload.user.id) === undefined)
                     chan.users = ([...chan.users, payload.user]);
@@ -60,14 +60,14 @@ export const chatSlice = createSlice({
             }
         },
 
-        removeMember: (state, { payload }: PayloadAction<{ id: number, user: IUser }>) => {
-            const chan: IChannel | undefined = state.channels.find(obj => obj.id === payload.id);
+        removeMember: (state, { payload }: PayloadAction<{ chanid: number, userid: number }>) => {
+            const chan: IChannel | undefined = state.channels.find(obj => obj.id === payload.chanid);
             if (chan) {
-                if (chan.users && chan.users.find(obj => obj.id === payload.user.id) !== undefined)
-                    chan.users = chan.users.filter(obj => obj.id !== payload.user.id);
-                if (chan.admin && chan.admin.find(obj => obj.id === payload.user.id) !== undefined)
-                    chan.admin = chan.admin.filter(obj => obj.id !== payload.user.id);
-                if (chan.owner && chan.owner.id === payload.user.id)
+                if (chan.users && chan.users.find(obj => obj.id === payload.userid) !== undefined)
+                    chan.users = chan.users.filter(obj => obj.id !== payload.userid);
+                if (chan.admin && chan.admin.find(obj => obj.id === payload.userid) !== undefined)
+                    chan.admin = chan.admin.filter(obj => obj.id !== payload.userid);
+                if (chan.owner && chan.owner.id === payload.userid)
                     chan.owner = undefined;
             }
         },
@@ -94,6 +94,7 @@ export const chatSlice = createSlice({
                         chan.banned = ([...chan.banned, user]);
                     else
                         chan.banned = ([user]);
+                    chan.users = chan.users.filter(obj => obj.id !== user.id);
                 }
             }
         },
@@ -101,7 +102,7 @@ export const chatSlice = createSlice({
         unBanUser: (state, { payload }: PayloadAction<{ chanid: number, userid: number }>) => {
             const chan: IChannel | undefined = state.channels.find(obj => obj.id === payload.chanid);
             if (chan) {
-                const user: IUser | undefined = chan.users.find(obj => obj.id === payload.userid);
+                const user: IUser | undefined = chan.banned.find(obj => obj.id === payload.userid);
                 if (user) {
                     if (chan.banned && chan.banned.find(obj => obj.id === user.id) !== undefined)
                     chan.banned = chan?.banned.filter(obj => obj.id !== user.id);
@@ -125,7 +126,7 @@ export const chatSlice = createSlice({
         unMuteUser: (state, { payload }: PayloadAction<{ chanid: number, userid: number }>) => {
             const chan: IChannel | undefined = state.channels.find(obj => obj.id === payload.chanid);
             if (chan) {
-                const user: IUser | undefined = chan.users.find(obj => obj.id === payload.userid);
+                const user: IUser | undefined = chan.muted.find(obj => obj.id === payload.userid);
                 if (user) {
                     if (chan.muted && chan.muted.find(obj => obj.id === user.id) !== undefined)
                         chan.muted = chan?.muted.filter(obj => obj.id !== user.id);
