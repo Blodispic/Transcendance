@@ -409,10 +409,8 @@ class Game {
 		state.scale = state.client_area.x / state.area.x;
 
 		state.player1.input = { ...this.move1 };
-		// state.player1.input = JSON.parse(JSON.stringify(move1));
 		
 		state.player2.input = { ...this.move2 };
-		// state.player2.input = JSON.parse(JSON.stringify(move2));
 		if (state.player1.score === state.scoreMax || state.player2.score === state.scoreMax) {
 			state.gameFinished = true;
 		}
@@ -451,22 +449,22 @@ class Game {
 	                        player.input.right === false &&
 	                        ball.previous.y > player.paddle.position.y)
 	                ){
-						ball.speed.y = ball.speed.y * (Math.random() * (2 - 1.5) + 1.5);
+						ball.speed.y = ball.speed.y * 1.7;
 						if (ball.previous.x + (ball.position.x - ball.previous.x) / 2 < player.paddle.position.x + paddleDimensions.x / 2)
-							ball.speed.x -= (Math.random() * (4 - 2) + 2);
+							ball.speed.x -= 3;
 						else
-							ball.speed.x += (Math.random() * (4 - 2) + 2);
+							ball.speed.x += 3;
 					}
 	                else if (
 	                    player.input.left === false &&
 	                    player.input.right === false &&
 	                    ball.previous.y < player.paddle.position.y
 	                ){
-						ball.speed.y = ball.speed.y * (Math.random() * (1 - 0.8) + 0.8);
+						ball.speed.y = ball.speed.y * 0.9;
 						if (ball.previous.x + (ball.position.x - ball.previous.x) / 2 < player.paddle.position.x + paddleDimensions.x / 2)
-							ball.speed.x -= (Math.random() * (4 - 2) + 2);
+							ball.speed.x -= 3;
 						else
-							ball.speed.x += (Math.random() * (4 - 2) + 2);
+							ball.speed.x += 3;
 					}
 	            } else {
 	                if (
@@ -477,22 +475,22 @@ class Game {
 	                        player.input.right === false &&
 	                        ball.previous.y < player.paddle.position.y)
 	                ){
-						ball.speed.y = ball.speed.y * (Math.random() * (2 - 1.5) + 1.5);
+						ball.speed.y = ball.speed.y * 1.7;
 						if (ball.previous.x + (ball.position.x - ball.previous.x) / 2 < player.paddle.position.x + paddleDimensions.x / 2)
-							ball.speed.x -= (Math.random() * (4 - 2) + 2);
+							ball.speed.x -= 3;
 						else
-							ball.speed.x += (Math.random() * (4 - 2) + 2);
+							ball.speed.x += 3;
 					}
 	                else if (
-	                    player.input.left &&
-	                    player.input.right &&
+	                    player.input.left == false &&
+	                    player.input.right == false &&
 	                    ball.previous.y > player.paddle.position.y
 	                ){
-						ball.speed.y = ball.speed.y * (Math.random() * (1 - 0.8) + 0.8);
+						ball.speed.y = ball.speed.y * 0.9;
 						if (ball.previous.x + (ball.position.x - ball.previous.x) / 2 < player.paddle.position.x + paddleDimensions.x / 2)
-							ball.speed.x -= (Math.random() * (4 - 2) + 2);
+							ball.speed.x -= 3;
 						else
-							ball.speed.x += (Math.random() * (4 - 2) + 2);
+							ball.speed.x += 3;
 					}
 	            }
 	            if (
