@@ -4,7 +4,7 @@ import { Results } from 'src/results/entities/results.entity';
 import { Repository } from 'typeorm';
 import { CreateUserDto } from '../user/dto/create-user.dto';
 import { UpdateUserDto } from '../user/dto/update-user.dto';
-import { User } from './entities/user.entity';
+import { Status, User } from './entities/user.entity';
 import { FriendRequest } from './entities/friend-request.entity';
 import { FriendRequestDto } from './dto/friend-request.dto';
 import { JwtService } from '@nestjs/jwt';
@@ -132,7 +132,9 @@ export class UserService {
 
   async GetByAccessToken(access_token: any) {
 
-    const decoded_access_token: any = await this.jwtService.decode(access_token.token, { json: true });
+    const decoded_access_token: any = this.jwtService.decode(access_token.token, { json: true });
+    if (!decoded_access_token)
+      throw new NotFoundException('Token not valid');
     const user = await this.usersRepository.findOneBy({ login: decoded_access_token.username });
     if (decoded_access_token.exp && decoded_access_token.exp < Date.now() / 1000) {
       throw new NotFoundException('Token expired');
@@ -184,12 +186,12 @@ export class UserService {
         else
           user.username = userUpdate.username;
       }
-      if (userUpdate.status) {
-        user.status = userUpdate.status;
+      // if (userUpdate.status) {
+      //   user.status = userUpdate.status;
 
-      }
-      if (userUpdate.status)
-        user.status = userUpdate.status;
+      // }
+      // if (userUpdate.status)
+      //   user.status = userUpdate.status;
       if (userUpdate.twoFaEnable != undefined) {
         user.twoFaEnable = userUpdate.twoFaEnable;
       }
@@ -450,7 +452,7 @@ export class UserService {
     return realUser;
   }
 
-  async SetStatus(user: User, status: string): Promise<User | null> {
+  async SetStatus(user: User, status: Status): Promise<User | null> {
     if (!user)
       throw new HttpException('user doesn\'t exists', HttpStatus.BAD_REQUEST);
 

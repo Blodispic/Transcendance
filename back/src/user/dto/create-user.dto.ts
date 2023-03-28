@@ -1,4 +1,5 @@
-import { IsEmail, IsNotEmpty, IsOptional, IsString, MaxLength } from 'class-validator';
+import { IsEmail, IsEnum, IsNotEmpty, IsOptional, IsString, MaxLength } from 'class-validator';
+import { Status } from '../entities/user.entity';
 
 export class CreateUserDto {
 	@IsOptional()
@@ -18,5 +19,4 @@ export class CreateUserDto {
 	@IsEmail()
 	@IsNotEmpty()
 	intra_avatar: string;
-
 }

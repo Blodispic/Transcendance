@@ -3,6 +3,7 @@ import { Server } from 'socket.io';
 import { UserService } from 'src/user/user.service';
 import { Ball, GameState, Move, Player, Vec2 } from './game.interfaces';
 import { CreateResultDto } from 'src/results/dto/create-result.dto';
+import { Status } from 'src/user/entities/user.entity';
 
 @Injectable()
 export class GameService {
@@ -95,8 +96,8 @@ export class GameService {
 			this.gameRoom.push(new Game(this, server, player1, player2, true, 3, socket1, socket2, this.gameRoom.length + 1));
 			server.to(player1.socket).emit('RoomStart', this.gameRoom.length, player1);
 			server.to(player2.socket).emit('RoomStart', this.gameRoom.length, player2);
-			this.userService.SetStatus(socket1.handshake.auth.user, 'InGame');
-			this.userService.SetStatus(socket2.handshake.auth.user, 'InGame');
+			this.userService.SetStatus(socket1.handshake.auth.user, Status.Ingame);
+			this.userService.SetStatus(socket2.handshake.auth.user, Status.Ingame);
 			server.emit('UpdateSomeone', { idChange: socket1.handshake.auth.user.id, idChange2: socket2.handshake.auth.user.id });
 
 		}
@@ -149,8 +150,8 @@ export class GameService {
 		else if (scoreMax > 10)
 			scoreMax = 10;
 		this.gameRoom.push(new Game(this, server, player1, player2, extra, scoreMax, socket1, socket2, this.gameRoom.length + 1));
-		this.userService.SetStatus(socket1.handshake.auth.user, 'InGame');
-		this.userService.SetStatus(socket2.handshake.auth.user, 'InGame');
+		this.userService.SetStatus(socket1.handshake.auth.user, Status.Ingame);
+		this.userService.SetStatus(socket2.handshake.auth.user, Status.Ingame);
 		server.emit('UpdateSomeone', { idChange: socket1.handshake.auth.user.id, idChange2: socket2.handshake.auth.user.id });
 		server.to(player1.socket).emit('RoomStart', this.gameRoom.length, player1);
 		server.to(player2.socket).emit('RoomStart', this.gameRoom.length, player2);
@@ -216,8 +217,8 @@ export class GameService {
         let roomId = 0;
         while (roomId < this.gameRoom.length && this.gameRoom.length > 0) {
             if (this.gameRoom[roomId].gameState.player1.socket === client || this.gameRoom[roomId].gameState.player2.socket === client) {
-                this.userService.SetStatus(this.gameRoom[roomId].socket1.handshake.auth.user, 'Online');  // ACHANGER PAR USERLIST BYY ADAM 
-                this.userService.SetStatus(this.gameRoom[roomId].socket2.handshake.auth.user, 'Online');  // ACHANGER PAR USERLIST BYY ADAM 
+                this.userService.SetStatus(this.gameRoom[roomId].socket1.handshake.auth.user, Status.Online);  // ACHANGER PAR USERLIST BYY ADAM 
+                this.userService.SetStatus(this.gameRoom[roomId].socket2.handshake.auth.user, Status.Online);  // ACHANGER PAR USERLIST BYY ADAM 
                 server.emit('UpdateSomeone', { idChange: this.gameRoom[roomId].socket1.handshake.auth.user.id, idChange2: this.gameRoom[roomId].socket2.handshake.auth.user.id });
                 this.gameRoom.splice(roomId, 1);
                 return;
