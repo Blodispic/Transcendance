@@ -1,9 +1,10 @@
 import { Injectable } from '@nestjs/common';
-import { Server } from 'socket.io';
+import { Server, Socket } from 'socket.io';
 import { UserService } from 'src/user/user.service';
 import { Ball, GameState, Move, Player, Vec2 } from './game.interfaces';
 import { CreateResultDto } from 'src/results/dto/create-result.dto';
 import { Status } from 'src/user/entities/user.entity';
+import { Results } from 'src/results/entities/results.entity';
 
 @Injectable()
 export class GameService {
@@ -24,7 +25,9 @@ export class GameService {
 		return false;
 	}
 
-	async addToWaitingRoom(client: any) {
+	async addToWaitingRoom(client: Socket) {
+		console.log(this.waitingRoom);
+		console.log(typeof this.waitingRoom);
 		let i  = 0;
 		while (i < this.waitingRoom.length)
 		{
@@ -36,7 +39,7 @@ export class GameService {
 		return 0;
 	}
 
-	removeFromWaitingRoom(client: any)
+	removeFromWaitingRoom(client: string)
 	{
 		let i  = 0;
 		while (i < this.waitingRoom.length)
@@ -69,7 +72,7 @@ export class GameService {
 				name: 'Player1',
 				score: 0,
 				side: 0,
-				socket: socket1.id,
+				socket: socket1?.id,
 				id: 0,
 			};
 			const player2: Player = {
@@ -288,14 +291,14 @@ class Game {
 	server: Server;
 	public gameState: GameState;
 	gameService: GameService;
-	socket1: any;
-	socket2: any;
+	socket1: Socket;
+	socket2: Socket;
 	watchList: string[];
 
 	move1: Move = JSON.parse(JSON.stringify(inputdefault));
 	move2: Move = JSON.parse(JSON.stringify(inputdefault));
 
-	constructor(gameService: GameService, server: Server, user1: Player, user2: Player, extra: boolean, scoreMax: number, socket1: any, socket2: any, roomId: number) {
+	constructor(gameService: GameService, server: Server, user1: Player, user2: Player, extra: boolean, scoreMax: number, socket1: Socket, socket2: Socket, roomId: number) {
 		this.gameService = gameService;
 		this.server = server;
 		// this.gamestateInitializer();
@@ -393,13 +396,13 @@ class Game {
 	async finishGame() {
 		this.gameState.gameFinished = true;
 		if (this.gameState.player1.score === this.gameState.scoreMax) {
-			const result: any = { winner: this.gameState.player1.name, winnerId: this.gameState.player1.id, loser: this.gameState.player2.name, loserId: this.gameState.player2.id, winner_score: this.gameState.player1.score.toString(), loser_score: this.gameState.player2.score.toString() };
+			const result: CreateResultDto = { winner: this.gameState.player1.name, winnerId: this.gameState.player1.id, loser: this.gameState.player2.name, loserId: this.gameState.player2.id, winner_score: this.gameState.player1.score.toString(), loser_score: this.gameState.player2.score.toString() };
 			await this.gameService.save(result);
 			this.server.to(this.gameState.player1.socket).emit('GameEnd', result);
 			this.server.to(this.gameState.player2.socket).emit('GameEnd', result);
 		}
 		else {
-			const result: any = { winner: this.gameState.player2.name, winnerId: this.gameState.player2.id, loser: this.gameState.player1.name, loserId: this.gameState.player1.id, winner_score: this.gameState.player2.score.toString(), loser_score: this.gameState.player1.score.toString() };
+			const result: CreateResultDto = { winner: this.gameState.player2.name, winnerId: this.gameState.player2.id, loser: this.gameState.player1.name, loserId: this.gameState.player1.id, winner_score: this.gameState.player2.score.toString(), loser_score: this.gameState.player1.score.toString() };
 			await this.gameService.save(result);
 			this.server.to(this.gameState.player1.socket).emit('GameEnd', result);
 			this.server.to(this.gameState.player2.socket).emit('GameEnd', result);
