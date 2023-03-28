@@ -13,7 +13,6 @@ import { WebSocketServer } from '@nestjs/websockets';
 import { plainToClass } from 'class-transformer';
 import { GetUser } from './getUser';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
 
 @Controller('user')
 export class UserController {
@@ -44,7 +43,7 @@ export class UserController {
     return await plainToClass(User, this.userService.getByUsername(username));
   }
 
-  // Retrieves a user by their ID
+  // Retrieves a user by their ID 
   @Get('id/:id')
   @UseGuards(JwtGuard)
   async findOne(@Param('id', ParseIntPipe) id: number) {
