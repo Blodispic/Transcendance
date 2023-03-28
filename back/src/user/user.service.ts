@@ -130,21 +130,14 @@ export class UserService {
     });
   }
 
-  async GetByAccessToken(access_token: any) {
-
-    const decoded_access_token: any = await this.jwtService.decode(access_token.token, { json: true });
+  async GetByAccessToken(access_token: string) {
+    const decoded_access_token: any = await this.jwtService.decode(access_token, { json: true });
     const user = await this.usersRepository.findOneBy({ login: decoded_access_token.username });
+    
     if (decoded_access_token.exp && decoded_access_token.exp < Date.now() / 1000) {
       throw new NotFoundException('Token expired');
     }
     else if (user) {
-      // let i : number = 0;
-      // while (i < userList.length)
-      // {
-      //   if (userList[i].handshake.auth.user.id === user.id)
-      //     throw new BadRequestException(); // User already logged in
-      //   i++;
-      // }
       for (const iterator of userList) {
         if (iterator.handshake.auth.user.id === user.id)
           throw new BadRequestException('t\'as deja un tab frero');

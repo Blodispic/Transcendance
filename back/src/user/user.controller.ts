@@ -52,8 +52,8 @@ export class UserController {
 
   // Retrieves a user by their access token
   @Post('access_token')
-  async GetbyAccessToken(@Body() token: any) {
-    return await plainToClass(User, this.userService.GetByAccessToken(token));
+  async GetbyAccessToken(@Body() token: {token: string} ) {
+    return await plainToClass(User, this.userService.GetByAccessToken(token.token));
   }
 
   // Enables two-factor authentication for a specific user
@@ -89,7 +89,6 @@ export class UserController {
   @Get('friends')
   @UseGuards(JwtGuard)
   GetFriends(@GetUser() user: User) {
-    console.log('User = ', user);
     return this.userService.GetFriends(user.id);
   }
 
