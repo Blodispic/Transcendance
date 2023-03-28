@@ -4,7 +4,6 @@ import { UserService } from 'src/user/user.service';
 import { Ball, GameState, Move, Player, Vec2 } from './game.interfaces';
 import { CreateResultDto } from 'src/results/dto/create-result.dto';
 import { Status } from 'src/user/entities/user.entity';
-import { Results } from 'src/results/entities/results.entity';
 
 @Injectable()
 export class GameService {
@@ -108,7 +107,7 @@ export class GameService {
 			return ('Waiting for more Players...');
 	}
 
-	startCustomGame(server: Server, userSocket1: any, userSocket2: any, extra: boolean, scoreMax: number) {
+	startCustomGame(server: Server, userSocket1: Socket, userSocket2: Socket, extra: boolean, scoreMax: number) {
 		const socket1 = userSocket1;
 		const socket2 = userSocket2;
 
