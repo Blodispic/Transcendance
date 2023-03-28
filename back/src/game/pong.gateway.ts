@@ -69,7 +69,7 @@ export class PongGateway implements OnGatewayDisconnect, OnGatewayInit {
 		}
 	}
 
-	handleDisconnect(client: any) {
+	handleDisconnect(client: Socket) {
 		this.gameService.playerDisconnect(client.id);
 		this.gameService.removeFromWaitingRoom(client.id);
 	}
@@ -197,8 +197,8 @@ export class PongGateway implements OnGatewayDisconnect, OnGatewayInit {
 		this.gameService.removeFromWaitingRoom(client.id);
 
 		console.log('Add ' + user1.username + ' and ' + user2.username + ' to custom game.');
-		let userSocket1: any = userList[0]; //By default both user are the first user of the list
-		let userSocket2: any = userList[0]; //By default both user are the first user of the list
+		let userSocket1: Socket = userList[0]; //By default both user are the first user of the list
+		let userSocket2: Socket = userList[0]; //By default both user are the first user of the list
 		let i = 0;
 		while (i < userList.length) {
 			if (userList[i].handshake.auth.user.id === user1.id) {
@@ -237,7 +237,7 @@ export class PongGateway implements OnGatewayDisconnect, OnGatewayInit {
 			this.removeInvite(user1.id);
 		if (user2.id)
 			this.removeInvite(user2.id);
-		let socket : any = this.findSocketFromUser(user1);
+		let socket = this.findSocketFromUser(user1);
 		if (socket)
 			this.server.to(socket.id).emit('GameDeclined', user2.username);
 		socket = this.findSocketFromUser(user2);
@@ -252,7 +252,7 @@ export class PongGateway implements OnGatewayDisconnect, OnGatewayInit {
 	}
 
 	@SubscribeMessage('PlayerLeft')
-	HandlePlayerLeft(@MessageBody() input: Move, @ConnectedSocket() client: any) {
+	HandlePlayerLeft(@MessageBody() input: Move, @ConnectedSocket() client: Socket) {
 		this.gameService.playerDisconnect(client.id);
 	}
 
