@@ -73,7 +73,7 @@ export function JoinChannel(props: { channel: IChannel }) {
 						const data = await response.json();
 
 						if (response.ok) {
-							dispatch(joinChannel({ id: chanId, chan: data, user: currentUser }));
+							dispatch(joinChannel({ chanid: chanId, chan: data, user: currentUser }));
 						}
 					})
 				}
@@ -121,7 +121,7 @@ export function LeaveChannel(props: { channel: IChannel }) {
 	useEffect(() => {
 		socket.on("leaveChannelOK", (chanId) => {
 			if (currentUser !== undefined) {
-				dispatch(removeMember({ id: chanId, user: currentUser }));
+				dispatch(removeMember({ chanid: chanId, userid: currentUser.id }));
 				dispatch(removeChanMessage(chanId));
 				swal("You left " + props.channel.name, "success");
 			}

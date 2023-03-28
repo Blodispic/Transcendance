@@ -22,6 +22,10 @@ export default function ClickableMenu(props: { user: IUser, chan: IChannel, page
         socket.emit('GiveAdmin', { chanid: props.chan.id, userid: props.user.id });
     }
 
+    const handleUnmute = () => {
+        // socket.emit('Unmute', { chanid: props.chan.id, userid: props.user.id });
+    }
+
     return (
         <div className="dropdown-container">
             <div className="dropdown clickable-menu hover-style">
@@ -67,12 +71,11 @@ export default function ClickableMenu(props: { user: IUser, chan: IChannel, page
                                                     </span>
                                                 </li>
                                             }
-                                            { // Do we need unmute?
+                                            {
                                                 props.chan.muted?.find(obj => obj.id === props.user.id) !== undefined &&
                                                 <li>
-                                                    <span onClick={() => setTimeMute(true)}>
+                                                    <span onClick={() => handleUnmute()}>
                                                         Unmute
-                                                        {/* <MuteUser chanid={props.chan.id} userid={user.id} trigger={timeMute} setTrigger={setTimeMute} /> */}
                                                     </span>
                                                 </li>
                                             }
@@ -87,15 +90,6 @@ export default function ClickableMenu(props: { user: IUser, chan: IChannel, page
                                                 </li>
                                             }
 
-                                            { // Do we need unban?
-                                                props.chan.banned?.find(obj => obj.id === props.user.id) !== undefined &&
-                                                <li>
-                                                    <span onClick={() => setTimeBan(true)}>
-                                                        Unban
-                                                        {/* <BanUser chanid={props.chan.id} userid={user.id} trigger={timeBan} setTrigger={setTimeBan} /> */}
-                                                    </span>
-                                                </li>
-                                            }
 
                                             <li>
                                                 <span onClick={() => KickUser(props.chan.id, user.id)}>
