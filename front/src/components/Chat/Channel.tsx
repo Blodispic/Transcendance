@@ -109,63 +109,43 @@ function ChannelMemberList(props: { page: (page: page) => void }) {
 	return (
 		<div className="title"> Members <hr />
 
-			{ currentChan && currentChan.admin?.map(admin => (
-					<div key={admin.id} className="user-list">
+			{currentChan && currentChan.admin?.map(admin => (
+				<div key={admin.id} className="user-list">
 					<ul onClick={() => changeId(admin.id)}>
 						<li>
 							{admin.username}
-							{
-								currentChan.owner?.id === admin.id &&
-								<FaCrown style={{ marginLeft: '5px' }} />
-							}
-							{
-								currentChan.owner?.id !== admin.id &&
-									<BsFillPersonFill style={{ marginLeft: '5px' }} />
-							}
-
+							{ currentChan.owner?.id === admin.id &&
+								<FaCrown style={{ marginLeft: '5px' }} /> }
+							{ currentChan.owner?.id !== admin.id &&
+								<BsFillPersonFill style={{ marginLeft: '5px' }} /> }
+							{ currentChan.muted && currentChan.muted.find(obj => obj.id === admin.id) &&
+								<FaVolumeMute style={{ marginLeft: '5px' }} /> }
 						</li>
 					</ul>
-				
-					</div>
-
-
+					{ currentId === admin.id &&
+						<ClickableMenu user={admin} chan={currentChan} page={props.page} /> }
+				</div>
 			))
-				
 			}
 
-
-				{currentChan && currentChan.users?.map(user => (
-					<div key={user.id} className="user-list">
-						<ul onClick={() => changeId(user.id)}>
-							<li>
-								{	currentChan.admin?.find(obj => obj.id === user.id) === undefined &&
-									<>
+			{currentChan && currentChan.users?.map(user => (
+				<div key={user.id} className="user-list">
+					<ul onClick={() => changeId(user.id)}>
+						<li>
+							{currentChan.admin?.find(obj => obj.id === user.id) === undefined &&
+								<>
 									{user.username}
-								{/* {
-									currentChan.owner?.id === user.id &&
-									<FaCrown style={{ marginLeft: '5px' }} />
-								} */}
-								{/* {
-									currentChan.owner?.id !== user.id &&
-									currentChan.admin?.find(obj => obj.id === user.id) &&
-									<BsFillPersonFill style={{ marginLeft: '5px' }} />
-								} */}
-								{
-									currentChan.muted && currentChan.muted.find(obj => obj.id === user.id) &&
-									<FaVolumeMute style={{ marginLeft: '5px' }} />
-								}
+									{ currentChan.muted && currentChan.muted.find(obj => obj.id === user.id) &&
+										<FaVolumeMute style={{ marginLeft: '5px' }} /> }
 								</>
-								}
-							</li>
-						</ul>
-						{
-							currentId === user.id &&
-							<ClickableMenu user={user} chan={currentChan} page={props.page} />
-						}
-					</div>
-				))
-				}
-
+							}
+						</li>
+					</ul>
+					{ (currentId === user.id && currentChan.admin.find(obj => obj.id === user.id) === undefined) &&
+						<ClickableMenu user={user} chan={currentChan} page={props.page} /> }
+				</div>
+			))
+			}
 
 		</div>
 	);
