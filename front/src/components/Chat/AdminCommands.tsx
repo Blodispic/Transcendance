@@ -227,7 +227,7 @@ export function ConfigureChannel(props: { trigger: boolean, setTrigger: (value: 
 	}
 
 	const removePassword = () => {
-		socket.emit('rmPassword', { chanid: props.channel.id, pass: "" });
+		socket.emit('rmPassword', { chanid: props.channel.id });
 		props.setTrigger(false);
 	}
 

@@ -138,9 +138,12 @@ export class UserController {
         destination: './storage/images/',
         filename: editFileName,
       }),
-      fileFilter: imageFilter,
+      limits: {
+        fileSize: 10 * 1024 * 1024, // 10 MB in bytes
+      },
     }),
   )
+  
   async setAvatar(@GetUser() user: User, @UploadedFile() file: Express.Multer.File, @Body('username') username: string) {
     await this.userService.setAvatar(user, username, file);
     return { message: 'Avatar set successfully' };

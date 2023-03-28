@@ -181,12 +181,6 @@ export class UserService {
         else
           user.username = userUpdate.username;
       }
-      if (userUpdate.status) {
-        user.status = userUpdate.status;
-
-      }
-      if (userUpdate.status)
-        user.status = userUpdate.status;
       if (userUpdate.twoFaEnable != undefined) {
         user.twoFaEnable = userUpdate.twoFaEnable;
       }

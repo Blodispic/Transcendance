@@ -8,10 +8,6 @@ export class UpdateUserDto extends PartialType(CreateUserDto) {
   username?: string;
 
   @IsOptional()
-  @IsString()
-  status?: string;
-
-  @IsOptional()
   @IsBoolean()
   twoFaEnable?: boolean;
 }
