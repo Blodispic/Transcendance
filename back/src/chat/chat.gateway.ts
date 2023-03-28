@@ -166,9 +166,9 @@ async handleAddPassword(@ConnectedSocket() client: Socket, @MessageBody() chanPa
   const channel = await this.channelService.getById(chanPasswordDto.chanid);
   const user = client.handshake.auth.user;
   if (channel === null || user === null)
-    throw new BadRequestException('No such Channel or User'); // no such channel or user
+    throw new BadRequestException('No such Channel or User');
   if (!(await this.channelService.isUserAdmin({chanid: channel.id, userid: user.id})))
-    throw new BadRequestException('you are not Admin on this channel'); // user willing to change password isn't admin/owner
+    throw new BadRequestException('you are not Admin on this channel');
   this.channelService.update(channel.id, {
     password: chanPasswordDto.password,
     chanType: 2,
@@ -181,9 +181,9 @@ async handleRmPassword(@ConnectedSocket() client: Socket, @MessageBody() chanPas
   const channel = await this.channelService.getById(chanPasswordDto.chanid);
   const user = client.handshake.auth.user;
   if (channel === null || user === null)
-    throw new BadRequestException('No such Channel or User'); // no such channel or user
+    throw new BadRequestException('No such Channel or User');
   if (!(await this.channelService.isUserAdmin({chanid: channel.id, userid: user.id})))
-    throw new BadRequestException('You are not Admin on this Channel'); // user willing to change password isn't admin/owner
+    throw new BadRequestException('You are not Admin on this Channel');
   this.channelService.update(channel.id, {
     rmPassword: 1,
     chanType: 0,
