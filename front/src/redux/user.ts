@@ -45,22 +45,11 @@ export const userSlice = createSlice({
             state.isOauth = true;
         },
         set_status: (state, { payload }: PayloadAction<UserStatus>) => {
-
             state.user!.status = payload;
             if (payload === UserStatus.OFFLINE)
                 state.isLog = false;
             else
                 state.isLog = true;
-            // socket.emit("UpdateSomeone", {idChange : state.user?.id})
-            fetch(`${process.env.REACT_APP_BACK}user/${state.user?.id}`, {
-                method: 'PATCH',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${state.myToken}`,
-                },
-                body: JSON.stringify({ status: payload }),
-            })
-                .then(response => { return response.json() })
         },
         delete_user: (state) => {
             userSlice.caseReducers.set_status(state, { type: 'set_status', payload: UserStatus.OFFLINE })

@@ -20,7 +20,9 @@ export function ChannelHeader() {
 	const [chanId, setChanId] = useState<number | undefined>(undefined);
 	const currentChan: IChannel | undefined = useAppSelector(state => state.chat.channels.find(chan => chan.id === chanId));
 
+
 	useEffect(() => {
+	console.log("ca push pas");
 		if (id !== undefined) {
 			setChanId(parseInt(id));
 		}

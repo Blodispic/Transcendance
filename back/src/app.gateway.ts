@@ -4,6 +4,7 @@ import { Server, Socket } from 'socket.io';
 import { UserService } from './user/user.service';
 import { GatewayExceptionFilter } from './app.exceptionFilter';
 import { ChannelService } from './chat/channel/channel.service';
+import { Status } from './user/entities/user.entity';
 
 export const userList: Socket[] = [];
 
@@ -31,9 +32,10 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
 			client.handshake.auth.user = await this.userService.GetByAccessToken(client.handshake.auth);
 			if (client.handshake.auth.user === null)
 				throw new BadRequestException("No user with such token")
-			await this.userService.SetStatus(client.handshake.auth.user, 'Online');
+			await this.userService.SetStatus(client.handshake.auth.user, Status.Online);
 		} catch (error) {
 			console.log(error);
+			return client.disconnect();
 		}
 		userList.push(client);
 		const channels = await this.channelService.getUserChannel(client.handshake.auth.user.id);
@@ -46,9 +48,10 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
 	async handleDisconnect(client: any) {
 		try {
-			await this.userService.SetStatus(client.handshake.auth.user, 'Offline');
+			await this.userService.SetStatus(client.handshake.auth.user, Status.Offline);
 		} catch (error) {
 			console.log(error);
+			return;
 		}
 		userList.splice(userList.indexOf(client), 1);
 		this.server.emit('UpdateSomeone', { idChange: client.handshake.auth.user.id, idChange2: 0 });
@@ -72,7 +75,16 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
     	    this.server.to(socket.id).emit('RequestSent');
 		}
 	}
-
+	@SubscribeMessage('logout')
+	async HandleLogout(client: Socket) {
+		try {
+			await this.userService.SetStatus(client.handshake.auth.user, Status.Offline);
+			this.server.emit('UpdateSomeone', { idChange: client.handshake.auth.user.id, idChange2: 0 });
+		} catch (error) {
+			console.log(error);
+			return;
+		}
+	}
 	@SubscribeMessage('RequestAccepted')
 	HandleRequestAccepted(@MessageBody() playerId: number) {
 		const socket = this.findSocketById(playerId);
