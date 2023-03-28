@@ -5,16 +5,20 @@ import { HiLockClosed } from "react-icons/hi2";
 import { ImCog } from "react-icons/im";
 import { useParams } from "react-router-dom";
 import { socket } from "../../App";
-import { useAppSelector } from "../../redux/Hook";
+import { IChannel } from '../../interface/Channel';
+import { IMessage } from '../../interface/Message';
+import { IUser } from '../../interface/User';
+import { addMessage } from '../../redux/chat';
+import { useAppDispatch, useAppSelector } from "../../redux/Hook";
 import { ConfigureChannel, ConfigureChannelPrivate } from "./AdminCommands";
 import { JoinChannel, LeaveChannel } from "./JoinLeave";
 
 export function ChannelHeader() {
 	const [popup, setPopup] = useState(false);
-	const currentUser = useAppSelector(state => state.user.user);
+	const currentUser: IUser | undefined = useAppSelector(state => state.user.user);
 	const { id } = useParams();
 	const [chanId, setChanId] = useState<number | undefined>(undefined);
-	const currentChan = useAppSelector(state => state.chat.channels.find(chan => chan.id === chanId));
+	const currentChan: IChannel | undefined = useAppSelector(state => state.chat.channels.find(chan => chan.id === chanId));
 
 
 	useEffect(() => {
@@ -44,7 +48,7 @@ export function ChannelHeader() {
 				<LeaveChannel channel={currentChan} />
 			}
 			{
-				currentChan.id &&
+				currentChan.id !== undefined &&
 				<>
 					{
 						currentChan.chanType !== 1 &&
@@ -52,7 +56,7 @@ export function ChannelHeader() {
 							{
 								currentChan.users?.find(obj => obj.id === currentUser?.id) &&
 								<>
-									{currentChan.owner.id === currentUser?.id &&
+									{currentChan.owner?.id === currentUser?.id &&
 										<>
 											<ImCog className="config-icon" onClick={() => setPopup(true)} />
 											<ConfigureChannel trigger={popup} setTrigger={setPopup} channel={currentChan} />
@@ -65,9 +69,9 @@ export function ChannelHeader() {
 						currentChan.chanType === 1 &&
 						<>
 							{
-								currentChan.users.find(obj => obj.id == currentUser?.id) &&
+								currentChan.users.find(obj => obj.id === currentUser?.id) &&
 								<>
-									{currentChan.admin.find(obj => obj.id == currentUser?.id) &&
+									{currentChan.admin.find(obj => obj.id === currentUser?.id) &&
 										<>
 											<ImCog className="config-icon" onClick={() => setPopup(true)} />
 											<ConfigureChannelPrivate trigger={popup} setTrigger={setPopup} channel={currentChan} />
@@ -87,9 +91,10 @@ export function ChannelMessages() {
 	const [newInput, setNewInput] = useState<string>("");
 	const { id } = useParams();
 	const [chanId, setChanId] = useState<number | undefined>(undefined);
-	const currentChan = useAppSelector(state =>
+	const currentChan: IChannel | undefined = useAppSelector(state =>
 		state.chat.channels.find(chan => chan.id === chanId));
-	const messages = useAppSelector(state => state.chat.chanMs.filter(obj => obj.chanid === chanId));
+	const messages: IMessage[] = useAppSelector(state => state.chat.chanMs.filter(obj => obj.chanid === chanId));
+	const dispatch = useAppDispatch();
 
 	useEffect(() => {
 		if (id !== undefined) {
@@ -97,11 +102,22 @@ export function ChannelMessages() {
 		}
 	}, [id]);
 
+	useEffect(() => {
+		socket.on("sendMessageChannelFailed", (errorMessage) => {
+			const newMessage: IMessage = {
+				chanid: currentChan?.id,
+				message: errorMessage, 
+			  }
+			  dispatch(addMessage(newMessage));
+		});
+		return () => {
+			socket.off("sendMessageChannelFailed");
+		}})
+
 	const handleSubmitNewMessage = (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
 		if (newInput !== "") {
-			const sendTime = new Date().toLocaleString('en-US');
-			socket.emit('sendMessageChannel', { chanid: currentChan?.id, message: newInput, sendtime: sendTime });
+			socket.emit('sendMessageChannel', { chanid: currentChan?.id, message: newInput});
 		}
 		setNewInput("");
 	}
@@ -165,5 +181,6 @@ export function ChannelMessages() {
 				</>
 			}
 		</>
+
 	) : <></>;
 }

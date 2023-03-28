@@ -7,5 +7,5 @@ export class ReceiveDmDto {
 
 	@IsString()
 	@IsNotEmpty()
-	message: string; 
+	message: string;
 }
