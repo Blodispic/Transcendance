@@ -75,7 +75,7 @@ export class ChannelService {
 		if (await this.isUserAdmin({chanid: channel.id, userid: user.id}))		
 			channel = await this.rmAdmin({chanid: channel.id, userid: user.id});
 		channel.users = channel.users.filter(elem => elem.id != user.id);
-		return this.channelRepository.save(channel);
+		return await this.channelRepository.save(channel);
 	}
 
 	async update(id: number, channelUpdate: any) {		

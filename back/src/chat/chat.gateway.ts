@@ -74,9 +74,7 @@ async handleSendMessageChannel(@ConnectedSocket() client: Socket, @MessageBody()
   const sender = await this.userService.getById(client.handshake.auth.user.id);
   if (sender == null)
     throw new BadRequestException('No such user');
-  console.log("sender : ", sender);
-  
-    if (!(await this.channelService.isUserinChan(channel, sender))) {
+  if (!(await this.channelService.isUserinChan(channel, sender))) {
     client.emit('sendMessageChannelFailed', 'You are not in this channel');
     throw new BadRequestException('You are not in this Channel');
   }
