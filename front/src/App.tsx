@@ -31,7 +31,6 @@ function App() {
       socket = io(`${process.env.REACT_APP_BACK}`, {
         auth: {
           token: token,
-          user: myUser.user,
         }
       });
       socket.emit("UpdateSomeone", { idChange: myUser.user?.id, idChange2: 0 })

@@ -1,4 +1,4 @@
-import { forwardRef, Inject, UseFilters, UsePipes, ValidationPipe } from '@nestjs/common';
+import { BadRequestException, forwardRef, Inject, UseFilters, UsePipes, ValidationPipe } from '@nestjs/common';
 import { MessageBody, OnGatewayConnection, OnGatewayDisconnect, SubscribeMessage, WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 import { UserService } from './user/user.service';
@@ -27,6 +27,9 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
 	server: Server;
 
 	async handleConnection(client: Socket) {
+		client.handshake.auth.user = await this.userService.GetByAccessToken(client.handshake.auth);
+		if (client.handshake.auth.user === null)
+			throw new BadRequestException("No user with such token")
 		try {
 			await this.userService.SetStatus(client.handshake.auth.user, 'Online');
 		} catch (error) {

@@ -1,37 +1,26 @@
 import * as React from 'react';
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { IChannel } from "../../interface/Channel";
 import { IUser } from "../../interface/User";
-import { useAppDispatch, useAppSelector } from "../../redux/Hook";
+import { useAppSelector } from "../../redux/Hook";
 import CustomGamePopup from "../Game/CustomGamePopup";
 import { BanUser, KickUser, MuteUser } from "./AdminCommands";
 import { page } from "../../interface/enum";
 import { socket } from "../../App";
-import { addAdmin } from "../../redux/chat";
 
 export default function ClickableMenu(props: { user: IUser, chan: IChannel, page: (page: page) => void }) {
 
     const user: IUser = props.user;
     const [myVar, setMyvar] = useState<boolean>(false);
-    const myUser = useAppSelector(state => state.user.user)
+    const myUser: IUser | undefined = useAppSelector(state => state.user.user)
     const [timeMute, setTimeMute] = useState(false);
     const [timeBan, setTimeBan] = useState(false);
     const navigate = useNavigate();
-    const dispatch = useAppDispatch();
 
     const handleAddAdmin = () => {
         socket.emit('GiveAdmin', { chanid: props.chan.id, userid: props.user.id });
     }
-
-    useEffect(() => {
-        socket.on("giveAdminOK", ({ chanId }) => {
-            dispatch(addAdmin({ id: chanId, user: props.user }));
-        });
-        return () => {
-            socket.off("giveAdminOK");
-        }
-    })
 
     return (
         <div className="dropdown-container">
