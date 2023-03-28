@@ -20,7 +20,6 @@ $tab-color: rgba(var(--primary-color), 0.5); //rgb(121, 121, 121);
 #chat-container {
 	font-family: 'Fredoka One', cursive;
 
-	margin-top: 20px;
 	display: flex;
 	width: 100%;
 	height: 100%;
@@ -42,7 +41,6 @@ $tab-color: rgba(var(--primary-color), 0.5); //rgb(121, 121, 121);
 		font-size: 20px;
 		padding: 20px;
 		height: 30px;
-		// width: 60%;
 		line-height: 30px;
 		color: black;
 		display: flex;
@@ -76,6 +74,7 @@ $tab-color: rgba(var(--primary-color), 0.5); //rgb(121, 121, 121);
 			position: absolute;
 			top: 43%;
 		}
+
 		.add-icon {
 			width: 90%;
 			display: flex;
@@ -89,7 +88,6 @@ $tab-color: rgba(var(--primary-color), 0.5); //rgb(121, 121, 121);
 			.add-button {
 				cursor: pointer;
 			}
-
 		}
 	}
 
@@ -107,30 +105,27 @@ $tab-color: rgba(var(--primary-color), 0.5); //rgb(121, 121, 121);
 		box-shadow: none;
 		color: var(--primary-color);
 		text-decoration: none;
-		// background: var(--secondary-color);
 		cursor: pointer;
 	}
 
 	.chat-body {
 		float: none;
 		width: 60%;
-		padding-bottom: 2%;
-		height: 60%;
-		// background-color: rgba(62, 62, 74, 0.76);
-		// background-color: var(--secondary-color);
+		position: relative;
 
-		form input {
-			position: absolute;
-			font-family: 'Fredoka One', cursive;
-			font-size: 20px;
-			color: white;
-			background: rgba($color: rgb(135, 135, 135), $alpha: 0.5);
-			border-radius: 10px;
-			box-sizing: border-box;
-			bottom: 0;
-			width: 60%;
-			height: 50px;
-		}
+	}
+	
+	form input {
+		position: absolute;
+		font-family: 'Fredoka One', cursive;
+		font-size: 20px;
+		color: white;
+		background-color: rgba(0, 0, 0, 0.2);
+		border-color: transparent;
+		box-sizing: border-box;
+		width:100%;
+		height: 60px;
+
 	}
 
 	.user-list {
@@ -168,8 +163,6 @@ $tab-color: rgba(var(--primary-color), 0.5); //rgb(121, 121, 121);
 }
 
 .button-style{
-
-
 		font-family: 'Fredoka One', cursive;
 		display: inline-block;
 		width: auto;
@@ -181,41 +174,33 @@ $tab-color: rgba(var(--primary-color), 0.5); //rgb(121, 121, 121);
 		background: var(--primary-color);
 		color: white;
 		transition: .3s;
-		// border: 2px solid var(--primary-color);
 		margin-left: 5px;
 
 }
 .chat-messages {
-	height: calc(100vh - 270px);
+	height: calc(100vh - 250px);
 	vertical-align: top;
 	overflow-y: scroll;
 	flex: 1;
 	display: flex;
 	flex-direction: column-reverse;
-	
 }
 
 .__wrap {
 	font-size: 20px;
 	line-height: normal;
-	// color: rgb(111, 106, 106);
 	color: black;
 	background-color: rgba($color: rgb(80, 165, 174), $alpha: 0.3);
-	max-width: auto;
 	border-radius: 5px;
-	padding: 20px;
+	padding: 10px 20px 10px 20px;
 	margin: 10px;
-	// padding-top: 0;
-	display: flexbox;
 	word-wrap: break-word;
 
 	.message-info {
 		color: rgb(107, 107, 107);
-		// font-size: 15px;
 		display: flex;
-		align-items: center;
+		align-items:first baseline;
 	}
-	
 }
 
 .channel-announce {
@@ -336,7 +321,6 @@ $tab-color: rgba(var(--primary-color), 0.5); //rgb(121, 121, 121);
 	width: auto;
 	display: flex;
 	justify-content: center;
-	// justify-content;
 
 
 	a {
