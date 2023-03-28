@@ -48,12 +48,12 @@ function DMList(props: { currentdm: IUser | undefined; setCurrentDm: (user: IUse
 }
 
 function InfoFriend(props: { user: IUser }) {
-	const myUser = useAppSelector(state => state.user);
-	const user: IUser = props.user;
 	const [myVar, setMyvar] = useState<boolean>(false);
-	const dispatch = useAppDispatch();
 	const [relation, setRelation] = useState<string>("");
+	const user: IUser = props.user;
+	const myUser = useAppSelector(state => state.user);
 	const myToken = useAppSelector(state => state.user.myToken);
+	const dispatch = useAppDispatch();
 
 	useEffect(() => {
 		Relations();
@@ -238,14 +238,13 @@ function InfoFriend(props: { user: IUser }) {
 
 export function DmMessages(props: { id: number; currentdm: IUser | undefined; setCurrentDm: (user: IUser | undefined) => void }) {
 	const [newInput, setNewInput] = useState("");
-	const myUser = useAppSelector(state => state.user.user);
+	const myUser: IUser | undefined = useAppSelector(state => state.user.user);
 	const messages: IMessage[] = useAppSelector(state => state.chat.DMs.filter(obj => obj.chanid === props.id));
 
 	const handleSubmitNewMessage = (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
 		if (newInput !== "") {
-			const sendtime = new Date().toLocaleString('en-US');
-			socket.emit('sendDM', { IdReceiver: props.id, message: newInput, sendtime: sendtime });
+			socket.emit('sendDM', { IdReceiver: props.id, message: newInput});
 		}
 		setNewInput("");
 	}
@@ -314,7 +313,6 @@ export function DirectMessage() {
 				setCurrentDm(data);
 			}
 		}
-		// console.log("getuser");
 		get_user();
 	}, [dmId]);
 
@@ -327,7 +325,7 @@ export function DirectMessage() {
 			{(currentDm !== undefined && dmId !== undefined) &&
 				<>
 					<DmMessages id={dmId} currentdm={currentDm} setCurrentDm={setCurrentDm} />
-					<div className="sidebar left-sidebar">
+					<div className="sidebar right-sidebar">
 						<InfoFriend user={currentDm} />
 					</div>
 				</>

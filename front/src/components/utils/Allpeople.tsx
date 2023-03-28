@@ -22,6 +22,7 @@ export default function AllPeople(props: { friend: IUser[] | undefined, setFrien
             setAllFriend(allfriend.filter(allfriend => allfriend.id !== myfriend.id))
     }
 
+
     useEffect(() => {
         if (allfriend !== undefined) {
             props.setFriend([...allfriend]);
@@ -36,8 +37,19 @@ export default function AllPeople(props: { friend: IUser[] | undefined, setFrien
             },
         })
         const data = await response.json();
-        setAlluser(data.filter((User: { username: string, status: string }) => User.username !== myUser.user.user?.username && User.status === "Online"));
-
+        if (allfriend !== undefined)
+            setAlluser(
+                data
+                    .filter((user: { username: string, status: string }) =>
+                        user.username !== myUser.user.user?.username && user.status === "Online"
+                    )
+                    .filter((user: { id: number }) =>
+                        allfriend.findIndex((allfriend: IUser) => allfriend.id === user.id) === -1
+                    )
+            );
+        else {
+            setAlluser(data.filter((User: { username: string, status: string }) => User.username !== myUser.user.user?.username && User.status === "Online"));
+        }
     }
     useEffect(() => {
         get_all();
@@ -83,10 +95,10 @@ export default function AllPeople(props: { friend: IUser[] | undefined, setFrien
                 }
 
                 {
-                    myVar === true &&
+                    myVar === true && alluser && alluser.length > 0 &&
                     <div className="dropdown-container">
                         <div className=" dropdown people-list hover-style">
-                            {alluser && alluser!.map(user_list => (
+                            {alluser.map(user_list => (
                                 <ul key={user_list.username} >
                                     <li onClick={() => { setMyvar(!myVar); addfriend(user_list) }}>
                                         {user_list.username}

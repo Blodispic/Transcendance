@@ -31,7 +31,6 @@ function App() {
       socket = io(`${process.env.REACT_APP_BACK}`, {
         auth: {
           token: token,
-          user: myUser.user,
         }
       });
       socket.emit("UpdateSomeone", { idChange: myUser.user?.id, idChange2: 0 })
@@ -84,7 +83,7 @@ function App() {
             message: user.username + " has joined the channel",
           }
           dispatch(addMessage(newMessage));
-          dispatch(addMember({ id: chanid, user: user }));
+          dispatch(addMember({ chanid: chanid, user: user }));
         });
 
         socket.on("leaveChannel", ({ chanid, user }) => {
@@ -93,7 +92,7 @@ function App() {
             message: user.username + " has left the channel",
           }
           dispatch(addMessage(newMessage));
-          dispatch(removeMember({ id: chanid, user: user }));
+          dispatch(removeMember({ chanid: chanid, userid: user.id }));
         });
 
         socket.on('sendMessageChannelOK', (messageDto) => {
