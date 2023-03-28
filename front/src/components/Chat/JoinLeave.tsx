@@ -62,7 +62,7 @@ export function JoinChannel(props: { channel: IChannel }) {
 	useEffect(() => {
 		socket.on("joinChannelFailed", (error_message) => {
 			setErrorMessage(error_message);
-			swal(errorMessage, "error");
+			swal("Error", errorMessage, "error");
 		});
 		socket.on("joinChannelOK", (chanId) => {
 			if (currentUser !== undefined) {
@@ -73,13 +73,13 @@ export function JoinChannel(props: { channel: IChannel }) {
 						const data = await response.json();
 
 						if (response.ok) {
-							dispatch(joinChannel({ id: chanId, chan: data, user: currentUser }));
+							dispatch(joinChannel({ chanid: chanId, chan: data, user: currentUser }));
 						}
 					})
 				}
 				fetchChanInfo();
 				setPassPopup(false);
-				swal("You joined " + props.channel.name, "success");
+				swal("You joined [ " + props.channel.name + " ] ", " ");
 			}
 		});
 
@@ -121,9 +121,9 @@ export function LeaveChannel(props: { channel: IChannel }) {
 	useEffect(() => {
 		socket.on("leaveChannelOK", (chanId) => {
 			if (currentUser !== undefined) {
-				dispatch(removeMember({ id: chanId, user: currentUser }));
+				dispatch(removeMember({ chanid: chanId, userid: currentUser.id }));
 				dispatch(removeChanMessage(chanId));
-				swal("You left " + props.channel.name, "success");
+				swal("You left [ " + props.channel.name + " ] ", " ");
 			}
 		})
 		socket.on("leaveChannelFailed", (err_message) => {
