@@ -102,7 +102,7 @@ export const chatSlice = createSlice({
         unBanUser: (state, { payload }: PayloadAction<{ chanid: number, userid: number }>) => {
             const chan: IChannel | undefined = state.channels.find(obj => obj.id === payload.chanid);
             if (chan) {
-                const user: IUser | undefined = chan.users.find(obj => obj.id === payload.userid);
+                const user: IUser | undefined = chan.banned.find(obj => obj.id === payload.userid);
                 if (user) {
                     if (chan.banned && chan.banned.find(obj => obj.id === user.id) !== undefined)
                     chan.banned = chan?.banned.filter(obj => obj.id !== user.id);
@@ -126,7 +126,7 @@ export const chatSlice = createSlice({
         unMuteUser: (state, { payload }: PayloadAction<{ chanid: number, userid: number }>) => {
             const chan: IChannel | undefined = state.channels.find(obj => obj.id === payload.chanid);
             if (chan) {
-                const user: IUser | undefined = chan.users.find(obj => obj.id === payload.userid);
+                const user: IUser | undefined = chan.muted.find(obj => obj.id === payload.userid);
                 if (user) {
                     if (chan.muted && chan.muted.find(obj => obj.id === user.id) !== undefined)
                         chan.muted = chan?.muted.filter(obj => obj.id !== user.id);
