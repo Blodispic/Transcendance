@@ -5,16 +5,11 @@ import { FriendRequest } from './friend-request.entity';
 import { Exclude } from 'class-transformer';
 
 export enum Status {
-	Offline = "Offline",
-	Online = "Online",
+  Offline = "Offline",
+  Online = "Online",
   Ingame = "Ingame",
-  }
+}
 
-  var TEST_ERROR  = {
-    SUCCESS  : 'Success',
-    FAIL     : 'Fail',
-    ID_ERROR : 'ID Error'
-};
 
 @Entity('user')
 export class User {
