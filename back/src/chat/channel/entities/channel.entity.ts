@@ -24,10 +24,10 @@ export class Channel {
 	password: string;
 
 	@IsOptional()
-	@ManyToOne(() => User, user => user.channels, {cascade: true} )
+	@ManyToOne(() => User, user => user.owned, {cascade: true} )
 	owner?: User
 	
-	@ManyToMany(() => User, user => user.channels, { cascade: true })
+	@ManyToMany(() => User, { cascade: true })
 	@JoinTable()
 	admin: User[];
 
@@ -35,11 +35,12 @@ export class Channel {
 	@JoinTable()
 	users: User[];
 
-	@ManyToMany(() => User, user => user.channels, { cascade: true })
+	@ManyToMany(() => User, { cascade: true })
 	@JoinTable()
 	banned: User[];
 
-	@ManyToMany(() => User, user => user.channels, { cascade: true })
+	@ManyToMany(() => User, { cascade: true })
 	@JoinTable()
 	muted: User[];
+
 }
