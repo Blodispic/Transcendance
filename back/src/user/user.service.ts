@@ -84,7 +84,7 @@ export class UserService {
     return qrCode;
   }
 
-  async enable2FA(user: any, secret: string): Promise<void> {
+  async enable2FA(user: User, secret: string): Promise<void> {
     user.two_factor_secret = secret;
     await this.usersRepository.save(user);
   }
@@ -131,7 +131,11 @@ export class UserService {
   }
 
   async GetByAccessToken(access_token: string) {
-    const decoded_access_token: any = await this.jwtService.decode(access_token, { json: true });
+    const decoded_access_token = await this.jwtService.decode(access_token, { json: true }) as { username: string, iat: number, exp: number } | null;
+    if (!decoded_access_token) {
+      throw new BadRequestException('Invalid access token');
+    }
+    
     const user = await this.usersRepository.findOneBy({ login: decoded_access_token.username });
     
     if (decoded_access_token.exp && decoded_access_token.exp < Date.now() / 1000) {
