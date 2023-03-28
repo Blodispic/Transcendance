@@ -231,6 +231,10 @@ export function ConfigureChannel(props: { trigger: boolean, setTrigger: (value: 
 		props.setTrigger(false);
 	}
 
+	const handleUnban = () => {
+		// socket.emit('unban');
+	}
+
 	return (props.trigger) ? (
 		<div className="chat-form-popup" onClick={() => props.setTrigger(false)}>
 			<div className="chat-form-inner" onClick={e => e.stopPropagation()}>
@@ -251,8 +255,26 @@ export function ConfigureChannel(props: { trigger: boolean, setTrigger: (value: 
 						<input type="password" id="channel-input" placeholder="Insert new password" onChange={e => { setNewPassword(e.target.value); }} /><br />
 					</>
 				}
+				{
+					props.channel.banned.length > 0 && 
+					<>
+					<h3>Unban user</h3>
+					{props.channel.banned?.map(banned => (
+						<ul key={banned.id}>
+							<li title='Unban'>
+							<div className='avatar-inpopup'>
+
+							<img className="cursor-onsomoene avatar avatar-manu" src={`${process.env.REACT_APP_BACK}user/${banned.id}/avatar`} alt="" onClick={() => handleUnban()}/>
+								</div>
+							</li>
+
+						</ul>
+					))}
+					</>
+				}
 				<button onClick={setPassword}> Save Setting </button>
 			</div>
 		</div>
+
 	) : <></>;
 }

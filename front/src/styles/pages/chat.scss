@@ -104,7 +104,7 @@ $tab-color: rgba(var(--primary-color), 0.5); //rgb(121, 121, 121);
 		cursor: pointer;
 		height: auto;
 	}
-
+	
 	li:hover {
 		border-radius: 3px;
 		box-shadow: none;
@@ -247,13 +247,13 @@ $tab-color: rgba(var(--primary-color), 0.5); //rgb(121, 121, 121);
 	color: black;
 	border-color: var(--sub-color1);
 	width: 500px;
-	height: 400px;
+	height: auto;
 	justify-content: center;
 	align-items: center;
 	text-align: center;
 	position: relative;
 	z-index: 1;
-	// -webkit-text-fill-color: black !important; 
+	padding-bottom: 30px;
 
 	#channel-input {
 		font-family: 'Fredoka One', cursive;

@@ -123,10 +123,6 @@ function ChannelMemberList(props: { page: (page: page) => void }) {
 								<BsFillPersonFill />
 							}
 							{
-								currentChan.banned && currentChan.banned.find(obj => obj.id === user.id) &&
-								<AiOutlineStop />
-							}
-							{
 								currentChan.muted && currentChan.muted.find(obj => obj.id === user.id) &&
 								<FaVolumeMute />
 							}
