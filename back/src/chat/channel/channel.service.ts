@@ -51,8 +51,8 @@ export class ChannelService {
 			relations: { users: true, banned: true, muted: true },
 			where: {
 				id: addUserDto.chanId,
-			},
-		});
+				},
+			});
 		const user = await this.userService.getById(addUserDto.user.id);
 		if (channel == null || user == null)
 			throw new NotFoundException('No such Channel or User');
