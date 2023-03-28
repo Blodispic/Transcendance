@@ -69,7 +69,7 @@ $tab-color: rgba(var(--primary-color), 0.5); //rgb(121, 121, 121);
 		}
 
 		.bottom {
-			height:40%;
+			height:50%;
 			width: 90%;
 			position: absolute;
 			top: 43%;
@@ -83,7 +83,7 @@ $tab-color: rgba(var(--primary-color), 0.5); //rgb(121, 121, 121);
 			position: absolute;
 			background: var(--sub-color2);
 			border-radius: 3px;
-			top: 38%;
+			top: 40%;
 
 			.add-button {
 				cursor: pointer;
@@ -91,6 +91,11 @@ $tab-color: rgba(var(--primary-color), 0.5); //rgb(121, 121, 121);
 		}
 	}
 
+	.chat-list {
+		overflow-y: scroll;
+		height: 85%;
+		position: relative;
+	}
 
 	ul {
 		list-style: none;

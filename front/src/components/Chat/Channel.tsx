@@ -23,26 +23,28 @@ function JoinedChannelList() {
 	return (
 		<div className="upper">
 			<header>Joined Channels <hr /></header>
-			{channels && channels.map(chan => (
-				<ul key={chan.name}>
-					{
-						chan.users.find(obj => obj.id === currentUser?.id) &&
-						<li>
-							<div onClick={() => navigate(`/Chat/channel/${chan.id}`)}>{chan.name}
-								{
-									chan.chanType === 1 &&
-									<HiLockClosed style={{ float: 'right' }} />
-								}
-								{
-									chan.chanType === 2 &&
-									<BsFillKeyFill style={{ float: 'right' }} />
-								}
-							</div>
-						</li>
-					}
+			<div className='chat-list'>
+				{channels && channels.map(chan => (
+					<ul key={chan.name}>
+						{
+							chan.users.find(obj => obj.id === currentUser?.id) &&
+							<li>
+								<div onClick={() => navigate(`/Chat/channel/${chan.id}`)}>{chan.name}
+									{
+										chan.chanType === 1 &&
+										<HiLockClosed style={{ float: 'right' }} />
+									}
+									{
+										chan.chanType === 2 &&
+										<BsFillKeyFill style={{ float: 'right' }} />
+									}
+								</div>
+							</li>
+						}
 
-				</ul>
-			))}
+					</ul>
+				))}
+			</div>
 		</div>
 	);
 }
@@ -53,7 +55,9 @@ function PublicChannelList() {
 
 	return (
 		<div className="bottom">
-				<header>All Joinable Channels <hr /></header>
+			<header>All Joinable Channels <hr /></header>
+			<div className='chat-list'>
+
 				{channels && channels.map(chan => (
 					<ul key={chan.name}>
 						{
@@ -69,6 +73,7 @@ function PublicChannelList() {
 						}
 					</ul>
 				))}
+			</div>
 		</div>
 	);
 }
