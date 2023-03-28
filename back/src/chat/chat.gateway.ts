@@ -287,6 +287,7 @@ async handleInvite(@ConnectedSocket() client: Socket, @MessageBody() inviteDto: 
     throw new BadRequestException('You are not Admin on this channel');
   this.inviteToChan(inviteDto.users, channel.id);
   client.emit('inviteOK');
+  this.server.to("chan" + channel.id).emit('invitePrivate', inviteDto);
 }
 
 async inviteToChan(users: User[], chanid: number)

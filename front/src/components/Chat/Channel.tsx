@@ -8,7 +8,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { socket } from "../../App";
 import { IChannel } from "../../interface/Channel";
 import { IUser } from "../../interface/User";
-import { addAdmin, banUser, muteUser, removeMember, setChannels, unBanUser, unMuteUser } from "../../redux/chat";
+import { addAdmin, addMember, banUser, joinChannel, muteUser, removeMember, setChannels, unBanUser, unMuteUser } from "../../redux/chat";
 import { useAppDispatch, useAppSelector } from "../../redux/Hook";
 import { ChannelHeader, ChannelMessages } from "./ChannelMessages";
 import ClickableMenu from "./clickableMenu";
@@ -142,6 +142,7 @@ function ChannelMemberList(props: { page: (page: page) => void }) {
 export function Channels(props: { page: (page: page) => void }) {
 	const { id } = useParams();
 	const dispatch = useAppDispatch();
+	const currentUser: IUser | undefined = useAppSelector(state => state.user.user);
 
 	useEffect(() => {
 		const get_channels = async () => {
@@ -179,10 +180,37 @@ export function Channels(props: { page: (page: page) => void }) {
 			}, timer);
 
 		});
+
+		socket.on("invitePrivate", (inviteDto) => {
+			for (let i = 0; inviteDto.users[i]; i++) {
+				dispatch(addMember({chanid: inviteDto.chanid, user: inviteDto.users[i]}));
+			}
+		});
+
+		socket.on("invited", (chanId) => {
+			if (currentUser !== undefined) {
+
+				const fetchChanInfo = async () => {
+					await fetch(`${process.env.REACT_APP_BACK}channel/${chanId}`, {
+						method: 'GET',
+					}).then(async response => {
+						const data = await response.json();
+						
+						if (response.ok) {
+							dispatch(joinChannel({ chanid: chanId, chan: data, user: currentUser }));
+						}
+					})
+				}
+				fetchChanInfo();
+			}
+		});
+
         return () => {
             socket.off("giveAdminOK");
 			socket.off("muteUser");
 			socket.off("banUser");
+			socket.off("invitePrivate");
+			socket.off("invited");
         }
     })
 
