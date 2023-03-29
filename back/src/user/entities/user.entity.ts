@@ -49,10 +49,10 @@ export class User {
   @ManyToMany(() => Channel, channel => channel.users, { onDelete: 'CASCADE'} )
   channels: Channel[];
 
-  @OneToMany(() => Channel, channel => channel.owner )
+  @OneToMany(() => Channel, channel => channel.owner, { onDelete: 'CASCADE'} )
   owned: Channel[];
 
-  @ManyToMany(() => User, user => user.blocked)
+  @ManyToMany(() => User, user => user.blocked, { onDelete: 'CASCADE'})
   @JoinTable()
   blocked: User[];
 

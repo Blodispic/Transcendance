@@ -124,6 +124,7 @@ async handleJoinChannel(@ConnectedSocket() client: Socket, @MessageBody() joinCh
 
 @SubscribeMessage('createChannel')
 async handleCreateChannel(@ConnectedSocket() client: Socket, @MessageBody() createChannelDto: CreateChannelDto) {
+  createChannelDto.chanName = createChannelDto.chanName.trim();
   const channel = await this.channelService.getByName(createChannelDto.chanName);  
   if (channel != null) {
     client.emit('createChannelFailed', 'Channel name already exists');
