@@ -190,8 +190,11 @@ function App() {
         // setCookie('Token', data.access_token, { path: '/' });
         // socket.emit("UpdateSomeone", { idChange: myUser.user?.id, idChange2: 0 })
       }
-      else {
+      else if (response.status !== 400) {
         cookies.remove('Token');
+      }
+      else {
+        swal('t\'as deja un tab frero', '',  "error");
       }
     })
   }

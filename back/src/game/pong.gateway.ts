@@ -1,4 +1,4 @@
-import { ConnectedSocket, MessageBody, OnGatewayDisconnect, OnGatewayInit, SubscribeMessage, WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
+import { ConnectedSocket, MessageBody, OnGatewayDisconnect, SubscribeMessage, WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 import { User } from 'src/user/entities/user.entity';
 import { GameService } from './game.service';
@@ -19,7 +19,7 @@ export interface Move {
 	},
 })
 
-export class PongGateway implements OnGatewayDisconnect, OnGatewayInit {
+export class PongGateway implements OnGatewayDisconnect {
 	@WebSocketServer()
 	server: Server;
 	inviteList: number[];
@@ -27,10 +27,6 @@ export class PongGateway implements OnGatewayDisconnect, OnGatewayInit {
 	constructor(private gameService: GameService, private readonly userService: UserService) {
 		this.inviteList = new Array<number>;
 	}
-	
-	afterInit(server: Server) {
-		console.log(`WebSocket server initialized: ${server}`);
-	  }
 	
 	findByID(id: number)
 	{

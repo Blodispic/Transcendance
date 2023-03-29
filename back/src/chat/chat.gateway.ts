@@ -306,11 +306,11 @@ async handleUnMute(@ConnectedSocket() client: Socket, @MessageBody() muteUserDto
     client.emit('UnmuteUserFailed', 'No such Channel or User');
     throw new BadRequestException('No such Channel or User');
   }
-  if (await this.channelService.isUserMuted(muteUserDto)) {
+  if (!(await this.channelService.isUserMuted(muteUserDto))) {
     client.emit('unmuteUserFailed', 'User is not muted');
     throw new BadRequestException('User is not muted');
   }
-  if (!(await this.channelService.isUserAdmin(muteUserDto))) {
+  if (channel.owner?.id != user.id && !(await this.channelService.isUserAdmin({chanid: channel.id, userid: user.id}))) {
     client.emit('muteUserFailed', 'You are not Admin on this channel');
     throw new BadRequestException('You are not Admin on this channel');
   }

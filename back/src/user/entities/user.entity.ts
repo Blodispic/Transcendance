@@ -1,4 +1,3 @@
-import { Results } from '../../results/entities/results.entity';
 import { Column, Entity, PrimaryGeneratedColumn, ManyToMany, JoinTable, OneToMany } from 'typeorm';
 import { Channel } from 'src/chat/channel/entities/channel.entity';
 import { FriendRequest } from './friend-request.entity';
@@ -66,10 +65,6 @@ export class User {
 
   @Column({ default: 0 })
   lose: number;
-
-  @ManyToMany(() => Results, result => result.user)
-  @JoinTable()
-  results: Results[];
 
   @OneToMany(() => FriendRequest, friendRequest => friendRequest.creator, { onDelete: 'CASCADE' })
   @JoinTable()

@@ -113,12 +113,12 @@ export function ConfigureChannelPrivate(props: { trigger: boolean, setTrigger: (
 
 	const AddPeoplePrivate = () => {
 		if (allfriend.length > 0)
-			socket.emit('AddPeoplePrivate', { chanid: props.channel.id, users: allfriend });
+			socket.emit('AddPeoplePrivate', { chanid: props.channel.id, usersId: allfriend.map(user => user.id) });
+			cleanlist();
 	}
 	const cleanlist = () => {
 		setAlluser([]);
 		setAllFriend([]);
-		setAlreadyhere([])
 		setMyvar(false)
 	}
 
@@ -139,7 +139,7 @@ export function ConfigureChannelPrivate(props: { trigger: boolean, setTrigger: (
 		return () => {
 			socket.off("AddPeoplePrivateOk");
 		}
-	}, []);
+	}, [props.channel.users]);
 	const get_all = async () => {
 		const response = await fetch(`${process.env.REACT_APP_BACK}user`, {
 			method: 'GET',
@@ -162,6 +162,10 @@ export function ConfigureChannelPrivate(props: { trigger: boolean, setTrigger: (
 			)
 			
 		  );
+	}
+
+	const handleUnban = () => {
+		socket.emit('unban'); //to be added soon
 	}
 
 	return (props.trigger) ? (
@@ -208,6 +212,23 @@ export function ConfigureChannelPrivate(props: { trigger: boolean, setTrigger: (
 						</div>
 					}
 				</div>
+				{
+					props.channel.banned.length > 0 && 
+					<>
+					<h3>Unban user</h3>
+					{props.channel.banned?.map(banned => (
+						<ul key={banned.id}>
+							<li title='Unban'>
+							<div className='avatar-inpopup'>
+
+							<img className="cursor-onsomoene avatar avatar-manu" src={`${process.env.REACT_APP_BACK}user/${banned.id}/avatar`} alt="" onClick={() => handleUnban()}/>
+								</div>
+							</li>
+
+						</ul>
+					))}
+					</>
+				}
 				<button onClick={() => { AddPeoplePrivate(); props.setTrigger(false) }}> Save Setting </button>
 			</div>
 		</div>
@@ -233,7 +254,7 @@ export function ConfigureChannel(props: { trigger: boolean, setTrigger: (value: 
 	}
 
 	const handleUnban = () => {
-		// socket.emit('unban'); //to be added soon
+		socket.emit('unban'); //to be added soon
 	}
 
 	return (props.trigger) ? (
