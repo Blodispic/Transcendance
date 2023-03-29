@@ -93,7 +93,7 @@ $tab-color: rgba(var(--primary-color), 0.5); //rgb(121, 121, 121);
 	}
 
 	.chat-list {
-		overflow-y: scroll;
+		overflow-y: auto;
 		height: 85%;
 		position: relative;
 	}
@@ -185,7 +185,7 @@ $tab-color: rgba(var(--primary-color), 0.5); //rgb(121, 121, 121);
 .chat-messages {
 	height: calc(100vh - 250px);
 	vertical-align: top;
-	overflow-y: scroll;
+	overflow-y: auto;
 	flex: 1;
 	display: flex;
 	flex-direction: column-reverse;
