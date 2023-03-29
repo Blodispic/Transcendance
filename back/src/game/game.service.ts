@@ -199,9 +199,7 @@ export class GameService {
 		const winner = await this.userService.getById(results.winnerId);
 		const loser = await this.userService.getById(results.loserId);  
 		const resultReturn = {
-		  winner: results.winner,
 		  winnerId: results.winnerId,
-		  loser: results.loser,
 		  loserId: results.loserId,
 		  winner_score: results.winner_score,
 		  loser_score: results.loser_score,

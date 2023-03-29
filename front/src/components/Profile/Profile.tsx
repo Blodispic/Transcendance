@@ -107,12 +107,12 @@ export default function Profile() {
                 };
         }, [id, updateStatus])
 
-        useEffect(() => {
-                if (currentUser?.id === myUser.user.user?.id) {
-                        setCurrentUser(myUser.user.user);
+        // useEffect(() => {
+        //         // if (currentUser?.id === myUser.user.user?.id) {
+        //         //         setCurrentUser(myUser.user.user);
 
-                }
-        }, [Onglets, currentUser?.id,  myUser.user.user?.username, id])
+        //         // }
+        // }, [Onglets, currentUser?.id,  myUser.user.user?.username, id])
 
 
         // if (currentUser === undefined) {

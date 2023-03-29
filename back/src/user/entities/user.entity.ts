@@ -67,10 +67,6 @@ export class User {
   @Column({ default: 0 })
   lose: number;
 
-  @ManyToMany(() => Results, result => result.user)
-  @JoinTable()
-  results: Results[];
-
   @OneToMany(() => FriendRequest, friendRequest => friendRequest.creator, { onDelete: 'CASCADE' })
   @JoinTable()
   sendFriendRequests: FriendRequest[];

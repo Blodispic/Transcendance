@@ -27,7 +27,7 @@ export function History(props: { user: IUser }) {
         };
 
     checkMatchRequest();
-  }, [user]);
+  }, [props.user]);
 
   const MatchesReq = () => {
     return (

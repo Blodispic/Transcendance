@@ -1,17 +1,9 @@
 import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
 
 export class CreateResultDto {
-	@IsString()
-	@IsNotEmpty()
-	winner: string;
-
 	@IsNumber()
 	@IsNotEmpty()
 	winnerId: number;
-
-	@IsString()
-	@IsNotEmpty()
-	loser: string;
 
 	@IsNumber()
 	@IsNotEmpty()

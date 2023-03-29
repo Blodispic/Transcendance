@@ -92,8 +92,9 @@ export class UserController {
   // Retrieves all match requests for a specific user
   @Post('matches')
   @UseGuards(JwtGuard)
-  GetMatches(@GetUser() user: User) {
-    return this.userService.GetMatchRequest(user.id);
+  async GetMatches(@Body('userId') userId: number) {
+    console.log("userId");
+    return await this.userService.GetMatchRequest(userId);
   }
 
   // Accepts a friend request
