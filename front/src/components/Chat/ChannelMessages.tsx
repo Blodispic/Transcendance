@@ -33,11 +33,11 @@ export function ChannelHeader() {
 			{currentChan.name}
 			{
 				currentChan.chanType === 1 &&
-				<HiLockClosed style={{marginLeft:'5px'}} />
+				<HiLockClosed className='channel-icon' />
 			}
 			{
 				currentChan.chanType === 2 &&
-				<BsKeyFill style={{marginLeft:'5px'}} />
+				<BsKeyFill className='channel-icon' />
 			}
 			{
 				currentChan.users?.find(obj => obj.id === currentUser?.id) === undefined &&

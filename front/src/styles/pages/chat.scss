@@ -309,11 +309,13 @@ $tab-color: rgba(var(--primary-color), 0.5); //rgb(121, 121, 121);
 	cursor: pointer;
 }
 
+.channel-icon {
+	margin-left: 5px;
+}
+
 .clickable-menu {
 	margin-top: -15px !important;
 	background-color: rgba(0, 0, 0, 0.70) !important;
-
-
 }
 
 .Chat-onglets {
@@ -387,7 +389,6 @@ $tab-color: rgba(var(--primary-color), 0.5); //rgb(121, 121, 121);
 	color: #B33A3A;
 	font-size: smaller;
 }
-
 
 .message_block {
 	background-color: #9da6b7;

@@ -31,11 +31,11 @@ function JoinedChannelList() {
 								<div onClick={() => navigate(`/Chat/channel/${chan.id}`)}>{chan.name}
 									{
 										chan.chanType === 1 &&
-										<HiLockClosed style={{ float: 'right' }} />
+										<HiLockClosed className='channel-icon' />
 									}
 									{
 										chan.chanType === 2 &&
-										<BsFillKeyFill style={{ float: 'right' }} />
+										<BsFillKeyFill className='channel-icon' />
 									}
 								</div>
 							</li>
@@ -65,7 +65,7 @@ function PublicChannelList() {
 								<div onClick={() => navigate(`/Chat/channel/${chan.id}`)}>{chan.name}
 									{
 										chan.chanType === 2 &&
-										<BsFillKeyFill style={{ paddingLeft: '10px' }} />
+										<BsFillKeyFill className='channel-icon'/>
 									}
 								</div>
 							</li>
@@ -114,11 +114,11 @@ function ChannelMemberList(props: { page: (page: page) => void }) {
 						<li>
 							{admin.username}
 							{ currentChan.owner?.id === admin.id &&
-								<FaCrown style={{ marginLeft: '5px' }} /> }
+								<FaCrown className='channel-icon' /> }
 							{ currentChan.owner?.id !== admin.id &&
-								<BsFillPersonFill style={{ marginLeft: '5px' }} /> }
+								<BsFillPersonFill className='channel-icon' /> }
 							{ currentChan.muted && currentChan.muted.find(obj => obj.id === admin.id) &&
-								<FaVolumeMute style={{ marginLeft: '5px' }} /> }
+								<FaVolumeMute className='channel-icon' /> }
 						</li>
 					</ul>
 					{ currentId === admin.id &&
@@ -135,7 +135,7 @@ function ChannelMemberList(props: { page: (page: page) => void }) {
 								<>
 									{user.username}
 									{ currentChan.muted && currentChan.muted.find(obj => obj.id === user.id) &&
-										<FaVolumeMute style={{ marginLeft: '5px' }} /> }
+										<FaVolumeMute className='channel-icon' /> }
 								</>
 							}
 						</li>

@@ -27,7 +27,7 @@ function DMList(props: { currentdm: IUser | undefined; setCurrentDm: (user: IUse
 			setAlluser(data.filter((obj: IUser) => obj.username !== myStore.user.user?.username && obj.status === "Online" ));
 		}
 		get_all();
-	}, [])
+	}, []);
 
 	return (
 		<div className="title"> Direct Messages <hr />

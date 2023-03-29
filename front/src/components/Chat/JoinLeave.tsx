@@ -96,12 +96,12 @@ export function JoinChannel(props: { channel: IChannel }) {
 				<div>
 					{
 						props.channel.chanType === 0 &&
-						<button style={{ float: 'right' }} onClick={() => { handleJoin() }}>Join Channel</button>
+						<button onClick={() => { handleJoin() }}>Join Channel</button>
 					}
 					{
 						props.channel.chanType === 2 &&
 						<>
-							<button style={{ float: 'right' }} onClick={() => setPassPopup(true)}>Join Channel</button>
+							<button onClick={() => setPassPopup(true)}>Join Channel</button>
 							<CheckPassword trigger={passPopup} setTrigger={setPassPopup} channel={props.channel} />
 						</>
 					}
