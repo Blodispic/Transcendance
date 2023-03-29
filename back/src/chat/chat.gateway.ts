@@ -343,7 +343,7 @@ async handleInvite(@ConnectedSocket() client: Socket, @MessageBody() inviteDto: 
     throw new BadRequestException('You are not Admin on this channel');
   this.inviteToChan(inviteDto.usersId, channel.id);
   client.emit('inviteOK');
-  this.server.to("chan" + channel.id).emit('invitePrivate', inviteDto);
+  this.server.to("chan" + channel.id).emit('invitePrivate', inviteDto); // inviteDto -> {chanid: number, users: User[]}
 }
 
 async inviteToChan(usersId: number[], chanid: number)
@@ -352,7 +352,7 @@ async inviteToChan(usersId: number[], chanid: number)
     if (!channel)
       return;
   for (const userId of usersId) {
-    let user = await this.userService.getById(userId);
+    const user = await this.userService.getById(userId);
     if (user === null)
       continue;
     if (await this.channelService.isUserinChan(channel, user))
