@@ -80,8 +80,8 @@ export function Header(props: { currentUser: IUser, setCurrentUser: (user: IUser
                 return 'BRONZE'
         };
         const rank2 = () => {
-                const thresholds = [2500, 2200, 2100, 2000, 1900, 1800, 1700, 1600, 1500, 1400, 1300, 1200, 1100, 1000, 900, 800, 700, 600, 500, 400];
-                const rankNames = ['MANUTIER', 'DIAMOND I', 'DIAMOND II', 'DIAMOND III', 'DIAMOND IV', 'PLATINUM I', 'PLATINUM II', 'PLATINUM III', 'PLATINUM IV', 'GOLD I', 'GOLD II', 'GOLD III', 'GOLD IV', 'SILVER I', 'SILVER II', 'SILVER III', 'SILVER IV', 'BRONZE I', 'BRONZE II', 'BRONZE III', 'BRONZE IV'];
+                const thresholds = [2500, 2200, 2100, 2000, 1900, 1800, 1700, 1600, 1500, 1400, 1300, 1200, 1100, 1000, 900, 800, 700, 600, 500, 400, 0];
+                const rankNames = ['ROZHOUTIER', 'DIAMOND I', 'DIAMOND II', 'DIAMOND III', 'DIAMOND IV', 'PLATINUM I', 'PLATINUM II', 'PLATINUM III', 'PLATINUM IV', 'GOLD I', 'GOLD II', 'GOLD III', 'GOLD IV', 'SILVER I', 'SILVER II', 'SILVER III', 'SILVER IV', 'BRONZE I', 'BRONZE II', 'BRONZE III', 'BRONZE IV', 'MANUTIER'];
                 for (let i = 0; i < thresholds.length; i++) {
                         if (currentUser.elo >= thresholds[i]) {
                                 return rankNames[i];

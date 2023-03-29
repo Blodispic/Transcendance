@@ -5,14 +5,23 @@ import { extname } from 'path';
 export class AppService {
 }
 
-export const imageFilter = (req: any, file: any, callback: any) => {
+
+export const imageFilter = (
+  req: Express.Request,
+  file: Express.Multer.File,
+  callback: (error: Error | null, acceptFile: boolean) => void,
+) => {
   if (!file.originalname.match(/\.(jpg|jpeg|png|gif)$/)) {
     return callback(new UnprocessableEntityException('Only image files are allowed!'), false);
   }
   callback(null, true);
 };
 
-export const editFileName = (req: any, file: any, callback: any) => {
+export const editFileName = (
+  req: Express.Request,
+  file: Express.Multer.File,
+  callback: (error: Error | null, filename: string) => void,
+) => {
   const name = file.originalname.split('.')[0];
   const fileExtName = extname(file.originalname);
   const randomName = Array(4)

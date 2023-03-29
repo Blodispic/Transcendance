@@ -102,7 +102,8 @@ export class ChannelService {
 				channel.chanType = channelUpdate.chanType;
 		  	return await this.channelRepository.save(channel);
 		}
-		return 'There is no channel to update';
+		else
+			return 'There is no channel to update';
 	  }
 
 	async getById(id: number) {

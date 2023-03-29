@@ -29,7 +29,7 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
 	async handleConnection(client: Socket) {
 		try {
-			client.handshake.auth.user = await this.userService.GetByAccessToken(client.handshake.auth);
+			client.handshake.auth.user = await this.userService.GetByAccessToken(client.handshake.auth.token);
 			if (client.handshake.auth.user === null)
 				throw new BadRequestException("No user with such token")
 			await this.userService.SetStatus(client.handshake.auth.user, Status.Online);
@@ -43,10 +43,11 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
 			client.join('chan' + channel.id);
 		});
 
+		this.server.to(client.id).emit("LoginValid");
 		this.server.emit('UpdateSomeone', { idChange: client.handshake.auth.user.id, idChange2: 0 });
 	}
 
-	async handleDisconnect(client: any) {
+	async handleDisconnect(client: Socket) {
 		try {
 			await this.userService.SetStatus(client.handshake.auth.user, Status.Offline);
 		} catch (error) {
