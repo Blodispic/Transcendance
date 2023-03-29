@@ -241,21 +241,22 @@ async handleBanUser(@ConnectedSocket() client: Socket, @MessageBody() banUserDto
   this.server.to('chan' + channel.id).emit('banUser', {chanid: channel.id, userid: userBan.id, timer: banUserDto.timeout});
 }
 
-@SubscribeMessage('unBanUser')
+@SubscribeMessage('unBan')
 async handleunBanUser(@ConnectedSocket() client: Socket, @MessageBody() banUserDto: BanUserDto) {
+ console.log("ca rentre laaaa");
   const channel = await this.channelService.getById(banUserDto.chanid);
   const user = await this.userService.getById(client.handshake.auth.user.id);
   const userBan = await this.userService.getById(banUserDto.userid);
   if (channel === null || user === null || userBan === null) {
-    client.emit('unbanUserFailed', 'No such Channel or User');
+    client.emit('unbanFailed', 'No such Channel or User');
     throw new BadRequestException('No such Channel or User');
   }
   if (await this.channelService.isUserMuted(banUserDto)) {
-    client.emit('unbanUserFailed', 'User is not banned');
+    client.emit('unbanFailed', 'User is not banned');
     throw new BadRequestException('User is not banned');
   }
   if (!(await this.channelService.isUserAdmin({chanid: channel.id, userid: user.id}))) {
-    client.emit('unbanUserFailed', 'You are not Admin on this channel');
+    client.emit('unbanFailed', 'You are not Admin on this channel');
     throw new BadRequestException('You are not Admin on this Channel');
   }
   await this.channelService.unbanUser(banUserDto);
@@ -265,7 +266,7 @@ async handleunBanUser(@ConnectedSocket() client: Socket, @MessageBody() banUserD
   const socketId = this.findSocketFromUser(userBan);
   if (socketId)
     this.server.to(socketId.id).emit('unbanUser', {chanid: channel.id, userid: userBan.id, timer: banUserDto.timeout});
-  client.emit('unbanUserOK', user.id, channel.id);
+  client.emit('unbanOK', user.id, channel.id);
   this.server.to('chan' + channel.id).emit('unbanUser', {chanid: channel.id, userid: userBan.id, timer: banUserDto.timeout});
 }
 
