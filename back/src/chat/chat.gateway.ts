@@ -264,9 +264,9 @@ async handleunBanUser(@ConnectedSocket() client: Socket, @MessageBody() banUserD
   
   const socketId = this.findSocketFromUser(userBan);
   if (socketId)
-    this.server.to(socketId.id).emit('unbanUser', {chanid: channel.id, userid: userBan.id, timer: banUserDto.timeout});
-  client.emit('unbanUserOK', user.id, channel.id);
-  this.server.to('chan' + channel.id).emit('unbanUser', {chanid: channel.id, userid: userBan.id, timer: banUserDto.timeout});
+    this.server.to(socketId.id).emit('unban', {chanid: channel.id, userid: userBan.id, timer: banUserDto.timeout});
+  client.emit('unbanOK', user.id, channel.id);
+  this.server.to('chan' + channel.id).emit('unban', {chanid: channel.id, userid: userBan.id, timer: banUserDto.timeout});
 }
 
 @SubscribeMessage('MuteUser')
