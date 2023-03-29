@@ -90,7 +90,6 @@ export class UserController {
   @Post('matches')
   @UseGuards(JwtGuard)
   async GetMatches(@Body('userId') userId: number) {
-    console.log("userId");
     return await this.userService.GetMatchRequest(userId);
   }
 
