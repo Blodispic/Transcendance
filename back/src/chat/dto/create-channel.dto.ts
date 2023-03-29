@@ -17,5 +17,5 @@ export class CreateChannelDto {
 
 	@IsOptional()
 	@IsArray()
-	users?: User[];
+	usersId?: number[];
 }

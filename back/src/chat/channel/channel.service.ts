@@ -78,7 +78,7 @@ export class ChannelService {
 		return await this.channelRepository.save(channel);
 	}
 
-	async update(id: number, channelUpdate: any) {		
+	async update(id: number, channelUpdate: any) {		 // DTO pour update
 		const channel = await this.channelRepository.findOne({
 			relations: { users: true },
 			where: {

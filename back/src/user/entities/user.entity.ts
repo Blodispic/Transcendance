@@ -39,7 +39,7 @@ export class User {
   @JoinTable()
   friends: User[];
 
-  @ManyToMany(() => Channel, channel => channel.users )
+  @ManyToMany(() => Channel, channel => channel.users, { onDelete: 'CASCADE'} )
   channels: Channel[];
 
   @OneToMany(() => Channel, channel => channel.owner )
