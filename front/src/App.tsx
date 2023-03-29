@@ -138,6 +138,7 @@ function App() {
           socket.off("invitationInGame");
           socket.off("GameDeclined");
           socket.off("GameCancelled");
+          socket.off("LoginValid");
 
           socket.off("joinChannel");
           socket.off("leaveChannel");
