@@ -44,6 +44,7 @@ $tab-color: rgba(var(--primary-color), 0.5); //rgb(121, 121, 121);
 		line-height: 30px;
 		color: black;
 		display: flex;
+		align-items: center;
 	}
 
 	.right-sidebar {
@@ -69,7 +70,7 @@ $tab-color: rgba(var(--primary-color), 0.5); //rgb(121, 121, 121);
 		}
 
 		.bottom {
-			height:40%;
+			height:50%;
 			width: 90%;
 			position: absolute;
 			top: 43%;
@@ -83,7 +84,7 @@ $tab-color: rgba(var(--primary-color), 0.5); //rgb(121, 121, 121);
 			position: absolute;
 			background: var(--sub-color2);
 			border-radius: 3px;
-			top: 38%;
+			top: 40%;
 
 			.add-button {
 				cursor: pointer;
@@ -91,6 +92,11 @@ $tab-color: rgba(var(--primary-color), 0.5); //rgb(121, 121, 121);
 		}
 	}
 
+	.chat-list {
+		overflow-y: scroll;
+		height: 85%;
+		position: relative;
+	}
 
 	ul {
 		list-style: none;
@@ -99,7 +105,7 @@ $tab-color: rgba(var(--primary-color), 0.5); //rgb(121, 121, 121);
 		cursor: pointer;
 		height: auto;
 	}
-
+	
 	li:hover {
 		border-radius: 3px;
 		box-shadow: none;
@@ -148,10 +154,9 @@ $tab-color: rgba(var(--primary-color), 0.5); //rgb(121, 121, 121);
 		cursor: pointer;
 		padding: 5px;
 		background: var(--primary-color);
-		color: white;
+		color: white !important;
 		transition: .3s;
-		// border: 2px solid var(--primary-color);
-		margin-left: 5px;
+		margin: 0px 10px;
 	}
 
 	button:hover {
@@ -172,7 +177,7 @@ $tab-color: rgba(var(--primary-color), 0.5); //rgb(121, 121, 121);
 		cursor: pointer;
 		padding: 5px;
 		background: var(--primary-color);
-		color: white;
+		color: white !important;
 		transition: .3s;
 		margin-left: 5px;
 
@@ -242,13 +247,13 @@ $tab-color: rgba(var(--primary-color), 0.5); //rgb(121, 121, 121);
 	color: black;
 	border-color: var(--sub-color1);
 	width: 500px;
-	height: 400px;
+	height: auto;
 	justify-content: center;
 	align-items: center;
 	text-align: center;
 	position: relative;
 	z-index: 1;
-	// -webkit-text-fill-color: black !important; 
+	padding-bottom: 30px;
 
 	#channel-input {
 		font-family: 'Fredoka One', cursive;
