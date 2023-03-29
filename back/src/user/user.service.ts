@@ -84,7 +84,7 @@ export class UserService {
     return qrCode;
   }
 
-  async enable2FA(user: any, secret: string): Promise<void> {
+  async enable2FA(user: User, secret: string): Promise<void> {
     user.two_factor_secret = secret;
     await this.usersRepository.save(user);
   }
@@ -130,12 +130,14 @@ export class UserService {
     });
   }
 
-  async GetByAccessToken(access_token: any) {
-
-    const decoded_access_token: any = this.jwtService.decode(access_token.token, { json: true });
-    if (!decoded_access_token)
-      throw new NotFoundException('Token not valid');
+  async GetByAccessToken(access_token: string) {
+    const decoded_access_token = await this.jwtService.decode(access_token, { json: true }) as { username: string, iat: number, exp: number } | null;
+    if (!decoded_access_token) {
+      throw new BadRequestException('Invalid access token');
+    }
+    
     const user = await this.usersRepository.findOneBy({ login: decoded_access_token.username });
+    
     if (decoded_access_token.exp && decoded_access_token.exp < Date.now() / 1000) {
       throw new NotFoundException('Token expired');
     }
@@ -163,7 +165,7 @@ export class UserService {
       throw new NotFoundException('Username dont exist');
   }
 
-  async update(id: number, userUpdate: any) {
+  async update(id: number, userUpdate: UpdateUserDto) {
     const user = await this.usersRepository.findOneBy({
       id: id,
     });
@@ -199,7 +201,7 @@ export class UserService {
     return `This action removes a #${id} user`;
   }
 
-  async setAvatar(user: User, username: string, file: any) {
+  async setAvatar(user: User, username: string, file: Express.Multer.File) {
     if (user) {
       user.avatar = file.filename;
       user.username = username;
