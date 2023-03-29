@@ -35,7 +35,7 @@ export function PopupCreateChannel(props: { trigger: boolean, setTrigger: (value
 	const handleCreateNewChan = () => {
 		if (chanName !== "") {
 			if (password && password.length)
-				socket.emit('createChannel', { chanName: chanName, password: password, chanType: chanMode, users: friend });
+				socket.emit('createChannel', { chanName: chanName, password: password, chanType: chanMode, users: friend.map( user => user.id) });
 			else
 				socket.emit('createChannel', { chanName: chanName, chanType: chanMode, users: friend });
 		}

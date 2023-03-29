@@ -120,7 +120,7 @@ export function ConfigureChannelPrivate(props: { trigger: boolean, setTrigger: (
 
 	const AddPeoplePrivate = () => {
 		if (allfriend.length > 0)
-			socket.emit('AddPeoplePrivate', { chanid: props.channel.id, users: allfriend });
+			socket.emit('AddPeoplePrivate', { chanId: props.channel.id, users: allfriend.map(user => user.id) });
 	}
 	const cleanlist = () => {
 		setAlluser([]);

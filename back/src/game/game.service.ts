@@ -201,9 +201,7 @@ export class GameService {
 		const winner = await this.userService.getById(results.winnerId);
 		const loser = await this.userService.getById(results.loserId);  
 		const resultReturn = {
-		  winner: results.winner,
 		  winnerId: results.winnerId,
-		  loser: results.loser,
 		  loserId: results.loserId,
 		  winner_score: results.winner_score,
 		  loser_score: results.loser_score,
@@ -395,13 +393,13 @@ class Game {
 	async finishGame() {
 		this.gameState.gameFinished = true;
 		if (this.gameState.player1.score === this.gameState.scoreMax) {
-			const result: CreateResultDto = { winner: this.gameState.player1.name, winnerId: this.gameState.player1.id, loser: this.gameState.player2.name, loserId: this.gameState.player2.id, winner_score: this.gameState.player1.score.toString(), loser_score: this.gameState.player2.score.toString() };
+			const result: CreateResultDto = { winnerId: this.gameState.player1.id, loserId: this.gameState.player2.id, winner_score: this.gameState.player1.score.toString(), loser_score: this.gameState.player2.score.toString() };
 			await this.gameService.save(result);
 			this.server.to(this.gameState.player1.socket).emit('GameEnd', result);
 			this.server.to(this.gameState.player2.socket).emit('GameEnd', result);
 		}
 		else {
-			const result: CreateResultDto = { winner: this.gameState.player2.name, winnerId: this.gameState.player2.id, loser: this.gameState.player1.name, loserId: this.gameState.player1.id, winner_score: this.gameState.player2.score.toString(), loser_score: this.gameState.player1.score.toString() };
+			const result: CreateResultDto = { winnerId: this.gameState.player2.id, loserId: this.gameState.player1.id, winner_score: this.gameState.player2.score.toString(), loser_score: this.gameState.player1.score.toString() };
 			await this.gameService.save(result);
 			this.server.to(this.gameState.player1.socket).emit('GameEnd', result);
 			this.server.to(this.gameState.player2.socket).emit('GameEnd', result);

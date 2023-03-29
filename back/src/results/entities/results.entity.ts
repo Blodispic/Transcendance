@@ -1,24 +1,21 @@
 import { User } from 'src/user/entities/user.entity';
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn, RelationId } from 'typeorm';
 
 @Entity()
 export class Results {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne(() => User, user => user.results)
-  user: User;
+  @ManyToOne(() => User, { cascade: true, onDelete: 'CASCADE' })
+  winner: User;
 
-  @Column()
-  winner: string;
-
-  @Column()
-  loser: string;
+  @ManyToOne(() => User, { cascade: true, onDelete: 'CASCADE' })
+  loser: User;
   
-  @Column({ default: 0 })
+  @RelationId('winner')
   winnerId: number;
 
-  @Column({ default: 0 })
+  @RelationId('loser')
   loserId: number;
 
   @Column()

@@ -40,34 +40,25 @@ export class UserService {
   }
 
   async createResult(resultDto: CreateResultDto) {
-    const winner = await this.usersRepository.findOne({
-      relations: {
-        results: true,
-      },
-      where: { username: resultDto.winner },
-    });
-    const resultPush = await this.resultsRepository.save(resultDto);
-    if (resultPush) {
-      if (winner) {
-        winner.win += 1;
-        winner.elo += 50;
-        winner.results.push(resultPush);
-        await this.usersRepository.save(winner);
-      }
-      const loser = await this.usersRepository.findOne({
-        relations: {
-          results: true,
-        },
-        where: { username: resultDto.loser },
-      });
-      if (loser) {
-        loser.lose += 1;
-        loser.elo -= 50;
-        loser.results.push(resultPush);
-        await this.usersRepository.save(loser);
-      }
-      return resultPush;
+    const winner = await this.usersRepository.findOneBy({id: resultDto.winnerId});
+    const loser = await this.usersRepository.findOneBy({id: resultDto.loserId});
+    if (!winner || !loser) {
+      throw new NotFoundException("User not found");
     }
+    winner.elo += 50;
+    loser.elo -= 50;
+    winner.win += 1;
+    loser.lose += 1;
+
+    const result = this.resultsRepository.create({
+      winner,
+      loser,
+      loser_score: resultDto.loser_score,
+      winner_score: resultDto.winner_score,
+      loser_elo: loser.elo,
+      winner_elo: winner.elo,
+    });
+    return this.resultsRepository.save(result);
   }
 
   async save(updateUserDto: UpdateUserDto) {
@@ -104,7 +95,6 @@ export class UserService {
     return this.usersRepository.findOne({
       relations: {
         friends: true,
-        results: true,
         channels: true,
         owned: true,
         blocked: true,
@@ -122,7 +112,6 @@ export class UserService {
         'owned',
         'sendFriendRequests',
         'receiveFriendRequests',
-        'results',
       ],
       where: {
         login: login,
@@ -155,7 +144,6 @@ export class UserService {
     const userfindName = await this.usersRepository.findOne({
       relations: {
         friends: true,
-        results: true,
       },
       where: { username: username },
     });
@@ -165,40 +153,22 @@ export class UserService {
       throw new NotFoundException('Username dont exist');
   }
 
-  async update(id: number, userUpdate: UpdateUserDto) {
-    const user = await this.usersRepository.findOneBy({
-      id: id,
-    });
-    if (user) {
-      //Si vous voulez plus de chose a update, mettez le dans le body et faites un iff
-      if (userUpdate.username) {
-        const checkUsername = await this.usersRepository.findOneBy({
-          username: userUpdate.username,
-        });
-        if (checkUsername && checkUsername.id !== user.id) {
-          throw new NotFoundException('Username exists');
-        }
-        else
-          user.username = userUpdate.username;
+  async update(user: User, userUpdate: UpdateUserDto) {
+    //Si vous voulez plus de chose a update, mettez le dans le body et faites un iff
+    if (userUpdate.username) {
+      const checkUsername = await this.usersRepository.findOneBy({
+        username: userUpdate.username,
+      });
+      if (checkUsername && checkUsername.id !== user.id) {
+        throw new NotFoundException('Username exists');
       }
-      if (userUpdate.twoFaEnable != undefined) {
-        user.twoFaEnable = userUpdate.twoFaEnable;
-      }
-
-      return await this.usersRepository.save(user);
+      else
+        user.username = userUpdate.username;
     }
-    else
-      throw new NotFoundException('User not found');
-  }
-
-  async remove(id: number) {
-    const user = await this.usersRepository.findOneBy({
-      id: id,
-    });
-    if (!user)
-      throw new NotFoundException('User not found');
-    this.usersRepository.delete(id);
-    return `This action removes a #${id} user`;
+    if (userUpdate.twoFaEnable != undefined) {
+      user.twoFaEnable = userUpdate.twoFaEnable;
+    }
+    return await this.usersRepository.save(user);
   }
 
   async setAvatar(user: User, username: string, file: Express.Multer.File) {
@@ -364,30 +334,16 @@ export class UserService {
   }
 
   async GetMatchRequest(userId: number) {
-    const my_user = await this.usersRepository.findOne({
-      relations: ['results'],
-      where: { id: userId },
+    return this.resultsRepository.find({
+      relations: {
+        winner: true,
+        loser: true,
+      },
+      where: [
+        { winner: { id: userId } },
+        { loser: { id: userId } },
+      ]
     });
-    if (!my_user) {
-      return [];
-    }
-    return Promise.all(my_user.results.map(async request => {
-      const [winner, loser] = await Promise.all([
-        this.usersRepository.findOne({ where: { id: request.winnerId } }),
-        this.usersRepository.findOne({ where: { id: request.loserId } }),
-      ]);
-      return {
-        id: request.id,
-        winner: winner ? winner : 'Unknown',
-        winner_score: request.winner_score || 0,
-        loser: loser ? loser : 'Unknown',
-        loser_score: request.loser_score || 0,
-        winner_elo: winner ? request.winner_elo : 0,
-        loser_elo: loser ? request.loser_elo : 0,
-        winnerId: winner ? request.winnerId : 0,
-        loserId: loser ? request.loserId : 0,
-      };
-    }));
   }
 
 
@@ -494,16 +450,6 @@ export class UserService {
     return (myUser.friends.some(friend => friend.id == friendId));
   }
 
-  async getResults(id: number): Promise<Results[]> {
-    const user = await this.usersRepository.findOne({
-      relations: {
-        results: true,
-      },
-      where: { id: id },
-    });
-    return user ? user.results : [];
-  }
-
   async getBlocked(id: number) {
     const user = await this.usersRepository.findOne({
       relations: {
@@ -533,15 +479,7 @@ export class UserService {
     return await this.usersRepository.save(user);
   }
 
-  async RmBlock(id: number, blockedid: number) {
-    const user = await this.usersRepository.findOne({
-      relations: {
-        blocked: true,
-      },
-      where: { id: id },
-    });
-    if (user === null)
-      throw new BadRequestException('No such User');
+  async RmBlock(user: User, blockedid: number) {
     const blocked = user?.blocked.find(elem => elem.id === blockedid)
     if (blocked === undefined)
       throw new BadRequestException('No such User already blocked');
