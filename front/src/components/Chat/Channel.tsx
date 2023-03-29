@@ -51,6 +51,7 @@ function JoinedChannelList() {
 function PublicChannelList() {
 	const navigate = useNavigate();
 	const channels: IChannel[] = useAppSelector(state => state.chat.channels);
+	const currentUser: IUser | undefined = useAppSelector(state => state.user.user);
 
 	return (
 		<div className="bottom">
@@ -60,7 +61,7 @@ function PublicChannelList() {
 				{channels && channels.map(chan => (
 					<ul key={chan.name}>
 						{
-							chan.chanType !== 1 &&
+							(chan.chanType !== 1 && chan.users.find(obj => obj.id === currentUser?.id) === undefined )&&
 							<li>
 								<div onClick={() => navigate(`/Chat/channel/${chan.id}`)}>{chan.name}
 									{
@@ -177,19 +178,23 @@ export function Channels(props: { page: (page: page) => void }) {
 		socket.on("muteUser", ({chanid, userid, timer}) => {
 			dispatch(muteUser({chanid: chanid, userid: userid}));
 
-			setTimeout(() => {
-				dispatch(unMuteUser({chanid: chanid, userid: userid}));
-			}, timer);
+			if (timer) {
+				setTimeout(() => {
+					dispatch(unMuteUser({chanid: chanid, userid: userid}));
+				}, timer);
+			}
 
 		});
+		
 		socket.on("banUser", ({chanid, userid, timer}) => {
 			dispatch(banUser({chanid: chanid, userid: userid}));
 			dispatch(removeMember({chanid: chanid, userid: userid}));
 
-			setTimeout(() => {
-				dispatch(unBanUser({chanid: chanid, userid: userid}));
-			}, timer);
-
+			if (timer) {
+				setTimeout(() => {
+					dispatch(unBanUser({chanid: chanid, userid: userid}));
+				}, timer);
+			}
 		});
 
 		socket.on("invitePrivate", (inviteDto) => {

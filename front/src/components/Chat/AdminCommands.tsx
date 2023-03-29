@@ -59,18 +59,10 @@ export function MuteUser(props: { chanid: any, userid: any, trigger: boolean, se
 	const [errorMessage, setError] = useState<string>("");
 
 	const handleMute = () => {
-		let timer = parseInt(timeout);
-		console.log("timer: ", timer);
-		if (!isNaN(timer)) {
-			if (timeout === "")
+		if (timeout === "")
 			socket.emit('MuteUser', { chanid: props.chanid, userid: props.userid });
-			else
+		else
 			socket.emit('MuteUser', { chanid: props.chanid, userid: props.userid, timeout: parseInt(timeout) * 1000 });
-		}
-		else {
-			setFailed(true);
-			setError("Please input a number");
-		}
 	}
 
 	useEffect(() => {
