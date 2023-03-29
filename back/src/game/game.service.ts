@@ -3,6 +3,7 @@ import { Server } from 'socket.io';
 import { UserService } from 'src/user/user.service';
 import { Ball, GameState, Move, Player, Vec2 } from './game.interfaces';
 import { CreateResultDto } from 'src/results/dto/create-result.dto';
+import { Status } from 'src/user/entities/user.entity';
 
 @Injectable()
 export class GameService {
@@ -95,8 +96,8 @@ export class GameService {
 			this.gameRoom.push(new Game(this, server, player1, player2, true, 3, socket1, socket2, this.gameRoom.length + 1));
 			server.to(player1.socket).emit('RoomStart', this.gameRoom.length, player1);
 			server.to(player2.socket).emit('RoomStart', this.gameRoom.length, player2);
-			this.userService.SetStatus(socket1.handshake.auth.user, 'InGame');
-			this.userService.SetStatus(socket2.handshake.auth.user, 'InGame');
+			this.userService.SetStatus(socket1.handshake.auth.user, Status.Ingame);
+			this.userService.SetStatus(socket2.handshake.auth.user, Status.Ingame);
 			server.emit('UpdateSomeone', { idChange: socket1.handshake.auth.user.id, idChange2: socket2.handshake.auth.user.id });
 
 		}
@@ -149,8 +150,8 @@ export class GameService {
 		else if (scoreMax > 10)
 			scoreMax = 10;
 		this.gameRoom.push(new Game(this, server, player1, player2, extra, scoreMax, socket1, socket2, this.gameRoom.length + 1));
-		this.userService.SetStatus(socket1.handshake.auth.user, 'InGame');
-		this.userService.SetStatus(socket2.handshake.auth.user, 'InGame');
+		this.userService.SetStatus(socket1.handshake.auth.user, Status.Ingame);
+		this.userService.SetStatus(socket2.handshake.auth.user, Status.Ingame);
 		server.emit('UpdateSomeone', { idChange: socket1.handshake.auth.user.id, idChange2: socket2.handshake.auth.user.id });
 		server.to(player1.socket).emit('RoomStart', this.gameRoom.length, player1);
 		server.to(player2.socket).emit('RoomStart', this.gameRoom.length, player2);
@@ -216,8 +217,8 @@ export class GameService {
         let roomId = 0;
         while (roomId < this.gameRoom.length && this.gameRoom.length > 0) {
             if (this.gameRoom[roomId].gameState.player1.socket === client || this.gameRoom[roomId].gameState.player2.socket === client) {
-                this.userService.SetStatus(this.gameRoom[roomId].socket1.handshake.auth.user, 'Online');  // ACHANGER PAR USERLIST BYY ADAM 
-                this.userService.SetStatus(this.gameRoom[roomId].socket2.handshake.auth.user, 'Online');  // ACHANGER PAR USERLIST BYY ADAM 
+                this.userService.SetStatus(this.gameRoom[roomId].socket1.handshake.auth.user, Status.Online);  // ACHANGER PAR USERLIST BYY ADAM 
+                this.userService.SetStatus(this.gameRoom[roomId].socket2.handshake.auth.user, Status.Online);  // ACHANGER PAR USERLIST BYY ADAM 
                 server.emit('UpdateSomeone', { idChange: this.gameRoom[roomId].socket1.handshake.auth.user.id, idChange2: this.gameRoom[roomId].socket2.handshake.auth.user.id });
                 this.gameRoom.splice(roomId, 1);
                 return;
@@ -409,10 +410,8 @@ class Game {
 		state.scale = state.client_area.x / state.area.x;
 
 		state.player1.input = { ...this.move1 };
-		// state.player1.input = JSON.parse(JSON.stringify(move1));
 		
 		state.player2.input = { ...this.move2 };
-		// state.player2.input = JSON.parse(JSON.stringify(move2));
 		if (state.player1.score === state.scoreMax || state.player2.score === state.scoreMax) {
 			state.gameFinished = true;
 		}
@@ -451,22 +450,22 @@ class Game {
 	                        player.input.right === false &&
 	                        ball.previous.y > player.paddle.position.y)
 	                ){
-						ball.speed.y = ball.speed.y * (Math.random() * (2 - 1.5) + 1.5);
+						ball.speed.y = ball.speed.y * 1.7;
 						if (ball.previous.x + (ball.position.x - ball.previous.x) / 2 < player.paddle.position.x + paddleDimensions.x / 2)
-							ball.speed.x -= (Math.random() * (4 - 2) + 2);
+							ball.speed.x -= 3;
 						else
-							ball.speed.x += (Math.random() * (4 - 2) + 2);
+							ball.speed.x += 3;
 					}
 	                else if (
 	                    player.input.left === false &&
 	                    player.input.right === false &&
 	                    ball.previous.y < player.paddle.position.y
 	                ){
-						ball.speed.y = ball.speed.y * (Math.random() * (1 - 0.8) + 0.8);
+						ball.speed.y = ball.speed.y * 0.9;
 						if (ball.previous.x + (ball.position.x - ball.previous.x) / 2 < player.paddle.position.x + paddleDimensions.x / 2)
-							ball.speed.x -= (Math.random() * (4 - 2) + 2);
+							ball.speed.x -= 3;
 						else
-							ball.speed.x += (Math.random() * (4 - 2) + 2);
+							ball.speed.x += 3;
 					}
 	            } else {
 	                if (
@@ -477,22 +476,22 @@ class Game {
 	                        player.input.right === false &&
 	                        ball.previous.y < player.paddle.position.y)
 	                ){
-						ball.speed.y = ball.speed.y * (Math.random() * (2 - 1.5) + 1.5);
+						ball.speed.y = ball.speed.y * 1.7;
 						if (ball.previous.x + (ball.position.x - ball.previous.x) / 2 < player.paddle.position.x + paddleDimensions.x / 2)
-							ball.speed.x -= (Math.random() * (4 - 2) + 2);
+							ball.speed.x -= 3;
 						else
-							ball.speed.x += (Math.random() * (4 - 2) + 2);
+							ball.speed.x += 3;
 					}
 	                else if (
-	                    player.input.left &&
-	                    player.input.right &&
+	                    player.input.left == false &&
+	                    player.input.right == false &&
 	                    ball.previous.y > player.paddle.position.y
 	                ){
-						ball.speed.y = ball.speed.y * (Math.random() * (1 - 0.8) + 0.8);
+						ball.speed.y = ball.speed.y * 0.9;
 						if (ball.previous.x + (ball.position.x - ball.previous.x) / 2 < player.paddle.position.x + paddleDimensions.x / 2)
-							ball.speed.x -= (Math.random() * (4 - 2) + 2);
+							ball.speed.x -= 3;
 						else
-							ball.speed.x += (Math.random() * (4 - 2) + 2);
+							ball.speed.x += 3;
 					}
 	            }
 	            if (

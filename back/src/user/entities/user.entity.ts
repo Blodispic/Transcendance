@@ -4,6 +4,13 @@ import { Channel } from 'src/chat/channel/entities/channel.entity';
 import { FriendRequest } from './friend-request.entity';
 import { Exclude } from 'class-transformer';
 
+export enum Status {
+  Offline = "Offline",
+  Online = "Online",
+  Ingame = "Ingame",
+}
+
+
 @Entity('user')
 export class User {
 
@@ -13,8 +20,8 @@ export class User {
   @Column({ default: false })
   twoFaEnable: boolean;
 
-  @Column({ default: 'Offline' })
-  status: string;
+  @Column({ type: 'enum', enum: Status, default: Status.Offline })
+  status: Status;
 
   @Column({ unique: true, nullable: true, length: 16 })
   username: string;

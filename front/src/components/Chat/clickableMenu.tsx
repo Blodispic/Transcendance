@@ -22,6 +22,10 @@ export default function ClickableMenu(props: { user: IUser, chan: IChannel, page
         socket.emit('GiveAdmin', { chanid: props.chan.id, userid: props.user.id });
     }
 
+    const handleUnmute = () => {
+        // socket.emit('Unmute', { chanid: props.chan.id, userid: props.user.id });
+    }
+
     return (
         <div className="dropdown-container">
             <div className="dropdown clickable-menu hover-style">
@@ -67,6 +71,14 @@ export default function ClickableMenu(props: { user: IUser, chan: IChannel, page
                                                     </span>
                                                 </li>
                                             }
+                                            {
+                                                props.chan.muted?.find(obj => obj.id === props.user.id) !== undefined &&
+                                                <li>
+                                                    <span onClick={() => handleUnmute()}>
+                                                        Unmute
+                                                    </span>
+                                                </li>
+                                            }
 
                                             {
                                                 props.chan.banned?.find(obj => obj.id === props.user.id) === undefined &&
@@ -78,6 +90,7 @@ export default function ClickableMenu(props: { user: IUser, chan: IChannel, page
                                                 </li>
                                             }
 
+
                                             <li>
                                                 <span onClick={() => KickUser(props.chan.id, user.id)}>
                                                     Kick
@@ -86,7 +99,6 @@ export default function ClickableMenu(props: { user: IUser, chan: IChannel, page
                                         </>
                                     }
                                 </>
-
                             }
                         </>
                     }

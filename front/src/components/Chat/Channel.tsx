@@ -8,7 +8,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { socket } from "../../App";
 import { IChannel } from "../../interface/Channel";
 import { IUser } from "../../interface/User";
-import { addAdmin, banUser, muteUser, setChannels, unBanUser, unMuteUser } from "../../redux/chat";
+import { addAdmin, banUser, muteUser, removeMember, setChannels, unBanUser, unMuteUser } from "../../redux/chat";
 import { useAppDispatch, useAppSelector } from "../../redux/Hook";
 import { ChannelHeader, ChannelMessages } from "./ChannelMessages";
 import ClickableMenu from "./clickableMenu";
@@ -171,6 +171,7 @@ export function Channels(props: { page: (page: page) => void }) {
 		});
 		socket.on("banUser", ({chanid, userid, timer}) => {
 			dispatch(banUser({chanid: chanid, userid: userid}));
+			dispatch(removeMember({chanid: chanid, userid: userid}));
 
 			setTimeout(() => {
 				dispatch(unBanUser({chanid: chanid, userid: userid}));
