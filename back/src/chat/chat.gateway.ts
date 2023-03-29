@@ -250,23 +250,21 @@ async handleunBanUser(@ConnectedSocket() client: Socket, @MessageBody() banUserD
     client.emit('unbanUserFailed', 'No such Channel or User');
     throw new BadRequestException('No such Channel or User');
   }
-  if (await this.channelService.isUserMuted(banUserDto)) {
+  if (!(await this.channelService.isUserBanned(banUserDto))) {
     client.emit('unbanUserFailed', 'User is not banned');
     throw new BadRequestException('User is not banned');
   }
-  if (!(await this.channelService.isUserAdmin({chanid: channel.id, userid: user.id}))) {
+  if (channel.owner?.id != user.id && !(await this.channelService.isUserAdmin({chanid: channel.id, userid: user.id}))) {
     client.emit('unbanUserFailed', 'You are not Admin on this channel');
     throw new BadRequestException('You are not Admin on this Channel');
   }
   await this.channelService.unbanUser(banUserDto);
-
-  this.findSocketFromUser(userBan)?.leave('chan' + channel.id);
   
   const socketId = this.findSocketFromUser(userBan);
   if (socketId)
     this.server.to(socketId.id).emit('unban', {chanid: channel.id, userid: userBan.id, timer: banUserDto.timeout});
   client.emit('unbanOK', user.id, channel.id);
-  this.server.to('chan' + channel.id).emit('unban', {chanid: channel.id, userid: userBan.id, timer: banUserDto.timeout});
+  // this.server.to('chan' + channel.id).emit('unban', {chanid: channel.id, userid: userBan.id, timer: banUserDto.timeout});
 }
 
 @SubscribeMessage('MuteUser')
