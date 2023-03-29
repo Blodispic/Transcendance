@@ -241,7 +241,7 @@ async handleBanUser(@ConnectedSocket() client: Socket, @MessageBody() banUserDto
   this.server.to('chan' + channel.id).emit('banUser', {chanid: channel.id, userid: userBan.id, timer: banUserDto.timeout});
 }
 
-@SubscribeMessage('unBanUser')
+@SubscribeMessage('unBan')
 async handleunBanUser(@ConnectedSocket() client: Socket, @MessageBody() banUserDto: BanUserDto) {
   const channel = await this.channelService.getById(banUserDto.chanid);
   const user = await this.userService.getById(client.handshake.auth.user.id);
