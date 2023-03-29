@@ -70,6 +70,30 @@ export function ChannelHeader() {
 	) : <></>;
 }
 
+function MessageBubble(props: { message: IMessage, blocked: boolean }) {
+
+	return (props.blocked) ? (
+		< div className="__wrap message_block">
+			<div className="message-info "  >
+				<img className="user-avatar" src={`${process.env.REACT_APP_BACK}user/${props.message.sender?.id}/avatar`} alt="" />
+				<p>{props.message.sender?.username}</p>
+				<p className="timestamp">{props.message.sendtime}</p>
+			</div>
+			<p className="text"> message from blocked user </p>
+		</div>
+	) : (
+		<div className="__wrap">
+			<div className="message-info">
+				<img className="user-avatar" src={`${process.env.REACT_APP_BACK}user/${props.message.sender?.id}/avatar`} alt="" />
+				<p>{props.message.sender?.username}</p>
+				<p className="timestamp">{props.message.sendtime}</p>
+			</div>
+			{props.message.message}
+		</div>
+	);
+}
+
+
 export function ChannelMessages() {
 	const currentUser = useAppSelector(state => state.user);
 	const [newInput, setNewInput] = useState<string>("");
@@ -77,8 +101,8 @@ export function ChannelMessages() {
 	const [chanId, setChanId] = useState<number | undefined>(undefined);
 	const currentChan: IChannel | undefined = useAppSelector(state =>
 		state.chat.channels.find(chan => chan.id === chanId));
-	const messages: IMessage[] = useAppSelector(state => state.chat.chanMs.filter(obj => obj.chanid === chanId));
 	const dispatch = useAppDispatch();
+	const messages: IMessage[] = useAppSelector(state => state.chat.chanMs.filter(obj => obj.chanid === chanId));
 
 	useEffect(() => {
 		if (id !== undefined) {
@@ -116,38 +140,14 @@ export function ChannelMessages() {
 								<div key={index}>
 									{(message.chanid === currentChan.id && message.sender !== undefined) &&
 										<>
-											{
-												currentUser.user?.blocked?.find(user => user.id === message.sender?.id) === undefined &&
-												<div className="__wrap">
-													<div className="message-info">
-														<img className="user-avatar" src={`${process.env.REACT_APP_BACK}user/${message.sender?.id}/avatar`} alt ="" />
-														<p>{message.sender?.username}</p>
-														<p className="timestamp">{message.sendtime}</p>
-
-													</div>
-													{message.message}
-												</div>
-											}
-											{
-												currentUser.user?.blocked?.find(user => user.id === message.sender?.id) !== undefined &&
-												< div className="__wrap message_block">
-													<div className="message-info "  >
-														<img className="user-avatar" src={`${process.env.REACT_APP_BACK}user/${message.sender?.id}/avatar`} alt="" />
-														<p>{message.sender?.username}</p>
-														<p className="timestamp">{message.sendtime}</p>
-													</div>
-													<p className="text">
-														message from blocked user
-													</p>
-												</div>
-											}
+											{currentUser.user?.blocked?.find(user => user.id === message.sender?.id) === undefined &&
+												<MessageBubble message={message} blocked={false} />}
+											{currentUser.user?.blocked?.find(user => user.id === message.sender?.id) !== undefined &&
+												<MessageBubble message={message} blocked={true} />}
 										</>
 									}
 									{(message.chanid === currentChan.id && message.sender === undefined) &&
-										<div className="channel-announce">
-											{message.message}
-										</div>
-									}
+										<div className="channel-announce"> {message.message} </div> }
 								</div>
 							))}
 						</div>
@@ -160,6 +160,5 @@ export function ChannelMessages() {
 				</>
 			}
 		</>
-
 	) : <></>;
 }
