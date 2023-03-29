@@ -68,7 +68,6 @@ export default function Profile() {
         const [updateStatus, setUpdateStatus] = useState(false);
 
         const fetchid = async () => {
-                console.log("ca reload ducoup ")
                 await fetch(`${process.env.REACT_APP_BACK}user/id/${id}`, {
                         method: 'GET',
                         headers: {
@@ -92,7 +91,6 @@ export default function Profile() {
                 setPages(page.PAGE_1);
                 // if (myUser.user.user!.friends)
                 socket.on('UpdateSomeone', () => {
-                        console.log("ca passe pas ?");
                         setUpdateStatus(!updateStatus);
                         // fetchid();
                 })

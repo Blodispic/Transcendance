@@ -39,7 +39,7 @@ export class UserController {
     return await plainToClass(User, this.userService.getByUsername(username));
   }
 
-  // Retrieves a user by their ID
+  // Retrieves a user by their ID 
   @Get('id/:id')
   @UseGuards(JwtGuard)
   async findOne(@Param('id', ParseIntPipe) id: number) {
@@ -48,8 +48,8 @@ export class UserController {
 
   // Retrieves a user by their access token
   @Post('access_token')
-  async GetbyAccessToken(@Body() token: any) {
-    return await plainToClass(User, this.userService.GetByAccessToken(token));
+  async GetbyAccessToken(@Body() token: {token: string} ) {
+    return await plainToClass(User, this.userService.GetByAccessToken(token.token));
   }
 
   // Enables two-factor authentication for a specific user
@@ -85,7 +85,6 @@ export class UserController {
   @Get('friends')
   @UseGuards(JwtGuard)
   GetFriends(@GetUser() user: User) {
-    console.log('User = ', user);
     return this.userService.GetFriends(user.id);
   }
 
@@ -136,10 +135,14 @@ export class UserController {
         destination: './storage/images/',
         filename: editFileName,
       }),
+      limits: {
+        fileSize: 10 * 1024 * 1024, // 10 MB in bytes
+      },
       fileFilter: imageFilter,
     }),
   )
-  async setAvatar(@GetUser() user: User, @UploadedFile() file: any, @Body('username') username: string) {
+  
+  async setAvatar(@GetUser() user: User, @UploadedFile() file: Express.Multer.File, @Body('username') username: string) {
     await this.userService.setAvatar(user, username, file);
     return { message: 'Avatar set successfully' };
   }

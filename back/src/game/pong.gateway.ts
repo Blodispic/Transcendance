@@ -65,7 +65,7 @@ export class PongGateway implements OnGatewayDisconnect {
 		}
 	}
 
-	handleDisconnect(client: any) {
+	handleDisconnect(client: Socket) {
 		this.gameService.playerDisconnect(client.id);
 		this.gameService.removeFromWaitingRoom(client.id);
 	}
@@ -176,7 +176,7 @@ export class PongGateway implements OnGatewayDisconnect {
 	}
 
 	@SubscribeMessage('acceptCustomGame')
-	async AcceptCustomGame(@MessageBody() payload: any, @ConnectedSocket() client: Socket) {
+	async AcceptCustomGame(@MessageBody() payload: { scoreMax: string; user1: User, user2: User, extra: boolean }, @ConnectedSocket() client: Socket) {
 
 		const user1 = await this.userService.getById(payload.user1.id);
 		const user2 = await this.userService.getById(payload.user2.id);
@@ -193,8 +193,8 @@ export class PongGateway implements OnGatewayDisconnect {
 		this.gameService.removeFromWaitingRoom(client.id);
 
 		console.log('Add ' + user1.username + ' and ' + user2.username + ' to custom game.');
-		let userSocket1: any = userList[0]; //By default both user are the first user of the list
-		let userSocket2: any = userList[0]; //By default both user are the first user of the list
+		let userSocket1: Socket = userList[0]; //By default both user are the first user of the list
+		let userSocket2: Socket = userList[0]; //By default both user are the first user of the list
 		let i = 0;
 		while (i < userList.length) {
 			if (userList[i].handshake.auth.user.id === user1.id) {
@@ -224,7 +224,7 @@ export class PongGateway implements OnGatewayDisconnect {
 	}
 
 	@SubscribeMessage('declineCustomGame')
-	DeclineCustomGame(@MessageBody() payload: any) {
+	DeclineCustomGame(@MessageBody() payload: { user1: User, user2: User }) {
 		const user1: User = payload.user1;
 		const user2: User = payload.user2;
 
@@ -233,7 +233,7 @@ export class PongGateway implements OnGatewayDisconnect {
 			this.removeInvite(user1.id);
 		if (user2.id)
 			this.removeInvite(user2.id);
-		let socket : any = this.findSocketFromUser(user1);
+		let socket = this.findSocketFromUser(user1);
 		if (socket)
 			this.server.to(socket.id).emit('GameDeclined', user2.username);
 		socket = this.findSocketFromUser(user2);
@@ -248,18 +248,18 @@ export class PongGateway implements OnGatewayDisconnect {
 	}
 
 	@SubscribeMessage('PlayerLeft')
-	HandlePlayerLeft(@MessageBody() input: Move, @ConnectedSocket() client: any) {
+	HandlePlayerLeft(@MessageBody() input: Move, @ConnectedSocket() client: Socket) {
 		this.gameService.playerDisconnect(client.id);
 	}
 
 	@SubscribeMessage('Move1')
-	HandleMove1(@MessageBody() payload: any, @ConnectedSocket() client: Socket) {
+	HandleMove1(@MessageBody() payload: { input: { left: boolean, right: boolean }, roomId: number }, @ConnectedSocket() client: Socket) {
 		const input : Move = {left: payload.input.left, right: payload.input.right};	
 		this.gameService.updateMove1(input, client.id, payload.roomId);
 	}
 
 	@SubscribeMessage('Move2')
-	HandleMove2(@MessageBody() payload: any, @ConnectedSocket() client: Socket) {
+	HandleMove2(@MessageBody() payload: { input: { left: boolean, right: boolean }, roomId: number }, @ConnectedSocket() client: Socket) {
 		const input : Move = {left: payload.input.left, right: payload.input.right};
 		this.gameService.updateMove2(input, client.id, payload.roomId);
 	}

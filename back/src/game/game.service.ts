@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { Server } from 'socket.io';
+import { Server, Socket } from 'socket.io';
 import { UserService } from 'src/user/user.service';
 import { Ball, GameState, Move, Player, Vec2 } from './game.interfaces';
 import { CreateResultDto } from 'src/results/dto/create-result.dto';
@@ -24,7 +24,9 @@ export class GameService {
 		return false;
 	}
 
-	async addToWaitingRoom(client: any) {
+	async addToWaitingRoom(client: Socket) {
+		console.log(this.waitingRoom);
+		console.log(typeof this.waitingRoom);
 		let i  = 0;
 		while (i < this.waitingRoom.length)
 		{
@@ -36,7 +38,7 @@ export class GameService {
 		return 0;
 	}
 
-	removeFromWaitingRoom(client: any)
+	removeFromWaitingRoom(client: string)
 	{
 		let i  = 0;
 		while (i < this.waitingRoom.length)
@@ -69,7 +71,7 @@ export class GameService {
 				name: 'Player1',
 				score: 0,
 				side: 0,
-				socket: socket1.id,
+				socket: socket1?.id,
 				id: 0,
 			};
 			const player2: Player = {
@@ -105,7 +107,7 @@ export class GameService {
 			return ('Waiting for more Players...');
 	}
 
-	startCustomGame(server: Server, userSocket1: any, userSocket2: any, extra: boolean, scoreMax: number) {
+	startCustomGame(server: Server, userSocket1: Socket, userSocket2: Socket, extra: boolean, scoreMax: number) {
 		const socket1 = userSocket1;
 		const socket2 = userSocket2;
 
@@ -286,14 +288,14 @@ class Game {
 	server: Server;
 	public gameState: GameState;
 	gameService: GameService;
-	socket1: any;
-	socket2: any;
+	socket1: Socket;
+	socket2: Socket;
 	watchList: string[];
 
 	move1: Move = JSON.parse(JSON.stringify(inputdefault));
 	move2: Move = JSON.parse(JSON.stringify(inputdefault));
 
-	constructor(gameService: GameService, server: Server, user1: Player, user2: Player, extra: boolean, scoreMax: number, socket1: any, socket2: any, roomId: number) {
+	constructor(gameService: GameService, server: Server, user1: Player, user2: Player, extra: boolean, scoreMax: number, socket1: Socket, socket2: Socket, roomId: number) {
 		this.gameService = gameService;
 		this.server = server;
 		// this.gamestateInitializer();
@@ -391,13 +393,13 @@ class Game {
 	async finishGame() {
 		this.gameState.gameFinished = true;
 		if (this.gameState.player1.score === this.gameState.scoreMax) {
-			const result: any = { winner: this.gameState.player1.name, winnerId: this.gameState.player1.id, loser: this.gameState.player2.name, loserId: this.gameState.player2.id, winner_score: this.gameState.player1.score.toString(), loser_score: this.gameState.player2.score.toString() };
+			const result: CreateResultDto = { winnerId: this.gameState.player1.id, loserId: this.gameState.player2.id, winner_score: this.gameState.player1.score.toString(), loser_score: this.gameState.player2.score.toString() };
 			await this.gameService.save(result);
 			this.server.to(this.gameState.player1.socket).emit('GameEnd', result);
 			this.server.to(this.gameState.player2.socket).emit('GameEnd', result);
 		}
 		else {
-			const result: any = { winner: this.gameState.player2.name, winnerId: this.gameState.player2.id, loser: this.gameState.player1.name, loserId: this.gameState.player1.id, winner_score: this.gameState.player2.score.toString(), loser_score: this.gameState.player1.score.toString() };
+			const result: CreateResultDto = { winnerId: this.gameState.player2.id, loserId: this.gameState.player1.id, winner_score: this.gameState.player2.score.toString(), loser_score: this.gameState.player1.score.toString() };
 			await this.gameService.save(result);
 			this.server.to(this.gameState.player1.socket).emit('GameEnd', result);
 			this.server.to(this.gameState.player2.socket).emit('GameEnd', result);
@@ -408,10 +410,8 @@ class Game {
 		state.scale = state.client_area.x / state.area.x;
 
 		state.player1.input = { ...this.move1 };
-		// state.player1.input = JSON.parse(JSON.stringify(move1));
 		
 		state.player2.input = { ...this.move2 };
-		// state.player2.input = JSON.parse(JSON.stringify(move2));
 		if (state.player1.score === state.scoreMax || state.player2.score === state.scoreMax) {
 			state.gameFinished = true;
 		}
@@ -450,22 +450,22 @@ class Game {
 	                        player.input.right === false &&
 	                        ball.previous.y > player.paddle.position.y)
 	                ){
-						ball.speed.y = ball.speed.y * (Math.random() * (2 - 1.5) + 1.5);
+						ball.speed.y = ball.speed.y * 1.7;
 						if (ball.previous.x + (ball.position.x - ball.previous.x) / 2 < player.paddle.position.x + paddleDimensions.x / 2)
-							ball.speed.x -= (Math.random() * (4 - 2) + 2);
+							ball.speed.x -= 3;
 						else
-							ball.speed.x += (Math.random() * (4 - 2) + 2);
+							ball.speed.x += 3;
 					}
 	                else if (
 	                    player.input.left === false &&
 	                    player.input.right === false &&
 	                    ball.previous.y < player.paddle.position.y
 	                ){
-						ball.speed.y = ball.speed.y * (Math.random() * (1 - 0.8) + 0.8);
+						ball.speed.y = ball.speed.y * 0.9;
 						if (ball.previous.x + (ball.position.x - ball.previous.x) / 2 < player.paddle.position.x + paddleDimensions.x / 2)
-							ball.speed.x -= (Math.random() * (4 - 2) + 2);
+							ball.speed.x -= 3;
 						else
-							ball.speed.x += (Math.random() * (4 - 2) + 2);
+							ball.speed.x += 3;
 					}
 	            } else {
 	                if (
@@ -476,24 +476,25 @@ class Game {
 	                        player.input.right === false &&
 	                        ball.previous.y < player.paddle.position.y)
 	                ){
-						ball.speed.y = ball.speed.y * (Math.random() * (2 - 1.5) + 1.5);
+						ball.speed.y = ball.speed.y * 1.7;
 						if (ball.previous.x + (ball.position.x - ball.previous.x) / 2 < player.paddle.position.x + paddleDimensions.x / 2)
-							ball.speed.x -= (Math.random() * (4 - 2) + 2);
+							ball.speed.x -= 3;
 						else
-							ball.speed.x += (Math.random() * (4 - 2) + 2);
+							ball.speed.x += 3;
 					}
 	                else if (
-	                    player.input.left &&
-	                    player.input.right &&
+	                    player.input.left == false &&
+	                    player.input.right == false &&
 	                    ball.previous.y > player.paddle.position.y
 	                ){
-						ball.speed.y = ball.speed.y * (Math.random() * (1 - 0.8) + 0.8);
+						ball.speed.y = ball.speed.y * 0.9;
 						if (ball.previous.x + (ball.position.x - ball.previous.x) / 2 < player.paddle.position.x + paddleDimensions.x / 2)
-							ball.speed.x -= (Math.random() * (4 - 2) + 2);
+							ball.speed.x -= 3;
 						else
-							ball.speed.x += (Math.random() * (4 - 2) + 2);
+							ball.speed.x += 3;
 					}
 	            }
+				
 	            if (
 	                (ball.previous.y < player.paddle.position.y && ball.speed.y > 0) ||
 	                (ball.previous.y > player.paddle.position.y && ball.speed.y < 0)
