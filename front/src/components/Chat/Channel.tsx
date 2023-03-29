@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { useEffect, useState } from "react";
-import { AiOutlineStop } from "react-icons/ai";
 import { BsFillKeyFill, BsFillPersonFill } from "react-icons/bs";
 import { FaCrown, FaVolumeMute } from "react-icons/fa";
 import { HiLockClosed } from "react-icons/hi2";
