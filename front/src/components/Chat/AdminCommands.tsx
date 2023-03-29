@@ -233,7 +233,7 @@ export function ConfigureChannel(props: { trigger: boolean, setTrigger: (value: 
 	}
 
 	const handleUnban = () => {
-		// socket.emit('unban');
+		// socket.emit('unban'); //to be added soon
 	}
 
 	return (props.trigger) ? (
