@@ -8,18 +8,12 @@ import { User } from './entities/user.entity';
 import { UserService } from './user.service';
 import { authenticator } from 'otplib';
 import { JwtGuard } from 'src/Oauth/jwt-auth.guard';
-import { Server } from 'socket.io';
-import { WebSocketServer } from '@nestjs/websockets';
 import { plainToClass } from 'class-transformer';
 import { GetUser } from './getUser';
 import { UpdateUserDto } from './dto/update-user.dto';
 
 @Controller('user')
 export class UserController {
-  // WebSocket server instance
-  @WebSocketServer()
-  server: Server;
-
   constructor(private readonly userService: UserService) { }
 
   // Creates a new user
@@ -95,8 +89,8 @@ export class UserController {
   // Retrieves all match requests for a specific user
   @Post('matches')
   @UseGuards(JwtGuard)
-  GetMatches(@GetUser() user: User) {
-    return this.userService.GetMatchRequest(user.id);
+  async GetMatches(@Body('userId') userId: number) {
+    return await this.userService.GetMatchRequest(userId);
   }
 
   // Accepts a friend request
@@ -154,7 +148,7 @@ export class UserController {
   @Patch(':id')
   @UseGuards(JwtGuard)
   async update(@GetUser() user: User, @Body() updateUserDto: UpdateUserDto) {
-    return plainToClass(User, await this.userService.update(user.id, updateUserDto));
+    return plainToClass(User, await this.userService.update(user, updateUserDto));
   }
 
   // Sends a friend request to a user
@@ -188,7 +182,7 @@ export class UserController {
   @UseGuards(JwtGuard)
   @Delete('unblock/:id')
   async RmBlock(@Body('blockedId') blockedId: number, @GetUser() user: User) {
-    return await this.userService.RmBlock(user.id, blockedId);
+    return await this.userService.RmBlock(user, blockedId);
   }
 
   // Checks the relationship between two users
