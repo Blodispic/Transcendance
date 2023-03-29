@@ -59,12 +59,19 @@ export function MuteUser(props: { chanid: any, userid: any, trigger: boolean, se
 	const [errorMessage, setError] = useState<string>("");
 
 	const handleMute = () => {
-		if (timeout === "")
+		let timer = parseInt(timeout);
+		console.log("timer: ", timer);
+		if (!isNaN(timer)) {
+			if (timeout === "")
 			socket.emit('MuteUser', { chanid: props.chanid, userid: props.userid });
-		else
+			else
 			socket.emit('MuteUser', { chanid: props.chanid, userid: props.userid, timeout: parseInt(timeout) * 1000 });
+		}
+		else {
+			setFailed(true);
+			setError("Please input a number");
+		}
 	}
-
 
 	useEffect(() => {
 		socket.on("muteUserFailed", (errorMessage) => {
@@ -82,17 +89,17 @@ export function MuteUser(props: { chanid: any, userid: any, trigger: boolean, se
 	})
 
 	return (props.trigger) ? (
-		<div className="chat-form-popup" onClick={() => (props.setTrigger(false))}>
+		<div className="chat-form-popup" onClick={() => {props.setTrigger(false); setFailed(false); setError("")}}>
 			<div className="clickable-pop-up-inner" onClick={e => e.stopPropagation()}>
 				<HiOutlineXMark className="close-icon" onClick={() => (props.setTrigger(false))} />
 				<br />
 				<h3>Mute User</h3>
 				<h4>Set time (optional)</h4>
-				<input type="number" id="clickable-input" min="0" onChange={e => { setTimeout(e.target.value) }} />seconds
+				<input type="number" id="clickable-input" min="0" onChange={e => { setTimeout(e.target.value); setFailed(false); setError("")}} />seconds
 				<br /><br />
 				{
 					failed === true &&
-					<span className="channel-error"> {errorMessage}</span>
+					<span className="channel-error"> {errorMessage} <br /></span>
 				}
 				<button onClick={_ => handleMute()}>Mute User</button>
 			</div>

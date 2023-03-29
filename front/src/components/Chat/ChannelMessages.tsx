@@ -22,7 +22,6 @@ export function ChannelHeader() {
 
 
 	useEffect(() => {
-	console.log("ca push pas");
 		if (id !== undefined) {
 			setChanId(parseInt(id));
 		}
@@ -31,30 +30,17 @@ export function ChannelHeader() {
 	return (currentChan) ? (
 		<div className="body-header" >
 			{currentChan.name}
-			{
-				currentChan.chanType === 1 &&
-				<HiLockClosed className='channel-icon' />
-			}
-			{
-				currentChan.chanType === 2 &&
-				<BsKeyFill className='channel-icon' />
-			}
-			{
-				currentChan.users?.find(obj => obj.id === currentUser?.id) === undefined &&
-				<JoinChannel channel={currentChan} />
-			}
-			{
-				currentChan.users?.find(obj => obj.id === currentUser?.id) &&
-				<LeaveChannel channel={currentChan} />
-			}
-			{
-				currentChan.id !== undefined &&
+			{currentChan.chanType === 1 && <HiLockClosed className='channel-icon' />}
+			{currentChan.chanType === 2 && <BsKeyFill className='channel-icon' />}
+			{currentChan.users?.find(obj => obj.id === currentUser?.id) === undefined &&
+				<JoinChannel channel={currentChan} />}
+			{currentChan.users?.find(obj => obj.id === currentUser?.id) &&
+				<LeaveChannel channel={currentChan} />}
+			{currentChan.id !== undefined &&
 				<>
-					{
-						currentChan.chanType !== 1 &&
+					{currentChan.chanType !== 1 &&
 						<>
-							{
-								currentChan.users?.find(obj => obj.id === currentUser?.id) &&
+							{ currentChan.users?.find(obj => obj.id === currentUser?.id) &&
 								<>
 									{currentChan.owner?.id === currentUser?.id &&
 										<>
@@ -65,11 +51,9 @@ export function ChannelHeader() {
 							}
 						</>
 					}
-					{
-						currentChan.chanType === 1 &&
+					{currentChan.chanType === 1 &&
 						<>
-							{
-								currentChan.users.find(obj => obj.id === currentUser?.id) &&
+							{ currentChan.users.find(obj => obj.id === currentUser?.id) &&
 								<>
 									{currentChan.admin.find(obj => obj.id === currentUser?.id) &&
 										<>
@@ -128,7 +112,6 @@ export function ChannelMessages() {
 				<>
 					<div className="chat-messages">
 						<div className="reverse">
-
 							{messages && messages.map((message, index) => (
 								<div key={index}>
 									{(message.chanid === currentChan.id && message.sender !== undefined) &&
@@ -158,7 +141,6 @@ export function ChannelMessages() {
 													</p>
 												</div>
 											}
-											
 										</>
 									}
 									{(message.chanid === currentChan.id && message.sender === undefined) &&
@@ -167,10 +149,7 @@ export function ChannelMessages() {
 										</div>
 									}
 								</div>
-
-							))
-							}
-
+							))}
 						</div>
 					</div>
 

@@ -22,9 +22,6 @@ export default function InviteGame(props: { infoGame: any, setTrigger: (value: b
         socket.emit("declineCustomGame", props.infoGame);
     }
 
-    // console.log(props.infoGame.user1.id);
-    // console.log(props.infoGame.user2.id);
-
     return (
         <div className='chat-form-popup'>
             <div className='chat-form-inner'>
