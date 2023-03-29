@@ -16,10 +16,6 @@ import { UpdateUserDto } from './dto/update-user.dto';
 
 @Controller('user')
 export class UserController {
-  // WebSocket server instance
-  @WebSocketServer()
-  server: Server;
-
   constructor(private readonly userService: UserService) { }
 
   // Creates a new user
@@ -151,7 +147,7 @@ export class UserController {
   @Patch(':id')
   @UseGuards(JwtGuard)
   async update(@GetUser() user: User, @Body() updateUserDto: UpdateUserDto) {
-    return plainToClass(User, await this.userService.update(user.id, updateUserDto));
+    return plainToClass(User, await this.userService.update(user, updateUserDto));
   }
 
   // Sends a friend request to a user
@@ -185,7 +181,7 @@ export class UserController {
   @UseGuards(JwtGuard)
   @Delete('unblock/:id')
   async RmBlock(@Body('blockedId') blockedId: number, @GetUser() user: User) {
-    return await this.userService.RmBlock(user.id, blockedId);
+    return await this.userService.RmBlock(user, blockedId);
   }
 
   // Checks the relationship between two users

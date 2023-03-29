@@ -10,6 +10,7 @@ import { History } from './History';
 import TwoFa from './setTwoFa';
 import { socket } from '../../App';
 import Sign from '../connection/Sign';
+import { BiLoaderCircle } from 'react-icons/bi';
 
 
 
@@ -114,16 +115,16 @@ export default function Profile() {
         }, [Onglets, currentUser?.id,  myUser.user.user?.username, id])
 
 
-        if (currentUser === undefined) {
-                return (
-                        <div className='center'>
-                                <h1>USER DOESN&apos;T EXIST </h1>
+        // if (currentUser === undefined) {
+        //         return (
+        //                 <div className='center'>
+        //                         <h1>USER DOESN&apos;T EXIST </h1>
 
-                        </div>
-                );
-        }
+        //                 </div>
+        //         );
+        // }
 
-        return (
+        return (currentUser) ? (
                 <div className='all'>
                         {currentUser &&
                                 <Header currentUser={currentUser} setCurrentUser={setCurrentUser} />
@@ -149,7 +150,9 @@ export default function Profile() {
 
                         </div>
                 </div>
-        );
+        ): <>
+        {/* <BiLoata🤪derCircle className='load'/> */}
+        </>;
 
 
 }

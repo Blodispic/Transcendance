@@ -163,40 +163,22 @@ export class UserService {
       throw new NotFoundException('Username dont exist');
   }
 
-  async update(id: number, userUpdate: any) {
-    const user = await this.usersRepository.findOneBy({
-      id: id,
-    });
-    if (user) {
-      //Si vous voulez plus de chose a update, mettez le dans le body et faites un iff
-      if (userUpdate.username) {
-        const checkUsername = await this.usersRepository.findOneBy({
-          username: userUpdate.username,
-        });
-        if (checkUsername && checkUsername.id !== user.id) {
-          throw new NotFoundException('Username exists');
-        }
-        else
-          user.username = userUpdate.username;
+  async update(user: User, userUpdate: any) {
+    //Si vous voulez plus de chose a update, mettez le dans le body et faites un iff
+    if (userUpdate.username) {
+      const checkUsername = await this.usersRepository.findOneBy({
+        username: userUpdate.username,
+      });
+      if (checkUsername && checkUsername.id !== user.id) {
+        throw new NotFoundException('Username exists');
       }
-      if (userUpdate.twoFaEnable != undefined) {
-        user.twoFaEnable = userUpdate.twoFaEnable;
-      }
-
-      return await this.usersRepository.save(user);
+      else
+        user.username = userUpdate.username;
     }
-    else
-      throw new NotFoundException('User not found');
-  }
-
-  async remove(id: number) {
-    const user = await this.usersRepository.findOneBy({
-      id: id,
-    });
-    if (!user)
-      throw new NotFoundException('User not found');
-    this.usersRepository.delete(id);
-    return `This action removes a #${id} user`;
+    if (userUpdate.twoFaEnable != undefined) {
+      user.twoFaEnable = userUpdate.twoFaEnable;
+    }
+    return await this.usersRepository.save(user);
   }
 
   async setAvatar(user: User, username: string, file: any) {
@@ -531,15 +513,7 @@ export class UserService {
     return await this.usersRepository.save(user);
   }
 
-  async RmBlock(id: number, blockedid: number) {
-    const user = await this.usersRepository.findOne({
-      relations: {
-        blocked: true,
-      },
-      where: { id: id },
-    });
-    if (user === null)
-      throw new BadRequestException('No such User');
+  async RmBlock(user: User, blockedid: number) {
     const blocked = user?.blocked.find(elem => elem.id === blockedid)
     if (blocked === undefined)
       throw new BadRequestException('No such User already blocked');

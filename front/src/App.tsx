@@ -168,7 +168,7 @@ function App() {
       const data = await response.json();
       // check for error response
 
-      if (response.ok && data.username !== "") {
+      if (response.ok &&  data.username !== "" ) {
         dispatch(setUser(data))
         dispatch(setToken(token));
         dispatch(set_status(UserStatus.ONLINE));
@@ -176,8 +176,11 @@ function App() {
         // setCookie('Token', data.access_token, { path: '/' });
         // socket.emit("UpdateSomeone", { idChange: myUser.user?.id, idChange2: 0 })
       }
-      else {
+      else if (response.status !== 400) {
         cookies.remove('Token');
+      }
+      else {
+        swal('t\'as deja un tab frero', '',  "error");
       }
     })
   }

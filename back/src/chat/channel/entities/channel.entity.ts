@@ -17,7 +17,8 @@ export class Channel {
 	@Column({ unique:true })
 	name: string;
 
-	@Column('int', {default: 0})
+	
+	@Column({ type: 'enum', enum: ChanType, default: ChanType.Public })
 	chanType: ChanType;
 
 	@Column({ nullable: true, select: false})
