@@ -287,7 +287,7 @@ async handleInvite(@ConnectedSocket() client: Socket, @MessageBody() inviteDto: 
   this.inviteToChan(inviteDto.users, channel.id);
   client.emit('inviteOK');
 }
-
+  
 async inviteToChan(users: User[], chanid: number)
 {
   const channel = await this.channelService.getById(chanid)

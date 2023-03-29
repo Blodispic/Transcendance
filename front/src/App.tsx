@@ -76,7 +76,7 @@ function App() {
           }, 10000)
         })
 
-        socket.on("LoginValid", () => {
+        socket.on("LoginValid", () => { 
             swal("Login Successful", "You connected successfully!", "success");
             setTimeout(() => {
               if (swal && swal.close)
