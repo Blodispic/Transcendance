@@ -14,14 +14,14 @@
 // }
 
 .test {
-  border: none;
-  color: black;
-  text-align: center;
-  display: inline-block;
-  font-size: 16px;
-  text-decoration: none;
+    border: none;
+    color: black;
+    text-align: center;
+    display: inline-block;
+    font-size: 16px;
+    text-decoration: none;
 
-  a{
+    a {
         text-decoration: none;
     }
 }
@@ -31,37 +31,39 @@
     color: white;
 }
 
-.custom-popup{
-	z-index: 2;
+.custom-popup {
+    z-index: 2;
 
     position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100vh;
-        background-color: rgba(0, 0, 0, 0.5);
-    
-        display: flex;
-        justify-content: center;
-        align-items: center;
-    
-    }
-    .avatar-inpopup {
-	z-index: 2;
-display: inline-flex;
-        height: 50px;
-        padding: 10px 0;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.5);
 
-        .avatar {
-            height: 50px !important;
-            width: 50px !important;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 
-            &:hover {
-                background-color: rgba(0, 0, 0, 0.5) !important;
-            }
+}
 
+.avatar-inpopup {
+    z-index: 2;
+    display: inline-flex;
+    height: 50px;
+    padding: 10px 0;
+
+    .avatar {
+        height: 50px !important;
+        width: 50px !important;
+
+        &:hover {
+            background-color: rgba(0, 0, 0, 0.5) !important;
         }
+
     }
+}
+
 .custom-popup-inner {
     font-family: 'Fredoka One', cursive;
     border-radius: 5px;
@@ -82,9 +84,9 @@ display: inline-flex;
 }
 
 .close-icon {
-	float: right;
-	padding: 10px;
-	cursor: pointer;
+    float: right;
+    padding: 10px;
+    cursor: pointer;
     width: 20px;
 }
 
@@ -92,6 +94,7 @@ label {
     font-size: 20px;
     font-family: 'Fredoka One', cursive;
 }
+
 .plus-circle {
     font-size: 155%;
     padding: 0 0 0 5px;
@@ -105,24 +108,26 @@ label {
     overflow: hidden;
     margin-top: -60px !important;
     left: 65% !important;
-     
+
     a {
-		background-image: linear-gradient(to left,
-		var(--sub-color1) 50%,
-		white 50%,
-		white) !important;
-	}
+        background-image: linear-gradient(to left,
+                var(--sub-color1) 50%,
+                white 50%,
+                white) !important;
+    }
+
     ul {
-      &>li {
-        font-size: medium;
-      }
+        &>li {
+            font-size: medium;
+        }
     }
 }
 
 .queu {
     display: flex;
     flex-flow: column;
+
     .button {
-        display:flex !important;
+        display: flex !important;
     }
 }
