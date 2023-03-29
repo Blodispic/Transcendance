@@ -26,7 +26,7 @@ function ErrorBoundary() {
   const error = useRouteError();
   console.error(error);
   // Uncaught ReferenceError: path is not defined
-  return <span>Dang!</span>;
+  return <span>dang</span>;
 }
 
 

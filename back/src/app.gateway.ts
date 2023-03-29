@@ -43,6 +43,7 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
 			client.join('chan' + channel.id);
 		});
 
+		this.server.to(client.id).emit("LoginValid");
 		this.server.emit('UpdateSomeone', { idChange: client.handshake.auth.user.id, idChange2: 0 });
 	}
 

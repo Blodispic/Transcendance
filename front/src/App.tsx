@@ -76,6 +76,14 @@ function App() {
           }, 10000)
         })
 
+        socket.on("LoginValid", () => {
+            swal("Login Successful", "You connected successfully!", "success");
+            setTimeout(() => {
+              if (swal && swal.close)
+                swal.close()
+            }, 1000)
+          })
+
         /* Chat */
         socket.on("joinChannel", ({ chanid, user }) => {
           const newMessage: IMessage = {
@@ -131,6 +139,7 @@ function App() {
           socket.off("invitationInGame");
           socket.off("GameDeclined");
           socket.off("GameCancelled");
+          socket.off("LoginValid");
 
           socket.off("joinChannel");
           socket.off("leaveChannel");

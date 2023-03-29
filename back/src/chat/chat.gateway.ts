@@ -289,7 +289,7 @@ async handleInvite(@ConnectedSocket() client: Socket, @MessageBody() inviteDto: 
   client.emit('inviteOK');
   this.server.to("chan" + channel.id).emit('invitePrivate', inviteDto);
 }
-
+  
 async inviteToChan(users: User[], chanid: number)
 {
   const channel = await this.channelService.getById(chanid)
