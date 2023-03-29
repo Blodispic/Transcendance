@@ -8,8 +8,6 @@ import { User } from './entities/user.entity';
 import { UserService } from './user.service';
 import { authenticator } from 'otplib';
 import { JwtGuard } from 'src/Oauth/jwt-auth.guard';
-import { Server } from 'socket.io';
-import { WebSocketServer } from '@nestjs/websockets';
 import { plainToClass } from 'class-transformer';
 import { GetUser } from './getUser';
 import { UpdateUserDto } from './dto/update-user.dto';
