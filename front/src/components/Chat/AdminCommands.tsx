@@ -104,7 +104,7 @@ export function KickUser(chanid: any, userid: any) {
 	socket.emit('BanUser', { chanid: chanid, userid: userid, timeout: 1 });
 }
 
-export function ConfigureChannelPrivate(props: { trigger: boolean, setTrigger: (value: boolean) => void, channel: IChannel }) {
+export function ConfigureChannelPrivate(props: { trigger: boolean, setTrigger: (value: boolean) => void, channel: IChannel}) {
 	const [alreadyhere, setAlreadyhere] = useState<IUser[]>(props.channel.users);
 	const [allfriend, setAllFriend] = useState<IUser[]>([]);
 	const [alluser, setAlluser] = useState<IUser[]>([]);
@@ -138,8 +138,10 @@ export function ConfigureChannelPrivate(props: { trigger: boolean, setTrigger: (
 		setAlreadyhere(props.channel.users);
 		socket.on("AddPeoplePrivateOk", (error_message) => {
 		});
+		
 		return () => {
 			socket.off("AddPeoplePrivateOk");
+			socket.off("unbanOK");
 		}
 	}, [props.channel.users]);
 	const get_all = async () => {
@@ -153,27 +155,23 @@ export function ConfigureChannelPrivate(props: { trigger: boolean, setTrigger: (
 		const data = await response.json();
 		setAlluser(
 			data
-				.filter((user: { username: string, status: string }) =>
-					user.username !== myUser.user.user?.username && user.status === "Online"
-				)
-				.filter((user: { id: number }) =>
+			.filter((user: { username: string, status: string }) =>
+			user.username !== myUser.user.user?.username && user.status === "Online"
+			)
+			.filter((user: { id: number }) =>
 					alreadyhere.findIndex((alreadyhereuser: IUser) => alreadyhereuser.id === user.id) === -1
 				)
 				.filter((user: { id: number }) =>
 					allfriend.findIndex((allfriend: IUser) => allfriend.id === user.id) === -1
-				)
-
-		);
+					)
+					
+					);
+				}
+				
+				const handleUnban = (id: number) => {
+					socket.emit('unBan',{ chanid: props.channel.id, userid: id} ); //to be added soon
 	}
 
-	const handleUnban = (id: number) => {
-		socket.emit('unBan',{ chanid: props.channel.id, userid: id} ); //to be added soon
-	}
-	useEffect( () => {
-		socket.on("unBanOk", (id) => {
-			dispatch(banUser({chanid: props.channel.id, userid: id} ))
-		})
-	})
 
 	return (props.trigger) ? (
 		<div className="chat-form-popup" onClick={_ => { cleanlist(); props.setTrigger(false) }}>
@@ -220,20 +218,22 @@ export function ConfigureChannelPrivate(props: { trigger: boolean, setTrigger: (
 					}
 				</div>
 				{
-					props.channel.banned.length > 0 && 
+					props.channel.banned.length > 0 &&
 					<>
-					<h3>Unban user</h3>
-					{props.channel.banned?.map(banned => (
-						<ul key={banned.id}>
-							<li title='Unban'>
-							<div className='avatar-inpopup'>
-
-							<img className="cursor-onsomoene avatar avatar-manu" src={`${process.env.REACT_APP_BACK}user/${banned.id}/avatar`} alt="" onClick={() => handleUnban(banned.id)}/>
-								</div>
-							</li>
-
-						</ul>
-					))}
+						<h3>Unban user</h3>
+						<div className='allpoeple'>
+							<div className="avatar-inpopup">
+								{props.channel.banned?.map(banned => (
+									<ul key={banned.id}>
+										<li title='Unban'>
+											<div >
+												<img className="cursor-onsomoene avatar avatar-manu" src={`${process.env.REACT_APP_BACK}user/${banned.id}/avatar`} alt="" onClick={() => handleUnban(banned.id)} />
+											</div>
+										</li>
+									</ul>
+								))}
+							</div>
+						</div>
 					</>
 				}
 				<button onClick={() => { AddPeoplePrivate(); props.setTrigger(false) }}> Save Setting </button>
@@ -267,9 +267,7 @@ export function ConfigureChannel(props: { trigger: boolean, setTrigger: (value: 
 
 	useEffect( () => {
 		socket.on("unbanOK", (id) => {
-			// console.log("ca rentre");
-			// dispatch(banUser({chanid: props.channel.id, userid: id}));
-			// props.channel.banned = props.channel.banned.filter( banned => banned.id === id);
+			dispatch(banUser({chanid: props.channel.id, userid: id}));
 		})
 	}, [])
 
@@ -303,10 +301,9 @@ export function ConfigureChannel(props: { trigger: boolean, setTrigger: (value: 
 							<ul key={banned.id}>
 								<li title='Unban'>
 									<div className='avatar-inpopup'>
-
-							<img className="cursor-onsomoene avatar avatar-manu" src={`${process.env.REACT_APP_BACK}user/${banned.id}/avatar`} alt="" onClick={() => handleUnban(banned.id)}/>
-								</div>
-							</li>
+										<img className="cursor-onsomoene avatar avatar-manu" src={`${process.env.REACT_APP_BACK}user/${banned.id}/avatar`} alt="" onClick={() => handleUnban(banned.id)} />
+									</div>
+								</li>
 
 							</ul>
 						))}
