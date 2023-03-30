@@ -38,7 +38,13 @@ export class UserService {
     return this.usersRepository.save(user);
   }
 
-
+async checkTab(user: User) {
+  for (const iterator of userList) {
+    console.log("la", iterator.handshake.auth.user.id);
+    if (iterator.handshake.auth.user.id === user.id)
+      throw new BadRequestException('t\'as deja un tab frero');
+  }
+}
   async save(updateUserDto: UpdateUserDto) {
     return (await this.usersRepository.save(updateUserDto));
   }
@@ -133,6 +139,13 @@ export class UserService {
 
   async update(user: User, userUpdate: UpdateUserDto) {
     //Si vous voulez plus de chose a update, mettez le dans le body et faites un iff
+    // if (user.username === "" || user.username === undefined)
+    // {
+    //   for (const iterator of userList) {
+    //     if (iterator.handshake.auth.user.id === user.id)
+    //     throw new BadRequestException('t\'as deja un tab frero');
+    //   }
+    // }
     if (userUpdate.username) {
       const checkUsername = await this.usersRepository.findOneBy({
         username: userUpdate.username,

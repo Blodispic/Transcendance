@@ -17,8 +17,15 @@ export default function Sign() {
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
     const [nameExist, SetNameExist] = useState<boolean>(false);
+    // const [controller, setController] = useState<string>("");
+    let controller: string;
+    if (window.location.href.search('sign') !== -1)
+        controller = 'firstSign';
+    else
+        controller = "" + myUser?.user?.id;
 
 
+   
     const fetch_name_avatar = async (e: any) => {
         e.preventDefault();
         if (file && myUser.user) {
@@ -36,7 +43,8 @@ export default function Sign() {
 
         if (newname !== '' && myUser.user) {
             if (newname) {
-                await fetch(`${process.env.REACT_APP_BACK}user/${myUser.user.id}`, {
+
+                await fetch(`${process.env.REACT_APP_BACK}user/${controller}`, {
                     method: 'PATCH',
                     headers: {
                         'Content-Type': 'application/json',

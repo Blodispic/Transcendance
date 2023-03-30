@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post, Req, Request, Res, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post, Req, Request, Res, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { Response } from 'express';
 import { diskStorage } from 'multer';
@@ -11,6 +11,7 @@ import { JwtGuard } from 'src/Oauth/jwt-auth.guard';
 import { plainToClass } from 'class-transformer';
 import { GetUser } from './getUser';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { userList } from 'src/app.gateway';
 
 @Controller('user')
 export class UserController {
@@ -28,6 +29,19 @@ export class UserController {
   @UseGuards(JwtGuard)
   async findAll() {
     return await plainToClass(User, this.userService.findAll());
+  }
+
+  @Patch('firstSign')
+  @UseGuards(JwtGuard)
+  async firstSign(@GetUser() user: User, @Body() updateUserDto: UpdateUserDto) {
+    console.log("FIRSTSIGNNNNNN:");
+
+    for (const iterator of userList) {
+      console.log("la", iterator.handshake.auth.user.id);
+      if (iterator.handshake.auth.user.id === user.id)
+        throw new BadRequestException('t\'as deja un tab frero');
+    }
+    return plainToClass(User, await this.userService.update(user, updateUserDto));
   }
 
   // Retrieves a user by their username
