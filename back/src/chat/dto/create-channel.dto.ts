@@ -1,10 +1,10 @@
-import { IsArray, IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
-import { User } from 'src/user/entities/user.entity';
+import { IsAlphanumeric, IsArray, IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
 
 
 export class CreateChannelDto {
     @IsString()
 	@IsNotEmpty()
+	// @IsAlphanumeric()
 	chanName: string;
 
 	@IsOptional()
@@ -17,5 +17,5 @@ export class CreateChannelDto {
 
 	@IsOptional()
 	@IsArray()
-	users?: User[];
+	usersId?: number[];
 }

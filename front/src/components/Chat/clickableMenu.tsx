@@ -23,7 +23,7 @@ export default function ClickableMenu(props: { user: IUser, chan: IChannel, page
     }
 
     const handleUnmute = () => {
-        // socket.emit('Unmute', { chanid: props.chan.id, userid: props.user.id });
+        socket.emit('Unmute', { chanid: props.chan.id, userid: props.user.id });
     }
 
     return (
