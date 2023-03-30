@@ -31,11 +31,11 @@ function JoinedChannelList() {
 								<div onClick={() => navigate(`/Chat/channel/${chan.id}`)}>{chan.name}
 									{
 										chan.chanType === 1 &&
-										<HiLockClosed style={{ float: 'right' }} />
+										<HiLockClosed className='channel-icon' />
 									}
 									{
 										chan.chanType === 2 &&
-										<BsFillKeyFill style={{ float: 'right' }} />
+										<BsFillKeyFill className='channel-icon' />
 									}
 								</div>
 							</li>
@@ -51,6 +51,7 @@ function JoinedChannelList() {
 function PublicChannelList() {
 	const navigate = useNavigate();
 	const channels: IChannel[] = useAppSelector(state => state.chat.channels);
+	const currentUser: IUser | undefined = useAppSelector(state => state.user.user);
 
 	return (
 		<div className="bottom">
@@ -60,12 +61,12 @@ function PublicChannelList() {
 				{channels && channels.map(chan => (
 					<ul key={chan.name}>
 						{
-							chan.chanType !== 1 &&
+							(chan.chanType !== 1 && chan.users.find(obj => obj.id === currentUser?.id) === undefined )&&
 							<li>
 								<div onClick={() => navigate(`/Chat/channel/${chan.id}`)}>{chan.name}
 									{
 										chan.chanType === 2 &&
-										<BsFillKeyFill style={{ paddingLeft: '10px' }} />
+										<BsFillKeyFill className='channel-icon'/>
 									}
 								</div>
 							</li>
@@ -114,11 +115,11 @@ function ChannelMemberList(props: { page: (page: page) => void }) {
 						<li>
 							{admin.username}
 							{ currentChan.owner?.id === admin.id &&
-								<FaCrown style={{ marginLeft: '5px' }} /> }
+								<FaCrown className='channel-icon' /> }
 							{ currentChan.owner?.id !== admin.id &&
-								<BsFillPersonFill style={{ marginLeft: '5px' }} /> }
+								<BsFillPersonFill className='channel-icon' /> }
 							{ currentChan.muted && currentChan.muted.find(obj => obj.id === admin.id) &&
-								<FaVolumeMute style={{ marginLeft: '5px' }} /> }
+								<FaVolumeMute className='channel-icon' /> }
 						</li>
 					</ul>
 					{ currentId === admin.id &&
@@ -135,7 +136,7 @@ function ChannelMemberList(props: { page: (page: page) => void }) {
 								<>
 									{user.username}
 									{ currentChan.muted && currentChan.muted.find(obj => obj.id === user.id) &&
-										<FaVolumeMute style={{ marginLeft: '5px' }} /> }
+										<FaVolumeMute className='channel-icon' /> }
 								</>
 							}
 						</li>
@@ -154,6 +155,7 @@ export function Channels(props: { page: (page: page) => void }) {
 	const { id } = useParams();
 	const dispatch = useAppDispatch();
 	const currentUser: IUser | undefined = useAppSelector(state => state.user.user);
+	const myUser = useAppSelector(state => state);
 
 	useEffect(() => {
 		const get_channels = async () => {
@@ -174,27 +176,45 @@ export function Channels(props: { page: (page: page) => void }) {
         socket.on("giveAdminOK", ({ userid, chanid }) => {
             dispatch(addAdmin({ chanid: chanid, userid: userid }));
         });
-		socket.on("muteUser", ({chanid, userid, timer}) => {
-			dispatch(muteUser({chanid: chanid, userid: userid}));
 
-			setTimeout(() => {
-				dispatch(unMuteUser({chanid: chanid, userid: userid}));
-			}, timer);
+		socket.on("muteUser", (muteUserDto) => {
+			dispatch(muteUser({chanid: muteUserDto.chanid, userid: muteUserDto.userid}));
 
+			if (muteUserDto.timeout) {
+				setTimeout(() => {
+					dispatch(unMuteUser({chanid: muteUserDto.chanid, userid: muteUserDto.userid}));
+				}, muteUserDto.timeout);
+			}
 		});
+		
 		socket.on("banUser", ({chanid, userid, timer}) => {
 			dispatch(banUser({chanid: chanid, userid: userid}));
 			dispatch(removeMember({chanid: chanid, userid: userid}));
 
-			setTimeout(() => {
-				dispatch(unBanUser({chanid: chanid, userid: userid}));
-			}, timer);
+			if (timer) {
+				setTimeout(() => {
+					dispatch(unBanUser({chanid: chanid, userid: userid}));
+				}, timer);
+			}
+		});
 
+		socket.on("unmuteUser", ({chanid, userid, timer}) => {
+			dispatch(unMuteUser({chanid: chanid, userid: userid}));
 		});
 
 		socket.on("invitePrivate", (inviteDto) => {
-			for (let i = 0; inviteDto.users[i]; i++) {
-				dispatch(addMember({chanid: inviteDto.chanid, user: inviteDto.users[i]}));
+			for (let i = 0; inviteDto.usersId[i]; i++) {
+				const get_user = async () => {
+						const response = await fetch(`${process.env.REACT_APP_BACK}user/id/${inviteDto.usersId[i]}`, {
+							method: 'GET',
+							headers: {
+								'Authorization': `Bearer ${myUser.user.myToken}`,
+							},
+						})
+						const data = await response.json();
+						dispatch(addMember({chanid: inviteDto.chanid, user: data}));
+				}
+				get_user();
 			}
 		});
 
@@ -219,6 +239,7 @@ export function Channels(props: { page: (page: page) => void }) {
         return () => {
             socket.off("giveAdminOK");
 			socket.off("muteUser");
+			socket.off("unmuteUser");
 			socket.off("banUser");
 			socket.off("invitePrivate");
 			socket.off("invited");
