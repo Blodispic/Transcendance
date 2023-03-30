@@ -129,11 +129,6 @@ function App() {
           dispatch(removePass(chanId));
         });
 
-        // I m on it
-        // socket.on('exception', (error_message) => {
-        //   swal("Format Error", "( -> pop up quand une variable dans un DTO ne correspond pas a son class-validator (exemple chanid = 'bonjour' alors que chanid est @IsNumber )    est-ce que c'est bon pour vous ?");
-        // });
-
       }
         return () => {
           socket.off("RoomStart");

@@ -1,10 +1,11 @@
-import { IsNotEmpty, IsString } from 'class-validator';
+import { IsNotEmpty, IsNumber, IsString, MaxLength } from 'class-validator';
 
 export class SendDmDto {
-	@IsNotEmpty()
+	@IsNumber()
 	IdReceiver: number;
 
 	@IsString()
 	@IsNotEmpty()
+	@MaxLength(1000)
 	message: string; 
 }

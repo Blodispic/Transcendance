@@ -17,7 +17,7 @@ export function BanUser(props: { chanid: any, userid: any, trigger: boolean, set
 		if (timeout === "")
 			socket.emit('BanUser', { chanid: props.chanid, userid: props.userid });
 		else
-			socket.emit('BanUser', { chanid: props.chanid, userid: props.userid, timeout: parseInt(timeout) * 1000 });
+			socket.emit('BanUser', { chanid: props.chanid, userid: props.userid, timeout: timeout });
 	}
 
 	useEffect(() => {
@@ -42,7 +42,7 @@ export function BanUser(props: { chanid: any, userid: any, trigger: boolean, set
 				<br />
 				<h3>Ban User</h3>
 				<h4>Set time (optional)</h4>
-				<input type="number" id="clickable-input" min="0" onChange={e => { setTimeout(e.target.value) }} />seconds
+				<input /* type="number" */ id="clickable-input" min="0" onChange={e => { setTimeout(e.target.value) }} />seconds
 				<br /><br />
 				{
 					failed === true &&
@@ -63,7 +63,7 @@ export function MuteUser(props: { chanid: any, userid: any, trigger: boolean, se
 		if (timeout === "")
 			socket.emit('MuteUser', { chanid: props.chanid, userid: props.userid });
 		else
-			socket.emit('MuteUser', { chanid: props.chanid, userid: props.userid, timeout: parseInt(timeout) * 1000 });
+			socket.emit('MuteUser', { chanid: props.chanid, userid: props.userid, timeout: timeout});
 	}
 
 	useEffect(() => {
@@ -88,7 +88,7 @@ export function MuteUser(props: { chanid: any, userid: any, trigger: boolean, se
 				<br />
 				<h3>Mute User</h3>
 				<h4>Set time (optional)</h4>
-				<input type="number" id="clickable-input" min="0" onChange={e => { setTimeout(e.target.value) }} />seconds
+				<input /* type="number" */ id="clickable-input" min="0" onChange={e => { setTimeout(e.target.value) }} />seconds
 				<br /><br />
 				{
 					failed === true &&
@@ -172,7 +172,7 @@ export function ConfigureChannelPrivate(props: { trigger: boolean, setTrigger: (
 	useEffect( () => {
 		socket.on("unBanOk", (id) => {
 			dispatch(banUser({chanid: props.channel.id, userid: id} ))
-		})
+		});
 	})
 
 	return (props.trigger) ? (
@@ -270,7 +270,7 @@ export function ConfigureChannel(props: { trigger: boolean, setTrigger: (value: 
 			// console.log("ca rentre");
 			// dispatch(banUser({chanid: props.channel.id, userid: id}));
 			// props.channel.banned = props.channel.banned.filter( banned => banned.id === id);
-		})
+		});
 	}, [])
 
 

@@ -85,6 +85,7 @@ export default function Profile() {
                         navigate("/game/" + roomId, { state: { Id: roomId } });
                 });
 
+                
                 if (id)
                         fetchid();
                 socket.on('UpdateSomeone', () => {

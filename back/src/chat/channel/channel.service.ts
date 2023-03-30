@@ -235,12 +235,12 @@ export class ChannelService {
 		return false;			
 	}
 
-	async isUserBanned(muteUserDto: MuteUserDto) {
+	async isUserBanned(banUserDto: BanUserDto) {
 		const channel: Channel | null = await this.channelRepository.findOne({
 			relations: { users: true, banned: true },
-			where: { id: muteUserDto.chanid },
+			where: { id: banUserDto.chanid },
 		});
-		const user = await this.userService.getById(muteUserDto.userid);
+		const user = await this.userService.getById(banUserDto.userid);
 		if (channel === null || user === null)
 			throw new BadRequestException('No such Channel or User');
 		if (!channel.banned)
