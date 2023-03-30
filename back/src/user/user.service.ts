@@ -11,7 +11,6 @@ import { JwtService } from '@nestjs/jwt';
 import { FriendRequestStatus } from './interface/friend-request.interface';
 import { authenticator } from 'otplib';
 import * as QRCode from 'qrcode';
-import { CreateResultDto } from 'src/results/dto/create-result.dto';
 import { Server } from 'http';
 import { userList } from 'src/app.gateway';
 
@@ -39,27 +38,6 @@ export class UserService {
     return this.usersRepository.save(user);
   }
 
-  async createResult(resultDto: CreateResultDto) {
-    const winner = await this.usersRepository.findOneBy({id: resultDto.winnerId});
-    const loser = await this.usersRepository.findOneBy({id: resultDto.loserId});
-    if (!winner || !loser) {
-      throw new NotFoundException("User not found");
-    }
-    winner.elo += 50;
-    loser.elo -= 50;
-    winner.win += 1;
-    loser.lose += 1;
-
-    const result = this.resultsRepository.create({
-      winner,
-      loser,
-      loser_score: resultDto.loser_score,
-      winner_score: resultDto.winner_score,
-      loser_elo: loser.elo,
-      winner_elo: winner.elo,
-    });
-    return this.resultsRepository.save(result);
-  }
 
   async save(updateUserDto: UpdateUserDto) {
     return (await this.usersRepository.save(updateUserDto));

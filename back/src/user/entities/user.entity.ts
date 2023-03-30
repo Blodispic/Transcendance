@@ -6,7 +6,7 @@ import { Exclude } from 'class-transformer';
 export enum Status {
   Offline = "Offline",
   Online = "Online",
-  Ingame = "Ingame",
+  Ingame = "InGame",
 }
 
 
