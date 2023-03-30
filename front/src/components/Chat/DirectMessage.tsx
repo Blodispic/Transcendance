@@ -6,6 +6,7 @@ import swal from "sweetalert";
 import { socket } from "../../App";
 import { IMessage } from "../../interface/Message";
 import { IUser } from "../../interface/User";
+import { addDM } from '../../redux/chat';
 import { useAppDispatch, useAppSelector } from "../../redux/Hook";
 import { addBlockedUser, unBlockUser } from "../../redux/user";
 import CustomGamePopup from "../Game/CustomGamePopup";
@@ -252,6 +253,7 @@ export function DmMessages(props: { id: number; currentdm: IUser | undefined; se
 	const [newInput, setNewInput] = useState("");
 	const myUser: IUser | undefined = useAppSelector(state => state.user.user);
 	const messages: IMessage[] = useAppSelector(state => state.chat.DMs.filter(obj => obj.chanid === props.id));
+	const dispatch = useAppDispatch();
 
 	const handleSubmitNewMessage = (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
@@ -260,6 +262,21 @@ export function DmMessages(props: { id: number; currentdm: IUser | undefined; se
 		}
 		setNewInput("");
 	}
+
+	useEffect(() => {
+
+		socket.on('sendDMFailed', (errorMessage) => {
+			let newMessage: IMessage = {
+				chanid: props.id,
+				sender: undefined,
+				message: errorMessage,
+			}
+			dispatch(addDM(newMessage));
+		});
+		return () => {
+			socket.off('sendDMFailed');
+		}
+	})
 
 	return (
 		<div className="chat-body">
@@ -273,7 +290,7 @@ export function DmMessages(props: { id: number; currentdm: IUser | undefined; se
 
 					{messages && messages.map((message: IMessage, index: number) => (
 						<div key={index} >
-							{ myUser?.blocked?.find(obj => obj.id === props.currentdm?.id) === undefined &&
+							{ (myUser?.blocked?.find(obj => obj.id === props.currentdm?.id) === undefined && message.sender != undefined) &&
 									<div className="__wrap">
 										<div className="message-info">
 											<img className="user-avatar" src={`${process.env.REACT_APP_BACK}user/${message.sender?.id}/avatar`} alt="" />
@@ -283,6 +300,8 @@ export function DmMessages(props: { id: number; currentdm: IUser | undefined; se
 										{message.message}
 									</div>
 							}
+							{(message.chanid === props.currentdm?.id && message.sender === undefined) &&
+								<div className="channel-announce"> {message.message} </div> }
 						</div>
 					))}
 				</div>
