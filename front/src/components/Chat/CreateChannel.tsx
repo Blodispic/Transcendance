@@ -7,7 +7,6 @@ import { IUser } from "../../interface/User";
 import { addChannel } from "../../redux/chat";
 import { useAppDispatch, useAppSelector } from "../../redux/Hook";
 import AllPeople from "../utils/Allpeople";
-import swal from "sweetalert";
 
 export function PopupCreateChannel(props: { trigger: boolean, setTrigger: (value: boolean) => void }) {
 	const [chanName, setChanName] = useState("");

@@ -12,7 +12,6 @@ import { addMessage } from '../../redux/chat';
 import { useAppDispatch, useAppSelector } from "../../redux/Hook";
 import { ConfigureChannel, ConfigureChannelPrivate } from "./AdminCommands";
 import { JoinChannel, LeaveChannel } from "./JoinLeave";
-import swal from 'sweetalert';
 
 export function ChannelHeader() {
 	const [popup, setPopup] = useState(false);
