@@ -7,6 +7,7 @@ import { IUser } from "../../interface/User";
 import { addChannel } from "../../redux/chat";
 import { useAppDispatch, useAppSelector } from "../../redux/Hook";
 import AllPeople from "../utils/Allpeople";
+import swal from "sweetalert";
 
 export function PopupCreateChannel(props: { trigger: boolean, setTrigger: (value: boolean) => void }) {
 	const [chanName, setChanName] = useState("");
@@ -35,9 +36,9 @@ export function PopupCreateChannel(props: { trigger: boolean, setTrigger: (value
 	const handleCreateNewChan = () => {
 		if (chanName !== "") {
 			if (password && password.length)
-				socket.emit('createChannel', { chanName: chanName, password: password, chanType: chanMode, usersId: friend.map( user => user.id) });
+				socket.emit('createChannel', { chanName: chanName.trim(), password: password, chanType: chanMode, usersId: friend.map( user => user.id) });
 			else
-				socket.emit('createChannel', { chanName: chanName, chanType: chanMode, usersId: friend.map( user => user.id) });
+				socket.emit('createChannel', { chanName: chanName.trim(), chanType: chanMode, usersId: friend.map( user => user.id) });
 		}
 		setChanName("");
 		setPassword("");
@@ -48,6 +49,9 @@ export function PopupCreateChannel(props: { trigger: boolean, setTrigger: (value
 			setFailed(true);
 			setError(error_message);
 		});
+		socket.on('exception', () => {
+			swal("Format Error", "Your input is not valid for this request", "error");
+		  });
 		socket.on("createChannelOk", (new_chanid) => {
 			const fetchChanInfo = async () => {
 				await fetch(`${process.env.REACT_APP_BACK}channel/${new_chanid}`, {
@@ -71,6 +75,7 @@ export function PopupCreateChannel(props: { trigger: boolean, setTrigger: (value
 		return () => {
 			socket.off("createChannelFailed");
 			socket.off("createChannelOk");
+			socket.off('exception');
 		}
 	});
 

@@ -1,4 +1,4 @@
-import { IsNumber, IsOptional } from 'class-validator';
+import { IsNumber, IsOptional, IsString } from 'class-validator';
 
 export class BanUserDto {
     @IsNumber()
@@ -8,6 +8,6 @@ export class BanUserDto {
     userid: number;
 
     @IsOptional()
-    @IsNumber()
-    timeout?: number;
+    @IsString()
+    timeout?: string;
 }

@@ -12,6 +12,7 @@ import { addMessage } from '../../redux/chat';
 import { useAppDispatch, useAppSelector } from "../../redux/Hook";
 import { ConfigureChannel, ConfigureChannelPrivate } from "./AdminCommands";
 import { JoinChannel, LeaveChannel } from "./JoinLeave";
+import swal from 'sweetalert';
 
 export function ChannelHeader() {
 	const [popup, setPopup] = useState(false);
@@ -110,8 +111,12 @@ export function ChannelMessages() {
 			  }
 			  dispatch(addMessage(newMessage));
 		});
+		socket.on('exception', () => {
+			swal("Format Error", "Your input is not valid for this request", "error");
+		  });
 		return () => {
 			socket.off("sendMessageChannelFailed");
+			socket.off('exception');
 		}})
 
 	const handleSubmitNewMessage = (e: React.FormEvent<HTMLFormElement>) => {

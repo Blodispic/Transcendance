@@ -7,6 +7,7 @@ import { IUser } from "../../interface/User";
 import { useAppDispatch, useAppSelector } from "../../redux/Hook";
 import { AiFillPlusCircle } from 'react-icons/ai';
 import { banUser } from '../../redux/chat';
+import swal from 'sweetalert';
 
 export function BanUser(props: { chanid: any, userid: any, trigger: boolean, setTrigger: (value: boolean) => void }) {
 	const [timeout, setTimeout] = useState<string>("");
@@ -17,7 +18,7 @@ export function BanUser(props: { chanid: any, userid: any, trigger: boolean, set
 		if (timeout === "")
 			socket.emit('BanUser', { chanid: props.chanid, userid: props.userid });
 		else
-			socket.emit('BanUser', { chanid: props.chanid, userid: props.userid, timeout: parseInt(timeout) * 1000 });
+			socket.emit('BanUser', { chanid: props.chanid, userid: props.userid, timeout: timeout });
 	}
 	
 	useEffect(() => {
@@ -29,9 +30,13 @@ export function BanUser(props: { chanid: any, userid: any, trigger: boolean, set
 			props.setTrigger(false);
 			setFailed(false);
 		});
+		socket.on('exception', () => {
+			swal("Format Error", "Your input is not valid for this request", "error");
+		  });
 		return () => {
 			socket.off("banUserFailed");
 			socket.off("banUserOK");
+			socket.off('exception');
 		}
 	})
 
@@ -42,7 +47,7 @@ export function BanUser(props: { chanid: any, userid: any, trigger: boolean, set
 				<br />
 				<h3>Ban User</h3>
 				<h4>Set time (optional)</h4>
-				<input type="number" id="clickable-input" min="0" onChange={e => { setTimeout(e.target.value) }} />seconds
+				<input /* type="number" */ id="clickable-input" min="0" onChange={e => { setTimeout(e.target.value) }} />seconds
 				<br /><br />
 				{
 					failed === true &&
@@ -60,10 +65,11 @@ export function MuteUser(props: { chanid: any, userid: any, trigger: boolean, se
 	const [errorMessage, setError] = useState<string>("");
 
 	const handleMute = () => {
+		console.log("timeout : ", timeout);
 		if (timeout === "")
 			socket.emit('MuteUser', { chanid: props.chanid, userid: props.userid });
 		else
-			socket.emit('MuteUser', { chanid: props.chanid, userid: props.userid, timeout: parseInt(timeout) * 1000 });
+			socket.emit('MuteUser', { chanid: props.chanid, userid: props.userid, timeout: timeout});
 	}
 
 
@@ -76,9 +82,13 @@ export function MuteUser(props: { chanid: any, userid: any, trigger: boolean, se
 			props.setTrigger(false);
 			setFailed(false);
 		});
+		socket.on('exception', () => {
+			swal("Format Error", "Your input is not valid for this request", "error");
+		  });
 		return () => {
 			socket.off("muteUserFailed");
 			socket.off("muteUserOK");
+			socket.off('exception');
 		}
 	})
 
@@ -89,7 +99,7 @@ export function MuteUser(props: { chanid: any, userid: any, trigger: boolean, se
 				<br />
 				<h3>Mute User</h3>
 				<h4>Set time (optional)</h4>
-				<input type="number" id="clickable-input" min="0" onChange={e => { setTimeout(e.target.value) }} />seconds
+				<input /* type="number" */ id="clickable-input" min="0" onChange={e => { setTimeout(e.target.value) }} />seconds
 				<br /><br />
 				{
 					failed === true &&
@@ -139,8 +149,12 @@ export function ConfigureChannelPrivate(props: { trigger: boolean, setTrigger: (
 		setAlreadyhere(props.channel.users);
 		socket.on("AddPeoplePrivateOk", (error_message) => {
 		});
+		socket.on('exception', () => {
+			swal("Format Error", "Your input is not valid for this request", "error");
+		  });
 		return () => {
 			socket.off("AddPeoplePrivateOk");
+			socket.off('exception');
 		}
 	}, [props.channel.users]);
 
@@ -174,7 +188,10 @@ export function ConfigureChannelPrivate(props: { trigger: boolean, setTrigger: (
 	useEffect( () => {
 		socket.on("unBanOk", (id) => {
 			dispatch(banUser({chanid: props.channel.id, userid: id} ))
-		})
+		});
+		socket.on('exception', () => {
+			swal("Format Error", "Your input is not valid for this request", "error");
+		  }); // need a socket.off
 	})
 
 	return (props.trigger) ? (
@@ -272,7 +289,10 @@ export function ConfigureChannel(props: { trigger: boolean, setTrigger: (value: 
 			// console.log("ca rentre");
 			// dispatch(banUser({chanid: props.channel.id, userid: id}));
 			// props.channel.banned = props.channel.banned.filter( banned => banned.id === id);
-		})
+		});
+		socket.on('exception', () => {
+			swal("Format Error", "Your input is not valid for this request", "error"); // need on socket.off
+		  });
 	}, [])
 
 
