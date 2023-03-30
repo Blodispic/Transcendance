@@ -125,6 +125,7 @@ async handleJoinChannel(@ConnectedSocket() client: Socket, @MessageBody() joinCh
 
 @SubscribeMessage('createChannel')
 async handleCreateChannel(@ConnectedSocket() client: Socket, @MessageBody() createChannelDto: CreateChannelDto) {
+  createChannelDto.chanName = createChannelDto.chanName.trim();
   const channel = await this.channelService.getByName(createChannelDto.chanName);  
   if (channel != null) {
     client.emit('createChannelFailed', 'Channel name already exists');
@@ -140,8 +141,8 @@ async handleCreateChannel(@ConnectedSocket() client: Socket, @MessageBody() crea
 
   const new_channel = await this.channelService.create(createChannelDto, user);
   client.join('chan' + new_channel.id);
-  if (new_channel.chanType == 1 && createChannelDto.users && createChannelDto.users.length > 0)
-    await this.inviteToChan(createChannelDto.users, new_channel.id);  
+  if (new_channel.chanType == 1 && createChannelDto.usersId && createChannelDto.usersId.length > 0)
+    await this.inviteToChan(createChannelDto.usersId, new_channel.id);
   this.server.emit("createChannelOk", new_channel.id);
 }
 
@@ -233,15 +234,44 @@ async handleBanUser(@ConnectedSocket() client: Socket, @MessageBody() banUserDto
       this.channelService.unbanUser(banUserDto);
     }, banUserDto.timeout);
   }
+  const socketId = this.findSocketFromUser(userBan);
+  if (socketId)
+    this.server.to(socketId.id).emit('banUser', {chanid: channel.id, userid: userBan.id, timer: banUserDto.timeout});
   client.emit('banUserOK', user.id, channel.id);
   this.server.to('chan' + channel.id).emit('banUser', {chanid: channel.id, userid: userBan.id, timer: banUserDto.timeout});
 }
 
-@SubscribeMessage('MuteUser') // check un truc demain ( userMute ?)
+@SubscribeMessage('unBan')
+async handleunBanUser(@ConnectedSocket() client: Socket, @MessageBody() banUserDto: BanUserDto) {
+ console.log("ca rentre laaaa");
+  const channel = await this.channelService.getById(banUserDto.chanid);
+  const user = await this.userService.getById(client.handshake.auth.user.id);
+  const userBan = await this.userService.getById(banUserDto.userid);
+  if (channel === null || user === null || userBan === null) {
+    client.emit('unbanFailed', 'No such Channel or User');
+    throw new BadRequestException('No such Channel or User');
+  }
+  if (!(await this.channelService.isUserBanned(banUserDto))) {
+    client.emit('unbanUserFailed', 'User is not banned');
+    throw new BadRequestException('User is not banned');
+  }
+  if (channel.owner?.id != user.id && !(await this.channelService.isUserAdmin({chanid: channel.id, userid: user.id}))) {
+    client.emit('unbanUserFailed', 'You are not Admin on this channel');
+    throw new BadRequestException('You are not Admin on this Channel');
+  }
+  await this.channelService.unbanUser(banUserDto);
+  
+  const socketId = this.findSocketFromUser(userBan);
+  if (socketId)
+    this.server.to(socketId.id).emit('unban', {chanid: channel.id, userid: userBan.id, timer: banUserDto.timeout});
+  client.emit('unbanOK', user.id, channel.id);
+}
+
+@SubscribeMessage('MuteUser')
 async handleMuteUser(@ConnectedSocket() client: Socket, @MessageBody() muteUserDto: MuteUserDto) {
   const channel = await this.channelService.getById(muteUserDto.chanid);
   const user = await this.userService.getById(client.handshake.auth.user.id);
-  const userMute = await this.userService.getById(muteUserDto.userid)
+  const userMute = await this.userService.getById(muteUserDto.userid);
   if (channel === null || user === null || userMute === null) {
     client.emit('muteUserFailed', 'No such Channel or User');
     throw new BadRequestException('No such Channel or User');
@@ -261,7 +291,31 @@ async handleMuteUser(@ConnectedSocket() client: Socket, @MessageBody() muteUserD
     }, muteUserDto.timeout);
   }
   client.emit('muteUserOK', user.id, channel.id);
-  this.server.to('chan' + channel.id).emit('muteUser', {chanid: channel.id, userid: muteUserDto.userid, timer: muteUserDto.timeout});
+  // this.server.to('chan' + channel.id).emit('muteUser', {chanid: channel.id, userid: muteUserDto.userid, timer: muteUserDto.timeout});
+  this.server.to('chan' + channel.id).emit('muteUser', muteUserDto);
+}
+
+@SubscribeMessage('Unmute')
+async handleUnMute(@ConnectedSocket() client: Socket, @MessageBody() muteUserDto: MuteUserDto) {
+  const channel = await this.channelService.getById(muteUserDto.chanid);
+  const user = await this.userService.getById(client.handshake.auth.user.id);
+  const userMute = await this.userService.getById(muteUserDto.userid);
+  if (channel === null || user === null || userMute === null) {
+    client.emit('UnmuteUserFailed', 'No such Channel or User');
+    throw new BadRequestException('No such Channel or User');
+  }
+  if (!(await this.channelService.isUserMuted(muteUserDto))) {
+    client.emit('unmuteUserFailed', 'User is not muted');
+    throw new BadRequestException('User is not muted');
+  }
+  if (channel.owner?.id != user.id && !(await this.channelService.isUserAdmin({chanid: channel.id, userid: user.id}))) {
+    client.emit('muteUserFailed', 'You are not Admin on this channel');
+    throw new BadRequestException('You are not Admin on this channel');
+  }
+  this.channelService.unmuteUser(muteUserDto);
+  client.emit('unmuteUserOK', user.id, channel.id);
+  this.server.to('chan' + channel.id).emit('unmuteUser', muteUserDto);
+
 }
 
 @SubscribeMessage('GiveAdmin')
@@ -285,17 +339,20 @@ async handleInvite(@ConnectedSocket() client: Socket, @MessageBody() inviteDto: 
     throw new BadRequestException('No such Channel or User');
   if (!(await this.channelService.isUserAdmin(user)))
     throw new BadRequestException('You are not Admin on this channel');
-  this.inviteToChan(inviteDto.users, channel.id);
+  this.inviteToChan(inviteDto.usersId, channel.id);
   client.emit('inviteOK');
-  this.server.to("chan" + channel.id).emit('invitePrivate', inviteDto);
+  this.server.to("chan" + channel.id).emit('invitePrivate', inviteDto); // inviteDto -> {chanid: number, users: User[]}
 }
-  
-async inviteToChan(users: User[], chanid: number)
+
+async inviteToChan(usersId: number[], chanid: number)
 {
   const channel = await this.channelService.getById(chanid)
     if (!channel)
       return;
-  for (const user of users) {
+  for (const userId of usersId) {
+    const user = await this.userService.getById(userId);
+    if (user === null)
+      continue;
     if (await this.channelService.isUserinChan(channel, user))
       continue;
     const socketIdToWho = this.findSocketFromUser(user);
@@ -305,14 +362,5 @@ async inviteToChan(users: User[], chanid: number)
     await this.channelService.add({user: user, chanId: chanid});
   }
 }
-
-afterInit(server: Server) {
-  console.log(`WebSocket server initialized: ${server}`);
-}
- 
-//  handleDisconnect(client: Socket) {
-
-//  }
- 
 
 }

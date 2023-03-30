@@ -48,7 +48,6 @@ $tab-color: rgba(var(--primary-color), 0.5); //rgb(121, 121, 121);
 	}
 
 	.right-sidebar {
-		// z-index: 1;
 		float: right;
 		border-top-right-radius: 0 !important;
 	}
@@ -96,6 +95,7 @@ $tab-color: rgba(var(--primary-color), 0.5); //rgb(121, 121, 121);
 		overflow-y: scroll;
 		height: 85%;
 		position: relative;
+		white-space: pre;
 	}
 
 	ul {

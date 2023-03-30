@@ -1,17 +1,45 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { Server, Socket } from 'socket.io';
 import { UserService } from 'src/user/user.service';
 import { Ball, GameState, Move, Player, Vec2 } from './game.interfaces';
 import { CreateResultDto } from 'src/results/dto/create-result.dto';
 import { Status } from 'src/user/entities/user.entity';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Results } from 'src/results/entities/results.entity';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class GameService {
 	constructor(
 		private readonly userService: UserService,
+		@InjectRepository(Results)
+    	private readonly resultsRepository: Repository<Results>,
 	) { }
 	public waitingRoom: any[] = [];
 	public gameRoom: Game[] = [];
+
+
+	async createResult(resultDto: CreateResultDto) {
+		const winner = await this.userService.getById(resultDto.winnerId);
+		const loser = await this.userService.getById(resultDto.loserId);
+		if (!winner || !loser) {
+		  throw new NotFoundException("User not found");
+		}
+		winner.elo += 50;
+		loser.elo -= 50;
+		winner.win += 1;
+		loser.lose += 1;
+	
+		const result = this.resultsRepository.create({
+		  winner,
+		  loser,
+		  loser_score: resultDto.loser_score,
+		  winner_score: resultDto.winner_score,
+		  loser_elo: loser.elo,
+		  winner_elo: winner.elo,
+		});
+		return this.resultsRepository.save(result);
+	  }
 
 	inGame(playerId: number)
 	{
@@ -23,6 +51,7 @@ export class GameService {
 		});
 		return false;
 	}
+
 
 	async addToWaitingRoom(client: Socket) {
 		console.log(this.waitingRoom);
@@ -197,20 +226,8 @@ export class GameService {
 		}
 	}
 
-	async save(results: CreateResultDto) {
-		const winner = await this.userService.getById(results.winnerId);
-		const loser = await this.userService.getById(results.loserId);  
-		const resultReturn = {
-		  winnerId: results.winnerId,
-		  loserId: results.loserId,
-		  winner_score: results.winner_score,
-		  loser_score: results.loser_score,
-		  winner_elo: winner ? winner.elo : 0,
-		  loser_elo: loser ? loser.elo : 0,
-		};
-	  
-		await this.userService.createResult(resultReturn);
-	  }
+
+
 	  
 
 	EndGame(client: string, server: Server) {
@@ -394,13 +411,14 @@ class Game {
 		this.gameState.gameFinished = true;
 		if (this.gameState.player1.score === this.gameState.scoreMax) {
 			const result: CreateResultDto = { winnerId: this.gameState.player1.id, loserId: this.gameState.player2.id, winner_score: this.gameState.player1.score.toString(), loser_score: this.gameState.player2.score.toString() };
-			await this.gameService.save(result);
+			await this.gameService.createResult(result);
 			this.server.to(this.gameState.player1.socket).emit('GameEnd', result);
 			this.server.to(this.gameState.player2.socket).emit('GameEnd', result);
 		}
 		else {
+			
 			const result: CreateResultDto = { winnerId: this.gameState.player2.id, loserId: this.gameState.player1.id, winner_score: this.gameState.player2.score.toString(), loser_score: this.gameState.player1.score.toString() };
-			await this.gameService.save(result);
+			await this.gameService.createResult(result);
 			this.server.to(this.gameState.player1.socket).emit('GameEnd', result);
 			this.server.to(this.gameState.player2.socket).emit('GameEnd', result);
 		}
