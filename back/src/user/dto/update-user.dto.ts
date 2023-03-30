@@ -8,7 +8,7 @@ export class UpdateUserDto extends PartialType(CreateUserDto) {
 	  @IsString()
 	  @IsNotEmpty()
 	  @MaxLength(16)
-	  @Matches(/^\S.*\S$/,{ message: 'Username must contain at least two non-whitespace characters' })
+	  @Matches(/^\S.*\S$/,{ message: 'Username start or end with a space' })
     username?: string;
   
     @IsOptional()
