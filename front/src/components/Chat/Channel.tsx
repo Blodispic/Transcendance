@@ -197,7 +197,6 @@ export function Channels(props: { page: (page: page) => void }) {
 			}
 		});
 
-
 		socket.on("unmuteUser", ({chanid, userid, timer}) => {
 			dispatch(unMuteUser({chanid: chanid, userid: userid}));
 		});

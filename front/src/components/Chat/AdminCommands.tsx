@@ -88,7 +88,7 @@ export function MuteUser(props: { chanid: any, userid: any, trigger: boolean, se
 				<br />
 				<h3>Mute User</h3>
 				<h4>Set time (optional)</h4>
-				<input type="number" id="clickable-input" min="0" onChange={e => { setTimeout(e.target.value); setFailed(false); setError("")}} />seconds
+				<input type="number" id="clickable-input" min="0" onChange={e => { setTimeout(e.target.value)}} />seconds
 				<br /><br />
 				{
 					failed === true &&
@@ -142,6 +142,7 @@ export function ConfigureChannelPrivate(props: { trigger: boolean, setTrigger: (
 			socket.off("AddPeoplePrivateOk");
 		}
 	}, [props.channel.users]);
+
 	const get_all = async () => {
 		const response = await fetch(`${process.env.REACT_APP_BACK}user`, {
 			method: 'GET',
