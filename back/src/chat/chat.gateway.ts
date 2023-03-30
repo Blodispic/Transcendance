@@ -337,7 +337,7 @@ async handleInvite(@ConnectedSocket() client: Socket, @MessageBody() inviteDto: 
   const user = client.handshake.auth.user;
   if (channel === null || user === null)
     throw new BadRequestException('No such Channel or User');
-  if (!(await this.channelService.isUserAdmin(user)))
+  if (!(await this.channelService.isUserAdmin({chanid: channel.id, userid: user.id})))
     throw new BadRequestException('You are not Admin on this channel');
   this.inviteToChan(inviteDto.usersId, channel.id);
   client.emit('inviteOK');

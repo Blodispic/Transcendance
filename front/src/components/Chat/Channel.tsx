@@ -155,6 +155,7 @@ export function Channels(props: { page: (page: page) => void }) {
 	const { id } = useParams();
 	const dispatch = useAppDispatch();
 	const currentUser: IUser | undefined = useAppSelector(state => state.user.user);
+	const myUser = useAppSelector(state => state);
 
 	useEffect(() => {
 		const get_channels = async () => {
@@ -202,8 +203,18 @@ export function Channels(props: { page: (page: page) => void }) {
 		});
 
 		socket.on("invitePrivate", (inviteDto) => {
-			for (let i = 0; inviteDto.users[i]; i++) {
-				dispatch(addMember({chanid: inviteDto.chanid, user: inviteDto.users[i]}));
+			for (let i = 0; inviteDto.usersId[i]; i++) {
+				const get_user = async () => {
+						const response = await fetch(`${process.env.REACT_APP_BACK}user/id/${inviteDto.usersId[i]}`, {
+							method: 'GET',
+							headers: {
+								'Authorization': `Bearer ${myUser.user.myToken}`,
+							},
+						})
+						const data = await response.json();
+						dispatch(addMember({chanid: inviteDto.chanid, user: data}));
+				}
+				get_user();
 			}
 		});
 
