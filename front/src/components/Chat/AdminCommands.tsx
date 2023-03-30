@@ -65,7 +65,6 @@ export function MuteUser(props: { chanid: any, userid: any, trigger: boolean, se
 	const [errorMessage, setError] = useState<string>("");
 
 	const handleMute = () => {
-		console.log("timeout : ", timeout);
 		if (timeout === "")
 			socket.emit('MuteUser', { chanid: props.chanid, userid: props.userid });
 		else
