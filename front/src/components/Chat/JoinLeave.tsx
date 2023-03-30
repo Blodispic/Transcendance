@@ -84,6 +84,10 @@ export function JoinChannel(props: { channel: IChannel }) {
 				fetchChanInfo();
 				setPassPopup(false);
 				swal("You joined [ " + props.channel.name + " ] ", " ");
+				setTimeout(() => {
+					if (swal && swal.close)
+					  swal.close()
+				  }, 1000);
 			}
 		});
 		socket.on('exception', () => {
@@ -104,12 +108,12 @@ export function JoinChannel(props: { channel: IChannel }) {
 				<div>
 					{
 						props.channel.chanType === 0 &&
-						<button style={{ float: 'right' }} onClick={() => { handleJoin() }}>Join Channel</button>
+						<button onClick={() => { handleJoin() }}>Join Channel</button>
 					}
 					{
 						props.channel.chanType === 2 &&
 						<>
-							<button style={{ float: 'right' }} onClick={() => setPassPopup(true)}>Join Channel</button>
+							<button onClick={() => setPassPopup(true)}>Join Channel</button>
 							<CheckPassword trigger={passPopup} setTrigger={setPassPopup} channel={props.channel} />
 						</>
 					}
@@ -132,11 +136,19 @@ export function LeaveChannel(props: { channel: IChannel }) {
 				dispatch(removeMember({ chanid: chanId, userid: currentUser.id }));
 				dispatch(removeChanMessage(chanId));
 				swal("You left [ " + props.channel.name + " ] ", " ");
+				setTimeout(() => {
+					if (swal && swal.close)
+					  swal.close()
+				  }, 1000);
 			}
 		})
 		socket.on("leaveChannelFailed", (err_message) => {
 			if (currentUser !== undefined) {
 				swal(err_message, "error");
+				setTimeout(() => {
+					if (swal && swal.close)
+					  swal.close()
+				  }, 1000);
 			}
 		})
 		socket.on('exception', () => {

@@ -45,10 +45,10 @@ $tab-color: rgba(var(--primary-color), 0.5); //rgb(121, 121, 121);
 		color: black;
 		display: flex;
 		align-items: center;
+		white-space: pre;
 	}
 
 	.right-sidebar {
-		// z-index: 1;
 		float: right;
 		border-top-right-radius: 0 !important;
 	}
@@ -93,7 +93,7 @@ $tab-color: rgba(var(--primary-color), 0.5); //rgb(121, 121, 121);
 	}
 
 	.chat-list {
-		overflow-y: scroll;
+		overflow-y: auto;
 		height: 85%;
 		position: relative;
 		white-space: pre;
@@ -157,7 +157,7 @@ $tab-color: rgba(var(--primary-color), 0.5); //rgb(121, 121, 121);
 		background: var(--primary-color);
 		color: white !important;
 		transition: .3s;
-		margin: 0px 10px;
+		margin: 15px 10px;
 	}
 
 	button:hover {
@@ -186,7 +186,7 @@ $tab-color: rgba(var(--primary-color), 0.5); //rgb(121, 121, 121);
 .chat-messages {
 	height: calc(100vh - 250px);
 	vertical-align: top;
-	overflow-y: scroll;
+	overflow-y: auto;
 	flex: 1;
 	display: flex;
 	flex-direction: column-reverse;
@@ -276,7 +276,7 @@ $tab-color: rgba(var(--primary-color), 0.5); //rgb(121, 121, 121);
 	background-color: white;
 	border-radius: 5px;
 	width: 300px;
-	height: 250px;
+	height: auto;
 	color: black;
 	border-color: var(--sub-color1);
 	justify-content: center;
@@ -310,11 +310,13 @@ $tab-color: rgba(var(--primary-color), 0.5); //rgb(121, 121, 121);
 	cursor: pointer;
 }
 
+.channel-icon {
+	margin-left: 5px;
+}
+
 .clickable-menu {
 	margin-top: -15px !important;
 	background-color: rgba(0, 0, 0, 0.70) !important;
-
-
 }
 
 .Chat-onglets {
@@ -388,7 +390,6 @@ $tab-color: rgba(var(--primary-color), 0.5); //rgb(121, 121, 121);
 	color: #B33A3A;
 	font-size: smaller;
 }
-
 
 .message_block {
 	background-color: #9da6b7;

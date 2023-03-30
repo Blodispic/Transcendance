@@ -11,7 +11,6 @@ import { JwtService } from '@nestjs/jwt';
 import { FriendRequestStatus } from './interface/friend-request.interface';
 import { authenticator } from 'otplib';
 import * as QRCode from 'qrcode';
-import { CreateResultDto } from 'src/results/dto/create-result.dto';
 import { Server } from 'http';
 import { userList } from 'src/app.gateway';
 
@@ -39,28 +38,13 @@ export class UserService {
     return this.usersRepository.save(user);
   }
 
-  async createResult(resultDto: CreateResultDto) {
-    const winner = await this.usersRepository.findOneBy({id: resultDto.winnerId});
-    const loser = await this.usersRepository.findOneBy({id: resultDto.loserId});
-    if (!winner || !loser) {
-      throw new NotFoundException("User not found");
-    }
-    winner.elo += 50;
-    loser.elo -= 50;
-    winner.win += 1;
-    loser.lose += 1;
-
-    const result = this.resultsRepository.create({
-      winner,
-      loser,
-      loser_score: resultDto.loser_score,
-      winner_score: resultDto.winner_score,
-      loser_elo: loser.elo,
-      winner_elo: winner.elo,
-    });
-    return this.resultsRepository.save(result);
+async checkTab(user: User) {
+  for (const iterator of userList) {
+    console.log("la", iterator.handshake.auth.user.id);
+    if (iterator.handshake.auth.user.id === user.id)
+      throw new BadRequestException('t\'as deja un tab frero');
   }
-
+}
   async save(updateUserDto: UpdateUserDto) {
     return (await this.usersRepository.save(updateUserDto));
   }
@@ -154,7 +138,6 @@ export class UserService {
   }
 
   async update(user: User, userUpdate: UpdateUserDto) {
-    //Si vous voulez plus de chose a update, mettez le dans le body et faites un iff
     if (userUpdate.username) {
       const checkUsername = await this.usersRepository.findOneBy({
         username: userUpdate.username,
@@ -181,12 +164,9 @@ export class UserService {
   }
 
   async sendFriendRequest(friendId: number, creator: User) {
+
     if (friendId == creator.id) {
       return ({ message: 'You can\'t add yourself' });
-    }
-
-    if (!creator) {
-      throw new NotFoundException('creator doesn\'t exists');
     }
 
     const friend: User | null = await this.usersRepository.findOne({
@@ -199,15 +179,6 @@ export class UserService {
       return ({ message: 'Friend does not exist' });
     }
 
-    const user: User | null = await this.usersRepository.findOne({
-      relations: {
-        friends: true,
-      },
-      where: { id: creator.id },
-    });
-    if (!user) {
-      throw new NotFoundException('User not found');
-    }
     const existingRequest = await this.friendRequestRepository.findOne({
       relations: {
         creator: true,
@@ -215,10 +186,23 @@ export class UserService {
       },
       where: [{ creator: creator, receiver: friend }],
     });
-
     if (existingRequest) {
       throw new UnauthorizedException('Friend Request already send');
     }
+
+    const friendReqExists = await this.friendRequestRepository.findOne({
+      relations: {
+        creator: true,
+        receiver: true,
+      },
+      where: [{ receiver: creator, creator: friend }],
+    });
+    
+    if (friendReqExists) {
+      await this.addFriend(friendId, creator);
+      return await this.DeleteFriendRequest(creator, friendId);
+    }
+    
     const friendRequest: FriendRequestDto = {
       creatorId: creator.id,
       creator: creator,
@@ -236,10 +220,10 @@ export class UserService {
         friend.receiveFriendRequests = [];
       friend.receiveFriendRequests.push(friendRequestPush);
       await this.usersRepository.save(friend);
-      if (!user.sendFriendRequests)
-        user.sendFriendRequests = [];
-      user.sendFriendRequests.push(friendRequestPush);
-      await this.usersRepository.save(user);
+      if (!creator.sendFriendRequests)
+        creator.sendFriendRequests = [];
+      creator.sendFriendRequests.push(friendRequestPush);
+      await this.usersRepository.save(creator);
     }
     return { message: 'Friend request sent' };
   }

@@ -1,9 +1,10 @@
 import * as React from 'react';
 import { useEffect, useState } from "react";
-import { Circle, Layer, Rect, Stage, Text } from "react-konva";
+import { Circle, Layer, Rect, Stage } from "react-konva";
 import { socket } from "../../App";
 import { ResultPopup } from "./Result";
 import swal from "sweetalert";
+import { Result } from '../../interface/Result';
 
 
 export interface Vec2 {
@@ -114,7 +115,7 @@ resetState(gameStateDefault);
 
 export default function GameApp() {
 	const [gameState, setGameState] = useState<GameState>(gameStateDefault);
-	const [result, setResult] = useState<boolean>()
+	const [result, setResult] = useState<number>()
 	const [intervalId, setIntervalId] = useState<NodeJS.Timer>();
 
 	useEffect(() => {
@@ -130,21 +131,23 @@ export default function GameApp() {
 			setGameState(convertedState);
 			});
 
-		socket.on("GameEnd", (result: any) => {
+		socket.on("GameEnd", (result: Result) => {
 			if (selfID === 1)
 			{
-				if (result.winner === gameState.player1.name)
-					setResult(true);
-				else if (result.winner === gameState.player2.name)
-					setResult(false);
+				if (result.winner.id === gameState.player1.id)
+					setResult(1);
+				else if (result.winner.id === gameState.player2.id)
+					setResult(2);
+			}
+			else if (selfID === 2)
+			{
+				if (result.winner.id === gameState.player1.id)
+					setResult(2);
+				else if (result.winner.id === gameState.player2.id)
+					setResult(1);
 			}
 			else
-			{
-				if (result.winner === gameState.player1.name)
-					setResult(false);
-				else if (result.winner === gameState.player2.name)
-					setResult(true);
-			}
+				setResult(3)
 			socket.emit("GameEnd", null);
 			return () => {
 				socket.off('UpdateState');
@@ -170,7 +173,7 @@ export default function GameApp() {
 	//  Here to modify game page
 	return (
 		<div id="game-container">
-			{ gameState.gameFinished ? (result ? <ResultPopup win={true} /> : <ResultPopup win={false} />) : <></> }
+			{ gameState.gameFinished ? (<ResultPopup win={result} />) : <></> }
 			<h3 className="display-player">
 				<img src={`${process.env.REACT_APP_BACK}user/${gameState.player2.id}/avatar`} alt={gameState.player2.name} />
 				{gameState.player2.name} : {gameState.player2.score}
@@ -211,14 +214,6 @@ export default function GameApp() {
 						fill="white"
 						width={paddleDimensions.x}
 						height={paddleDimensions.y}
-					/>
-					<Text
-						text={gameState.player1.name.toString() + " wins !"}
-						visible={gameState.gameFinished}
-						x={gameState.area.x / 2 - 150}
-						y={gameState.area.y / 2}
-						fontSize={40}
-						align="center"
 					/>
 				</Layer>
 			</Stage>
