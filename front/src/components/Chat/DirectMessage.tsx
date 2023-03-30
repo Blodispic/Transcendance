@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { useEffect, useState } from "react";
+import { AiOutlineStop } from 'react-icons/ai';
 import { Link, useNavigate, useParams } from "react-router-dom";
 import swal from "sweetalert";
 import { socket } from "../../App";
@@ -12,6 +13,7 @@ import CustomGamePopup from "../Game/CustomGamePopup";
 function DMList(props: { currentdm: IUser | undefined; setCurrentDm: (user: IUser | undefined) => void }) {
 	const [alluser, setAlluser] = useState<IUser[] | undefined>(undefined);
 	const myStore = useAppSelector(state => state);
+	const currentUser: IUser | undefined = useAppSelector(state => state.user.user);
 	const navigate = useNavigate();
 	const [updateStatus, setUpdateStatus] = useState(false);
 	
@@ -47,6 +49,7 @@ function DMList(props: { currentdm: IUser | undefined; setCurrentDm: (user: IUse
 						<ul key={user.username} onClick={() => {props.setCurrentDm(user); navigate(`/Chat/dm/${user.id}`)}} >
 							<li >
 								{user.username}
+								{ currentUser?.blocked?.find(obj => obj.id === user.id) && <AiOutlineStop /> }
 							</li>
 						</ul>
 					))}
@@ -263,6 +266,7 @@ export function DmMessages(props: { id: number; currentdm: IUser | undefined; se
 			<div className="body-header">
 				<img className="user-avatar" src={`${process.env.REACT_APP_BACK}user/${props.currentdm?.id}/avatar`} alt="" />
 				{props.currentdm?.username}
+				{ myUser?.blocked?.find(obj => obj.id === props.currentdm?.id) && <AiOutlineStop /> }
 			</div>
 			<div className="chat-messages">
 				<div className="reverse">
