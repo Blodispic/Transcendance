@@ -218,7 +218,7 @@ async handleChangePassword(@ConnectedSocket() client: Socket, @MessageBody() cha
 @SubscribeMessage('BanUser')
 async handleBanUser(@ConnectedSocket() client: Socket, @MessageBody() banUserDto: BanUserDto) {
   if (banUserDto.timeout && isNaN(parseInt(banUserDto.timeout))) {
-    client.emit('muteUserFailed', 'Please put a number');
+    client.emit('banUserFailed', 'Please put a number');
     return;
   }
   
@@ -248,9 +248,17 @@ async handleBanUser(@ConnectedSocket() client: Socket, @MessageBody() banUserDto
   }
   const socketId = this.findSocketFromUser(userBan);
   if (socketId)
-    this.server.to(socketId.id).emit('banUser', {chanid: channel.id, userid: userBan.id, timer: banUserDto.timeout});
+    this.server.to(socketId.id).emit('banUser', {
+      chanid: channel.id,
+      userid: userBan.id,
+      timer: Number(banUserDto.timeout) * 1000
+    });
   client.emit('banUserOK', user.id, channel.id);
-  this.server.to('chan' + channel.id).emit('banUser', {chanid: channel.id, userid: userBan.id, timer: banUserDto.timeout});
+  this.server.to('chan' + channel.id).emit('banUser', {
+    chanid: channel.id,
+    userid: userBan.id,
+    timer: Number(banUserDto.timeout) * 1000,
+  });
 }
 
 @SubscribeMessage('unBan')
@@ -299,15 +307,18 @@ async handleMuteUser(@ConnectedSocket() client: Socket, @MessageBody() muteUserD
     client.emit('muteUserFailed', 'You can not Mute an Admin');
     return;
   }
-  await this.channelService.muteUser(muteUserDto);  
+  await this.channelService.muteUser(muteUserDto);
   if (muteUserDto.timeout) {
     setTimeout(() => {  
       this.channelService.unmuteUser(muteUserDto);
     }, parseInt(muteUserDto.timeout) * 1000);
   }
   client.emit('muteUserOK', user.id, channel.id);
-  // this.server.to('chan' + channel.id).emit('muteUser', {chanid: channel.id, userid: muteUserDto.userid, timer: muteUserDto.timeout});
-  this.server.to('chan' + channel.id).emit('muteUser', muteUserDto);
+  this.server.to('chan' + channel.id).emit('muteUser', {
+    chanid: channel.id,
+    userid: userMute.id,
+    timeout: Number(muteUserDto.timeout) * 1000,
+  });
 }
 
 @SubscribeMessage('Unmute')
