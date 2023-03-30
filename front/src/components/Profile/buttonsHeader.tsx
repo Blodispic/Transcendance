@@ -80,7 +80,7 @@ export default function HeaderButtons(props: { currentUser: IUser }) {
     return (
         <>
             {
-                ((myUser.user && (myUser.user.blocked === undefined || myUser.user.blocked.find(block => block.id === currentUser.id) === undefined)) && currentUser.username !== myUser.user!.username) &&
+                ((myUser.user && (myUser.user.blocked === undefined || myUser.user.blocked.find(block => block.id === currentUser.id) === undefined)) && currentUser.id !== myUser.user!.id) &&
                 <>
                     {
                         currentUser.status === UserStatus.INGAME &&
@@ -92,7 +92,7 @@ export default function HeaderButtons(props: { currentUser: IUser }) {
                 </>
             }
             {
-                ((myUser.user && (myUser.user.blocked !== undefined && myUser.user.blocked.find(block => block.id === currentUser.id) !== undefined)) && currentUser.username !== myUser.user!.username) &&
+                ((myUser.user && (myUser.user.blocked !== undefined && myUser.user.blocked.find(block => block.id === currentUser.id) !== undefined)) && currentUser.id !== myUser.user!.id) &&
                 <button className="button-style" style={{ background: '#B33A3A' }} onClick={() => UnBlock()}> unblock </button>
 
             }

@@ -38,7 +38,6 @@ export function Log() {
                 if (data.result === true) {
                     dispatch(set_status(UserStatus.ONLINE));
                     navigate("/Home");
-
                 }
             })
             .catch()

@@ -1,10 +1,11 @@
-import { IsEmail, IsNotEmpty, IsOptional, IsString, MaxLength } from 'class-validator';
+import { IsEmail, IsNotEmpty, IsOptional, IsString, Matches, MaxLength } from 'class-validator';
 
 export class CreateUserDto {
 	@IsOptional()
 	@IsString()
 	@IsNotEmpty()
 	@MaxLength(16)
+	@Matches(/^(?!\s+$).+$/s,{ message: 'Username start or end with a space' })
 	username?: string;
 
 	@IsString()

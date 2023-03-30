@@ -16,9 +16,16 @@ export default function Sign() {
     const myToken = useAppSelector(state => state.user.myToken);
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
-    const [nameExist, SetNameExist] = useState<boolean>(false);
+    const [error, SetError] = useState<string | undefined>(undefined);
+    // const [controller, setController] = useState<string>("");
+    let controller: string;
+    if (window.location.href.search('sign') !== -1)
+        controller = 'firstSign';
+    else
+        controller = "" + myUser?.user?.id;
 
 
+   
     const fetch_name_avatar = async (e: any) => {
         e.preventDefault();
         if (file && myUser.user) {
@@ -36,7 +43,8 @@ export default function Sign() {
 
         if (newname !== '' && myUser.user) {
             if (newname) {
-                await fetch(`${process.env.REACT_APP_BACK}user/${myUser.user.id}`, {
+
+                await fetch(`${process.env.REACT_APP_BACK}user/${controller}`, {
                     method: 'PATCH',
                     headers: {
                         'Content-Type': 'application/json',
@@ -47,10 +55,12 @@ export default function Sign() {
                     .then(async response => {
                         if (!response.ok)
                         {
-                            SetNameExist(true);
+                            const data = response.json();
+                            data.then(response => { SetError(response.message) })
+                            SetError("data");
                         }
                         else {
-                            SetNameExist(false);
+                            SetError(undefined);
                             dispatch(change_name(newname));
                             dispatch(set_status(UserStatus.ONLINE));
                             if (window.location.href.search('Profile') === -1) {
@@ -91,8 +101,8 @@ export default function Sign() {
                         </button>
                     }
                     {
-                        nameExist && 
-                        <span> this username already use</span>
+                        error !== undefined && 
+                        <span> {error}</span>
                     }
                 </form >
             </div >
