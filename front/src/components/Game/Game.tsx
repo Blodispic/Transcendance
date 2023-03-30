@@ -114,7 +114,7 @@ resetState(gameStateDefault);
 
 export default function GameApp() {
 	const [gameState, setGameState] = useState<GameState>(gameStateDefault);
-	const [result, setResult] = useState<boolean>()
+	const [result, setResult] = useState<number>()
 	const [intervalId, setIntervalId] = useState<NodeJS.Timer>();
 
 	useEffect(() => {
@@ -134,17 +134,19 @@ export default function GameApp() {
 			if (selfID === 1)
 			{
 				if (result.winner === gameState.player1.name)
-					setResult(true);
+					setResult(1);
 				else if (result.winner === gameState.player2.name)
-					setResult(false);
+					setResult(2);
 			}
-			else
+			else if (selfID === 2)
 			{
 				if (result.winner === gameState.player1.name)
-					setResult(false);
+					setResult(2);
 				else if (result.winner === gameState.player2.name)
-					setResult(true);
+					setResult(1);
 			}
+			else
+				setResult(3)
 			socket.emit("GameEnd", null);
 			return () => {
 				socket.off('UpdateState');
@@ -170,7 +172,7 @@ export default function GameApp() {
 	//  Here to modify game page
 	return (
 		<div id="game-container">
-			{ gameState.gameFinished ? (result ? <ResultPopup win={true} /> : <ResultPopup win={false} />) : <></> }
+			{ gameState.gameFinished ? (<ResultPopup win={result} />) : <></> }
 			<h3 className="display-player">
 				<img src={`${process.env.REACT_APP_BACK}user/${gameState.player2.id}/avatar`} alt={gameState.player2.name} />
 				{gameState.player2.name} : {gameState.player2.score}
