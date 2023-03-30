@@ -22,8 +22,6 @@ export class ChannelService {
 
 		@Inject(forwardRef(() => UserService))
 		private userService: UserService,
-		// @InjectRepository(User)
-		// private userRepository: Repository<User>,
 
 	) {}
 
@@ -78,7 +76,7 @@ export class ChannelService {
 		return await this.channelRepository.save(channel);
 	}
 
-	async update(id: number, channelUpdate: any) {	
+	async update(id: number, channelUpdate: any) {		 // DTO pour update
 		const channel = await this.channelRepository.findOne({
 			relations: { users: true },
 			where: {
@@ -183,16 +181,6 @@ export class ChannelService {
 				owner: true,
 			},
 		});
-	  }
-
-	  getPublic() {		
-		return this.channelRepository.find({
-			where: [
-				{chanType: 0},
-				{chanType: 2},
-				],
-			});
-
 	  }
 
 	  getUserChannel (id: number) {
