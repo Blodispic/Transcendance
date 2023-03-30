@@ -282,8 +282,8 @@ async handleunBanUser(@ConnectedSocket() client: Socket, @MessageBody() banUserD
   
   const socketId = this.findSocketFromUser(userBan);
   if (socketId)
-    this.server.to(socketId.id).emit('unban', {chanid: channel.id, userid: userBan.id, timer: banUserDto.timeout});
-  client.emit('unbanOK', user.id, channel.id);
+    this.server.to(socketId.id).emit('unban', {chanid: channel.id, userid: userBan.id, timer: banUserDto.timeout}); // not useful (delete or use ? ) selee confirmation needed or adam or pop up
+  client.emit('unbanOK', userBan.id, channel.id);
 }
 
 @SubscribeMessage('MuteUser')
@@ -339,7 +339,7 @@ async handleUnMute(@ConnectedSocket() client: Socket, @MessageBody() muteUserDto
     return;
   }
   this.channelService.unmuteUser(muteUserDto);
-  client.emit('unmuteUserOK', user.id, channel.id);
+  client.emit('unmuteUserOK', user.id, channel.id); // probably to remove, or pop - up or adam, selee confirmation needed
   this.server.to('chan' + channel.id).emit('unmuteUser', muteUserDto);
 
 }
@@ -365,12 +365,12 @@ async handleInvite(@ConnectedSocket() client: Socket, @MessageBody() inviteDto: 
     return; // 'No such Channel or User');
   if (user.id != channel.owner?.id)
     return; // 'You are not Owner of this channel');
-  this.inviteToChan(inviteDto.usersId, channel.id);
+  this.inviteToChan(inviteDto.usersId, channel.id, client);
   client.emit('inviteOK');
   this.server.to("chan" + channel.id).emit('invitePrivate', inviteDto); // inviteDto -> {chanid: number, users: User[]}
 }
 
-async inviteToChan(usersId: number[], chanid: number)
+async inviteToChan(usersId: number[], chanid: number, client?: Socket)
 {
   const channel = await this.channelService.getById(chanid)
     if (!channel)
@@ -381,6 +381,10 @@ async inviteToChan(usersId: number[], chanid: number)
       continue;
     if (await this.channelService.isUserinChan(channel, user))
       continue;
+    if (await this.channelService.isUserBanned({chanid: channel.id, userid: user.id})) {
+      await this.channelService.unbanUser({chanid: channel.id, userid: user.id});
+      client?.emit('unbanOK', user.id, channel.id);
+    }
     const socketIdToWho = this.findSocketFromUser(user);
     if (socketIdToWho)
       this.server.to(socketIdToWho.id).emit('invited', chanid);

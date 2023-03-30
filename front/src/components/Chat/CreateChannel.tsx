@@ -49,9 +49,6 @@ export function PopupCreateChannel(props: { trigger: boolean, setTrigger: (value
 			setFailed(true);
 			setError(error_message);
 		});
-		socket.on('exception', () => {
-			swal("Format Error", "Your input is not valid for this request", "error");
-		  });
 		socket.on("createChannelOk", (new_chanid) => {
 			const fetchChanInfo = async () => {
 				await fetch(`${process.env.REACT_APP_BACK}channel/${new_chanid}`, {
@@ -75,7 +72,6 @@ export function PopupCreateChannel(props: { trigger: boolean, setTrigger: (value
 		return () => {
 			socket.off("createChannelFailed");
 			socket.off("createChannelOk");
-			socket.off('exception');
 		}
 	});
 

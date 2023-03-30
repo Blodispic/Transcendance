@@ -30,13 +30,9 @@ export function BanUser(props: { chanid: any, userid: any, trigger: boolean, set
 			props.setTrigger(false);
 			setFailed(false);
 		});
-		socket.on('exception', () => {
-			swal("Format Error", "Your input is not valid for this request", "error");
-		  });
 		return () => {
 			socket.off("banUserFailed");
 			socket.off("banUserOK");
-			socket.off('exception');
 		}
 	})
 
@@ -80,13 +76,9 @@ export function MuteUser(props: { chanid: any, userid: any, trigger: boolean, se
 			props.setTrigger(false);
 			setFailed(false);
 		});
-		socket.on('exception', () => {
-			swal("Format Error", "Your input is not valid for this request", "error");
-		  });
 		return () => {
 			socket.off("muteUserFailed");
 			socket.off("muteUserOK");
-			socket.off('exception');
 		}
 	})
 
@@ -147,12 +139,8 @@ export function ConfigureChannelPrivate(props: { trigger: boolean, setTrigger: (
 		setAlreadyhere(props.channel.users);
 		socket.on("AddPeoplePrivateOk", (error_message) => {
 		});
-		socket.on('exception', () => {
-			swal("Format Error", "Your input is not valid for this request", "error");
-		  });
 		return () => {
 			socket.off("AddPeoplePrivateOk");
-			socket.off('exception');
 		}
 	}, [props.channel.users]);
 	const get_all = async () => {
@@ -186,9 +174,6 @@ export function ConfigureChannelPrivate(props: { trigger: boolean, setTrigger: (
 		socket.on("unBanOk", (id) => {
 			dispatch(banUser({chanid: props.channel.id, userid: id} ))
 		});
-		socket.on('exception', () => {
-			swal("Format Error", "Your input is not valid for this request", "error");
-		  }); // need a socket.off
 	})
 
 	return (props.trigger) ? (
@@ -287,9 +272,6 @@ export function ConfigureChannel(props: { trigger: boolean, setTrigger: (value: 
 			// dispatch(banUser({chanid: props.channel.id, userid: id}));
 			// props.channel.banned = props.channel.banned.filter( banned => banned.id === id);
 		});
-		socket.on('exception', () => {
-			swal("Format Error", "Your input is not valid for this request", "error"); // need on socket.off
-		  });
 	}, [])
 
 

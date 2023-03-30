@@ -25,13 +25,8 @@ export function CheckPassword(props: { trigger: boolean, setTrigger: (value: boo
 			setErrorMessage(error_message);
 			setFailed(true);
 		});
-		socket.on('exception', () => {
-			swal("Format Error", "Your input is not valid for this request", "error");
-		  });
-
 		return () => {
 			socket.off("joinChannelFailed");
-			socket.off('exception');
 		}
 	});
 
@@ -90,14 +85,9 @@ export function JoinChannel(props: { channel: IChannel }) {
 				  }, 1000);
 			}
 		});
-		socket.on('exception', () => {
-			swal("Format Error", "Your input is not valid for this request", "error");
-		  });
-
 		return () => {
 			socket.off("joinChannelFailed");
 			socket.off("joinChannelOK");
-			socket.off('exception');
 		}
 	});
 
@@ -151,14 +141,9 @@ export function LeaveChannel(props: { channel: IChannel }) {
 				  }, 1000);
 			}
 		})
-		socket.on('exception', () => {
-			swal("Format Error", "Your input is not valid for this request", "error");
-		  });
-
 		return () => {
 			socket.off("leaveChannelOK");
 			socket.off("leaveChannelFailed");
-			socket.off('exception');
 		}
 	});
 

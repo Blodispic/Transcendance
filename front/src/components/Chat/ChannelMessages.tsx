@@ -119,12 +119,8 @@ export function ChannelMessages() {
 			  }
 			  dispatch(addMessage(newMessage));
 		});
-		socket.on('exception', () => {
-			swal("Format Error", "Your input is not valid for this request", "error");
-		  });
 		return () => {
 			socket.off("sendMessageChannelFailed");
-			socket.off('exception');
 		}})
 
 	const handleSubmitNewMessage = (e: React.FormEvent<HTMLFormElement>) => {
