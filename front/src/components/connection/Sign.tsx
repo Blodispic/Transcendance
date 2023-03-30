@@ -16,7 +16,7 @@ export default function Sign() {
     const myToken = useAppSelector(state => state.user.myToken);
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
-    const [nameExist, SetNameExist] = useState<boolean>(false);
+    const [error, SetError] = useState<string | undefined>(undefined);
     // const [controller, setController] = useState<string>("");
     let controller: string;
     if (window.location.href.search('sign') !== -1)
@@ -55,10 +55,12 @@ export default function Sign() {
                     .then(async response => {
                         if (!response.ok)
                         {
-                            SetNameExist(true);
+                            const data = response.json();
+                            data.then(response => { SetError(response.message) })
+                            SetError("data");
                         }
                         else {
-                            SetNameExist(false);
+                            SetError(undefined);
                             dispatch(change_name(newname));
                             dispatch(set_status(UserStatus.ONLINE));
                             if (window.location.href.search('Profile') === -1) {
@@ -99,8 +101,8 @@ export default function Sign() {
                         </button>
                     }
                     {
-                        nameExist && 
-                        <span> this username already use</span>
+                        error !== undefined && 
+                        <span> {error}</span>
                     }
                 </form >
             </div >
