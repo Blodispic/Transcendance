@@ -6,7 +6,7 @@ import { IChannel } from "../../interface/Channel";
 import { IUser } from "../../interface/User";
 import { useAppDispatch, useAppSelector } from "../../redux/Hook";
 import { AiFillPlusCircle } from 'react-icons/ai';
-import { banUser } from '../../redux/chat';
+import { banUser, unBanUser } from '../../redux/chat';
 
 export function BanUser(props: { chanid: any, userid: any, trigger: boolean, setTrigger: (value: boolean) => void }) {
 	const [timeout, setTimeout] = useState<string>("");
@@ -170,9 +170,14 @@ export function ConfigureChannelPrivate(props: { trigger: boolean, setTrigger: (
 		socket.emit('unBan',{ chanid: props.channel.id, userid: id} ); //to be added soon
 	}
 	useEffect( () => {
-		socket.on("unBanOk", (id) => {
-			dispatch(banUser({chanid: props.channel.id, userid: id} ))
-		})
+		socket.on("unBanOk", (chanid, userid) => {
+			dispatch(unBanUser( {chanid: chanid, userid: userid} ));
+			props.setTrigger(false);
+		});
+		
+		return () => {
+			socket.off("unBanOk");
+		}
 	})
 
 	return (props.trigger) ? (
@@ -182,7 +187,6 @@ export function ConfigureChannelPrivate(props: { trigger: boolean, setTrigger: (
 				<h3>Edit members</h3>
 				<div className='allpoeple'>
 					{
-
 						<>
 							<div>
 								{alreadyhere && alreadyhere.map(user => (
@@ -202,7 +206,6 @@ export function ConfigureChannelPrivate(props: { trigger: boolean, setTrigger: (
 								<AiFillPlusCircle className="plus-circle pointer" title='Add member' onClick={() => { get_all(); setMyvar(!myVar) }} />
 							</div>
 						</>
-
 					}
 					{
 						myVar === true && alluser && alluser.length > 0 &&
@@ -266,12 +269,15 @@ export function ConfigureChannel(props: { trigger: boolean, setTrigger: (value: 
 	}
 
 	useEffect( () => {
-		socket.on("unbanOK", (id) => {
-			// console.log("ca rentre");
-			// dispatch(banUser({chanid: props.channel.id, userid: id}));
-			// props.channel.banned = props.channel.banned.filter( banned => banned.id === id);
-		})
-	}, [])
+		socket.on("unBanOk", (chanid, userid) => {
+			dispatch(unBanUser( {chanid: chanid, userid: userid} ));
+			props.setTrigger(false);
+		});
+		
+		return () => {
+			socket.off("unBanOk");
+		}
+	})
 
 
 

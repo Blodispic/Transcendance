@@ -273,9 +273,7 @@ export function DmMessages(props: { id: number; currentdm: IUser | undefined; se
 
 					{messages && messages.map((message: IMessage, index: number) => (
 						<div key={index} >
-							{
-
-								myUser?.blocked?.find(obj => obj.id === props.currentdm?.id) === undefined &&
+							{ myUser?.blocked?.find(obj => obj.id === props.currentdm?.id) === undefined &&
 									<div className="__wrap">
 										<div className="message-info">
 											<img className="user-avatar" src={`${process.env.REACT_APP_BACK}user/${message.sender?.id}/avatar`} alt="" />
@@ -284,11 +282,9 @@ export function DmMessages(props: { id: number; currentdm: IUser | undefined; se
 										</div>
 										{message.message}
 									</div>
-
 							}
 						</div>
 					))}
-
 				</div>
 			</div>
 			{
