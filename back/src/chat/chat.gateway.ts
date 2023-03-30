@@ -171,7 +171,7 @@ async handleLeaveChannel(@ConnectedSocket() client: Socket, @MessageBody() leave
 @SubscribeMessage('addPassword')
 async handleAddPassword(@ConnectedSocket() client: Socket, @MessageBody() chanPasswordDto: ChanPasswordDto) {
   const channel = await this.channelService.getById(chanPasswordDto.chanid);
-  const user = client.handshake.auth.user;
+  const user = await this.userService.getById(client.handshake.auth.user.id);
   if (channel === null || user === null)
     return; // No such User or Channel
   if (user.id != channel.owner?.id)
@@ -186,7 +186,7 @@ async handleAddPassword(@ConnectedSocket() client: Socket, @MessageBody() chanPa
 @SubscribeMessage('rmPassword')
 async handleRmPassword(@ConnectedSocket() client: Socket, @MessageBody() chanPasswordDto: ChanPasswordDto) {
   const channel = await this.channelService.getById(chanPasswordDto.chanid);
-  const user = client.handshake.auth.user;
+  const user = await this.userService.getById(client.handshake.auth.user.id);
   if (channel === null || user === null)
     return; // No such User or Channel
   if (user.id != channel.owner?.id)
@@ -201,7 +201,7 @@ async handleRmPassword(@ConnectedSocket() client: Socket, @MessageBody() chanPas
 @SubscribeMessage('changePassword')
 async handleChangePassword(@ConnectedSocket() client: Socket, @MessageBody() chanPasswordDto: ChanPasswordDto) {
   const channel = await this.channelService.getById(chanPasswordDto.chanid);
-  const user = client.handshake.auth.user;
+  const user = await this.userService.getById(client.handshake.auth.user.id);
   if (channel === null || user === null)
     return; // No such User or Channel
   if (user.id != channel.owner?.id)
@@ -347,7 +347,7 @@ async handleUnMute(@ConnectedSocket() client: Socket, @MessageBody() muteUserDto
 @SubscribeMessage('GiveAdmin')
 async handleGiveAdmin(@ConnectedSocket() client: Socket, @MessageBody() giveAdminDto: GiveAdminDto) {
   const channel = await this.channelService.getById(giveAdminDto.chanid);
-  const user = client.handshake.auth.user;
+  const user = await this.userService.getById(client.handshake.auth.user.id);
   if (channel === null || user === null)
     return; // No such User or Channel
   if (!(await this.channelService.isUserAdmin({chanid: channel.id, userid: user.id})))
@@ -360,7 +360,7 @@ async handleGiveAdmin(@ConnectedSocket() client: Socket, @MessageBody() giveAdmi
 async handleInvite(@ConnectedSocket() client: Socket, @MessageBody() inviteDto: InviteDto)
 {
   const channel = await this.channelService.getById(inviteDto.chanid);
-  const user = client.handshake.auth.user;
+  const user = await this.userService.getById(client.handshake.auth.user.id);
   if (channel === null || user === null)
     return; // 'No such Channel or User');
   if (user.id != channel.owner?.id)
