@@ -4,6 +4,7 @@ import { Circle, Layer, Rect, Stage, Text } from "react-konva";
 import { socket } from "../../App";
 import { ResultPopup } from "./Result";
 import swal from "sweetalert";
+import { Result } from '../../interface/Result';
 
 
 export interface Vec2 {
@@ -130,19 +131,19 @@ export default function GameApp() {
 			setGameState(convertedState);
 			});
 
-		socket.on("GameEnd", (result: any) => {
+		socket.on("GameEnd", (result: Result) => {
 			if (selfID === 1)
 			{
-				if (result.winner === gameState.player1.name)
+				if (result.winner.id === gameState.player1.id)
 					setResult(1);
-				else if (result.winner === gameState.player2.name)
+				else if (result.winner.id === gameState.player2.id)
 					setResult(2);
 			}
 			else if (selfID === 2)
 			{
-				if (result.winner === gameState.player1.name)
+				if (result.winner.id === gameState.player1.id)
 					setResult(2);
-				else if (result.winner === gameState.player2.name)
+				else if (result.winner.id === gameState.player2.id)
 					setResult(1);
 			}
 			else

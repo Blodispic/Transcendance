@@ -411,16 +411,16 @@ class Game {
 		this.gameState.gameFinished = true;
 		if (this.gameState.player1.score === this.gameState.scoreMax) {
 			const result: CreateResultDto = { winnerId: this.gameState.player1.id, loserId: this.gameState.player2.id, winner_score: this.gameState.player1.score.toString(), loser_score: this.gameState.player2.score.toString() };
-			await this.gameService.createResult(result);
-			this.server.to(this.gameState.player1.socket).emit('GameEnd', result);
-			this.server.to(this.gameState.player2.socket).emit('GameEnd', result);
+			const Result: Results = await this.gameService.createResult(result);
+			this.server.to(this.gameState.player1.socket).emit('GameEnd', Result);
+			this.server.to(this.gameState.player2.socket).emit('GameEnd', Result);
 		}
 		else {
 			
 			const result: CreateResultDto = { winnerId: this.gameState.player2.id, loserId: this.gameState.player1.id, winner_score: this.gameState.player2.score.toString(), loser_score: this.gameState.player1.score.toString() };
-			await this.gameService.createResult(result);
-			this.server.to(this.gameState.player1.socket).emit('GameEnd', result);
-			this.server.to(this.gameState.player2.socket).emit('GameEnd', result);
+			const Result: Results = await this.gameService.createResult(result);
+			this.server.to(this.gameState.player1.socket).emit('GameEnd', Result);
+			this.server.to(this.gameState.player2.socket).emit('GameEnd', Result);
 		}
 	}
 
