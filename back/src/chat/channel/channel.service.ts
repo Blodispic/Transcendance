@@ -78,7 +78,7 @@ export class ChannelService {
 		return await this.channelRepository.save(channel);
 	}
 
-	async update(id: number, channelUpdate: any) {		
+	async update(id: number, channelUpdate: any) {	
 		const channel = await this.channelRepository.findOne({
 			relations: { users: true },
 			where: {
@@ -104,7 +104,8 @@ export class ChannelService {
 				channel.chanType = channelUpdate.chanType;
 		  	return await this.channelRepository.save(channel);
 		}
-		return 'There is no channel to update';
+		else
+			return 'There is no channel to update';
 	  }
 
 	async getById(id: number) {

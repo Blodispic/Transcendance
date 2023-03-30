@@ -13,7 +13,7 @@ export class OauthService {
     private jwtService: JwtService,
   ) { }
 
-  async getToken(oauthCode: string): Promise<any> {
+  async getToken(oauthCode: string){
     const api_key = process.env.API42_UID;
     const private_key = process.env.API42_SECRET;
     const redirect_uri = process.env.REDIRECT_URI;

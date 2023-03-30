@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { useEffect, useState } from "react";
-import { AiOutlineStop } from "react-icons/ai";
 import { BsFillKeyFill, BsFillPersonFill } from "react-icons/bs";
 import { FaCrown, FaVolumeMute } from "react-icons/fa";
 import { HiLockClosed } from "react-icons/hi2";
@@ -8,7 +7,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { socket } from "../../App";
 import { IChannel } from "../../interface/Channel";
 import { IUser } from "../../interface/User";
-import { addAdmin, banUser, muteUser, removeMember, setChannels, unBanUser, unMuteUser } from "../../redux/chat";
+import { addAdmin, addMember, banUser, joinChannel, muteUser, removeMember, setChannels, unBanUser, unMuteUser } from "../../redux/chat";
 import { useAppDispatch, useAppSelector } from "../../redux/Hook";
 import { ChannelHeader, ChannelMessages } from "./ChannelMessages";
 import ClickableMenu from "./clickableMenu";
@@ -23,26 +22,28 @@ function JoinedChannelList() {
 	return (
 		<div className="upper">
 			<header>Joined Channels <hr /></header>
-			{channels && channels.map(chan => (
-				<ul key={chan.name}>
-					{
-						chan.users.find(obj => obj.id === currentUser?.id) &&
-						<li>
-							<div onClick={() => navigate(`/Chat/channel/${chan.id}`)}>{chan.name}
-								{
-									chan.chanType === 1 &&
-									<HiLockClosed style={{ float: 'right' }} />
-								}
-								{
-									chan.chanType === 2 &&
-									<BsFillKeyFill style={{ float: 'right' }} />
-								}
-							</div>
-						</li>
-					}
+			<div className='chat-list'>
+				{channels && channels.map(chan => (
+					<ul key={chan.name}>
+						{
+							chan.users.find(obj => obj.id === currentUser?.id) &&
+							<li>
+								<div onClick={() => navigate(`/Chat/channel/${chan.id}`)}>{chan.name}
+									{
+										chan.chanType === 1 &&
+										<HiLockClosed style={{ float: 'right' }} />
+									}
+									{
+										chan.chanType === 2 &&
+										<BsFillKeyFill style={{ float: 'right' }} />
+									}
+								</div>
+							</li>
+						}
 
-				</ul>
-			))}
+					</ul>
+				))}
+			</div>
 		</div>
 	);
 }
@@ -53,7 +54,9 @@ function PublicChannelList() {
 
 	return (
 		<div className="bottom">
-				<header>All Joinable Channels <hr /></header>
+			<header>All Joinable Channels <hr /></header>
+			<div className='chat-list'>
+
 				{channels && channels.map(chan => (
 					<ul key={chan.name}>
 						{
@@ -69,6 +72,7 @@ function PublicChannelList() {
 						}
 					</ul>
 				))}
+			</div>
 		</div>
 	);
 }
@@ -103,37 +107,45 @@ function ChannelMemberList(props: { page: (page: page) => void }) {
 
 	return (
 		<div className="title"> Members <hr />
+
+			{currentChan && currentChan.admin?.map(admin => (
+				<div key={admin.id} className="user-list">
+					<ul onClick={() => changeId(admin.id)}>
+						<li>
+							{admin.username}
+							{ currentChan.owner?.id === admin.id &&
+								<FaCrown style={{ marginLeft: '5px' }} /> }
+							{ currentChan.owner?.id !== admin.id &&
+								<BsFillPersonFill style={{ marginLeft: '5px' }} /> }
+							{ currentChan.muted && currentChan.muted.find(obj => obj.id === admin.id) &&
+								<FaVolumeMute style={{ marginLeft: '5px' }} /> }
+						</li>
+					</ul>
+					{ currentId === admin.id &&
+						<ClickableMenu user={admin} chan={currentChan} page={props.page} /> }
+				</div>
+			))
+			}
+
 			{currentChan && currentChan.users?.map(user => (
 				<div key={user.id} className="user-list">
 					<ul onClick={() => changeId(user.id)}>
 						<li>
-							{user.username}
-							{
-								currentChan.owner?.id === user.id &&
-								<FaCrown />
-							}
-							{
-								currentChan.owner?.id !== user.id &&
-								currentChan.admin?.find(obj => obj.id === user.id) &&
-								<BsFillPersonFill />
-							}
-							{
-								currentChan.banned && currentChan.banned.find(obj => obj.id === user.id) &&
-								<AiOutlineStop />
-							}
-							{
-								currentChan.muted && currentChan.muted.find(obj => obj.id === user.id) &&
-								<FaVolumeMute />
+							{currentChan.admin?.find(obj => obj.id === user.id) === undefined &&
+								<>
+									{user.username}
+									{ currentChan.muted && currentChan.muted.find(obj => obj.id === user.id) &&
+										<FaVolumeMute style={{ marginLeft: '5px' }} /> }
+								</>
 							}
 						</li>
 					</ul>
-					{
-						currentId === user.id &&
-						<ClickableMenu user={user} chan={currentChan} page={props.page} />
-					}
+					{ (currentId === user.id && currentChan.admin.find(obj => obj.id === user.id) === undefined) &&
+						<ClickableMenu user={user} chan={currentChan} page={props.page} /> }
 				</div>
 			))
 			}
+
 		</div>
 	);
 }
@@ -141,6 +153,7 @@ function ChannelMemberList(props: { page: (page: page) => void }) {
 export function Channels(props: { page: (page: page) => void }) {
 	const { id } = useParams();
 	const dispatch = useAppDispatch();
+	const currentUser: IUser | undefined = useAppSelector(state => state.user.user);
 
 	useEffect(() => {
 		const get_channels = async () => {
@@ -178,10 +191,37 @@ export function Channels(props: { page: (page: page) => void }) {
 			}, timer);
 
 		});
+
+		socket.on("invitePrivate", (inviteDto) => {
+			for (let i = 0; inviteDto.users[i]; i++) {
+				dispatch(addMember({chanid: inviteDto.chanid, user: inviteDto.users[i]}));
+			}
+		});
+
+		socket.on("invited", (chanId) => {
+			if (currentUser !== undefined) {
+
+				const fetchChanInfo = async () => {
+					await fetch(`${process.env.REACT_APP_BACK}channel/${chanId}`, {
+						method: 'GET',
+					}).then(async response => {
+						const data = await response.json();
+						
+						if (response.ok) {
+							dispatch(joinChannel({ chanid: chanId, chan: data, user: currentUser }));
+						}
+					})
+				}
+				fetchChanInfo();
+			}
+		});
+
         return () => {
             socket.off("giveAdminOK");
 			socket.off("muteUser");
 			socket.off("banUser");
+			socket.off("invitePrivate");
+			socket.off("invited");
         }
     })
 

@@ -51,7 +51,7 @@
 }
 
 .dropdown-container {
-  z-index: 9999;
+  z-index: 1;
   &>.dropdown {
     position: absolute;
     width: 100px;

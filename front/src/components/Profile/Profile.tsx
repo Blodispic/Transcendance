@@ -67,7 +67,6 @@ export default function Profile() {
         const [updateStatus, setUpdateStatus] = useState(false);
 
         const fetchid = async () => {
-                console.log("ca reload ducoup ")
                 await fetch(`${process.env.REACT_APP_BACK}user/id/${id}`, {
                         method: 'GET',
                         headers: {
@@ -89,11 +88,8 @@ export default function Profile() {
                 if (id)
                         fetchid();
                 setPages(page.PAGE_1);
-                // if (myUser.user.user!.friends)
                 socket.on('UpdateSomeone', () => {
-                        console.log("ca passe pas ?");
                         setUpdateStatus(!updateStatus);
-                        // fetchid();
                 })
 
                 socket.on("SpectateStart", (roomId: number) => {
@@ -101,29 +97,12 @@ export default function Profile() {
                 });
                 
                 return () => {
-                        // socket.off('UpdateSomeone');
+                        socket.off('UpdateSomeone');
                         socket.off('SpectateStart');
                 };
         }, [id, updateStatus])
 
-        useEffect(() => {
-                if (currentUser?.id === myUser.user.user?.id) {
-                        setCurrentUser(myUser.user.user);
-
-                }
-        }, [Onglets, currentUser?.id,  myUser.user.user?.username, id])
-
-
-        if (currentUser === undefined) {
-                return (
-                        <div className='center'>
-                                <h1>USER DOESN&apos;T EXIST </h1>
-
-                        </div>
-                );
-        }
-
-        return (
+        return (currentUser) ? (
                 <div className='all'>
                         {currentUser &&
                                 <Header currentUser={currentUser} setCurrentUser={setCurrentUser} />
@@ -149,7 +128,7 @@ export default function Profile() {
 
                         </div>
                 </div>
-        );
+        ): <></>;
 
 
 }

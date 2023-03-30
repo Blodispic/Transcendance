@@ -8,18 +8,12 @@ import { User } from './entities/user.entity';
 import { UserService } from './user.service';
 import { authenticator } from 'otplib';
 import { JwtGuard } from 'src/Oauth/jwt-auth.guard';
-import { Server } from 'socket.io';
-import { WebSocketServer } from '@nestjs/websockets';
 import { plainToClass } from 'class-transformer';
 import { GetUser } from './getUser';
 import { UpdateUserDto } from './dto/update-user.dto';
 
 @Controller('user')
 export class UserController {
-  // WebSocket server instance
-  @WebSocketServer()
-  server: Server;
-
   constructor(private readonly userService: UserService) { }
 
   // Creates a new user
@@ -43,7 +37,7 @@ export class UserController {
     return await plainToClass(User, this.userService.getByUsername(username));
   }
 
-  // Retrieves a user by their ID
+  // Retrieves a user by their ID 
   @Get('id/:id')
   @UseGuards(JwtGuard)
   async findOne(@Param('id', ParseIntPipe) id: number) {
@@ -52,8 +46,8 @@ export class UserController {
 
   // Retrieves a user by their access token
   @Post('access_token')
-  async GetbyAccessToken(@Body() token: any) {
-    return await plainToClass(User, this.userService.GetByAccessToken(token));
+  async GetbyAccessToken(@Body() token: {token: string} ) {
+    return await plainToClass(User, this.userService.GetByAccessToken(token.token));
   }
 
   // Enables two-factor authentication for a specific user
@@ -89,15 +83,14 @@ export class UserController {
   @Get('friends')
   @UseGuards(JwtGuard)
   GetFriends(@GetUser() user: User) {
-    console.log('User = ', user);
     return this.userService.GetFriends(user.id);
   }
 
   // Retrieves all match requests for a specific user
   @Post('matches')
   @UseGuards(JwtGuard)
-  GetMatches(@GetUser() user: User) {
-    return this.userService.GetMatchRequest(user.id);
+  async GetMatches(@Body('userId') userId: number) {
+    return await this.userService.GetMatchRequest(userId);
   }
 
   // Accepts a friend request
@@ -139,10 +132,14 @@ export class UserController {
         destination: './storage/images/',
         filename: editFileName,
       }),
+      limits: {
+        fileSize: 10 * 1024 * 1024, // 10 MB in bytes
+      },
       fileFilter: imageFilter,
     }),
   )
-  async setAvatar(@GetUser() user: User, @UploadedFile() file: any, @Body('username') username: string) {
+  
+  async setAvatar(@GetUser() user: User, @UploadedFile() file: Express.Multer.File, @Body('username') username: string) {
     await this.userService.setAvatar(user, username, file);
     return { message: 'Avatar set successfully' };
   }
@@ -151,7 +148,7 @@ export class UserController {
   @Patch(':id')
   @UseGuards(JwtGuard)
   async update(@GetUser() user: User, @Body() updateUserDto: UpdateUserDto) {
-    return plainToClass(User, await this.userService.update(user.id, updateUserDto));
+    return plainToClass(User, await this.userService.update(user, updateUserDto));
   }
 
   // Sends a friend request to a user
@@ -185,7 +182,7 @@ export class UserController {
   @UseGuards(JwtGuard)
   @Delete('unblock/:id')
   async RmBlock(@Body('blockedId') blockedId: number, @GetUser() user: User) {
-    return await this.userService.RmBlock(user.id, blockedId);
+    return await this.userService.RmBlock(user, blockedId);
   }
 
   // Checks the relationship between two users

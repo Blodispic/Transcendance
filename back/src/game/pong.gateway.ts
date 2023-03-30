@@ -1,4 +1,4 @@
-import { ConnectedSocket, MessageBody, OnGatewayDisconnect, OnGatewayInit, SubscribeMessage, WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
+import { ConnectedSocket, MessageBody, OnGatewayDisconnect, SubscribeMessage, WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 import { User } from 'src/user/entities/user.entity';
 import { GameService } from './game.service';
@@ -19,7 +19,7 @@ export interface Move {
 	},
 })
 
-export class PongGateway implements OnGatewayDisconnect, OnGatewayInit {
+export class PongGateway implements OnGatewayDisconnect {
 	@WebSocketServer()
 	server: Server;
 	inviteList: number[];
@@ -27,10 +27,6 @@ export class PongGateway implements OnGatewayDisconnect, OnGatewayInit {
 	constructor(private gameService: GameService, private readonly userService: UserService) {
 		this.inviteList = new Array<number>;
 	}
-	
-	afterInit(server: Server) {
-		console.log(`WebSocket server initialized: ${server}`);
-	  }
 	
 	findByID(id: number)
 	{
@@ -180,7 +176,7 @@ export class PongGateway implements OnGatewayDisconnect, OnGatewayInit {
 	}
 
 	@SubscribeMessage('acceptCustomGame')
-	async AcceptCustomGame(@MessageBody() payload: any, @ConnectedSocket() client: Socket) {
+	async AcceptCustomGame(@MessageBody() payload: { scoreMax: string; user1: User, user2: User, extra: boolean }, @ConnectedSocket() client: Socket) {
 
 		const user1 = await this.userService.getById(payload.user1.id);
 		const user2 = await this.userService.getById(payload.user2.id);
@@ -228,7 +224,7 @@ export class PongGateway implements OnGatewayDisconnect, OnGatewayInit {
 	}
 
 	@SubscribeMessage('declineCustomGame')
-	DeclineCustomGame(@MessageBody() payload: any) {
+	DeclineCustomGame(@MessageBody() payload: { user1: User, user2: User }) {
 		const user1: User = payload.user1;
 		const user2: User = payload.user2;
 
@@ -257,13 +253,13 @@ export class PongGateway implements OnGatewayDisconnect, OnGatewayInit {
 	}
 
 	@SubscribeMessage('Move1')
-	HandleMove1(@MessageBody() payload: any, @ConnectedSocket() client: Socket) {
+	HandleMove1(@MessageBody() payload: { input: { left: boolean, right: boolean }, roomId: number }, @ConnectedSocket() client: Socket) {
 		const input : Move = {left: payload.input.left, right: payload.input.right};	
 		this.gameService.updateMove1(input, client.id, payload.roomId);
 	}
 
 	@SubscribeMessage('Move2')
-	HandleMove2(@MessageBody() payload: any, @ConnectedSocket() client: Socket) {
+	HandleMove2(@MessageBody() payload: { input: { left: boolean, right: boolean }, roomId: number }, @ConnectedSocket() client: Socket) {
 		const input : Move = {left: payload.input.left, right: payload.input.right};
 		this.gameService.updateMove2(input, client.id, payload.roomId);
 	}
