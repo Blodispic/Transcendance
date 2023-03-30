@@ -19,13 +19,13 @@ export function BanUser(props: { chanid: any, userid: any, trigger: boolean, set
 		else
 			socket.emit('BanUser', { chanid: props.chanid, userid: props.userid, timeout: parseInt(timeout) * 1000 });
 	}
-	
+
 	useEffect(() => {
 		socket.on("banUserFailed", (errorMessage) => {
 			setFailed(true);
 			setError(errorMessage);
 		});
-		socket.on("banUserOK", ({chanid, userid}) => {
+		socket.on("banUserOK", ({ chanid, userid }) => {
 			props.setTrigger(false);
 			setFailed(false);
 		});
@@ -72,7 +72,7 @@ export function MuteUser(props: { chanid: any, userid: any, trigger: boolean, se
 			setFailed(true);
 			setError(errorMessage);
 		});
-		socket.on("muteUserOK", ({chanid, userid}) => {
+		socket.on("muteUserOK", ({ chanid, userid }) => {
 			props.setTrigger(false);
 			setFailed(false);
 		});
@@ -143,7 +143,6 @@ export function ConfigureChannelPrivate(props: { trigger: boolean, setTrigger: (
 			socket.off("AddPeoplePrivateOk");
 		}
 	}, [props.channel.users]);
-
 	const get_all = async () => {
 		const response = await fetch(`${process.env.REACT_APP_BACK}user`, {
 			method: 'GET',
@@ -155,17 +154,17 @@ export function ConfigureChannelPrivate(props: { trigger: boolean, setTrigger: (
 		const data = await response.json();
 		setAlluser(
 			data
-			  .filter((user: { username: string, status: string}) => 
-				user.username !== myUser.user.user?.username && user.status === "Online"
-			  )
-			  .filter((user: { id: number }) => 
-				alreadyhere.findIndex((alreadyhereuser: IUser) => alreadyhereuser.id === user.id) === -1
-			  )
-			  .filter((user: { id: number }) => 
-			  allfriend.findIndex((allfriend: IUser) => allfriend.id === user.id) === -1
-			)
-			
-		  );
+				.filter((user: { username: string, status: string }) =>
+					user.username !== myUser.user.user?.username && user.status === "Online"
+				)
+				.filter((user: { id: number }) =>
+					alreadyhere.findIndex((alreadyhereuser: IUser) => alreadyhereuser.id === user.id) === -1
+				)
+				.filter((user: { id: number }) =>
+					allfriend.findIndex((allfriend: IUser) => allfriend.id === user.id) === -1
+				)
+
+		);
 	}
 
 	const handleUnban = (id: number) => {
@@ -178,9 +177,9 @@ export function ConfigureChannelPrivate(props: { trigger: boolean, setTrigger: (
 	})
 
 	return (props.trigger) ? (
-		<div className="chat-form-popup" onClick={_ => {cleanlist(); props.setTrigger(false)}}>
-			<div className="chat-form-inner" onClick={e => {e.stopPropagation()}}>
-				<HiOutlineXMark className="close-icon" onClick={_ => {cleanlist();props.setTrigger(false)}} /> <br />
+		<div className="chat-form-popup" onClick={_ => { cleanlist(); props.setTrigger(false) }}>
+			<div className="chat-form-inner" onClick={e => { e.stopPropagation() }}>
+				<HiOutlineXMark className="close-icon" onClick={_ => { cleanlist(); props.setTrigger(false) }} /> <br />
 				<h3>Edit members</h3>
 				<div className='allpoeple'>
 					{
@@ -298,20 +297,20 @@ export function ConfigureChannel(props: { trigger: boolean, setTrigger: (value: 
 					</>
 				}
 				{
-					props.channel.banned.length > 0 && 
+					props.channel.banned.length > 0 &&
 					<>
-					<h3>Unban user</h3>
-					{props.channel.banned?.map(banned => (
-						<ul key={banned.id}>
-							<li title='Unban'>
-							<div className='avatar-inpopup'>
+						<h3>Unban user</h3>
+						{props.channel.banned?.map(banned => (
+							<ul key={banned.id}>
+								<li title='Unban'>
+									<div className='avatar-inpopup'>
 
 							<img className="cursor-onsomoene avatar avatar-manu" src={`${process.env.REACT_APP_BACK}user/${banned.id}/avatar`} alt="" onClick={() => handleUnban(banned.id)}/>
 								</div>
 							</li>
 
-						</ul>
-					))}
+							</ul>
+						))}
 					</>
 				}
 				<button onClick={setPassword}> Save Setting </button>
