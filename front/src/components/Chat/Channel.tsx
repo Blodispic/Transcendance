@@ -175,15 +175,15 @@ export function Channels(props: { page: (page: page) => void }) {
         socket.on("giveAdminOK", ({ userid, chanid }) => {
             dispatch(addAdmin({ chanid: chanid, userid: userid }));
         });
-		socket.on("muteUser", ({chanid, userid, timer}) => {
-			dispatch(muteUser({chanid: chanid, userid: userid}));
 
-			if (timer) {
+		socket.on("muteUser", (muteUserDto) => {
+			dispatch(muteUser({chanid: muteUserDto.chanid, userid: muteUserDto.userid}));
+
+			if (muteUserDto.timeout) {
 				setTimeout(() => {
-					dispatch(unMuteUser({chanid: chanid, userid: userid}));
-				}, timer);
+					dispatch(unMuteUser({chanid: muteUserDto.chanid, userid: muteUserDto.userid}));
+				}, muteUserDto.timeout);
 			}
-
 		});
 		
 		socket.on("banUser", ({chanid, userid, timer}) => {
@@ -195,6 +195,11 @@ export function Channels(props: { page: (page: page) => void }) {
 					dispatch(unBanUser({chanid: chanid, userid: userid}));
 				}, timer);
 			}
+		});
+
+
+		socket.on("unmuteUser", ({chanid, userid, timer}) => {
+			dispatch(unMuteUser({chanid: chanid, userid: userid}));
 		});
 
 		socket.on("invitePrivate", (inviteDto) => {
@@ -224,6 +229,7 @@ export function Channels(props: { page: (page: page) => void }) {
         return () => {
             socket.off("giveAdminOK");
 			socket.off("muteUser");
+			socket.off("unmuteUser");
 			socket.off("banUser");
 			socket.off("invitePrivate");
 			socket.off("invited");
