@@ -12,6 +12,7 @@ import { plainToClass } from 'class-transformer';
 import { GetUser } from './getUser';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { userList } from 'src/app.gateway';
+import { ValidationError, validateOrReject } from 'class-validator';
 
 @Controller('user')
 export class UserController {
@@ -31,24 +32,30 @@ export class UserController {
     return await plainToClass(User, this.userService.findAll());
   }
 
-  @Patch('firstSign')
-  @UseGuards(JwtGuard)
-  async firstSign(@GetUser() user: User, @Body() updateUserDto: UpdateUserDto) {
-    console.log("FIRSTSIGNNNNNN:");
-
-    for (const iterator of userList) {
-      console.log("la", iterator.handshake.auth.user.id);
-      if (iterator.handshake.auth.user.id === user.id)
-        throw new BadRequestException('t\'as deja un tab frero');
-    }
-    return plainToClass(User, await this.userService.update(user, updateUserDto));
-  }
-
   // Retrieves a user by their username
   @Get('username/:username')
   @UseGuards(JwtGuard)
   async GetbyUsername(@Param('username') username: string) {
     return await plainToClass(User, this.userService.getByUsername(username));
+  }
+
+  @Post('firstSign')
+  @UseGuards(JwtGuard)
+  async firstSign(@GetUser() user: User, @Body() updateUserDto: UpdateUserDto) {
+    console.log("CheckSign");
+    for (const iterator of userList) {
+      if (iterator.handshake.auth.user.id === user.id)
+        throw new BadRequestException('t\'as deja un tab frero');
+    }
+    try {
+      await validateOrReject(updateUserDto);
+      const updatedUser = await this.userService.update(user, updateUserDto);
+      return plainToClass(User, updatedUser);
+    } 
+    catch (errors) {
+      const validationErrors: ValidationError[] = errors;
+      throw new BadRequestException(validationErrors);
+    }
   }
 
   // Retrieves a user by their ID 
@@ -60,7 +67,7 @@ export class UserController {
 
   // Retrieves a user by their access token
   @Post('access_token')
-  async GetbyAccessToken(@Body() token: {token: string} ) {
+  async GetbyAccessToken(@Body() token: { token: string }) {
     return await plainToClass(User, this.userService.GetByAccessToken(token.token));
   }
 
@@ -152,7 +159,7 @@ export class UserController {
       fileFilter: imageFilter,
     }),
   )
-  
+
   async setAvatar(@GetUser() user: User, @UploadedFile() file: Express.Multer.File, @Body('username') username: string) {
     await this.userService.setAvatar(user, username, file);
     return { message: 'Avatar set successfully' };
@@ -162,7 +169,15 @@ export class UserController {
   @Patch(':id')
   @UseGuards(JwtGuard)
   async update(@GetUser() user: User, @Body() updateUserDto: UpdateUserDto) {
-    return plainToClass(User, await this.userService.update(user, updateUserDto));
+    try {
+      await validateOrReject(updateUserDto);
+      const updatedUser = await this.userService.update(user, updateUserDto);
+      return plainToClass(User, updatedUser);
+    } 
+    catch (errors) {
+      const validationErrors: ValidationError[] = errors;
+      throw new BadRequestException(validationErrors);
+    }
   }
 
   // Sends a friend request to a user

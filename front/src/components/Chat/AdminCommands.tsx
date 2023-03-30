@@ -66,7 +66,6 @@ export function MuteUser(props: { chanid: any, userid: any, trigger: boolean, se
 			socket.emit('MuteUser', { chanid: props.chanid, userid: props.userid, timeout: parseInt(timeout) * 1000 });
 	}
 
-
 	useEffect(() => {
 		socket.on("muteUserFailed", (errorMessage) => {
 			setFailed(true);
@@ -83,7 +82,7 @@ export function MuteUser(props: { chanid: any, userid: any, trigger: boolean, se
 	})
 
 	return (props.trigger) ? (
-		<div className="chat-form-popup" onClick={() => (props.setTrigger(false))}>
+		<div className="chat-form-popup" onClick={() => {props.setTrigger(false)}}>
 			<div className="clickable-pop-up-inner" onClick={e => e.stopPropagation()}>
 				<HiOutlineXMark className="close-icon" onClick={() => (props.setTrigger(false))} />
 				<br />
@@ -93,7 +92,7 @@ export function MuteUser(props: { chanid: any, userid: any, trigger: boolean, se
 				<br /><br />
 				{
 					failed === true &&
-					<span className="channel-error"> {errorMessage}</span>
+					<span className="channel-error"> {errorMessage} <br /></span>
 				}
 				<button onClick={_ => handleMute()}>Mute User</button>
 			</div>
