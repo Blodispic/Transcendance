@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useEffect, useState } from "react";
-import { Circle, Layer, Rect, Stage, Text } from "react-konva";
+import { Circle, Layer, Rect, Stage } from "react-konva";
 import { socket } from "../../App";
 import { ResultPopup } from "./Result";
 import swal from "sweetalert";
@@ -214,14 +214,6 @@ export default function GameApp() {
 						fill="white"
 						width={paddleDimensions.x}
 						height={paddleDimensions.y}
-					/>
-					<Text
-						text={gameState.player1.name.toString() + " wins !"}
-						visible={gameState.gameFinished}
-						x={gameState.area.x / 2 - 150}
-						y={gameState.area.y / 2}
-						fontSize={40}
-						align="center"
 					/>
 				</Layer>
 			</Stage>

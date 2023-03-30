@@ -17,7 +17,7 @@ export function BanUser(props: { chanid: any, userid: any, trigger: boolean, set
 		if (timeout === "")
 			socket.emit('BanUser', { chanid: props.chanid, userid: props.userid });
 		else
-			socket.emit('BanUser', { chanid: props.chanid, userid: props.userid, timeout: parseInt(timeout) * 1000 });
+			socket.emit('BanUser', { chanid: props.chanid, userid: props.userid, timeout: timeout });
 	}
 
 	useEffect(() => {
@@ -42,7 +42,7 @@ export function BanUser(props: { chanid: any, userid: any, trigger: boolean, set
 				<br />
 				<h3>Ban User</h3>
 				<h4>Set time (optional)</h4>
-				<input type="number" id="clickable-input" min="0" onChange={e => { setTimeout(e.target.value) }} />seconds
+				<input /* type="number" */ id="clickable-input" min="0" onChange={e => { setTimeout(e.target.value) }} />seconds
 				<br /><br />
 				{
 					failed === true &&
@@ -63,7 +63,7 @@ export function MuteUser(props: { chanid: any, userid: any, trigger: boolean, se
 		if (timeout === "")
 			socket.emit('MuteUser', { chanid: props.chanid, userid: props.userid });
 		else
-			socket.emit('MuteUser', { chanid: props.chanid, userid: props.userid, timeout: parseInt(timeout) * 1000 });
+			socket.emit('MuteUser', { chanid: props.chanid, userid: props.userid, timeout: timeout});
 	}
 
 	useEffect(() => {
@@ -88,7 +88,7 @@ export function MuteUser(props: { chanid: any, userid: any, trigger: boolean, se
 				<br />
 				<h3>Mute User</h3>
 				<h4>Set time (optional)</h4>
-				<input type="number" id="clickable-input" min="0" onChange={e => { setTimeout(e.target.value) }} />seconds
+				<input /* type="number" */ id="clickable-input" min="0" onChange={e => { setTimeout(e.target.value) }} />seconds
 				<br /><br />
 				{
 					failed === true &&
@@ -104,7 +104,7 @@ export function KickUser(chanid: any, userid: any) {
 	socket.emit('BanUser', { chanid: chanid, userid: userid, timeout: 1 });
 }
 
-export function ConfigureChannelPrivate(props: { trigger: boolean, setTrigger: (value: boolean) => void, channel: IChannel}) {
+export function ConfigureChannelPrivate(props: { trigger: boolean, setTrigger: (value: boolean) => void, channel: IChannel }) {
 	const [alreadyhere, setAlreadyhere] = useState<IUser[]>(props.channel.users);
 	const [allfriend, setAllFriend] = useState<IUser[]>([]);
 	const [alluser, setAlluser] = useState<IUser[]>([]);
@@ -116,7 +116,7 @@ export function ConfigureChannelPrivate(props: { trigger: boolean, setTrigger: (
 	const AddPeoplePrivate = () => {
 		if (allfriend.length > 0)
 			socket.emit('AddPeoplePrivate', { chanid: props.channel.id, usersId: allfriend.map(user => user.id) });
-			cleanlist();
+		cleanlist();
 	}
 	const cleanlist = () => {
 		setAlluser([]);
@@ -138,7 +138,7 @@ export function ConfigureChannelPrivate(props: { trigger: boolean, setTrigger: (
 		setAlreadyhere(props.channel.users);
 		socket.on("AddPeoplePrivateOk", (error_message) => {
 		});
-		
+
 		return () => {
 			socket.off("AddPeoplePrivateOk");
 			socket.off("unbanOK");
@@ -155,21 +155,21 @@ export function ConfigureChannelPrivate(props: { trigger: boolean, setTrigger: (
 		const data = await response.json();
 		setAlluser(
 			data
-			.filter((user: { username: string, status: string }) =>
-			user.username !== myUser.user.user?.username && user.status === "Online"
-			)
-			.filter((user: { id: number }) =>
+				.filter((user: { username: string, status: string }) =>
+					user.username !== myUser.user.user?.username && user.status === "Online"
+				)
+				.filter((user: { id: number }) =>
 					alreadyhere.findIndex((alreadyhereuser: IUser) => alreadyhereuser.id === user.id) === -1
 				)
 				.filter((user: { id: number }) =>
 					allfriend.findIndex((allfriend: IUser) => allfriend.id === user.id) === -1
-					)
-					
-					);
-				}
-				
-				const handleUnban = (id: number) => {
-					socket.emit('unBan',{ chanid: props.channel.id, userid: id} ); //to be added soon
+				)
+
+		);
+	}
+
+	const handleUnban = (id: number) => {
+		socket.emit('unBan', { chanid: props.channel.id, userid: id }); //to be added soon
 	}
 
 
@@ -264,12 +264,6 @@ export function ConfigureChannel(props: { trigger: boolean, setTrigger: (value: 
 	const handleUnban = (id: number) => {
 		socket.emit('unBan',{ chanid: props.channel.id, userid: id} ); //to be added soon
 	}
-
-	useEffect( () => {
-		socket.on("unbanOK", (id) => {
-			dispatch(banUser({chanid: props.channel.id, userid: id}));
-		})
-	}, [])
 
 
 
