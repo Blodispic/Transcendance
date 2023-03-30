@@ -13,22 +13,31 @@ function DMList(props: { currentdm: IUser | undefined; setCurrentDm: (user: IUse
 	const [alluser, setAlluser] = useState<IUser[] | undefined>(undefined);
 	const myStore = useAppSelector(state => state);
 	const navigate = useNavigate();
+	const [updateStatus, setUpdateStatus] = useState(false);
+	
+	const get_all = async () => {
+		const response = await fetch(`${process.env.REACT_APP_BACK}user`, {
+			method: 'GET',
+			headers: {
+				'Content-Type': 'application/json',
+				'Authorization': `Bearer ${myStore.user.myToken}`,
+			},
+		})
+		const data = await response.json();
+		setAlluser(data.filter((obj: IUser) => obj.username !== myStore.user.user?.username && obj.status === "Online" ));
+	}
 
 	useEffect(() => {
-		const get_all = async () => {
-			const response = await fetch(`${process.env.REACT_APP_BACK}user`, {
-				method: 'GET',
-				headers: {
-					'Content-Type': 'application/json',
-					'Authorization': `Bearer ${myStore.user.myToken}`,
-				},
-			})
-			const data = await response.json();
-			setAlluser(data.filter((User: { status: string; }) => User.status === "Online"));
-			setAlluser(data.filter((User: { username: string; }) => User.username !== myStore.user.user?.username));
-		}
+		socket.on('UpdateSomeone', () => {
+			setUpdateStatus(!updateStatus);
+		});
 		get_all();
-	}, [])
+
+		return () => {
+			socket.off('UpdateSomeone');
+		}
+
+	}, [updateStatus]);
 
 	return (
 		<div className="title"> Direct Messages <hr />
