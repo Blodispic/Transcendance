@@ -172,7 +172,6 @@ export function ConfigureChannelPrivate(props: { trigger: boolean, setTrigger: (
 	useEffect( () => {
 		socket.on("unBanOk", (chanid, userid) => {
 			dispatch(unBanUser( {chanid: chanid, userid: userid} ));
-			props.setTrigger(false);
 		});
 		
 		return () => {
@@ -271,7 +270,6 @@ export function ConfigureChannel(props: { trigger: boolean, setTrigger: (value: 
 	useEffect( () => {
 		socket.on("unBanOk", (chanid, userid) => {
 			dispatch(unBanUser( {chanid: chanid, userid: userid} ));
-			props.setTrigger(false);
 		});
 		
 		return () => {
