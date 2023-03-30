@@ -101,7 +101,7 @@ export function MuteUser(props: { chanid: any, userid: any, trigger: boolean, se
 }
 
 export function KickUser(chanid: any, userid: any) {
-	socket.emit('BanUser', { chanid: chanid, userid: userid, timeout: 1 });
+	socket.emit('BanUser', { chanid: chanid, userid: userid, timeout: "1" });
 }
 
 export function ConfigureChannelPrivate(props: { trigger: boolean, setTrigger: (value: boolean) => void, channel: IChannel }) {
