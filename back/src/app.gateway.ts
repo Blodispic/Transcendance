@@ -48,6 +48,8 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
 	}
 
 	async handleDisconnect(client: Socket) {
+		await new Promise(resolve => setTimeout(resolve, 400));
+
 		try {
 			await this.userService.SetStatus(client.handshake.auth.user, Status.Offline);
 		} catch (error) {
