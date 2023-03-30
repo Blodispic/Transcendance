@@ -181,12 +181,9 @@ export class UserService {
   }
 
   async sendFriendRequest(friendId: number, creator: User) {
+
     if (friendId == creator.id) {
       return ({ message: 'You can\'t add yourself' });
-    }
-
-    if (!creator) {
-      throw new NotFoundException('creator doesn\'t exists');
     }
 
     const friend: User | null = await this.usersRepository.findOne({
@@ -199,15 +196,6 @@ export class UserService {
       return ({ message: 'Friend does not exist' });
     }
 
-    const user: User | null = await this.usersRepository.findOne({
-      relations: {
-        friends: true,
-      },
-      where: { id: creator.id },
-    });
-    if (!user) {
-      throw new NotFoundException('User not found');
-    }
     const existingRequest = await this.friendRequestRepository.findOne({
       relations: {
         creator: true,
@@ -215,10 +203,23 @@ export class UserService {
       },
       where: [{ creator: creator, receiver: friend }],
     });
-
     if (existingRequest) {
       throw new UnauthorizedException('Friend Request already send');
     }
+
+    const friendReqExists = await this.friendRequestRepository.findOne({
+      relations: {
+        creator: true,
+        receiver: true,
+      },
+      where: [{ receiver: creator, creator: friend }],
+    });
+    
+    if (friendReqExists) {
+      await this.addFriend(friendId, creator);
+      return await this.DeleteFriendRequest(creator, friendId);
+    }
+    
     const friendRequest: FriendRequestDto = {
       creatorId: creator.id,
       creator: creator,
@@ -236,10 +237,10 @@ export class UserService {
         friend.receiveFriendRequests = [];
       friend.receiveFriendRequests.push(friendRequestPush);
       await this.usersRepository.save(friend);
-      if (!user.sendFriendRequests)
-        user.sendFriendRequests = [];
-      user.sendFriendRequests.push(friendRequestPush);
-      await this.usersRepository.save(user);
+      if (!creator.sendFriendRequests)
+        creator.sendFriendRequests = [];
+      creator.sendFriendRequests.push(friendRequestPush);
+      await this.usersRepository.save(creator);
     }
     return { message: 'Friend request sent' };
   }
