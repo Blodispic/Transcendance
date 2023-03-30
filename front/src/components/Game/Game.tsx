@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useEffect, useState } from "react";
-import { Circle, Layer, Rect, Stage, Text } from "react-konva";
+import { Circle, Layer, Rect, Stage } from "react-konva";
 import { socket } from "../../App";
 import { ResultPopup } from "./Result";
 import swal from "sweetalert";
