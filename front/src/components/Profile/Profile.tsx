@@ -87,7 +87,7 @@ export default function Profile() {
 
                 if (id)
                         fetchid();
-                setPages(page.PAGE_1);
+                // setPages(page.PAGE_1);
                 socket.on('UpdateSomeone', () => {
                         setUpdateStatus(!updateStatus);
                 })
@@ -95,12 +95,20 @@ export default function Profile() {
                 socket.on("SpectateStart", (roomId: number) => {
                         navigate("/game/" + roomId, { state: { Id: roomId } });
                 });
-                
+
                 return () => {
                         socket.off('UpdateSomeone');
                         socket.off('SpectateStart');
                 };
-        }, [id, updateStatus])
+        }, [id, updateStatus, myUser.user.user?.username])
+
+
+        // useEffect(() => {
+        //         if (currentUser?.id == myUser.user.user?.id) {
+        //                 setCurrentUser(myUser.user.user);
+
+        //         }
+        // }, [Onglets, currentUser?.id,  myUser.user.user?.username, id])
 
         return (currentUser) ? (
                 <div className='all'>
