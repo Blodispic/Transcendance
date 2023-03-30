@@ -46,7 +46,7 @@ export class ChatGateway
   const socketReceiver = this.findSocketFromUser(receiver);
   if (socketReceiver === null) 
   {
-    client.emit('sendDMFailed', 'Receiver is not online');
+    client.emit('sendDMFailed', 'This user is offline');
     return; //Receiver is not connected');
   }
   if ((await this.userService.checkRelations(receiver.id, sender.id)).relation === 'Blocked')
