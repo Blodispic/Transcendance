@@ -19,8 +19,8 @@ export function ChannelHeader() {
 	const { id } = useParams();
 	const [chanId, setChanId] = useState<number | undefined>(undefined);
 	const currentChan: IChannel | undefined = useAppSelector(state => state.chat.channels.find(chan => chan.id === chanId));
-
-
+	
+	
 	useEffect(() => {
 		if (id !== undefined) {
 			setChanId(parseInt(id));
@@ -45,7 +45,7 @@ export function ChannelHeader() {
 									{currentChan.owner?.id === currentUser?.id &&
 										<>
 											<ImCog className="config-icon" onClick={() => setPopup(true)} />
-											<ConfigureChannel trigger={popup} setTrigger={setPopup} channel={currentChan} />
+											<ConfigureChannel trigger={popup} setTrigger={setPopup} channel={currentChan}/>
 										</>}
 								</>
 							}
@@ -58,7 +58,7 @@ export function ChannelHeader() {
 									{currentChan.admin.find(obj => obj.id === currentUser?.id) &&
 										<>
 											<ImCog className="config-icon" onClick={() => setPopup(true)} />
-											<ConfigureChannelPrivate trigger={popup} setTrigger={setPopup} channel={currentChan} />
+											<ConfigureChannelPrivate trigger={popup} setTrigger={setPopup} channel={currentChan}/>
 										</>}
 								</>
 							}
