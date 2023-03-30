@@ -215,14 +215,6 @@ export default function GameApp() {
 						width={paddleDimensions.x}
 						height={paddleDimensions.y}
 					/>
-					<Text
-						text={gameState.player1.name.toString() + " wins !"}
-						visible={gameState.gameFinished}
-						x={gameState.area.x / 2 - 150}
-						y={gameState.area.y / 2}
-						fontSize={40}
-						align="center"
-					/>
 				</Layer>
 			</Stage>
 			<h3 className="display-player">
