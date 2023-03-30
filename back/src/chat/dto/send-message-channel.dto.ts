@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
+import { IsNotEmpty, IsNumber, IsString, MaxLength } from 'class-validator';
 
 export class SendMessageChannelDto {
 	@IsNumber()
@@ -6,5 +6,6 @@ export class SendMessageChannelDto {
 
 	@IsString()
 	@IsNotEmpty()
+	@MaxLength(1000)
 	message: string; 
 }

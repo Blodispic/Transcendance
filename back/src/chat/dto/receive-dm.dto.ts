@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsString } from 'class-validator';
+import { IsNotEmpty, IsString, MaxLength } from 'class-validator';
 import { User } from 'src/user/entities/user.entity';
 
 export class ReceiveDmDto {
@@ -7,5 +7,6 @@ export class ReceiveDmDto {
 
 	@IsString()
 	@IsNotEmpty()
+	@MaxLength(1000)
 	message: string;
 }

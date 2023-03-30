@@ -25,7 +25,6 @@ export function CheckPassword(props: { trigger: boolean, setTrigger: (value: boo
 			setErrorMessage(error_message);
 			setFailed(true);
 		});
-
 		return () => {
 			socket.off("joinChannelFailed");
 		}
@@ -86,7 +85,6 @@ export function JoinChannel(props: { channel: IChannel }) {
 				  }, 1000);
 			}
 		});
-
 		return () => {
 			socket.off("joinChannelFailed");
 			socket.off("joinChannelOK");
@@ -143,7 +141,6 @@ export function LeaveChannel(props: { channel: IChannel }) {
 				  }, 1000);
 			}
 		})
-
 		return () => {
 			socket.off("leaveChannelOK");
 			socket.off("leaveChannelFailed");

@@ -6,6 +6,7 @@ import { DirectMessage } from "./DirectMessage";
 import 'react-tabs/style/react-tabs.css';
 import { useNavigate } from "react-router-dom";
 import { page } from "../../interface/enum";
+import swal from 'sweetalert';
 
 export default function Chat() {
 	const navigate = useNavigate();
@@ -15,6 +16,12 @@ export default function Chat() {
 		socket.on("RoomStart", (roomId: number) => {
             navigate("/game/" + roomId, { state: { Id: roomId } });
         });
+		socket.on('exception', () => {
+			swal("Format Error", "Your input is not valid for this request", "error");
+		  });
+		return () => {
+			socket.off('exception');
+		}
 	})
 
 	if (window.location.href.search('channel') !== -1 && current !== page.PAGE_1) {
