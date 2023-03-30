@@ -197,7 +197,9 @@ export function Channels(props: { page: (page: page) => void }) {
 				}, timer);
 			}
 		});
-
+		socket.on("unbanOK", (id, chanid) => {
+			dispatch(unBanUser({chanid: chanid, userid: id} ))
+		})
 		socket.on("unmuteUser", ({chanid, userid, timer}) => {
 			dispatch(unMuteUser({chanid: chanid, userid: userid}));
 		});

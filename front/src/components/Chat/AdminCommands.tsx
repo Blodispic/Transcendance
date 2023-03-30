@@ -116,7 +116,7 @@ export function ConfigureChannelPrivate(props: { trigger: boolean, setTrigger: (
 	const AddPeoplePrivate = () => {
 		if (allfriend.length > 0)
 			socket.emit('AddPeoplePrivate', { chanid: props.channel.id, usersId: allfriend.map(user => user.id) });
-			cleanlist();
+		cleanlist();
 	}
 	const cleanlist = () => {
 		setAlluser([]);
@@ -138,8 +138,10 @@ export function ConfigureChannelPrivate(props: { trigger: boolean, setTrigger: (
 		setAlreadyhere(props.channel.users);
 		socket.on("AddPeoplePrivateOk", (error_message) => {
 		});
+
 		return () => {
 			socket.off("AddPeoplePrivateOk");
+			socket.off("unbanOK");
 		}
 	}, [props.channel.users]);
 	const get_all = async () => {
@@ -167,20 +169,8 @@ export function ConfigureChannelPrivate(props: { trigger: boolean, setTrigger: (
 	}
 
 	const handleUnban = (id: number) => {
-		socket.emit('unBan',{ chanid: props.channel.id, userid: id} ); //to be added soon
+		socket.emit('unBan', { chanid: props.channel.id, userid: id }); //to be added soon
 	}
-	useEffect( () => {
-		// socket.on("unBanOk", (chanid, userid) => {
-		// 	dispatch(unBanUser( {chanid: chanid, userid: userid} ));
-		// });
-		
-		// return () => {
-		// 	socket.off("unBanOk");
-		// }
-		socket.on("unBanOk", (id) => {
-			dispatch(banUser({chanid: props.channel.id, userid: id} ))
-		});
-	})
 
 	return (props.trigger) ? (
 		<div className="chat-form-popup" onClick={_ => { cleanlist(); props.setTrigger(false) }}>
@@ -225,20 +215,22 @@ export function ConfigureChannelPrivate(props: { trigger: boolean, setTrigger: (
 					}
 				</div>
 				{
-					props.channel.banned.length > 0 && 
+					props.channel.banned.length > 0 &&
 					<>
-					<h3>Unban user</h3>
-					{props.channel.banned?.map(banned => (
-						<ul key={banned.id}>
-							<li title='Unban'>
-							<div className='avatar-inpopup'>
-
-							<img className="cursor-onsomoene avatar avatar-manu" src={`${process.env.REACT_APP_BACK}user/${banned.id}/avatar`} alt="" onClick={() => handleUnban(banned.id)}/>
-								</div>
-							</li>
-
-						</ul>
-					))}
+						<h3>Unban user</h3>
+						<div className='allpoeple'>
+							<div className="avatar-inpopup">
+								{props.channel.banned?.map(banned => (
+									<ul key={banned.id}>
+										<li title='Unban'>
+											<div >
+												<img className="cursor-onsomoene avatar avatar-manu" src={`${process.env.REACT_APP_BACK}user/${banned.id}/avatar`} alt="" onClick={() => handleUnban(banned.id)} />
+											</div>
+										</li>
+									</ul>
+								))}
+							</div>
+						</div>
 					</>
 				}
 				<button onClick={() => { AddPeoplePrivate(); props.setTrigger(false) }}> Save Setting </button>
@@ -270,22 +262,6 @@ export function ConfigureChannel(props: { trigger: boolean, setTrigger: (value: 
 		socket.emit('unBan',{ chanid: props.channel.id, userid: id} ); //to be added soon
 	}
 
-	useEffect( () => {
-	// 	socket.on("unBanOk", (chanid, userid) => {
-	// 		dispatch(unBanUser( {chanid: chanid, userid: userid} ));
-	// 	});
-		
-	// 	return () => {
-	// 		socket.off("unBanOk");
-	// 	}
-	// })
-		socket.on("unbanOK", (id) => {
-			// console.log("ca rentre");
-			// dispatch(banUser({chanid: props.channel.id, userid: id}));
-			// props.channel.banned = props.channel.banned.filter( banned => banned.id === id);
-		});
-	}, [])
-
 
 
 	return (props.trigger) ? (
@@ -316,10 +292,9 @@ export function ConfigureChannel(props: { trigger: boolean, setTrigger: (value: 
 							<ul key={banned.id}>
 								<li title='Unban'>
 									<div className='avatar-inpopup'>
-
-							<img className="cursor-onsomoene avatar avatar-manu" src={`${process.env.REACT_APP_BACK}user/${banned.id}/avatar`} alt="" onClick={() => handleUnban(banned.id)}/>
-								</div>
-							</li>
+										<img className="cursor-onsomoene avatar avatar-manu" src={`${process.env.REACT_APP_BACK}user/${banned.id}/avatar`} alt="" onClick={() => handleUnban(banned.id)} />
+									</div>
+								</li>
 
 							</ul>
 						))}
