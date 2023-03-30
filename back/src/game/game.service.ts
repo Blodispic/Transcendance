@@ -136,7 +136,7 @@ export class GameService {
 			return ('Waiting for more Players...');
 	}
 
-	startCustomGame(server: Server, userSocket1: Socket, userSocket2: Socket, extra: boolean, scoreMax: number) {
+	async startCustomGame(server: Server, userSocket1: Socket, userSocket2: Socket, extra: boolean, scoreMax: number) {
 		const socket1 = userSocket1;
 		const socket2 = userSocket2;
 
@@ -174,8 +174,18 @@ export class GameService {
 		};
 		player1.name = socket1.handshake.auth.user.username;
 		player1.id = socket1.handshake.auth.user.id;
+		const user1 = await this.userService.getById(player1.id)
+		if (!user1)
+			throw new NotFoundException("User Not found");
+		if (user1.username)
+			player1.name = user1.username;
 		player2.name = socket2.handshake.auth.user.username;
 		player2.id = socket2.handshake.auth.user.id;
+		const user2 = await this.userService.getById(player2.id)
+		if (!user2)
+			throw new NotFoundException("User Not found");
+		if (user2.username)
+			player2.name = user2.username;
 		if (scoreMax < 1)
 			scoreMax = 1;
 		else if (scoreMax > 10)
