@@ -19,8 +19,7 @@ export function ChannelHeader() {
 	const { id } = useParams();
 	const [chanId, setChanId] = useState<number | undefined>(undefined);
 	const currentChan: IChannel | undefined = useAppSelector(state => state.chat.channels.find(chan => chan.id === chanId));
-	
-	
+
 	useEffect(() => {
 		if (id !== undefined) {
 			setChanId(parseInt(id));
@@ -40,26 +39,20 @@ export function ChannelHeader() {
 				<>
 					{currentChan.chanType !== 1 &&
 						<>
-							{ currentChan.users?.find(obj => obj.id === currentUser?.id) &&
+							{(currentChan.users?.find(obj => obj.id === currentUser?.id) && currentChan.owner?.id === currentUser?.id) &&
 								<>
-									{currentChan.owner?.id === currentUser?.id &&
-										<>
-											<ImCog className="config-icon" onClick={() => setPopup(true)} />
-											<ConfigureChannel trigger={popup} setTrigger={setPopup} channel={currentChan}/>
-										</>}
+									<ImCog className="config-icon" onClick={() => setPopup(true)} />
+									<ConfigureChannel trigger={popup} setTrigger={setPopup} channel={currentChan} />
 								</>
 							}
 						</>
 					}
 					{currentChan.chanType === 1 &&
 						<>
-							{ currentChan.users.find(obj => obj.id === currentUser?.id) &&
+							{(currentChan.users.find(obj => obj.id === currentUser?.id) && currentChan.owner?.id === currentUser?.id) &&
 								<>
-									{currentChan.admin.find(obj => obj.id === currentUser?.id) &&
-										<>
-											<ImCog className="config-icon" onClick={() => setPopup(true)} />
-											<ConfigureChannelPrivate trigger={popup} setTrigger={setPopup} channel={currentChan}/>
-										</>}
+									<ImCog className="config-icon" onClick={() => setPopup(true)} />
+									<ConfigureChannelPrivate trigger={popup} setTrigger={setPopup} channel={currentChan} />
 								</>
 							}
 						</>
@@ -92,7 +85,6 @@ function MessageBubble(props: { message: IMessage, blocked: boolean }) {
 		</div>
 	);
 }
-
 
 export function ChannelMessages() {
 	const currentUser = useAppSelector(state => state.user);
