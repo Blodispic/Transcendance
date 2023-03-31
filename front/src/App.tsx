@@ -32,6 +32,7 @@ function App() {
         auth: {
           token: token,
         }
+        
       });
       socket.emit("UpdateSomeone", { idChange: myUser.user?.id, idChange2: 0 })
 
@@ -131,7 +132,6 @@ function App() {
 
       }
         return () => {
-          socket.off("RoomStart");
           socket.off("RequestSent");
           socket.off("RequestAccepted");
           socket.off("RequestDeclined");
@@ -189,7 +189,7 @@ function App() {
         cookies.remove('Token');
       }
       else {
-        swal('t\'as deja un tab frero', '',  "error");
+        swal('Other tab already open', '',  "error");
       }
     })
   }

@@ -14,7 +14,7 @@ export default function Chat() {
 
 	useEffect(() => {
 		socket.on("RoomStart", (roomId: number) => {
-            navigate("/game/" + roomId, { state: { Id: roomId } });
+			navigate("/game/" + roomId, { state: { Id: roomId } });
         });
 		socket.on('exception', () => {
 			swal("Format Error", "Your input is not valid for this request", "error");
@@ -51,7 +51,6 @@ export default function Chat() {
 			{
 				current === page.PAGE_1 &&
 				<Channels page={setOnglet}/>
-
 			}
 			{
 				current === page.PAGE_2 &&

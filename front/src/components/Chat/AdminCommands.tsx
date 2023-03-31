@@ -6,7 +6,6 @@ import { IChannel } from "../../interface/Channel";
 import { IUser } from "../../interface/User";
 import { useAppDispatch, useAppSelector } from "../../redux/Hook";
 import { AiFillPlusCircle } from 'react-icons/ai';
-import { banUser } from '../../redux/chat';
 
 export function BanUser(props: { chanid: any, userid: any, trigger: boolean, setTrigger: (value: boolean) => void }) {
 	const [timeout, setTimeout] = useState<string>("");
@@ -42,7 +41,7 @@ export function BanUser(props: { chanid: any, userid: any, trigger: boolean, set
 				<br />
 				<h3>Ban User</h3>
 				<h4>Set time (optional)</h4>
-				<input /* type="number" */ id="clickable-input" min="0" onChange={e => { setTimeout(e.target.value) }} />seconds
+				<input id="clickable-input" min="0" onChange={e => { setTimeout(e.target.value) }} />seconds
 				<br /><br />
 				{
 					failed === true &&
@@ -88,7 +87,7 @@ export function MuteUser(props: { chanid: any, userid: any, trigger: boolean, se
 				<br />
 				<h3>Mute User</h3>
 				<h4>Set time (optional)</h4>
-				<input /* type="number" */ id="clickable-input" min="0" onChange={e => { setTimeout(e.target.value) }} />seconds
+				<input id="clickable-input" min="0" onChange={e => { setTimeout(e.target.value) }} />seconds
 				<br /><br />
 				{
 					failed === true &&
@@ -101,7 +100,7 @@ export function MuteUser(props: { chanid: any, userid: any, trigger: boolean, se
 }
 
 export function KickUser(chanid: any, userid: any) {
-	socket.emit('BanUser', { chanid: chanid, userid: userid, timeout: 1 });
+	socket.emit('BanUser', { chanid: chanid, userid: userid, timeout: "1" });
 }
 
 export function ConfigureChannelPrivate(props: { trigger: boolean, setTrigger: (value: boolean) => void, channel: IChannel }) {
@@ -110,8 +109,6 @@ export function ConfigureChannelPrivate(props: { trigger: boolean, setTrigger: (
 	const [alluser, setAlluser] = useState<IUser[]>([]);
 	const [myVar, setMyvar] = useState<boolean>(false);
 	const myUser = useAppSelector(state => state);
-	const dispatch = useAppDispatch();
-
 
 	const AddPeoplePrivate = () => {
 		if (allfriend.length > 0)
@@ -169,9 +166,8 @@ export function ConfigureChannelPrivate(props: { trigger: boolean, setTrigger: (
 	}
 
 	const handleUnban = (id: number) => {
-		socket.emit('unBan', { chanid: props.channel.id, userid: id }); //to be added soon
+		socket.emit('unBan', { chanid: props.channel.id, userid: id });
 	}
-
 
 	return (props.trigger) ? (
 		<div className="chat-form-popup" onClick={_ => { cleanlist(); props.setTrigger(false) }}>
@@ -180,7 +176,6 @@ export function ConfigureChannelPrivate(props: { trigger: boolean, setTrigger: (
 				<h3>Edit members</h3>
 				<div className='allpoeple'>
 					{
-
 						<>
 							<div>
 								{alreadyhere && alreadyhere.map(user => (
@@ -200,7 +195,6 @@ export function ConfigureChannelPrivate(props: { trigger: boolean, setTrigger: (
 								<AiFillPlusCircle className="plus-circle pointer" title='Add member' onClick={() => { get_all(); setMyvar(!myVar) }} />
 							</div>
 						</>
-
 					}
 					{
 						myVar === true && alluser && alluser.length > 0 &&
@@ -244,7 +238,6 @@ export function ConfigureChannelPrivate(props: { trigger: boolean, setTrigger: (
 
 export function ConfigureChannel(props: { trigger: boolean, setTrigger: (value: boolean) => void, channel: IChannel }) {
 	const [newPassword, setNewPassword] = useState("");
-	const dispatch = useAppDispatch();
 
 	const setPassword = () => {
 		if (props.channel.chanType === 0 && newPassword !== undefined) {
@@ -262,10 +255,8 @@ export function ConfigureChannel(props: { trigger: boolean, setTrigger: (value: 
 	}
 
 	const handleUnban = (id: number) => {
-		socket.emit('unBan',{ chanid: props.channel.id, userid: id} ); //to be added soon
+		socket.emit('unBan',{ chanid: props.channel.id, userid: id} );
 	}
-
-
 
 	return (props.trigger) ? (
 		<div className="chat-form-popup" onClick={() => props.setTrigger(false)}>
