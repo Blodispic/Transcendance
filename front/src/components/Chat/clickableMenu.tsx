@@ -90,7 +90,6 @@ export default function ClickableMenu(props: { user: IUser, chan: IChannel, page
                                                 </li>
                                             }
 
-
                                             <li>
                                                 <span onClick={() => KickUser(props.chan.id, user.id)}>
                                                     Kick

@@ -51,7 +51,6 @@ export default function Chat() {
 			{
 				current === page.PAGE_1 &&
 				<Channels page={setOnglet}/>
-
 			}
 			{
 				current === page.PAGE_2 &&

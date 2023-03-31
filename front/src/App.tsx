@@ -115,7 +115,7 @@ function App() {
           newMessage.sendtime = sendtime;
           dispatch(addDM(newMessage));
         });
-        
+
         socket.on('ReceiveDM', (receiveDmDto) => {
           const newMessage: IMessage = receiveDmDto;
           newMessage.chanid = receiveDmDto.sender.id;

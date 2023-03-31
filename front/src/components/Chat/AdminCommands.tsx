@@ -6,7 +6,6 @@ import { IChannel } from "../../interface/Channel";
 import { IUser } from "../../interface/User";
 import { useAppDispatch, useAppSelector } from "../../redux/Hook";
 import { AiFillPlusCircle } from 'react-icons/ai';
-import { banUser } from '../../redux/chat';
 
 export function BanUser(props: { chanid: any, userid: any, trigger: boolean, setTrigger: (value: boolean) => void }) {
 	const [timeout, setTimeout] = useState<string>("");
@@ -42,7 +41,7 @@ export function BanUser(props: { chanid: any, userid: any, trigger: boolean, set
 				<br />
 				<h3>Ban User</h3>
 				<h4>Set time (optional)</h4>
-				<input /* type="number" */ id="clickable-input" min="0" onChange={e => { setTimeout(e.target.value) }} />seconds
+				<input id="clickable-input" min="0" onChange={e => { setTimeout(e.target.value) }} />seconds
 				<br /><br />
 				{
 					failed === true &&
@@ -88,7 +87,7 @@ export function MuteUser(props: { chanid: any, userid: any, trigger: boolean, se
 				<br />
 				<h3>Mute User</h3>
 				<h4>Set time (optional)</h4>
-				<input /* type="number" */ id="clickable-input" min="0" onChange={e => { setTimeout(e.target.value) }} />seconds
+				<input id="clickable-input" min="0" onChange={e => { setTimeout(e.target.value) }} />seconds
 				<br /><br />
 				{
 					failed === true &&
@@ -101,7 +100,7 @@ export function MuteUser(props: { chanid: any, userid: any, trigger: boolean, se
 }
 
 export function KickUser(chanid: any, userid: any) {
-	socket.emit('BanUser', { chanid: chanid, userid: userid, timeout: 1 });
+	socket.emit('BanUser', { chanid: chanid, userid: userid, timeout: "1" });
 }
 
 export function ConfigureChannelPrivate(props: { trigger: boolean, setTrigger: (value: boolean) => void, channel: IChannel }) {
@@ -110,13 +109,11 @@ export function ConfigureChannelPrivate(props: { trigger: boolean, setTrigger: (
 	const [alluser, setAlluser] = useState<IUser[]>([]);
 	const [myVar, setMyvar] = useState<boolean>(false);
 	const myUser = useAppSelector(state => state);
-	const dispatch = useAppDispatch();
-
 
 	const AddPeoplePrivate = () => {
 		if (allfriend.length > 0)
 			socket.emit('AddPeoplePrivate', { chanid: props.channel.id, usersId: allfriend.map(user => user.id) });
-			cleanlist();
+		cleanlist();
 	}
 	const cleanlist = () => {
 		setAlluser([]);
@@ -138,8 +135,10 @@ export function ConfigureChannelPrivate(props: { trigger: boolean, setTrigger: (
 		setAlreadyhere(props.channel.users);
 		socket.on("AddPeoplePrivateOk", (error_message) => {
 		});
+
 		return () => {
 			socket.off("AddPeoplePrivateOk");
+			socket.off("unbanOK");
 		}
 	}, [props.channel.users]);
 	const get_all = async () => {
@@ -167,13 +166,8 @@ export function ConfigureChannelPrivate(props: { trigger: boolean, setTrigger: (
 	}
 
 	const handleUnban = (id: number) => {
-		socket.emit('unBan',{ chanid: props.channel.id, userid: id} ); //to be added soon
+		socket.emit('unBan', { chanid: props.channel.id, userid: id });
 	}
-	useEffect( () => {
-		socket.on("unBanOk", (id) => {
-			dispatch(banUser({chanid: props.channel.id, userid: id} ))
-		});
-	})
 
 	return (props.trigger) ? (
 		<div className="chat-form-popup" onClick={_ => { cleanlist(); props.setTrigger(false) }}>
@@ -182,7 +176,6 @@ export function ConfigureChannelPrivate(props: { trigger: boolean, setTrigger: (
 				<h3>Edit members</h3>
 				<div className='allpoeple'>
 					{
-
 						<>
 							<div>
 								{alreadyhere && alreadyhere.map(user => (
@@ -202,7 +195,6 @@ export function ConfigureChannelPrivate(props: { trigger: boolean, setTrigger: (
 								<AiFillPlusCircle className="plus-circle pointer" title='Add member' onClick={() => { get_all(); setMyvar(!myVar) }} />
 							</div>
 						</>
-
 					}
 					{
 						myVar === true && alluser && alluser.length > 0 &&
@@ -220,20 +212,22 @@ export function ConfigureChannelPrivate(props: { trigger: boolean, setTrigger: (
 					}
 				</div>
 				{
-					props.channel.banned.length > 0 && 
+					props.channel.banned.length > 0 &&
 					<>
-					<h3>Unban user</h3>
-					{props.channel.banned?.map(banned => (
-						<ul key={banned.id}>
-							<li title='Unban'>
-							<div className='avatar-inpopup'>
-
-							<img className="cursor-onsomoene avatar avatar-manu" src={`${process.env.REACT_APP_BACK}user/${banned.id}/avatar`} alt="" onClick={() => handleUnban(banned.id)}/>
-								</div>
-							</li>
-
-						</ul>
-					))}
+						<h3>Unban user</h3>
+						<div className='allpoeple'>
+							<div className="avatar-inpopup">
+								{props.channel.banned?.map(banned => (
+									<ul key={banned.id}>
+										<li title='Unban'>
+											<div >
+												<img className="cursor-onsomoene avatar avatar-manu" src={`${process.env.REACT_APP_BACK}user/${banned.id}/avatar`} alt="" onClick={() => handleUnban(banned.id)} />
+											</div>
+										</li>
+									</ul>
+								))}
+							</div>
+						</div>
 					</>
 				}
 				<button onClick={() => { AddPeoplePrivate(); props.setTrigger(false) }}> Save Setting </button>
@@ -244,7 +238,6 @@ export function ConfigureChannelPrivate(props: { trigger: boolean, setTrigger: (
 
 export function ConfigureChannel(props: { trigger: boolean, setTrigger: (value: boolean) => void, channel: IChannel }) {
 	const [newPassword, setNewPassword] = useState("");
-	const dispatch = useAppDispatch();
 
 	const setPassword = () => {
 		if (props.channel.chanType === 0 && newPassword !== undefined) {
@@ -262,18 +255,8 @@ export function ConfigureChannel(props: { trigger: boolean, setTrigger: (value: 
 	}
 
 	const handleUnban = (id: number) => {
-		socket.emit('unBan',{ chanid: props.channel.id, userid: id} ); //to be added soon
+		socket.emit('unBan',{ chanid: props.channel.id, userid: id} );
 	}
-
-	useEffect( () => {
-		socket.on("unbanOK", (id) => {
-			// console.log("ca rentre");
-			// dispatch(banUser({chanid: props.channel.id, userid: id}));
-			// props.channel.banned = props.channel.banned.filter( banned => banned.id === id);
-		});
-	}, [])
-
-
 
 	return (props.trigger) ? (
 		<div className="chat-form-popup" onClick={() => props.setTrigger(false)}>
@@ -303,10 +286,9 @@ export function ConfigureChannel(props: { trigger: boolean, setTrigger: (value: 
 							<ul key={banned.id}>
 								<li title='Unban'>
 									<div className='avatar-inpopup'>
-
-							<img className="cursor-onsomoene avatar avatar-manu" src={`${process.env.REACT_APP_BACK}user/${banned.id}/avatar`} alt="" onClick={() => handleUnban(banned.id)}/>
-								</div>
-							</li>
+										<img className="cursor-onsomoene avatar avatar-manu" src={`${process.env.REACT_APP_BACK}user/${banned.id}/avatar`} alt="" onClick={() => handleUnban(banned.id)} />
+									</div>
+								</li>
 
 							</ul>
 						))}

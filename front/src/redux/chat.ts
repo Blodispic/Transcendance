@@ -105,7 +105,7 @@ export const chatSlice = createSlice({
                 const user: IUser | undefined = chan.banned.find(obj => obj.id === payload.userid);
                 if (user) {
                     if (chan.banned && chan.banned.find(obj => obj.id === user.id) !== undefined)
-                    chan.banned = chan?.banned.filter(obj => obj.id !== user.id);
+                        chan.banned = chan?.banned.filter(obj => obj.id !== user.id);
                 }
             }
         },

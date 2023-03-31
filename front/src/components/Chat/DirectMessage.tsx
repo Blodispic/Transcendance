@@ -1,10 +1,12 @@
 import * as React from 'react';
 import { useEffect, useState } from "react";
+import { AiOutlineStop } from 'react-icons/ai';
 import { Link, useNavigate, useParams } from "react-router-dom";
 import swal from "sweetalert";
 import { socket } from "../../App";
 import { IMessage } from "../../interface/Message";
 import { IUser } from "../../interface/User";
+import { addDM } from '../../redux/chat';
 import { useAppDispatch, useAppSelector } from "../../redux/Hook";
 import { addBlockedUser, unBlockUser } from "../../redux/user";
 import CustomGamePopup from "../Game/CustomGamePopup";
@@ -12,6 +14,7 @@ import CustomGamePopup from "../Game/CustomGamePopup";
 function DMList(props: { currentdm: IUser | undefined; setCurrentDm: (user: IUser | undefined) => void }) {
 	const [alluser, setAlluser] = useState<IUser[] | undefined>(undefined);
 	const myStore = useAppSelector(state => state);
+	const currentUser: IUser | undefined = useAppSelector(state => state.user.user);
 	const navigate = useNavigate();
 	const [updateStatus, setUpdateStatus] = useState(false);
 	
@@ -47,6 +50,7 @@ function DMList(props: { currentdm: IUser | undefined; setCurrentDm: (user: IUse
 						<ul key={user.username} onClick={() => {props.setCurrentDm(user); navigate(`/Chat/dm/${user.id}`)}} >
 							<li >
 								{user.username}
+								{ currentUser?.blocked?.find(obj => obj.id === user.id) && <AiOutlineStop /> }
 							</li>
 						</ul>
 					))}
@@ -104,7 +108,6 @@ function InfoFriend(props: { user: IUser }) {
 					setRelation("friendRequestSent");
 					swal("Your request has been sent", "", "success");
 					socket.emit("RequestSent", user.id);
-
 				}
 			})
 	}
@@ -124,7 +127,6 @@ function InfoFriend(props: { user: IUser }) {
 					swal("Congrats", str, "success");
 					socket.emit("RequestAccepted", user.id);
 					setRelation("Friend");
-
 				}
 			});
 	};
@@ -186,14 +188,12 @@ function InfoFriend(props: { user: IUser }) {
 	return (
 		<div className="title"> menu <hr />
 			<div className="menu hover-style">
-
 				<ul >
 					<li >
 						<Link to={`/Profile/${user.id}`}>
 							Profile
 						</Link>
 					</li>
-
 					<>
 						{
 							relation === "Nobody" &&
@@ -214,7 +214,6 @@ function InfoFriend(props: { user: IUser }) {
 							<li onClick={() => (acceptFriendRequest())}> accept in Friend </li>
 						}
 
-
 						<li onClick={() => setMyvar(true)}>
 							Invite Game
 						</li>
@@ -234,7 +233,6 @@ function InfoFriend(props: { user: IUser }) {
 								Unblock
 							</li>
 						}
-
 					</>
 				</ul>
 			</div>
@@ -249,6 +247,7 @@ export function DmMessages(props: { id: number; currentdm: IUser | undefined; se
 	const [newInput, setNewInput] = useState("");
 	const myUser: IUser | undefined = useAppSelector(state => state.user.user);
 	const messages: IMessage[] = useAppSelector(state => state.chat.DMs.filter(obj => obj.chanid === props.id));
+	const dispatch = useAppDispatch();
 
 	const handleSubmitNewMessage = (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
@@ -258,20 +257,34 @@ export function DmMessages(props: { id: number; currentdm: IUser | undefined; se
 		setNewInput("");
 	}
 
+	useEffect(() => {
+
+		socket.on('sendDMFailed', (errorMessage) => {
+			const newMessage: IMessage = {
+				chanid: props.id,
+				sender: undefined,
+				message: errorMessage,
+			}
+			dispatch(addDM(newMessage));
+		});
+		return () => {
+			socket.off('sendDMFailed');
+		}
+	})
+
 	return (
 		<div className="chat-body">
 			<div className="body-header">
 				<img className="user-avatar" src={`${process.env.REACT_APP_BACK}user/${props.currentdm?.id}/avatar`} alt="" />
 				{props.currentdm?.username}
+				{ myUser?.blocked?.find(obj => obj.id === props.currentdm?.id) && <AiOutlineStop /> }
 			</div>
 			<div className="chat-messages">
 				<div className="reverse">
 
 					{messages && messages.map((message: IMessage, index: number) => (
 						<div key={index} >
-							{
-
-								myUser?.blocked?.find(obj => obj.id === props.currentdm?.id) === undefined &&
+							{ (myUser?.blocked?.find(obj => obj.id === props.currentdm?.id) === undefined && message.sender !== undefined) &&
 									<div className="__wrap">
 										<div className="message-info">
 											<img className="user-avatar" src={`${process.env.REACT_APP_BACK}user/${message.sender?.id}/avatar`} alt="" />
@@ -280,11 +293,11 @@ export function DmMessages(props: { id: number; currentdm: IUser | undefined; se
 										</div>
 										{message.message}
 									</div>
-
 							}
+							{(message.chanid === props.currentdm?.id && message.sender === undefined) &&
+								<div className="channel-announce"> {message.message} </div> }
 						</div>
 					))}
-
 				</div>
 			</div>
 			{
@@ -339,7 +352,6 @@ export function DirectMessage() {
 					</div>
 				</>
 			}
-
 		</div>
 	) : (
 			<div id="chat-container">
