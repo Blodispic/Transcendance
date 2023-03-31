@@ -50,18 +50,15 @@ export function CheckPassword(props: { trigger: boolean, setTrigger: (value: boo
 
 export function JoinChannel(props: { channel: IChannel }) {
 	const [passPopup, setPassPopup] = useState(false);
-	const [errorMessage, setErrorMessage] = useState("");
 	const dispatch = useAppDispatch();
 	const currentUser: IUser | undefined = useAppSelector(state => state.user.user);
-
 	const handleJoin = () => {
 		socket.emit('joinChannel', { chanid: props.channel.id });
 	}
 
 	useEffect(() => {
 		socket.on("joinChannelFailed", (error_message) => {
-			setErrorMessage(error_message);
-			swal("Error", errorMessage, "error");
+			swal("Error", error_message, "error");
 		});
 		socket.on("joinChannelOK", (chanId) => {
 			if (currentUser !== undefined) {
