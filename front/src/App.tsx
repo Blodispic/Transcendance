@@ -132,7 +132,6 @@ function App() {
 
       }
         return () => {
-          //socket.off("RoomStart");
           socket.off("RequestSent");
           socket.off("RequestAccepted");
           socket.off("RequestDeclined");

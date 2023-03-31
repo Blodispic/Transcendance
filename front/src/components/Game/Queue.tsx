@@ -56,7 +56,6 @@ export default function Queue() {
         }
         fetchuser()
         return () => {
-            //socket.off("RoomStart");
             socket.off("WaitingRoomSuccess");
             socket.off("WaitingRoomFailure");
           }
