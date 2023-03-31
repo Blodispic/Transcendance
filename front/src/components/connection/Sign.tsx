@@ -64,7 +64,9 @@ export default function Sign() {
                             dispatch(change_name(newname));
                             dispatch(set_status(UserStatus.ONLINE));
                             if (window.location.href.search('Profile') === -1) {
-                                navigate("/Home");
+                                 setTimeout(() => {
+                                        navigate("/Home");
+                                      }, 1000)
                             }
                         }
 
