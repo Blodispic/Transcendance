@@ -51,9 +51,11 @@ export default function Connection() {
                             else {
                                 dispatch(set_status(UserStatus.ONLINE));
                                 // socket.emit("UpdateSomeone", { idChange: myUser.user?.id, idChange2: 0 })
-                                navigate("/Home");
+                                setTimeout(() => {
+                                    navigate("/Home");
+                                  }, 1000)
+                            }
                         }
-                    }
                     })
                     .catch(error => {
                         console.error('There was an error!', error);

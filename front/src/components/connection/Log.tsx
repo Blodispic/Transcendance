@@ -37,7 +37,9 @@ export function Log() {
                 setIsValid(data.result);
                 if (data.result === true) {
                     dispatch(set_status(UserStatus.ONLINE));
-                    navigate("/Home");
+                    setTimeout(() => {
+                        navigate("/Home");
+                      }, 1000)
                 }
             })
             .catch()

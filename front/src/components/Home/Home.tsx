@@ -13,7 +13,7 @@ export default function Home() {
                 navigate("/game/" + roomId, { state: { Id: roomId } });
             });
         }
-	}, [])
+	}, [socket])
 
     return (
         <div className='scroll'>

@@ -146,11 +146,12 @@ export class PongGateway implements OnGatewayDisconnect {
 		// let user2: User | null = await this.userService.getById(payload.user2);
 		// if (user2 === null)
 		// 	throw new BadRequestException("UserToSpectate not found");
-		if (!payload.user2 || !client.handshake.auth.user)
+		let user1 = await this.userService.getById(client.handshake.auth.user.id)
+		if (!payload.user2 || !user1)
 			return;
 		this.gameService.removeFromWaitingRoom(client.id);
-		if (this.isInInvite(payload.user2.id) || this.isInInvite(client.handshake.auth.user.id)
-			|| this.gameService.inGame(client.handshake.auth.user.id) == true
+		if (this.isInInvite(payload.user2.id) || this.isInInvite(user1.id)
+			|| this.gameService.inGame(user1.id) == true
 			|| this.gameService.inGame(payload.user2.id) == true)
 		{
 			console.log('[CreateCustomGame] One of the two users is currently busy.');
@@ -162,11 +163,11 @@ export class PongGateway implements OnGatewayDisconnect {
 			if (socket != null)
 			{
 				this.server.to(socket.id).emit('invitationInGame', payload);
-				this.inviteList.push(client.handshake.auth.user.id);
+				this.inviteList.push(user1.id);
 				this.inviteList.push(payload.user2.id);
 				setTimeout(() => {
-					if (client.handshake.auth.user.id)
-						this.removeInvite(client.handshake.auth.user.id);
+					if (user1?.id)
+						this.removeInvite(user1.id);
 					if (payload.user2.id)
 						this.removeInvite(payload.user2.id);
 					// this.server.to(client.id).emit("GameDeclined", payload.user2.username);

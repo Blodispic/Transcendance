@@ -54,8 +54,6 @@ export class GameService {
 
 
 	async addToWaitingRoom(client: Socket) {
-		console.log(this.waitingRoom);
-		console.log(typeof this.waitingRoom);
 		let i  = 0;
 		while (i < this.waitingRoom.length)
 		{

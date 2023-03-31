@@ -40,7 +40,6 @@ export class UserService {
 
 async checkTab(user: User) {
   for (const iterator of userList) {
-    console.log("la", iterator.handshake.auth.user.id);
     if (iterator.handshake.auth.user.id === user.id)
       throw new BadRequestException('t\'as deja un tab frero');
   }
