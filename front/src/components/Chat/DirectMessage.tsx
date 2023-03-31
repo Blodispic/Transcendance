@@ -260,7 +260,7 @@ export function DmMessages(props: { id: number; currentdm: IUser | undefined; se
 	useEffect(() => {
 
 		socket.on('sendDMFailed', (errorMessage) => {
-			let newMessage: IMessage = {
+			const newMessage: IMessage = {
 				chanid: props.id,
 				sender: undefined,
 				message: errorMessage,
@@ -284,7 +284,7 @@ export function DmMessages(props: { id: number; currentdm: IUser | undefined; se
 
 					{messages && messages.map((message: IMessage, index: number) => (
 						<div key={index} >
-							{ (myUser?.blocked?.find(obj => obj.id === props.currentdm?.id) === undefined && message.sender != undefined) &&
+							{ (myUser?.blocked?.find(obj => obj.id === props.currentdm?.id) === undefined && message.sender !== undefined) &&
 									<div className="__wrap">
 										<div className="message-info">
 											<img className="user-avatar" src={`${process.env.REACT_APP_BACK}user/${message.sender?.id}/avatar`} alt="" />
