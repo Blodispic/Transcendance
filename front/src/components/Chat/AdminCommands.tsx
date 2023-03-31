@@ -41,7 +41,7 @@ export function BanUser(props: { chanid: any, userid: any, trigger: boolean, set
 				<br />
 				<h3>Ban User</h3>
 				<h4>Set time (optional)</h4>
-				<input /* type="number" */ id="clickable-input" min="0" onChange={e => { setTimeout(e.target.value) }} />seconds
+				<input id="clickable-input" min="0" onChange={e => { setTimeout(e.target.value) }} />seconds
 				<br /><br />
 				{
 					failed === true &&
@@ -87,7 +87,7 @@ export function MuteUser(props: { chanid: any, userid: any, trigger: boolean, se
 				<br />
 				<h3>Mute User</h3>
 				<h4>Set time (optional)</h4>
-				<input /* type="number" */ id="clickable-input" min="0" onChange={e => { setTimeout(e.target.value) }} />seconds
+				<input id="clickable-input" min="0" onChange={e => { setTimeout(e.target.value) }} />seconds
 				<br /><br />
 				{
 					failed === true &&
@@ -109,8 +109,6 @@ export function ConfigureChannelPrivate(props: { trigger: boolean, setTrigger: (
 	const [alluser, setAlluser] = useState<IUser[]>([]);
 	const [myVar, setMyvar] = useState<boolean>(false);
 	const myUser = useAppSelector(state => state);
-	const dispatch = useAppDispatch();
-
 
 	const AddPeoplePrivate = () => {
 		if (allfriend.length > 0)
@@ -168,7 +166,7 @@ export function ConfigureChannelPrivate(props: { trigger: boolean, setTrigger: (
 	}
 
 	const handleUnban = (id: number) => {
-		socket.emit('unBan', { chanid: props.channel.id, userid: id }); //to be added soon
+		socket.emit('unBan', { chanid: props.channel.id, userid: id });
 	}
 
 	return (props.trigger) ? (
@@ -240,7 +238,6 @@ export function ConfigureChannelPrivate(props: { trigger: boolean, setTrigger: (
 
 export function ConfigureChannel(props: { trigger: boolean, setTrigger: (value: boolean) => void, channel: IChannel }) {
 	const [newPassword, setNewPassword] = useState("");
-	const dispatch = useAppDispatch();
 
 	const setPassword = () => {
 		if (props.channel.chanType === 0 && newPassword !== undefined) {
@@ -258,10 +255,8 @@ export function ConfigureChannel(props: { trigger: boolean, setTrigger: (value: 
 	}
 
 	const handleUnban = (id: number) => {
-		socket.emit('unBan',{ chanid: props.channel.id, userid: id} ); //to be added soon
+		socket.emit('unBan',{ chanid: props.channel.id, userid: id} );
 	}
-
-
 
 	return (props.trigger) ? (
 		<div className="chat-form-popup" onClick={() => props.setTrigger(false)}>

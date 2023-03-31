@@ -108,7 +108,6 @@ function InfoFriend(props: { user: IUser }) {
 					setRelation("friendRequestSent");
 					swal("Your request has been sent", "", "success");
 					socket.emit("RequestSent", user.id);
-
 				}
 			})
 	}
@@ -128,7 +127,6 @@ function InfoFriend(props: { user: IUser }) {
 					swal("Congrats", str, "success");
 					socket.emit("RequestAccepted", user.id);
 					setRelation("Friend");
-
 				}
 			});
 	};
@@ -190,14 +188,12 @@ function InfoFriend(props: { user: IUser }) {
 	return (
 		<div className="title"> menu <hr />
 			<div className="menu hover-style">
-
 				<ul >
 					<li >
 						<Link to={`/Profile/${user.id}`}>
 							Profile
 						</Link>
 					</li>
-
 					<>
 						{
 							relation === "Nobody" &&
@@ -218,7 +214,6 @@ function InfoFriend(props: { user: IUser }) {
 							<li onClick={() => (acceptFriendRequest())}> accept in Friend </li>
 						}
 
-
 						<li onClick={() => setMyvar(true)}>
 							Invite Game
 						</li>
@@ -238,7 +233,6 @@ function InfoFriend(props: { user: IUser }) {
 								Unblock
 							</li>
 						}
-
 					</>
 				</ul>
 			</div>
@@ -358,7 +352,6 @@ export function DirectMessage() {
 					</div>
 				</>
 			}
-
 		</div>
 	) : (
 			<div id="chat-container">

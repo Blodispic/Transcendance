@@ -146,7 +146,6 @@ function ChannelMemberList(props: { page: (page: page) => void }) {
 				</div>
 			))
 			}
-
 		</div>
 	);
 }

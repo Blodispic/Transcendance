@@ -14,7 +14,6 @@ export function PopupCreateChannel(props: { trigger: boolean, setTrigger: (value
 	const [chanMode, setChanMode] = useState(0);
 	const [friend, setFriend] = useState<IUser[]>([]);
 	const [error, setError] = useState<string>("");
-	// const [myVar, setMyvar] = useState<boolean>(false);
 	const [failed, setFailed] = useState<boolean>(false);
 	const currentUser: IUser | undefined = useAppSelector(state => state.user.user);
 	const dispatch = useAppDispatch();
