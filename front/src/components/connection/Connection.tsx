@@ -5,7 +5,7 @@ import { useAppDispatch } from "../../redux/Hook";
 import { oauth, setUser, set_status, change_avatar, setToken } from "../../redux/user";
 import { useCookies } from "react-cookie";
 import { UserStatus } from '../../interface/User';
-
+import swal from 'sweetalert';
 
 
 
@@ -56,9 +56,13 @@ export default function Connection() {
                                   }, 1000)
                             }
                         }
+                        else {
+                            swal('Other tab already open', '',  "error");
+                        }
                     })
                     .catch(error => {
                         console.error('There was an error!', error);
+                        
                     });
             }
             fetchcode();

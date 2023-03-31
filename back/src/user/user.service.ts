@@ -105,7 +105,7 @@ async checkTab(user: User) {
   async GetByAccessToken(access_token: string) {
     const decoded_access_token = await this.jwtService.decode(access_token, { json: true }) as { username: string, iat: number, exp: number } | null;
     if (!decoded_access_token) {
-      throw new BadRequestException('Invalid access token');
+      throw new NotFoundException('Invalid access token');
     }
     
     const user = await this.usersRepository.findOneBy({ login: decoded_access_token.username });

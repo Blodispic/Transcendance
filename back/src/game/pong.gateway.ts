@@ -146,7 +146,7 @@ export class PongGateway implements OnGatewayDisconnect {
 		// let user2: User | null = await this.userService.getById(payload.user2);
 		// if (user2 === null)
 		// 	throw new BadRequestException("UserToSpectate not found");
-		let user1 = await this.userService.getById(client.handshake.auth.user.id)
+		const user1 = await this.userService.getById(client.handshake.auth.user.id)
 		if (!payload.user2 || !user1)
 			return;
 		this.gameService.removeFromWaitingRoom(client.id);
