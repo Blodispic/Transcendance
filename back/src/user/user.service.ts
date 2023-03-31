@@ -40,7 +40,6 @@ export class UserService {
 
 async checkTab(user: User) {
   for (const iterator of userList) {
-    console.log("la", iterator.handshake.auth.user.id);
     if (iterator.handshake.auth.user.id === user.id)
       throw new BadRequestException('t\'as deja un tab frero');
   }
@@ -106,7 +105,7 @@ async checkTab(user: User) {
   async GetByAccessToken(access_token: string) {
     const decoded_access_token = await this.jwtService.decode(access_token, { json: true }) as { username: string, iat: number, exp: number } | null;
     if (!decoded_access_token) {
-      throw new BadRequestException('Invalid access token');
+      throw new NotFoundException('Invalid access token');
     }
     
     const user = await this.usersRepository.findOneBy({ login: decoded_access_token.username });

@@ -53,7 +53,6 @@ export function Friends() {
 
         checkFriend();
             return () => {
-        // socket.off('UpdateSomeone');
     };
     }, [setUpdateFriend, updateFriend]);
 

@@ -48,6 +48,7 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
 	}
 
 	async handleDisconnect(client: Socket) {
+		userList.splice(userList.indexOf(client), 1);
 		await new Promise(resolve => setTimeout(resolve, 400));
 
 		try {
@@ -56,7 +57,6 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
 			console.log(error);
 			return;
 		}
-		userList.splice(userList.indexOf(client), 1);
 		this.server.emit('UpdateSomeone', { idChange: client.handshake.auth.user.id, idChange2: 0 });
 	}
 	
