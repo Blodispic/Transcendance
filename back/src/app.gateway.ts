@@ -48,15 +48,14 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
 	}
 
 	async handleDisconnect(client: Socket) {
-		await new Promise(resolve => setTimeout(resolve, 400));
-
+		userList.splice(userList.indexOf(client), 1);
+		await new Promise(resolve => setTimeout(resolve, 200));
 		try {
 			await this.userService.SetStatus(client.handshake.auth.user, Status.Offline);
 		} catch (error) {
 			console.log(error);
 			return;
 		}
-		userList.splice(userList.indexOf(client), 1);
 		this.server.emit('UpdateSomeone', { idChange: client.handshake.auth.user.id, idChange2: 0 });
 	}
 	
