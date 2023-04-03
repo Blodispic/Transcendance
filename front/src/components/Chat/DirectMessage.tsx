@@ -18,23 +18,21 @@ function DMList(props: { currentdm: IUser | undefined; setCurrentDm: (user: IUse
 	const navigate = useNavigate();
 	const [updateStatus, setUpdateStatus] = useState(false);
 	
-	const get_all = async () => {
-		const response = await fetch(`${process.env.REACT_APP_BACK}user`, {
-			method: 'GET',
-			headers: {
-				'Content-Type': 'application/json',
-				'Authorization': `Bearer ${myStore.user.myToken}`,
-			},
-		})
-		const data = await response.json();
-		setAlluser(data.filter((obj: IUser) => obj.username !== myStore.user.user?.username && obj.status !== "Offline" ));
-	}
-
 	useEffect(() => {
 		socket.on('UpdateSomeone', () => {
 			setUpdateStatus(!updateStatus);
 		});
-		get_all();
+		const get_all = async () => {
+			const response = await fetch(`${process.env.REACT_APP_BACK}user`, {
+				method: 'GET',
+				headers: {
+					'Content-Type': 'application/json',
+					'Authorization': `Bearer ${myStore.user.myToken}`,
+				},
+			})
+			const data = await response.json();
+			setAlluser(data.filter((obj: IUser) => obj.username !== myStore.user.user?.username && obj.status !== "Offline" ));
+		}
 
 		return () => {
 			socket.off('UpdateSomeone');
