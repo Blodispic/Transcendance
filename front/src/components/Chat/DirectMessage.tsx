@@ -27,7 +27,7 @@ function DMList(props: { currentdm: IUser | undefined; setCurrentDm: (user: IUse
 			},
 		})
 		const data = await response.json();
-		setAlluser(data.filter((obj: IUser) => obj.username !== myStore.user.user?.username && obj.status === "Online" ));
+		setAlluser(data.filter((obj: IUser) => obj.username !== myStore.user.user?.username && obj.status !== "Offline" ));
 	}
 
 	useEffect(() => {
