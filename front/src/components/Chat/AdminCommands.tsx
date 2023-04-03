@@ -266,7 +266,9 @@ export function ConfigureChannel(props: { trigger: boolean, setTrigger: (value: 
 					props.channel.chanType === 0 &&
 					<>
 						<h3>Set Password</h3>
-						<input type="password" id="channel-input" placeholder="Insert password" onChange={e => { setNewPassword(e.target.value); }} /><br />
+						<div className='channel-input'>
+						<input type="password" placeholder="Insert password" onChange={e => { setNewPassword(e.target.value); }} /><br />
+						</div>
 					</>
 				}
 				{
@@ -275,7 +277,9 @@ export function ConfigureChannel(props: { trigger: boolean, setTrigger: (value: 
 						<h3> Remove Password </h3>
 						<button style={{ background: '#B33A3A' }} onClick={removePassword}> Remove Password </button>
 						<h3>Change Password</h3>
-						<input type="password" id="channel-input" placeholder="Insert new password" onChange={e => { setNewPassword(e.target.value); }} /><br />
+						<div className='channel-input'>
+						<input type="password" placeholder="Insert new password" onChange={e => { setNewPassword(e.target.value); }} /><br />
+						</div>
 					</>
 				}
 				{
