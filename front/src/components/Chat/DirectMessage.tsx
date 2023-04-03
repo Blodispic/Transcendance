@@ -33,6 +33,7 @@ function DMList(props: { currentdm: IUser | undefined; setCurrentDm: (user: IUse
 			const data = await response.json();
 			setAlluser(data.filter((obj: IUser) => obj.username !== myStore.user.user?.username && obj.status !== "Offline" ));
 		}
+		get_all();
 
 		return () => {
 			socket.off('UpdateSomeone');
