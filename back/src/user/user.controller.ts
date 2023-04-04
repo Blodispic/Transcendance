@@ -14,7 +14,7 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { userList } from 'src/app.gateway';
 import { ValidationError, validateOrReject } from 'class-validator';
 import * as sharp from 'sharp';
-import { readFileSync } from 'fs';
+import { readFileSync, unlinkSync } from 'fs';
 
 
 @Controller('user')
@@ -170,6 +170,12 @@ export class UserController {
     } 
     catch (error) {
       console.log(error);
+      try {
+				unlinkSync(file.path);
+			} 
+      catch(e) {
+				console.log(e.message);
+			}
       throw new UnprocessableEntityException('Invalid image file!')
     }
     await this.userService.setAvatar(user, username, file);

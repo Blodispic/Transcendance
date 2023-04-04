@@ -13,6 +13,7 @@ import { authenticator } from 'otplib';
 import * as QRCode from 'qrcode';
 import { Server } from 'http';
 import { userList } from 'src/app.gateway';
+import { unlinkSync } from 'fs';
 
 @Injectable()
 export class UserService {
@@ -155,6 +156,15 @@ async checkTab(user: User) {
 
   async setAvatar(user: User, username: string, file: Express.Multer.File) {
     if (user) {
+      if (user.avatar)
+      {
+        try { 
+          unlinkSync(`./storage/images/${user.avatar}`);
+        }
+        catch (error) {
+          console.log(error);
+        }
+      }
       user.avatar = file.filename;
       user.username = username;
       return await this.usersRepository.save(user);
