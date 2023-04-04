@@ -1,21 +1,28 @@
 import { Injectable, UnprocessableEntityException } from '@nestjs/common';
 import { extname } from 'path';
+import fs from 'fs';
+import sharp from 'sharp';
 
 @Injectable()
 export class AppService {
 }
 
 
-export const imageFilter = (
+export const imageFilter = async (
   req: Express.Request,
   file: Express.Multer.File,
   callback: (error: Error | null, acceptFile: boolean) => void,
 ) => {
+  const allowedExtensions = ['.jpg', '.jpeg', '.png', '.gif'];
   if (!file.originalname.match(/\.(jpg|jpeg|png|gif)$/)) {
+    return callback(new UnprocessableEntityException('Only image files are allowed!'), false);
+  }
+  if (!file.mimetype.match(/\/(jpg|jpeg|png|gif)$/)) {
     return callback(new UnprocessableEntityException('Only image files are allowed!'), false);
   }
   callback(null, true);
 };
+
 
 export const editFileName = (
   req: Express.Request,
