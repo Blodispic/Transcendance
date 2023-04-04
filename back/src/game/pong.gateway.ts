@@ -72,7 +72,6 @@ export class PongGateway implements OnGatewayDisconnect {
 
 	@SubscribeMessage('addToWaitingRoom')
 	async HandleAddToWaitingRoom(@ConnectedSocket() client: Socket) {
-		// this.gameService.addToWaitingRoom(userList[userList.indexOf(client)]);
 		if (this.isInInvite(client.handshake.auth.user.id) === true)
 		{
 			console.log('Already in Invite');
@@ -83,7 +82,6 @@ export class PongGateway implements OnGatewayDisconnect {
 		{
 			console.log('Already in a game');
 			throw new UnauthorizedException('Already in a game');
-			// this.server.to(client.id).emit("WaitingRoomFailure", "You are already in an game");
 		}
 		if (await this.gameService.addToWaitingRoom(client) == 1)
 			this.server.to(client.id).emit('WaitingRoomFailure', 'You are already in the waitingRoom');
@@ -109,7 +107,6 @@ export class PongGateway implements OnGatewayDisconnect {
 		
 		let i = 0;
 		const player: User | null = await this.userService.getById(playerId);
-		// let player = this.findByID(playerId);
 		if (player === null)
 			throw new BadRequestException('UserToSpectate not found');
 		while (i < this.gameService.gameRoom.length && player) {
@@ -143,9 +140,7 @@ export class PongGateway implements OnGatewayDisconnect {
 
 	@SubscribeMessage('createCustomGame')
 	async HandleCustomGame(@MessageBody() payload: any, @ConnectedSocket() client: Socket) {
-		// let user2: User | null = await this.userService.getById(payload.user2);
-		// if (user2 === null)
-		// 	throw new BadRequestException("UserToSpectate not found");
+
 		const user1 = await this.userService.getById(client.handshake.auth.user.id)
 		if (!payload.user2 || !user1)
 			return;
@@ -170,7 +165,6 @@ export class PongGateway implements OnGatewayDisconnect {
 						this.removeInvite(user1.id);
 					if (payload.user2.id)
 						this.removeInvite(payload.user2.id);
-					// this.server.to(client.id).emit("GameDeclined", payload.user2.username);
 				  }, 11000);
 			}
 		}
@@ -218,7 +212,6 @@ export class PongGateway implements OnGatewayDisconnect {
 			console.log('userSocket2=', userSocket2);
 			this.server.to(userSocket1.id).emit('GameCancelled', user2.username);
 			this.server.to(userSocket2.id).emit('GameCancelled', user1.username);
-			// throw new BadRequestException("User is not available");
 			return;
 		}
 		this.gameService.startCustomGame(this.server, userSocket1, userSocket2, payload.extra, parseInt(payload.scoreMax));

@@ -201,6 +201,7 @@ $tab-color: rgba(var(--primary-color), 0.5); //rgb(121, 121, 121);
 	padding: 10px 20px;
 	margin: 10px;
 	word-wrap: break-word;
+	white-space: pre;
 
 	.message-info {
 		color: rgb(107, 107, 107);
@@ -256,7 +257,7 @@ $tab-color: rgba(var(--primary-color), 0.5); //rgb(121, 121, 121);
 	z-index: 1;
 	padding-bottom: 30px;
 
-	#channel-input {
+	.channel-input input{
 		font-family: 'Fredoka One', cursive;
 		font-size: 15px;
 		color: rgb(111, 106, 106);

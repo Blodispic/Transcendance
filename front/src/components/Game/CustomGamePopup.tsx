@@ -12,7 +12,6 @@ import swal from 'sweetalert';
 export default function CustomGamePopup(props: {trigger: boolean; setTrigger: (arg: boolean) => void; friend: IUser | undefined} ) {
     const [extra, setExtra] = useState<boolean>(false);
     const [maxScore, setMaxScore] = useState(1);
-    // const [myVar, setMyvar] = useState<boolean>(false);
 
     const myUser = useAppSelector(state => state.user);
     const [friend, setFriend] = useState<IUser[]  >([]);
@@ -49,14 +48,12 @@ export default function CustomGamePopup(props: {trigger: boolean; setTrigger: (a
         socket.emit("createCustomGame", { user1: myUser.user, user2: friend[0], extra: extra, scoreMax: Max });
         props.setTrigger(false);
         setFriend([]);
-        // setMyvar(false);
         return;
     }
 
     return (props.trigger) ? (
         <div className='custom-popup'>
             <div className='custom-popup-inner'>
-            {/* ; setFriend(undefined) */}
                 <HiOutlineXMark className="close-icon" onClick={() => {props.setTrigger(false);  canErase() }} /> <br /> 
                 Create Custom Game
                 <AllPeople friend={friend} setFriend={setFriend} />

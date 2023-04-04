@@ -79,7 +79,9 @@ export function PopupCreateChannel(props: { trigger: boolean, setTrigger: (value
 			<div className="chat-form-inner" onClick={e => e.stopPropagation()}>
 				<HiOutlineXMark className="close-icon" onClick={() => {props.setTrigger(false); setChanMode(0); setFailed(false)}} /> <br />
 				<h3>Channel Name</h3>
-				<input type="text" id="channel-input" placeholder="Insert channel name"  maxLength={15} onChange={e => { setChanName(e.target.value) }} onSubmit={() => { handleCreateNewChan(); }} />
+				<div className='channel-input'>
+				<input type="text" placeholder="Insert channel name"  maxLength={15} onChange={e => { setChanName(e.target.value) }} onSubmit={() => { handleCreateNewChan(); }} />
+				</div>
 				<br />
 				{
 					failed === true &&
@@ -92,7 +94,9 @@ export function PopupCreateChannel(props: { trigger: boolean, setTrigger: (value
 				<input type="radio" name="chanMode" value={2} onChange={() => handleProtected()} />Protected <br />
 				{
 					chanMode === 2 &&
-					<><input type="password" id="channel-input" placeholder="Insert password" onChange={e => { setPassword(e.target.value); }} /><br /></>
+					<div className='channel-input'>
+					<input type="password" placeholder="Insert password" onChange={e => { setPassword(e.target.value); }} /><br />
+					</div>
 				}
 				{
 					chanMode === 1 &&

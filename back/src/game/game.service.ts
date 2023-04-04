@@ -43,12 +43,12 @@ export class GameService {
 
 	inGame(playerId: number)
 	{
-		this.gameRoom.forEach(element => {
-			if (element.gameState.player1.id == playerId || element.gameState.player2.id == playerId)
+		for (let i:number = 0; i < this.gameRoom.length; i++) {
+			if (this.gameRoom[i].gameState.player1.id == playerId || this.gameRoom[i].gameState.player2.id == playerId)
 			{
 				return true;
 			}
-		});
+		}
 		return false;
 	}
 
@@ -323,8 +323,6 @@ class Game {
 	constructor(gameService: GameService, server: Server, user1: Player, user2: Player, extra: boolean, scoreMax: number, socket1: Socket, socket2: Socket, roomId: number) {
 		this.gameService = gameService;
 		this.server = server;
-		// this.gamestateInitializer();
-		// this.gameState = gameStateDefault;
 		this.gameState = JSON.parse(JSON.stringify(gameStateDefault));
 		this.gameState.gameFinished = false;
 		this.gameState.player1 = user1;
