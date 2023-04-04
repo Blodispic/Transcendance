@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { HiOutlineMagnifyingGlassCircle } from "react-icons/hi2";
 import { useNavigate } from "react-router-dom";
 import { IUser } from "../../interface/User";
@@ -58,10 +58,6 @@ export function Header(props: { currentUser: IUser, setCurrentUser: (user: IUser
 
         let winPercentage = 0;
 
-        useEffect(() => {
-                // Relations();
-
-        }, [currentUser])
         if (totalGames > 0)
                 winPercentage = (currentUser.win / totalGames) * 100
 

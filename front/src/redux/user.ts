@@ -53,7 +53,6 @@ export const userSlice = createSlice({
         },
         delete_user: (state) => {
             userSlice.caseReducers.set_status(state, { type: 'set_status', payload: UserStatus.OFFLINE })
-            // set_status(UserStatus.OFFLINE);
             state.user = undefined;
             state.isLog = false;
             state.isOauth = false;
