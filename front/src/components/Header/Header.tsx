@@ -23,8 +23,10 @@ export default function Header() {
   const logout = () => {
     cookies.remove('Token');
     socket.emit("logout");
-    dispatch(delete_user());
     socket.disconnect();
+    setTimeout(() => {
+      dispatch(delete_user());
+    }, 200);
   }
 
   const myUser = useAppSelector(state => state.user);
