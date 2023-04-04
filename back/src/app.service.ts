@@ -13,7 +13,6 @@ export const imageFilter = (
   file: Express.Multer.File,
   callback: (error: Error | null, acceptFile: boolean) => void,
 ) => {
-  const allowedExtensions = ['.jpg', '.jpeg', '.png', '.gif'];
   if (!file.originalname.match(/\.(jpg|jpeg|png|gif)$/)) {
     return callback(new UnprocessableEntityException('Only image files are allowed!'), false);
   }
