@@ -8,7 +8,7 @@ export class AppService {
 }
 
 
-export const imageFilter = async (
+export const imageFilter = (
   req: Express.Request,
   file: Express.Multer.File,
   callback: (error: Error | null, acceptFile: boolean) => void,
