@@ -1,12 +1,9 @@
 import { Injectable, UnprocessableEntityException } from '@nestjs/common';
 import { extname } from 'path';
-import fs from 'fs';
-import sharp from 'sharp';
 
 @Injectable()
 export class AppService {
 }
-
 
 export const imageFilter = (
   req: Express.Request,
@@ -21,7 +18,6 @@ export const imageFilter = (
   }
   callback(null, true);
 };
-
 
 export const editFileName = (
   req: Express.Request,
