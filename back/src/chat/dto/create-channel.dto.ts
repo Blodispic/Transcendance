@@ -4,7 +4,6 @@ import { IsAlphanumeric, IsArray, IsNotEmpty, IsNumber, IsOptional, IsString } f
 export class CreateChannelDto {
     @IsString()
 	@IsNotEmpty()
-	// @IsAlphanumeric()
 	chanName: string;
 
 	@IsOptional()

@@ -58,10 +58,6 @@ export function Header(props: { currentUser: IUser, setCurrentUser: (user: IUser
 
         let winPercentage = 0;
 
-        useEffect(() => {
-                // Relations();
-
-        }, [currentUser])
         if (totalGames > 0)
                 winPercentage = (currentUser.win / totalGames) * 100
 

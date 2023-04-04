@@ -73,7 +73,7 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
 	@SubscribeMessage('RequestSent')
 	HandleRequestSent(@MessageBody() playerId: number) {
 		const socket = this.findSocketById(playerId);
-		if (socket != null && socket.id != null)// && socket.handshake.auth.user.status == "Online")
+		if (socket != null && socket.id != null)
 		{
     	    this.server.to(socket.id).emit('RequestSent');
 		}
@@ -91,7 +91,7 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
 	@SubscribeMessage('RequestAccepted')
 	HandleRequestAccepted(@MessageBody() playerId: number) {
 		const socket = this.findSocketById(playerId);
-		if (socket != null && socket.id != null)// && socket.handshake.auth.user.status == "Online")
+		if (socket != null && socket.id != null)
 		{
     	    this.server.to(socket.id).emit('RequestAccepted');
 		}
@@ -100,7 +100,7 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
 	@SubscribeMessage('RequestDeclined')
 	HandleRequestDeclined(@MessageBody() playerId: number) {
 		const socket = this.findSocketById(playerId);
-		if (socket != null && socket.id != null)// && socket.handshake.auth.user.status == "Online")
+		if (socket != null && socket.id != null)
 		{
     	    this.server.to(socket.id).emit('RequestDeclined');
 		}

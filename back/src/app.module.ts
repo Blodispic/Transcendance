@@ -26,7 +26,6 @@ import { APP_INTERCEPTOR } from '@nestjs/core';
       password: process.env.POSTGRES_PASSWORD,
       entities: [User, Results, Channel, FriendRequest],
       synchronize: true,
-      // dropSchema: true,    //A ENLEVER QUAND PLUS BESOIN (ça reset la db a chaque changement)
     }),
     MulterModule.register({
       dest: './storage/images',

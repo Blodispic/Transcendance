@@ -323,8 +323,6 @@ class Game {
 	constructor(gameService: GameService, server: Server, user1: Player, user2: Player, extra: boolean, scoreMax: number, socket1: Socket, socket2: Socket, roomId: number) {
 		this.gameService = gameService;
 		this.server = server;
-		// this.gamestateInitializer();
-		// this.gameState = gameStateDefault;
 		this.gameState = JSON.parse(JSON.stringify(gameStateDefault));
 		this.gameState.gameFinished = false;
 		this.gameState.player1 = user1;

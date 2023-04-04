@@ -17,7 +17,6 @@ export default function Sign() {
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
     const [error, SetError] = useState<string | undefined>(undefined);
-    // const [controller, setController] = useState<string>("");
     let controller: string;
     if (window.location.href.search('sign') !== -1)
         controller = 'firstSign';

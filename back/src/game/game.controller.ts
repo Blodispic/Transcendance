@@ -15,10 +15,5 @@ export class GameController {
         return (id);
     }
 
-    // @Post('waiting')
-    // matchmaking(@Body() client: any)
-    // {
-    //     user.push(client);
-    // }
 }
 
