@@ -48,6 +48,7 @@ export default function CustomGamePopup(props: {trigger: boolean; setTrigger: (a
         }
         socket.emit("createCustomGame", { user1: myUser.user, user2: friend[0], extra: extra, scoreMax: Max });
         props.setTrigger(false);
+        setFriend([]);
         // setMyvar(false);
         return;
     }
