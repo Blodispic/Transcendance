@@ -36,7 +36,7 @@ export class ChatGateway
   @WebSocketServer() server: Server;
   
  @SubscribeMessage('sendDM')
- async handleSendMessageUser(@ConnectedSocket() client: Socket, @MessageBody() sendDmDto: SendDmDto)/* : Promise<any> */ {
+ async handleSendMessageUser(@ConnectedSocket() client: Socket, @MessageBody() sendDmDto: SendDmDto) {
   const receiver = await this.userService.getById(sendDmDto.IdReceiver);  
   const sender = await this.userService.getById(client.handshake.auth.user.id);
   if (!receiver)
@@ -50,7 +50,7 @@ export class ChatGateway
     return; //Receiver is not connected');
   }
   if ((await this.userService.checkRelations(receiver.id, sender.id)).relation === 'Blocked')
-    return; //User blocked'); // do we want an emit ?
+    return; //User blocked');
   const sendtime = new Date().toLocaleString('en-US');
   client.emit('sendDmOK', {sendDmDto: sendDmDto, sendtime: sendtime});
   this.server.to(socketReceiver.id).emit('ReceiveDM', {
@@ -86,8 +86,7 @@ async handleSendMessageChannel(@ConnectedSocket() client: Socket, @MessageBody()
     client.emit('sendMessageChannelFailed', 'You are not in this channel');
     return;
   }
-  if (await this.channelService.isUserMuted({chanid: channel.id, userid: sender.id}) || 
-  await this.channelService.isUserBanned({chanid: channel.id, userid: sender.id })) { // ban to remove soon
+  if (await this.channelService.isUserMuted({chanid: channel.id, userid: sender.id})) {
     client.emit('sendMessageChannelFailed', 'You are muted or banned on this channel');
     return;
   }
@@ -128,7 +127,7 @@ async handleJoinChannel(@ConnectedSocket() client: Socket, @MessageBody() joinCh
     chanId: channel.id,
   });
   client.join('chan' + joinChannelDto.chanid);
-  client.emit('joinChannelOK', channel.id); // + (maybe) list of members
+  client.emit('joinChannelOK', channel.id);
   this.server.to('chan' + channel.id).emit('joinChannel', {chanid: channel.id, user: user});
 }
 
@@ -198,7 +197,7 @@ async handleRmPassword(@ConnectedSocket() client: Socket, @MessageBody() chanPas
     rmPassword: 1,
     chanType: 0,
   });
-  this.server.emit('rmPasswordOK', channel.id); //selee
+  this.server.emit('rmPasswordOK', channel.id);
   }
 
 @SubscribeMessage('changePassword')
@@ -285,7 +284,7 @@ async handleunBanUser(@ConnectedSocket() client: Socket, @MessageBody() banUserD
   
   const socketId = this.findSocketFromUser(userBan);
   if (socketId)
-    this.server.to(socketId.id).emit('unban', {chanid: channel.id, userid: userBan.id, timer: banUserDto.timeout}); // not useful (delete or use ? ) selee confirmation needed or adam or pop up
+    this.server.to(socketId.id).emit('unban', {chanid: channel.id, userid: userBan.id, timer: banUserDto.timeout}); // not useful (delete or use ? ) selee confirmation needed or adam or pop up, up, je remove si pas d'objection
   client.emit('unbanOK', userBan.id, channel.id);
 }
 
@@ -351,7 +350,8 @@ async handleUnMute(@ConnectedSocket() client: Socket, @MessageBody() muteUserDto
 async handleGiveAdmin(@ConnectedSocket() client: Socket, @MessageBody() giveAdminDto: GiveAdminDto) {
   const channel = await this.channelService.getById(giveAdminDto.chanid);
   const user = await this.userService.getById(client.handshake.auth.user.id);
-  if (channel === null || user === null)
+  const userGiveAdmin = await this.userService.getById(giveAdminDto.userid);
+  if (channel === null || user === null || userGiveAdmin === null)
     return; // No such User or Channel
   if (!(await this.channelService.isUserAdmin({chanid: channel.id, userid: user.id})))
     return; // You are not Admin on This Channel
@@ -370,7 +370,7 @@ async handleInvite(@ConnectedSocket() client: Socket, @MessageBody() inviteDto: 
     return; // 'You are not Owner of this channel');
   this.inviteToChan(inviteDto.usersId, channel.id, client);
   client.emit('inviteOK');
-  this.server.to("chan" + channel.id).emit('invitePrivate', inviteDto); // inviteDto -> {chanid: number, users: User[]}
+  this.server.to("chan" + channel.id).emit('invitePrivate', inviteDto);
 }
 
 async inviteToChan(usersId: number[], chanid: number, client?: Socket)
