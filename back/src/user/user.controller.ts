@@ -42,7 +42,7 @@ export class UserController {
     return await plainToClass(User, this.userService.getByUsername(username));
   }
 
-  @Post('firstSign')
+  @Patch('firstSign')
   @UseGuards(JwtGuard)
   async firstSign(@GetUser() user: User, @Body() updateUserDto: UpdateUserDto) {
     console.log("CheckSign");
@@ -183,7 +183,7 @@ export class UserController {
   }
 
   // Updates a user's information
-  @Patch(':id')
+  @Patch()
   @UseGuards(JwtGuard)
   async update(@GetUser() user: User, @Body() updateUserDto: UpdateUserDto) {
     try {

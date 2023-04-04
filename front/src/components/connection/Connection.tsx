@@ -50,9 +50,6 @@ export default function Connection() {
                                 navigate("./log")
                             else {
                                 dispatch(set_status(UserStatus.ONLINE));
-                                setTimeout(() => {
-                                    navigate("/Home");
-                                  }, 1000)
                             }
                         }
                         else {

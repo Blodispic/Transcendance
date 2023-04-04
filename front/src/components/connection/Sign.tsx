@@ -19,9 +19,9 @@ export default function Sign() {
     const [error, SetError] = useState<string | undefined>(undefined);
     let controller: string;
     if (window.location.href.search('sign') !== -1)
-        controller = 'firstSign';
+        controller = '/firstSign';
     else
-        controller = "" + myUser?.user?.id;
+        controller = "";
 
 
    
@@ -43,7 +43,7 @@ export default function Sign() {
         if (newname !== '' && myUser.user) {
             if (newname) {
 
-                await fetch(`${process.env.REACT_APP_BACK}user/${controller}`, {
+                await fetch(`${process.env.REACT_APP_BACK}user${controller}`, {
                     method: 'PATCH',
                     headers: {
                         'Content-Type': 'application/json',
