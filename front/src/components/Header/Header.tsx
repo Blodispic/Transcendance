@@ -27,7 +27,6 @@ export default function Header() {
     setTimeout(() => {
       dispatch(delete_user());
     }, 200);
-    // socket.emit("UpdateSomeone", { idChange: myUser.user?.id, idChange2: 0 });
   }
 
   const myUser = useAppSelector(state => state.user);
