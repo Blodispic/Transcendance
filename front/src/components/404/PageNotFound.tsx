@@ -6,7 +6,6 @@ export default function PageNotfound() {
 
         <div className="notFound-container">
         <div>
-            {/* // <div className="hit-the-floor">404</div> */}
             <div className="starthird"></div>
             <div className="starsec"></div>
             <div className="starfourth"></div>

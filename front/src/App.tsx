@@ -169,7 +169,6 @@ function App() {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        // 'Authorization': `Bearer ${myToken}`,
       },
       body: JSON.stringify({ token }),
     })
@@ -181,9 +180,6 @@ function App() {
         dispatch(setUser(data))
         dispatch(setToken(token));
         dispatch(set_status(UserStatus.ONLINE));
-
-        // setCookie('Token', data.access_token, { path: '/' });
-        // socket.emit("UpdateSomeone", { idChange: myUser.user?.id, idChange2: 0 })
       }
       else if (response.status !== 400) {
         cookies.remove('Token');

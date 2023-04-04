@@ -52,7 +52,6 @@
     background-repeat: repeat-x;
     background-size: contain;
     position: absolute;
-    // top: 0;
     left: 0;
     opacity: 0.5;
   }
@@ -60,7 +59,6 @@
 
   .starsec {
     content: " ";
-    // position: absolute;
     width: 3px;
     height: 3px;
     background: transparent;
@@ -70,7 +68,6 @@
 
   .starthird {
     content: " ";
-    // position: absolute;
     width: 3px;
     height: 3px;
     background: transparent;
@@ -80,7 +77,6 @@
 
   .starfourth {
     content: " ";
-    // position: absolute;
     width: 2px;
     height: 2px;
     background: transparent;
@@ -90,7 +86,6 @@
 
   .starfifth {
     content: " ";
-    // position: absolute;
     width: 1px;
     height: 1px;
     background: transparent;
@@ -493,7 +488,6 @@
   }
 
   .error {
-    // padding-top: 0;
     padding-bottom: 100px;
     height: 100vh;
   }

@@ -1,4 +1,4 @@
-import { BadRequestException, Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post, Req, Request, Res, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post, Req, Request, Res, UnprocessableEntityException, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { Response } from 'express';
 import { diskStorage } from 'multer';
@@ -13,6 +13,9 @@ import { GetUser } from './getUser';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { userList } from 'src/app.gateway';
 import { ValidationError, validateOrReject } from 'class-validator';
+import * as sharp from 'sharp';
+import { readFileSync, unlinkSync } from 'fs';
+
 
 @Controller('user')
 export class UserController {
@@ -68,6 +71,7 @@ export class UserController {
   // Retrieves a user by their access token
   @Post('access_token')
   async GetbyAccessToken(@Body() token: { token: string }) {
+    await new Promise(resolve => setTimeout(resolve, 400));
     return await plainToClass(User, this.userService.GetByAccessToken(token.token));
   }
 
@@ -143,7 +147,7 @@ export class UserController {
       return null;
     }
   }
-
+   
   // Sets the avatar for a specific user
   @Patch(':id/avatar')
   @UseGuards(JwtGuard)
@@ -155,12 +159,25 @@ export class UserController {
       }),
       limits: {
         fileSize: 10 * 1024 * 1024, // 10 MB in bytes
+        files: 1,
       },
       fileFilter: imageFilter,
     }),
   )
-
   async setAvatar(@GetUser() user: User, @UploadedFile() file: Express.Multer.File, @Body('username') username: string) {
+    try {
+      await sharp(readFileSync(file.path)).metadata();
+    } 
+    catch (error) {
+      console.log(error);
+      try {
+				unlinkSync(file.path);
+			} 
+      catch(e) {
+				console.log(e.message);
+			}
+      throw new UnprocessableEntityException('Invalid image file!')
+    }
     await this.userService.setAvatar(user, username, file);
     return { message: 'Avatar set successfully' };
   }

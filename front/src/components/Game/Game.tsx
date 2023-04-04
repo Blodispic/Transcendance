@@ -227,8 +227,6 @@ export default function GameApp() {
 }
 
 function convertState(state: GameState) {
-	// state.client_area.x = Math.min((window.innerWidth * 70) / 100, GAME_INTERNAL_WIDTH);
-	// state.client_area.y = state.client_area.x * GAME_RATIO;
 	if (window.innerHeight > GAME_RATIO * window.innerWidth)
 	{
 		state.client_area.x = Math.min((window.innerWidth * 70) / 100, GAME_INTERNAL_WIDTH);
@@ -253,7 +251,6 @@ function convertState(state: GameState) {
 
 	newState.ball.cooldown = state.ball.cooldown;
 
-	// newState.player1 = state.player1;
 	newState.player1.input = state.player1.input;
 	newState.player1.name = state.player1.name;
 	newState.player1.score = state.player1.score;
@@ -264,7 +261,6 @@ function convertState(state: GameState) {
 	newState.player1.paddle.speed.x = state.player1.paddle.speed.x;
 	newState.player1.paddle.speed.y = state.player1.paddle.speed.y;
 
-	// newState.player2 = state.player2;
 	newState.player2.input = state.player2.input;
 	newState.player2.name = state.player2.name;
 	newState.player2.score = state.player2.score;
@@ -289,11 +285,7 @@ function convertState(state: GameState) {
 function updateGameState(prev: GameState) {
 	const newState = { ...prev }
 	if (swal && swal.close !== undefined && swal.stopLoading !== undefined)
-	{
-		// swal("Success", "You've been added to the custom room.", "success");
-		// swal.stopLoading();
 		swal.close();
-	}
 
 	if (window.innerHeight > GAME_RATIO * window.innerWidth)
 	{

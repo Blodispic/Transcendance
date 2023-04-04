@@ -5,9 +5,8 @@ import Profile from './components/Profile/Profile'
 import Connection from './components/connection/Connection';
 import Header from './components/Header/Header';
 import Chat from './components/Chat/Chat';
-import { createBrowserRouter, Outlet, useRouteError } from "react-router-dom";
+import { createBrowserRouter, Outlet, useRouteError, Navigate } from "react-router-dom";
 import Queue from './components/Game/Queue';
-import { Navigate } from "react-router-dom";
 import { useAppSelector } from './redux/Hook';
 import Sign from './components/connection/Sign';
 import { Log } from './components/connection/Log';
