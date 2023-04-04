@@ -36,7 +36,9 @@ export function CheckPassword(props: { trigger: boolean, setTrigger: (value: boo
 
 				<HiOutlineXMark className="close-icon" onClick={() => {props.setTrigger(false); setFailed(false)}} /> <br />
 				<h3>Input password for &quot; {props.channel.name} &quot;</h3>
-				<input type="password" id="channel-input" placeholder="Input password" value={password} onChange={e => { setPassword(e.target.value); }} /><br />
+				<div className='channel-input'>
+				<input type="password" placeholder="Input password" value={password} onChange={e => { setPassword(e.target.value); }} /><br />
+				</div>
 				{
 					failed === true &&
 					<span className="channel-error">{errorMessage}</span>

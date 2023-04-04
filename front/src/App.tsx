@@ -191,8 +191,10 @@ function App() {
   }
   if (myUser.user === undefined) {
     if (token !== undefined)
+    setTimeout(() => {
       get_user();
       get_channels();
+    }, 200)
   }
 
   return (

@@ -43,12 +43,12 @@ export class GameService {
 
 	inGame(playerId: number)
 	{
-		this.gameRoom.forEach(element => {
-			if (element.gameState.player1.id == playerId || element.gameState.player2.id == playerId)
+		for (let i:number = 0; i < this.gameRoom.length; i++) {
+			if (this.gameRoom[i].gameState.player1.id == playerId || this.gameRoom[i].gameState.player2.id == playerId)
 			{
 				return true;
 			}
-		});
+		}
 		return false;
 	}
 
