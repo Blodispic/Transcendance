@@ -40,6 +40,7 @@ export function PopupCreateChannel(props: { trigger: boolean, setTrigger: (value
 		}
 		setChanName("");
 		setPassword("");
+		setChanMode(0);
 		setFriend([]);
 	}
 	
