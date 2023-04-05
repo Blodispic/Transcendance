@@ -54,7 +54,7 @@ export class PongGateway implements OnGatewayDisconnect {
 
 	removeInvite(id: number)
 	{
-		const i  = 0;
+		let i  = 0;
 		while (i < this.inviteList.length)
 		{
 			if (this.inviteList[i] === id)
@@ -62,6 +62,7 @@ export class PongGateway implements OnGatewayDisconnect {
 				this.inviteList.splice(i, 1);
 				return;
 			}
+			i++;
 		}
 	}
 
