@@ -39,8 +39,8 @@ export function PopupCreateChannel(props: { trigger: boolean, setTrigger: (value
 				socket.emit('createChannel', { chanName: chanName.trim(), chanType: chanMode, usersId: friend.map( user => user.id) });
 		}
 		setChanName("");
-		setPassword("");
-		setFriend([]);
+
+
 	}
 	
 	useEffect(() => {
@@ -67,7 +67,8 @@ export function PopupCreateChannel(props: { trigger: boolean, setTrigger: (value
 			setFailed(false);
 			props.setTrigger(false);
 			setChanMode(0);
-
+			setFriend([]);
+			setPassword("");
 		});
 
 		return () => {

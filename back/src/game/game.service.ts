@@ -239,16 +239,18 @@ export class GameService {
 	  
 
 	EndGame(client: string, server: Server) {
-        let roomId = 0;
-        while (roomId < this.gameRoom.length && this.gameRoom.length > 0) {
-            if (this.gameRoom[roomId].gameState.player1.socket === client || this.gameRoom[roomId].gameState.player2.socket === client) {
-                this.userService.SetStatus(this.gameRoom[roomId].socket1.handshake.auth.user, Status.Online);  // ACHANGER PAR USERLIST BYY ADAM 
-                this.userService.SetStatus(this.gameRoom[roomId].socket2.handshake.auth.user, Status.Online);  // ACHANGER PAR USERLIST BYY ADAM 
-                server.emit('UpdateSomeone', { idChange: this.gameRoom[roomId].socket1.handshake.auth.user.id, idChange2: this.gameRoom[roomId].socket2.handshake.auth.user.id });
-                this.gameRoom.splice(roomId, 1);
-                return;
-            }
-            roomId++;
+		let roomId = 0;
+		while (roomId < this.gameRoom.length && this.gameRoom.length > 0) {
+			if (this.gameRoom[roomId].gameState.player1.socket === client || this.gameRoom[roomId].gameState.player2.socket === client) {
+				if (this.gameRoom[roomId].socket1.handshake.auth.user.status !== Status.Offline)
+					this.userService.SetStatus(this.gameRoom[roomId].socket1.handshake.auth.user, Status.Online);  // ACHANGER PAR USERLIST BYY ADAM 
+				if (this.gameRoom[roomId].socket2.handshake.auth.user.status !== Status.Offline)
+					this.userService.SetStatus(this.gameRoom[roomId].socket2.handshake.auth.user, Status.Online);  // ACHANGER PAR USERLIST BYY ADAM 
+				server.emit('UpdateSomeone', { idChange: this.gameRoom[roomId].socket1.handshake.auth.user.id, idChange2: this.gameRoom[roomId].socket2.handshake.auth.user.id });
+				this.gameRoom.splice(roomId, 1);
+				return;
+			}
+			roomId++;
         }
     }
 }

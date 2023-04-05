@@ -237,7 +237,7 @@ export function ConfigureChannelPrivate(props: { trigger: boolean, setTrigger: (
 }
 
 export function ConfigureChannel(props: { trigger: boolean, setTrigger: (value: boolean) => void, channel: IChannel }) {
-	const [newPassword, setNewPassword] = useState("");
+	const [newPassword, setNewPassword] = useState<string>("");
 
 	const setPassword = () => {
 		if (props.channel.chanType === 0 && newPassword !== undefined) {
@@ -247,11 +247,14 @@ export function ConfigureChannel(props: { trigger: boolean, setTrigger: (value: 
 			socket.emit('changePassword', { chanid: props.channel.id, password: newPassword });
 		}
 		props.setTrigger(false);
+		setNewPassword("");
+
 	}
 
 	const removePassword = () => {
 		socket.emit('rmPassword', { chanid: props.channel.id });
 		props.setTrigger(false);
+		setNewPassword("");
 	}
 
 	const handleUnban = (id: number) => {

@@ -66,11 +66,6 @@ export default function Sign() {
                             dispatch(change_name(newname));
                             dispatch(set_status(UserStatus.ONLINE));
                             setCookie('Token', myToken , { path: '/' });
-                            if (window.location.href.search('Profile') === -1) {
-                                 setTimeout(() => {
-                                        navigate("/Home");
-                                      }, 1000)
-                            }
                         }
 
                     })

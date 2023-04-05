@@ -318,7 +318,9 @@ async handleMuteUser(@ConnectedSocket() client: Socket, @MessageBody() muteUserD
     setTimeout(async () => {  
       try {
       await this.channelService.unmuteUser(muteUserDto); }
-      catch (e){}
+      catch (e) {
+        
+      }
     }, parseInt(muteUserDto.timeout) * 1000);
   }
   client.emit('muteUserOK', user.id, channel.id);

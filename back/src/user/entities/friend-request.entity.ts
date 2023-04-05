@@ -14,10 +14,10 @@ export class FriendRequest {
     @Column()
     receiverId: number;
 
-    @ManyToOne(() => User, (user) => user.sendFriendRequests, { cascade: true })
+    @ManyToOne(() => User, (user) => user.sendFriendRequests, { onDelete: 'CASCADE' , cascade: true })
     creator: User;
 
-    @ManyToOne(() => User, (user) => user.receiveFriendRequests, { cascade: true })
+    @ManyToOne(() => User, (user) => user.receiveFriendRequests, { onDelete: 'CASCADE' , cascade: true })
     receiver: User;
 
     @Column()

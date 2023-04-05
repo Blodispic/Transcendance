@@ -82,7 +82,7 @@ function App() {
             setTimeout(() => {
               if (swal && swal.close)
                 swal.close()
-            }, 1000)
+            }, 700)
           })
 
         /* Chat */
@@ -191,10 +191,8 @@ function App() {
   }
   if (myUser.user === undefined) {
     if (token !== undefined)
-    setTimeout(() => {
       get_user();
       get_channels();
-    }, 200)
   }
 
   return (

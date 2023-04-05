@@ -70,7 +70,7 @@ export class UserController {
   // Retrieves a user by their access token
   @Post('access_token')
   async GetbyAccessToken(@Body() token: { token: string }) {
-    await new Promise(resolve => setTimeout(resolve, 400));
+    // await new Promise(resolve => setTimeout(resolve, 400));
     return await plainToClass(User, this.userService.GetByAccessToken(token.token));
   }
 

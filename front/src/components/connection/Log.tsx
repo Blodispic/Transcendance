@@ -41,9 +41,6 @@ export function Log() {
                 if (data.result === true) {
                     dispatch(set_status(UserStatus.ONLINE));
                     setCookie('Token', myStore.user.myToken , { path: '/' });
-                    setTimeout(() => {
-                        navigate("/Home");
-                      }, 1000)
                 }
             })
             .catch()
