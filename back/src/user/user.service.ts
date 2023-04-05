@@ -162,7 +162,6 @@ async checkTab(user: User) {
           unlinkSync(`./storage/images/${user.avatar}`);
         }
         catch (error) {
-          console.log(error);
         }
       }
       user.avatar = file.filename;

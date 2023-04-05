@@ -34,7 +34,6 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
 				throw new BadRequestException("No user with such token")
 			await this.userService.SetStatus(client.handshake.auth.user, Status.Online);
 		} catch (error) {
-			console.log(error);
 			return client.disconnect();
 		}
 		userList.push(client);
@@ -53,7 +52,6 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		try {
 			await this.userService.SetStatus(client.handshake.auth.user, Status.Offline);
 		} catch (error) {
-			console.log(error);
 			return;
 		}
 		this.server.emit('UpdateSomeone', { idChange: client.handshake.auth.user.id, idChange2: 0 });
@@ -83,7 +81,6 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
 			await this.userService.SetStatus(client.handshake.auth.user, Status.Offline);
 			this.server.emit('UpdateSomeone', { idChange: client.handshake.auth.user.id, idChange2: 0 });
 		} catch (error) {
-			console.log(error);
 			return;
 		}
 	}

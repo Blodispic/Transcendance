@@ -75,13 +75,11 @@ export class PongGateway implements OnGatewayDisconnect {
 	async HandleAddToWaitingRoom(@ConnectedSocket() client: Socket) {
 		if (this.isInInvite(client.handshake.auth.user.id) === true)
 		{
-			console.log('Already in Invite');
 			this.server.to(client.id).emit('WaitingRoomFailure', 'You are already in an invite, decline it or wait for an answer');
 			return;
 		}
 		if (this.gameService.inGame(client.handshake.auth.user.id) == true)
 		{
-			console.log('Already in a game');
 			this.server.to(client.id).emit('WaitingRoomFailure', 'You invited someone already in a game');
 			return;
 		}

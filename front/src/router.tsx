@@ -52,13 +52,11 @@ const PublicRoute = (props: { children: any }) => {
 
 const OauthRoute = (props: { children: any }) => {
   const user = useAppSelector(state => state.user);
-  console.log(user);
   if (user.isOauth === false) {
     // user is authenticated
     return <Navigate to="/" />;
   }
   if (user.isLog === true) {
-    console.log("ca rentre dans le if");
     return <Navigate to="/Home"/>;
   }
   return props.children;
