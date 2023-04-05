@@ -448,16 +448,6 @@ async checkTab(user: User) {
     return (myUser.friends.some(friend => friend.id == friendId));
   }
 
-  async getBlocked(id: number) {
-    const user = await this.usersRepository.findOne({
-      relations: {
-        blocked: true,
-      },
-      where: { id: id },
-    });
-    return user ? user.blocked : [];
-  }
-
   async addBlock(user: User, blockedid: number) {
     if (user === null)
       throw new BadRequestException('No such User');
