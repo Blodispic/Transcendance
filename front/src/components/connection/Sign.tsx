@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { UserStatus } from '../../interface/User';
 import { useAppDispatch, useAppSelector } from '../../redux/Hook';
 import { change_avatar, change_name, set_status } from "../../redux/user";
+import { useCookies } from "react-cookie";
 
 export default function Sign() {
 
@@ -17,6 +18,8 @@ export default function Sign() {
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
     const [error, SetError] = useState<string | undefined>(undefined);
+    const [, setCookie] = useCookies(['Token']);
+
     let controller: string;
     if (window.location.href.search('sign') !== -1)
         controller = '/firstSign';
@@ -62,6 +65,7 @@ export default function Sign() {
                             SetError(undefined);
                             dispatch(change_name(newname));
                             dispatch(set_status(UserStatus.ONLINE));
+                            setCookie('Token', myToken , { path: '/' });
                             if (window.location.href.search('Profile') === -1) {
                                  setTimeout(() => {
                                         navigate("/Home");

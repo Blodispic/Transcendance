@@ -76,12 +76,13 @@ export class PongGateway implements OnGatewayDisconnect {
 		{
 			console.log('Already in Invite');
 			this.server.to(client.id).emit('WaitingRoomFailure', 'You are already in an invite, decline it or wait for an answer');
-			throw new UnauthorizedException('Already in invite');
+			return;
 		}
 		if (this.gameService.inGame(client.handshake.auth.user.id) == true)
 		{
 			console.log('Already in a game');
-			throw new UnauthorizedException('Already in a game');
+			this.server.to(client.id).emit('WaitingRoomFailure', 'You invited someone already in a game');
+			return;
 		}
 		if (await this.gameService.addToWaitingRoom(client) == 1)
 			this.server.to(client.id).emit('WaitingRoomFailure', 'You are already in the waitingRoom');
@@ -149,9 +150,8 @@ export class PongGateway implements OnGatewayDisconnect {
 			|| this.gameService.inGame(user1.id) == true
 			|| this.gameService.inGame(payload.user2.id) == true)
 		{
-			console.log('[CreateCustomGame] One of the two users is currently busy.');
 			this.server.to(client.id).emit('WaitingRoomFailure', 'The person you\'re inviting is busy');
-			throw new UnauthorizedException('One of the two users is currently busy.');
+			return;
 		}
 		else {
 			const socket = this.findSocketFromUser(payload.user2);
@@ -187,7 +187,6 @@ export class PongGateway implements OnGatewayDisconnect {
 			this.removeInvite(user2.id);
 		this.gameService.removeFromWaitingRoom(client.id);
 
-		console.log('Add ' + user1.username + ' and ' + user2.username + ' to custom game.');
 		let userSocket1: Socket = userList[0]; //By default both user are the first user of the list
 		let userSocket2: Socket = userList[0]; //By default both user are the first user of the list
 		let i = 0;
@@ -206,12 +205,14 @@ export class PongGateway implements OnGatewayDisconnect {
 			}
 			i++;
 		}
-		if (user1.status != 'Online' || user2.status != 'Online')
+		if (user1.status != 'Online')
 		{
-			console.log('userSocket1=', userSocket1);
-			console.log('userSocket2=', userSocket2);
-			this.server.to(userSocket1.id).emit('GameCancelled', user2.username);
 			this.server.to(userSocket2.id).emit('GameCancelled', user1.username);
+			return;
+		}
+		if (user2.status != 'Online')
+		{
+			this.server.to(userSocket1.id).emit('GameCancelled', user2.username);
 			return;
 		}
 		this.gameService.startCustomGame(this.server, userSocket1, userSocket2, payload.extra, parseInt(payload.scoreMax));

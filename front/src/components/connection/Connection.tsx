@@ -42,14 +42,14 @@ export default function Connection() {
                             dispatch(setUser(data.user));
                             dispatch(change_avatar(data.user.intra_avatar))
                             dispatch(oauth());
-                            setCookie('Token', data.access_token, { path: '/' });
                             dispatch(setToken(data.access_token));
                             if (!data.user.username)
-                                navigate("./sign")
+                            navigate("./sign")
                             else if (data.user.twoFaEnable === true)
-                                navigate("./log")
+                            navigate("./log")
                             else {
                                 dispatch(set_status(UserStatus.ONLINE));
+                                setCookie('Token', data.access_token, { path: '/' });
                             }
                         }
                         else {
