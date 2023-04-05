@@ -66,6 +66,8 @@ export function PopupCreateChannel(props: { trigger: boolean, setTrigger: (value
 			fetchChanInfo();
 			setFailed(false);
 			props.setTrigger(false);
+			setChanMode(0);
+
 		});
 
 		return () => {
@@ -75,7 +77,7 @@ export function PopupCreateChannel(props: { trigger: boolean, setTrigger: (value
 	});
 
 	return (props.trigger) ? (
-		<div className="chat-form-popup" onClick={() => {props.setTrigger(false); setChanMode(0); setFailed(false)}} >
+		<div className="chat-form-popup" onClick={() => {props.setTrigger(false); setFailed(false)}} >
 			<div className="chat-form-inner" onClick={e => e.stopPropagation()}>
 				<HiOutlineXMark className="close-icon" onClick={() => {props.setTrigger(false); setChanMode(0); setFailed(false)}} /> <br />
 				<h3>Channel Name</h3>

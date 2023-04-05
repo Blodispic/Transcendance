@@ -109,7 +109,13 @@ async checkTab(user: User) {
       throw new NotFoundException('Invalid access token');
     }
     
-    const user = await this.usersRepository.findOneBy({ login: decoded_access_token.username });
+    const user = await this.usersRepository.findOne({ 
+      relations: {
+        friends: true,
+        owned: true,
+        blocked: true,
+      },
+    where: {login: decoded_access_token.username}, });
     
     if (decoded_access_token.exp && decoded_access_token.exp < Date.now() / 1000) {
       throw new NotFoundException('Token expired');

@@ -77,9 +77,13 @@ export const userSlice = createSlice({
                     state.user.blocked = state.user.blocked.filter(block => block.id !== payload.id);
             }
         },
+        setBlocked: (state, { payload }: PayloadAction<IUser[]>) => {
+            if (state.user)
+                state.user.blocked = (payload);
+        },
 
     },
 })
 
-export const { addBlockedUser, unBlockUser, setUser, setToken, change_status, enableTwoFa, change_name, change_avatar, set_status, delete_user, oauth } = userSlice.actions
+export const { addBlockedUser,setBlocked, unBlockUser, setUser, setToken, change_status, enableTwoFa, change_name, change_avatar, set_status, delete_user, oauth } = userSlice.actions
 export default userSlice.reducer

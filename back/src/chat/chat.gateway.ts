@@ -53,6 +53,8 @@ export class ChatGateway
     return; //User blocked');
   const sendtime = new Date().toLocaleString('en-US');
   client.emit('sendDmOK', {sendDmDto: sendDmDto, sendtime: sendtime});
+  if ((await this.userService.checkRelations(sender.id, receiver.id)).relation === 'Blocked')
+  return; //User blocked');
   this.server.to(socketReceiver.id).emit('ReceiveDM', {
     sender: sender,
     message: sendDmDto.message,
@@ -244,8 +246,10 @@ async handleBanUser(@ConnectedSocket() client: Socket, @MessageBody() banUserDto
 
   this.findSocketFromUser(userBan)?.leave('chan' + channel.id);
   if (banUserDto.timeout) {
-    setTimeout(() => {
-      this.channelService.unbanUser(banUserDto);
+    setTimeout(async () => {
+      try {
+      await this.channelService.unbanUser(banUserDto); }
+      catch(e) {}
     }, parseInt(banUserDto.timeout) * 1000);
   }
   const socketId = this.findSocketFromUser(userBan);
@@ -311,8 +315,10 @@ async handleMuteUser(@ConnectedSocket() client: Socket, @MessageBody() muteUserD
   }
   await this.channelService.muteUser(muteUserDto);
   if (muteUserDto.timeout) {
-    setTimeout(() => {  
-      this.channelService.unmuteUser(muteUserDto);
+    setTimeout(async () => {  
+      try {
+      await this.channelService.unmuteUser(muteUserDto); }
+      catch (e){}
     }, parseInt(muteUserDto.timeout) * 1000);
   }
   client.emit('muteUserOK', user.id, channel.id);
