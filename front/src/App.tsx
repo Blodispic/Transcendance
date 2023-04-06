@@ -16,11 +16,9 @@ export let socket: Socket;
 
 function App() {
   const myUser = useAppSelector(state => state.user);
-
   const dispatch = useAppDispatch();
   const cookies = new Cookies();
   const token = cookies.get('Token');
-  
   const [trigger, setTrigger] = useState<boolean> (false);
   const [infoGame, setInfoGame] = useState<any | undefined> (undefined);
   let timeOutId : any = undefined;
@@ -110,6 +108,7 @@ function App() {
 
         socket.on('sendDmOK', ({sendDmDto, sendtime }) => {
           const newMessage: IMessage = sendDmDto;
+          console.log(myUser.user)
           newMessage.sender = myUser.user;
           newMessage.chanid = sendDmDto.IdReceiver;
           newMessage.sendtime = sendtime;

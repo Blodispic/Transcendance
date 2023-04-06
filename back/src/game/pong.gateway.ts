@@ -141,6 +141,7 @@ export class PongGateway implements OnGatewayDisconnect {
 	@SubscribeMessage('createCustomGame')
 	async HandleCustomGame(@MessageBody() payload: any, @ConnectedSocket() client: Socket) {
 
+		console.log("CReateCUstom GAme", payload.user1.username, payload.user2.username );
 		const user1 = await this.userService.getById(client.handshake.auth.user.id)
 		if (!payload.user2 || !user1)
 			return;
@@ -154,11 +155,13 @@ export class PongGateway implements OnGatewayDisconnect {
 		}
 		else {
 			const socket = this.findSocketFromUser(payload.user2);
+			console.log("user 1 user 2 socket2", user1.username, payload.user2.username);
 			if (socket != null)
 			{
 				this.server.to(socket.id).emit('invitationInGame', payload);
 				this.inviteList.push(user1.id);
 				this.inviteList.push(payload.user2.id);
+				this.server.to(client.id).emit('CreateCustomOK', "invitation succes");
 				setTimeout(() => {
 					if (user1?.id)
 						this.removeInvite(user1.id);
@@ -174,7 +177,7 @@ export class PongGateway implements OnGatewayDisconnect {
 
 		const user1 = await this.userService.getById(payload.user1.id);
 		const user2 = await this.userService.getById(payload.user2.id);
-
+		console.log("Aceppt game les 2 user", user1?.username, user2?.username);
 		if (user2 === null || user1 === null)
 		{
 			throw new BadRequestException('User doesn\'t exist');

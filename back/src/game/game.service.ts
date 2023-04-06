@@ -3,7 +3,7 @@ import { Server, Socket } from 'socket.io';
 import { UserService } from 'src/user/user.service';
 import { Ball, GameState, Move, Player, Vec2 } from './game.interfaces';
 import { CreateResultDto } from 'src/results/dto/create-result.dto';
-import { Status } from 'src/user/entities/user.entity';
+import { Status, User } from 'src/user/entities/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Results } from 'src/results/entities/results.entity';
 import { Repository } from 'typeorm';
@@ -137,7 +137,7 @@ export class GameService {
 	async startCustomGame(server: Server, userSocket1: Socket, userSocket2: Socket, extra: boolean, scoreMax: number) {
 		const socket1 = userSocket1;
 		const socket2 = userSocket2;
-
+		console.log("START GAME ", socket1.handshake.auth.user.username, socket2.handshake.auth.user.username);
 		const player1: Player = {
 			paddle: {
 				position: {
@@ -226,7 +226,7 @@ export class GameService {
 
 	playerDisconnect(client: string) {
 		let roomId = 0;
-		while (roomId < this.gameRoom.length && this.gameRoom.length > 0) {
+		while (roomId < this.gameRoom.length) {
 			if (this.gameRoom[roomId].gameState.player1.socket === client
 				|| this.gameRoom[roomId].gameState.player2.socket === client)
 				this.gameRoom[roomId].disconnect(client);
@@ -238,16 +238,24 @@ export class GameService {
 
 	  
 
-	EndGame(client: string, server: Server) {
+	async EndGame(client: string, server: Server) {
 		let roomId = 0;
-		while (roomId < this.gameRoom.length && this.gameRoom.length > 0) {
-			if (this.gameRoom[roomId].gameState.player1.socket === client || this.gameRoom[roomId].gameState.player2.socket === client) {
-				if (this.gameRoom[roomId].socket1.handshake.auth.user.status !== Status.Offline)
-					this.userService.SetStatus(this.gameRoom[roomId].socket1.handshake.auth.user, Status.Online);  // ACHANGER PAR USERLIST BYY ADAM 
-				if (this.gameRoom[roomId].socket2.handshake.auth.user.status !== Status.Offline)
-					this.userService.SetStatus(this.gameRoom[roomId].socket2.handshake.auth.user, Status.Online);  // ACHANGER PAR USERLIST BYY ADAM 
-				server.emit('UpdateSomeone', { idChange: this.gameRoom[roomId].socket1.handshake.auth.user.id, idChange2: this.gameRoom[roomId].socket2.handshake.auth.user.id });
-				this.gameRoom.splice(roomId, 1);
+		while (roomId < this.gameRoom.length) {
+			if  (this.gameRoom[roomId].gameState.player1.socket === client || this.gameRoom[roomId].gameState.player2.socket === client) {
+				
+				const user1 = await this.userService.getById(this.gameRoom[roomId].gameState.player1.id);
+				const user2 = await this.userService.getById(this.gameRoom[roomId].gameState.player2.id);
+				console.log("ENDGAME", user1, user2);
+				if (user1 && user2)
+				{
+					console.log(user1.status, user1.status)
+					if (user1.status !== Status.Offline)
+					await this.userService.SetStatus(user1, Status.Online);  // ACHANGER PAR USERLIST BYY ADAM 
+					if (user2.status !== Status.Offline)
+					await this.userService.SetStatus(user2, Status.Online);  // ACHANGER PAR USERLIST BYY ADAM 
+					server.emit('UpdateSomeone', { idChange: user1.id, idChange2: user2.id });
+					this.gameRoom.splice(roomId, 1);
+				}
 				return;
 			}
 			roomId++;
@@ -417,19 +425,14 @@ class Game {
 
 	async finishGame() {
 		this.gameState.gameFinished = true;
-		if (this.gameState.player1.score === this.gameState.scoreMax) {
-			const result: CreateResultDto = { winnerId: this.gameState.player1.id, loserId: this.gameState.player2.id, winner_score: this.gameState.player1.score.toString(), loser_score: this.gameState.player2.score.toString() };
-			const Result: Results = await this.gameService.createResult(result);
-			this.server.to(this.gameState.player1.socket).emit('GameEnd', Result);
-			this.server.to(this.gameState.player2.socket).emit('GameEnd', Result);
-		}
-		else {
-			
-			const result: CreateResultDto = { winnerId: this.gameState.player2.id, loserId: this.gameState.player1.id, winner_score: this.gameState.player2.score.toString(), loser_score: this.gameState.player1.score.toString() };
-			const Result: Results = await this.gameService.createResult(result);
-			this.server.to(this.gameState.player1.socket).emit('GameEnd', Result);
-			this.server.to(this.gameState.player2.socket).emit('GameEnd', Result);
-		}
+		let result: CreateResultDto;
+		if (this.gameState.player1.score === this.gameState.scoreMax) 
+			result = { winnerId: this.gameState.player1.id, loserId: this.gameState.player2.id, winner_score: this.gameState.player1.score.toString(), loser_score: this.gameState.player2.score.toString() };
+		else 
+			result = { winnerId: this.gameState.player2.id, loserId: this.gameState.player1.id, winner_score: this.gameState.player2.score.toString(), loser_score: this.gameState.player1.score.toString() };
+		const Result = await this.gameService.createResult(result);
+		this.server.to(this.gameState.player2.socket).emit('GameEnd', Result);
+		this.server.to(this.gameState.player2.socket).emit('GameEnd', Result);
 	}
 
 	updateGameState(state: GameState) {
