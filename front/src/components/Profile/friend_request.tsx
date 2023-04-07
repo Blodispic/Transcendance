@@ -88,7 +88,6 @@ export function Friends() {
         });
         const data = await response.json();
         setUpdateFriend(prevFlag => !prevFlag);
-        console.log("data = ", data)
         const str : string = "You declined their friend request!"
         swal("Congrats", str, "success");
         socket.emit("RequestDeclined", data.id);

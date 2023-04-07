@@ -56,6 +56,9 @@ const OauthRoute = (props: { children: any }) => {
     // user is authenticated
     return <Navigate to="/" />;
   }
+  if (user.isLog === true) {
+    return <Navigate to="/Home"/>;
+  }
   return props.children;
 };
 

@@ -77,7 +77,6 @@ export const userSlice = createSlice({
                     state.user.blocked = state.user.blocked.filter(block => block.id !== payload.id);
             }
         },
-
     },
 })
 

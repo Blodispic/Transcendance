@@ -27,14 +27,13 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
 	@WebSocketServer()
 	server: Server;
 
-	async handleConnection(client: Socket) {
+	async handleConnection(client: Socket): Promise<any> {
 		try {
 			client.handshake.auth.user = await this.userService.GetByAccessToken(client.handshake.auth.token);
 			if (client.handshake.auth.user === null)
 				throw new BadRequestException("No user with such token")
 			await this.userService.SetStatus(client.handshake.auth.user, Status.Online);
 		} catch (error) {
-			console.log(error);
 			return client.disconnect();
 		}
 		userList.push(client);
@@ -49,24 +48,17 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
 	async handleDisconnect(client: Socket) {
 		userList.splice(userList.indexOf(client), 1);
-		await new Promise(resolve => setTimeout(resolve, 200));
 		try {
 			await this.userService.SetStatus(client.handshake.auth.user, Status.Offline);
 		} catch (error) {
-			console.log(error);
 			return;
 		}
 		this.server.emit('UpdateSomeone', { idChange: client.handshake.auth.user.id, idChange2: 0 });
 	}
 	
-	findSocketById(userId: number) {
-		for (const iterator of userList) {
-			if (iterator.handshake.auth.user.id == userId)
-			{
-				return iterator;
-			}
-		}
-		return null;
+	findSocketById(userId: number): Socket | null {
+		const foundSocket = userList.find(socket => socket.handshake.auth.user.id === userId);
+		return foundSocket || null;
 	}
 
 	@SubscribeMessage('RequestSent')
@@ -83,7 +75,6 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
 			await this.userService.SetStatus(client.handshake.auth.user, Status.Offline);
 			this.server.emit('UpdateSomeone', { idChange: client.handshake.auth.user.id, idChange2: 0 });
 		} catch (error) {
-			console.log(error);
 			return;
 		}
 	}

@@ -92,7 +92,8 @@ function InfoFriend(props: { user: IUser }) {
 	}
 
 	const sendFriendRequest = async () => {
-		await new Promise((resolve) => setTimeout(resolve, 1000));
+		// await new Promise((resolve) => setTimeout(resolve, 1000));
+		// Ca sert a quoi ca ? peut t'on remove ?
 
 		await fetch(`${process.env.REACT_APP_BACK}user/friend-request/send/${user.id}`, {
 			method: 'POST',

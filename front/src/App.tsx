@@ -16,11 +16,9 @@ export let socket: Socket;
 
 function App() {
   const myUser = useAppSelector(state => state.user);
-
   const dispatch = useAppDispatch();
   const cookies = new Cookies();
   const token = cookies.get('Token');
-  
   const [trigger, setTrigger] = useState<boolean> (false);
   const [infoGame, setInfoGame] = useState<any | undefined> (undefined);
   let timeOutId : any = undefined;
@@ -82,7 +80,7 @@ function App() {
             setTimeout(() => {
               if (swal && swal.close)
                 swal.close()
-            }, 1000)
+            }, 700)
           })
 
         /* Chat */
@@ -191,10 +189,8 @@ function App() {
   }
   if (myUser.user === undefined) {
     if (token !== undefined)
-    setTimeout(() => {
       get_user();
       get_channels();
-    }, 200)
   }
 
   return (

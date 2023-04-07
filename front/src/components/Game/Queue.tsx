@@ -39,6 +39,13 @@ export default function Queue() {
                     swal("Success", "You've been added to the waiting room.", "success");
             });
 
+            socket.on("CreateCustomOK", (message: string) => {
+                    swal("Success", message, "success");
+                    setTimeout(() => {
+                        if (swal && swal.close)
+                          swal.close()
+                      }, 700)
+            });
             socket.on("WaitingRoomFailure", (message: string) => {
                 swal("Failure", message, "error");
             });

@@ -39,9 +39,8 @@ export function PopupCreateChannel(props: { trigger: boolean, setTrigger: (value
 				socket.emit('createChannel', { chanName: chanName.trim(), chanType: chanMode, usersId: friend.map( user => user.id) });
 		}
 		setChanName("");
-		setPassword("");
-		setChanMode(0);
-		setFriend([]);
+
+
 	}
 	
 	useEffect(() => {
@@ -67,6 +66,9 @@ export function PopupCreateChannel(props: { trigger: boolean, setTrigger: (value
 			fetchChanInfo();
 			setFailed(false);
 			props.setTrigger(false);
+			setChanMode(0);
+			setFriend([]);
+			setPassword("");
 		});
 
 		return () => {
@@ -76,7 +78,7 @@ export function PopupCreateChannel(props: { trigger: boolean, setTrigger: (value
 	});
 
 	return (props.trigger) ? (
-		<div className="chat-form-popup" onClick={() => {props.setTrigger(false); setChanMode(0); setFailed(false)}} >
+		<div className="chat-form-popup" onClick={() => {props.setTrigger(false); setFailed(false)}} >
 			<div className="chat-form-inner" onClick={e => e.stopPropagation()}>
 				<HiOutlineXMark className="close-icon" onClick={() => {props.setTrigger(false); setChanMode(0); setFailed(false)}} /> <br />
 				<h3>Channel Name</h3>
