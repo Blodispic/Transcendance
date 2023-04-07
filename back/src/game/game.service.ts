@@ -245,7 +245,7 @@ export class GameService {
 				
 				const user1 = await this.userService.getById(this.gameRoom[roomId].gameState.player1.id);
 				const user2 = await this.userService.getById(this.gameRoom[roomId].gameState.player2.id);
-				console.log("ENDGAME", user1, user2);
+				console.log("ENDGAME", user1?.id, ": ", user1?.username , user2?.id, ": ", user2?.username);
 				if (user1 && user2)
 				{
 					console.log(user1.status, user1.status)
