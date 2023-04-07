@@ -23,6 +23,7 @@ export class PongGateway implements OnGatewayDisconnect {
 	@WebSocketServer()
 	server: Server;
 	inviteList: number[];
+	timeoutId: any;
 	
 	constructor(private gameService: GameService, private readonly userService: UserService) {
 		this.inviteList = new Array<number>;
@@ -122,7 +123,7 @@ export class PongGateway implements OnGatewayDisconnect {
 		}
 	}
 
-	findSocketFromUser(user: User) {
+	findSocketFromUser(user: User): Socket | null {
 		for (const iterator of userList) {
 			if (iterator.handshake.auth.user.id === user.id)
 				return iterator;
@@ -130,7 +131,7 @@ export class PongGateway implements OnGatewayDisconnect {
 		return null;
 	}
 
-	findSocketById(userId: number) {
+	findSocketById(userId: number): Socket | null {
 		for (const iterator of userList) {
 			if (iterator.handshake.auth.user.id === userId)
 				return iterator;
@@ -159,15 +160,24 @@ export class PongGateway implements OnGatewayDisconnect {
 			this.server.to(client.id).emit('WaitingRoomFailure', 'You or the person you\'re inviting is busy');
 			return;
 		}
+		const socket1 = this.findSocketById(user1.id);
+		const socket2 = this.findSocketById(user2.id);
 
-		const socketInvite = this.findSocketById(user2.id);
-		if (socketInvite != null)
+		if (socket1 && this.gameService.inSpectate(socket1.id) == true || socket2 && this.gameService.inSpectate(socket2.id) == true)
 		{
-			this.server.to(socketInvite.id).emit('invitationInGame', { scoreMax: payload.scoreMax, user1:{id: user1.id, username: user1.username}, user2:{id: user2.id, username: user2.username}, extra: payload.extra });
+			this.server.to(client.id).emit('WaitingRoomFailure', 'You or the person you\'re inviting is spectating');
+			return;
+		}
+		
+		if (socket2 != null)
+		{
+			console.log("createCustomGame, Invite sockets: 1: ", user1.id, " 2: ", user2.id)
 			this.inviteList.push(user1.id);
 			this.inviteList.push(user2.id);
+			console.log("InviteList with ", user1.username, " and ", user2.username, " just added: ", this.inviteList);
+			this.server.to(socket2.id).emit('invitationInGame', { scoreMax: payload.scoreMax, user1:{id: user1.id, username: user1.username}, user2:{id: user2.id, username: user2.username}, extra: payload.extra });
 			this.server.to(client.id).emit('CreateCustomOK', "invitation success");
-			setTimeout(() => {
+			this.timeoutId = setTimeout(() => {
 				if (user1.id)
 					this.removeInvite(user1.id);
 				if (user2.id)
@@ -189,6 +199,7 @@ export class PongGateway implements OnGatewayDisconnect {
 
 		if (this.isInInvite(payload.user2.id) == false || this.isInInvite(payload.user1.id) == false) //One of the players hasn't been invited
 		{
+			console.log("acceptCustomGame, id", payload.user1.username,": ", this.isInInvite(payload.user1.id), " id", payload.user2.username,": ", this.isInInvite(payload.user2.id))
 			throw new BadRequestException('One of the users hasn\'t been invited');
 		}
 
@@ -197,6 +208,8 @@ export class PongGateway implements OnGatewayDisconnect {
 			this.removeInvite(payload.user1.id);
 		if (payload.user2)
 			this.removeInvite(payload.user2.id);
+		if (this.timeoutId)
+            clearTimeout(this.timeoutId);
 		this.gameService.removeFromWaitingRoom(client.id);
 
 		let userSocket1: Socket | null = this.findSocketById(payload.user1.id)
@@ -226,6 +239,8 @@ export class PongGateway implements OnGatewayDisconnect {
 			this.removeInvite(payload.user1.id);
 		if (payload.user2.id)
 			this.removeInvite(payload.user2.id);
+		if (this.timeoutId)
+            clearTimeout(this.timeoutId);
 		let socket = this.findSocketById(payload.user1.id);
 		if (socket)
 			this.server.to(socket.id).emit('GameDeclined', payload.user2.username);
