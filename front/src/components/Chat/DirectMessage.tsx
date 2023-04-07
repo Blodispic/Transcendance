@@ -289,7 +289,7 @@ export function DmMessages(props: { id: number; currentdm: IUser | undefined; se
 										<div className="message-info">
 											<img className="user-avatar" src={`${process.env.REACT_APP_BACK}user/${message.sender?.id}/avatar`} alt="" />
 											{message.sender?.username}
-											<span className="timestamp">{message.sendtime}</span>
+											<span className="timestamp">{message.sendtime} utc+0</span>
 										</div>
 										{message.message}
 									</div>

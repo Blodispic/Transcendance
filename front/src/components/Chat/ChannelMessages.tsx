@@ -70,7 +70,7 @@ function MessageBubble(props: { message: IMessage, blocked: boolean }) {
 			<div className="message-info "  >
 				<img className="user-avatar" src={`${process.env.REACT_APP_BACK}user/${props.message.sender?.id}/avatar`} alt="" />
 				<p>{props.message.sender?.username}</p>
-				<p className="timestamp">{props.message.sendtime}</p>
+				<p className="timestamp">{props.message.sendtime} utc+0</p>
 			</div>
 			<p className="text"> message from blocked user </p>
 		</div>
@@ -79,7 +79,7 @@ function MessageBubble(props: { message: IMessage, blocked: boolean }) {
 			<div className="message-info">
 				<img className="user-avatar" src={`${process.env.REACT_APP_BACK}user/${props.message.sender?.id}/avatar`} alt="" />
 				<p>{props.message.sender?.username}</p>
-				<p className="timestamp">{props.message.sendtime}</p>
+				<p className="timestamp">{props.message.sendtime} utc+0</p>
 			</div>
 			{props.message.message}
 		</div>
