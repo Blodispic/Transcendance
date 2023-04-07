@@ -2,6 +2,7 @@ import * as React from 'react';
 import { useState } from "react";
 import { HiOutlineMagnifyingGlassCircle } from "react-icons/hi2";
 import { useNavigate } from "react-router-dom";
+import { page } from '../../interface/enum';
 import { IUser } from "../../interface/User";
 import { useAppSelector } from "../../redux/Hook";
 import HeaderButtons from "./buttonsHeader";

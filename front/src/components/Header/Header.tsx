@@ -21,9 +21,10 @@ export default function Header() {
   }
 
   const logout = () => {
+    console.log("remove token retour qqc ???? ",   cookies.remove('Token'));
     cookies.remove('Token');
-    socket.emit("logout");
     dispatch(delete_user());
+    socket.emit("logout");
     socket.disconnect();
 
   }
