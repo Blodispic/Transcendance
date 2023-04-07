@@ -4,7 +4,6 @@ import { useNavigate } from 'react-router-dom';
 export function ResultPopup(props: any) {
 	const navigate = useNavigate();
 	let message = "";
-
 	if (props.win === 1)
 		message = "You won!";
 	else if (props.win === 2)
