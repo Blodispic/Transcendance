@@ -47,7 +47,7 @@ export default function Queue() {
                       }, 700)
             });
             socket.on("WaitingRoomFailure", (message: string) => {
-                swal("Failure", message, "erro.11.r");
+                swal("Failure", message, "error");
             });
         }
 
