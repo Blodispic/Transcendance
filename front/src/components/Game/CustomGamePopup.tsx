@@ -45,7 +45,7 @@ export default function CustomGamePopup(props: {trigger: boolean; setTrigger: (a
             swal("Error", "User doesn't exist", "error");
             return ;
         }
-        socket.emit("createCustomGame", { user1: myUser.user, user2: friend[0], extra: extra, scoreMax: Max });
+        socket.emit("createCustomGame", { user1: myUser.user.id, user2: friend[0].id, extra: extra, scoreMax: Max });
         props.setTrigger(false);
         setFriend([]);
         return;
