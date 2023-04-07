@@ -52,7 +52,7 @@ export class ChatGateway
   if ((await this.userService.checkRelations(receiver.id, sender.id)).relation === 'Blocked')
     return; //User blocked');
   const sendtime = new Date().toLocaleString('en-US');
-  client.emit('sendDmOK', {sendDmDto: sendDmDto, sendtime: sendtime});
+  client.emit('sendDmOK', {sendDmDto: sendDmDto, sender: sender, sendtime: sendtime});
   this.server.to(socketReceiver.id).emit('ReceiveDM', {
     sender: sender,
     message: sendDmDto.message,
