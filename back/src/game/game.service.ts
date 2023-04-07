@@ -424,6 +424,7 @@ class Game {
 	}
 
 	async finishGame() {
+		console.log("Finish game");
 		this.gameState.gameFinished = true;
 		let result: CreateResultDto;
 		if (this.gameState.player1.score === this.gameState.scoreMax) 
@@ -431,7 +432,7 @@ class Game {
 		else 
 			result = { winnerId: this.gameState.player2.id, loserId: this.gameState.player1.id, winner_score: this.gameState.player2.score.toString(), loser_score: this.gameState.player1.score.toString() };
 		const Result = await this.gameService.createResult(result);
-		this.server.to(this.gameState.player2.socket).emit('GameEnd', Result);
+		this.server.to(this.gameState.player1.socket).emit('GameEnd', Result);
 		this.server.to(this.gameState.player2.socket).emit('GameEnd', Result);
 	}
 
