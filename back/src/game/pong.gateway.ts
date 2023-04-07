@@ -33,7 +33,7 @@ export class PongGateway implements OnGatewayDisconnect {
 		let i = 0;
 		while (i < userList.length)
 		{
-			if (userList[i].handshake.auth.user.id === id)
+			if (userList[i].handshake.auth.user.id == id)
 				return (userList[i].handshake.auth.user);
 			i++;
 		}
@@ -42,10 +42,10 @@ export class PongGateway implements OnGatewayDisconnect {
 
 	isInInvite(id: number)
 	{
-		let i  = 0;
+		let i = 0;
 		while (i < this.inviteList.length)
 		{
-			if (this.inviteList[i] === id)
+			if (this.inviteList[i] == id)
 				return true;
 			i++;
 		}
@@ -57,7 +57,7 @@ export class PongGateway implements OnGatewayDisconnect {
 		let i  = 0;
 		while (i < this.inviteList.length)
 		{
-			if (this.inviteList[i] === id)
+			if (this.inviteList[i] == id)
 			{
 				this.inviteList.splice(i, 1);
 				return;
@@ -139,101 +139,97 @@ export class PongGateway implements OnGatewayDisconnect {
 	}
 
 	@SubscribeMessage('createCustomGame')
-	async HandleCustomGame(@MessageBody() payload: any, @ConnectedSocket() client: Socket) {
+	async HandleCustomGame(@MessageBody() payload: { scoreMax: string; user1: number, user2: number, extra: boolean }, @ConnectedSocket() client: Socket) {
+		console.log("Full Payload = ", payload);
+		const user1 = await this.userService.getById(payload.user1)
+		const user2 = await this.userService.getById(payload.user2)
+		
+		if (!user2 || !user1) //One of the user doesn't exist
+			throw new BadRequestException('One of the users doesn\'t exist');
+		if (user1.id != client.handshake.auth.user.id) //Player 1 isn't the client who sent the invite
+			throw new BadRequestException('Player1 isn\'t the inviting socket');
+		if (user2.id === user1.id) //Player can't play with himself
+			throw new BadRequestException('User can\'t play with himself');
 
-		console.log("CReateCUstom GAme", payload.user1.username, payload.user2.username );
-		const user1 = await this.userService.getById(client.handshake.auth.user.id)
-		if (!payload.user2 || !user1)
-			return;
-		this.gameService.removeFromWaitingRoom(client.id);
-		if (this.isInInvite(payload.user2.id) || this.isInInvite(user1.id)
+		this.gameService.removeFromWaitingRoom(client.id); //If client is in waitingroom we remove him from waiting room
+		if (this.isInInvite(user2.id) || this.isInInvite(user1.id)
 			|| this.gameService.inGame(user1.id) == true
-			|| this.gameService.inGame(payload.user2.id) == true)
+			|| this.gameService.inGame(user2.id) == true)
 		{
-			this.server.to(client.id).emit('WaitingRoomFailure', 'The person you\'re inviting is busy');
+			this.server.to(client.id).emit('WaitingRoomFailure', 'You or the person you\'re inviting is busy');
 			return;
 		}
-		else {
-			const socket = this.findSocketFromUser(payload.user2);
-			console.log("user 1 user 2 socket2", user1.username, payload.user2.username);
-			if (socket != null)
-			{
-				this.server.to(socket.id).emit('invitationInGame', payload);
-				this.inviteList.push(user1.id);
-				this.inviteList.push(payload.user2.id);
-				this.server.to(client.id).emit('CreateCustomOK', "invitation succes");
-				setTimeout(() => {
-					if (user1?.id)
-						this.removeInvite(user1.id);
-					if (payload.user2.id)
-						this.removeInvite(payload.user2.id);
-				  }, 11000);
-			}
+
+		const socketInvite = this.findSocketById(user2.id);
+		if (socketInvite != null)
+		{
+			this.server.to(socketInvite.id).emit('invitationInGame', { scoreMax: payload.scoreMax, user1:{id: user1.id, username: user1.username}, user2:{id: user2.id, username: user2.username}, extra: payload.extra });
+			this.inviteList.push(user1.id);
+			this.inviteList.push(user2.id);
+			this.server.to(client.id).emit('CreateCustomOK', "invitation success");
+			setTimeout(() => {
+				if (user1.id)
+					this.removeInvite(user1.id);
+				if (user2.id)
+					this.removeInvite(user2.id);
+			  }, 11000);
 		}
 	}
 
 	@SubscribeMessage('acceptCustomGame')
-	async AcceptCustomGame(@MessageBody() payload: { scoreMax: string; user1: User, user2: User, extra: boolean }, @ConnectedSocket() client: Socket) {
+	async AcceptCustomGame(@MessageBody() payload: { scoreMax: string; user1: {id: number, username: String}, user2:{id: number, username: String}, extra: boolean }, @ConnectedSocket() client: Socket) {
 
-		const user1 = await this.userService.getById(payload.user1.id);
-		const user2 = await this.userService.getById(payload.user2.id);
-		console.log("Aceppt game les 2 user", user1?.username, user2?.username);
-		if (user2 === null || user1 === null)
+		// const user1 = await this.userService.getById(payload.user1.id);
+		// const user2 = await this.userService.getById(payload.user2.id);
+		// console.log("Accept game les 2 user", user1?.username, user2?.username);
+		// if (user2 === null || user1 === null)
+		// {
+		// 	throw new BadRequestException('User doesn\'t exist');
+		// }
+
+		if (this.isInInvite(payload.user2.id) == false || this.isInInvite(payload.user1.id) == false) //One of the players hasn't been invited
 		{
-			throw new BadRequestException('User doesn\'t exist');
+			throw new BadRequestException('One of the users hasn\'t been invited');
 		}
+
 		// Remove both users from InviteList, the can now invite and be invited again
-		if (user1.id)
-			this.removeInvite(user1.id);
-		if (user2.id)
-			this.removeInvite(user2.id);
+		if (payload.user1)
+			this.removeInvite(payload.user1.id);
+		if (payload.user2)
+			this.removeInvite(payload.user2.id);
 		this.gameService.removeFromWaitingRoom(client.id);
 
-		let userSocket1: Socket = userList[0]; //By default both user are the first user of the list
-		let userSocket2: Socket = userList[0]; //By default both user are the first user of the list
-		let i = 0;
-		while (i < userList.length) {
-			if (userList[i].handshake.auth.user.id === user1.id) {
-				userSocket1 = userList[i];
-				break;
-			}
-			i++;
-		}
-		i = 0;
-		while (i < userList.length) {
-			if (userList[i].handshake.auth.user.id === user2.id) {
-				userSocket2 = userList[i];
-				break;
-			}
-			i++;
-		}
-		if (user1.status != 'Online')
+		let userSocket1: Socket | null = this.findSocketById(payload.user1.id)
+		let userSocket2: Socket | null = this.findSocketById(payload.user2.id)
+
+		if (!userSocket1 || !userSocket2)
+			throw new BadRequestException('One of the users does\'nt have a socket (handleConnection is broken)');
+		
+		if (await this.userService.getStatus(payload.user1.id) != 'Online')
 		{
-			this.server.to(userSocket2.id).emit('GameCancelled', user1.username);
+			this.server.to(userSocket2.id).emit('GameCancelled', this.userService.getUsername(payload.user1.id));
 			return;
 		}
-		if (user2.status != 'Online')
+		if (await this.userService.getStatus(payload.user2.id) != 'Online')
 		{
-			this.server.to(userSocket1.id).emit('GameCancelled', user2.username);
+			this.server.to(userSocket1.id).emit('GameCancelled', this.userService.getUsername(payload.user2.id));
 			return;
 		}
 		this.gameService.startCustomGame(this.server, userSocket1, userSocket2, payload.extra, parseInt(payload.scoreMax));
 	}
 
 	@SubscribeMessage('declineCustomGame')
-	DeclineCustomGame(@MessageBody() payload: { user1: User, user2: User }) {
-		const user1: User = payload.user1;
-		const user2: User = payload.user2;
+	DeclineCustomGame(@MessageBody() payload: { scoreMax: string; user1: {id: number}, user2:{id: number, username: String}, extra: boolean }) {
 
 		// Remove both users from InviteList, the can now invite and be invited again
-		if (user1.id)
-			this.removeInvite(user1.id);
-		if (user2.id)
-			this.removeInvite(user2.id);
-		let socket = this.findSocketFromUser(user1);
+		if (payload.user1.id)
+			this.removeInvite(payload.user1.id);
+		if (payload.user2.id)
+			this.removeInvite(payload.user2.id);
+		let socket = this.findSocketById(payload.user1.id);
 		if (socket)
-			this.server.to(socket.id).emit('GameDeclined', user2.username);
-		socket = this.findSocketFromUser(user2);
+			this.server.to(socket.id).emit('GameDeclined', payload.user2.username);
+		socket = this.findSocketById(payload.user2.id);
 		if (socket)
 			this.server.to(socket.id).emit('GameDeclined', 'You');
 	}

@@ -87,6 +87,20 @@ async checkTab(user: User) {
     });
   }
 
+  async getUsername(id: number): Promise<String> {
+    const user = await this.getById(id);
+    if (user)
+      return (user.username);
+    return "";
+  }
+
+  async getStatus(id: number): Promise<Status | String> {
+    const user = await this.getById(id);
+    if (user)
+      return (user.status);
+    return "";
+  }
+
   getByLogin(login: string): Promise<User | null> {
     return this.usersRepository.findOne({
       relations: [

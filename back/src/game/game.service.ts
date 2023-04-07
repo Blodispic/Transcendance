@@ -234,10 +234,6 @@ export class GameService {
 		}
 	}
 
-
-
-	  
-
 	async EndGame(client: string, server: Server) {
 		let roomId = 0;
 		while (roomId < this.gameRoom.length) {
@@ -245,7 +241,6 @@ export class GameService {
 				
 				const user1 = await this.userService.getById(this.gameRoom[roomId].gameState.player1.id);
 				const user2 = await this.userService.getById(this.gameRoom[roomId].gameState.player2.id);
-				console.log("ENDGAME", user1, user2);
 				if (user1 && user2)
 				{
 					console.log(user1.status, user1.status)
