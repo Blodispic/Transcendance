@@ -21,14 +21,24 @@ export function PopupCreateChannel(props: { trigger: boolean, setTrigger: (value
 
 	const handlePublic = () => {
 		setChanMode(0);
+		setPassword("");
+		setFriend([]);
+		setError("");
+		setFailed(false);
 	}
 
 	const handlePrivate = () => {
 		setChanMode(1);
+		setPassword("");
+		setError("");
+		setFailed(false);
 	}
 
 	const handleProtected = () => {
 		setChanMode(2);
+		setFriend([]);
+		setError("");
+		setFailed(false);
 	}
 
 	const handleCreateNewChan = () => {
@@ -37,10 +47,19 @@ export function PopupCreateChannel(props: { trigger: boolean, setTrigger: (value
 				socket.emit('createChannel', { chanName: chanName.trim(), password: password, chanType: chanMode, usersId: friend.map( user => user.id) });
 			else
 				socket.emit('createChannel', { chanName: chanName.trim(), chanType: chanMode, usersId: friend.map( user => user.id) });
+		} else {
+			setFailed(true);
+			setError("Channel name needed");
 		}
+	}
+
+	const clearAll = () => {
 		setChanName("");
-
-
+		setChanMode(0);
+		setPassword("");
+		setFriend([]);
+		setError("");
+		setFailed(false);
 	}
 	
 	useEffect(() => {
@@ -63,12 +82,10 @@ export function PopupCreateChannel(props: { trigger: boolean, setTrigger: (value
 				})
 					
 			}
-			fetchChanInfo();
-			setFailed(false);
 			props.setTrigger(false);
-			setChanMode(0);
-			setFriend([]);
-			setPassword("");
+			fetchChanInfo();
+			
+			clearAll();
 		});
 
 		return () => {
@@ -80,7 +97,7 @@ export function PopupCreateChannel(props: { trigger: boolean, setTrigger: (value
 	return (props.trigger) ? (
 		<div className="chat-form-popup" onClick={() => {props.setTrigger(false); setFailed(false)}} >
 			<div className="chat-form-inner" onClick={e => e.stopPropagation()}>
-				<HiOutlineXMark className="close-icon" onClick={() => {props.setTrigger(false); setChanMode(0); setFailed(false)}} /> <br />
+				<HiOutlineXMark className="close-icon" onClick={() => {props.setTrigger(false); clearAll() }} /> <br />
 				<h3>Channel Name</h3>
 				<div className='channel-input'>
 				<input type="text" placeholder="Insert channel name"  maxLength={15} onChange={e => { setChanName(e.target.value) }} onSubmit={() => { handleCreateNewChan(); }} />
