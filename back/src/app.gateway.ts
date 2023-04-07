@@ -27,7 +27,7 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
 	@WebSocketServer()
 	server: Server;
 
-	async handleConnection(client: Socket) {
+	async handleConnection(client: Socket): Promise<any> {
 		try {
 			client.handshake.auth.user = await this.userService.GetByAccessToken(client.handshake.auth.token);
 			if (client.handshake.auth.user === null)
@@ -56,14 +56,9 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		this.server.emit('UpdateSomeone', { idChange: client.handshake.auth.user.id, idChange2: 0 });
 	}
 	
-	findSocketById(userId: number) {
-		for (const iterator of userList) {
-			if (iterator.handshake.auth.user.id == userId)
-			{
-				return iterator;
-			}
-		}
-		return null;
+	findSocketById(userId: number): Socket | null {
+		const foundSocket = userList.find(socket => socket.handshake.auth.user.id === userId);
+		return foundSocket || null;
 	}
 
 	@SubscribeMessage('RequestSent')

@@ -122,7 +122,7 @@ export class PongGateway implements OnGatewayDisconnect {
 		}
 	}
 
-	findSocketFromUser(user: User) {
+	findSocketFromUser(user: User): Socket | null {
 		for (const iterator of userList) {
 			if (iterator.handshake.auth.user.id === user.id)
 				return iterator;
@@ -130,7 +130,7 @@ export class PongGateway implements OnGatewayDisconnect {
 		return null;
 	}
 
-	findSocketById(userId: number) {
+	findSocketById(userId: number): Socket | null {
 		for (const iterator of userList) {
 			if (iterator.handshake.auth.user.id === userId)
 				return iterator;

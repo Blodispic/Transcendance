@@ -171,6 +171,7 @@ export default function GameApp() {
 	}, []);
 	
 	//  Here to modify game page
+	console.log("result= ", result);
 	return (
 		<div id="game-container">
 			{ gameState.gameFinished ? (<ResultPopup win={result} />) : <></> }
