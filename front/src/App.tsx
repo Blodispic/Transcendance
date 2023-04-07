@@ -67,6 +67,7 @@ function App() {
         });
 
         socket.on("invitationInGame", (payload: any) => {
+          console.log(payload);
           setInfoGame(payload);
           setTrigger(true);
           timeOutId = setTimeout(() => {
@@ -74,6 +75,14 @@ function App() {
             socket.emit("declineCustomGame", payload);
           }, 10000)
         })
+
+        socket.on("CreateCustomOK", (message: string) => {
+          swal("Success", message, "success");
+          setTimeout(() => {
+              if (swal && swal.close)
+                swal.close()
+            }, 700)
+        });
 
         socket.on("LoginValid", () => {
             swal("Login Successful", "You connected successfully!", "success");

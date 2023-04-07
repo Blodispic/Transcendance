@@ -132,7 +132,9 @@ export default function GameApp() {
 		});
 
 		socket.on("GameEnd", (result: Result) => {
-			if (selfID === 1) {
+			console.log("selfID = ", selfID);
+			if (selfID === 1)
+			{
 				if (result.winner.id === gameState.player1.id)
 					setResult(1);
 				else if (result.winner.id === gameState.player2.id)
