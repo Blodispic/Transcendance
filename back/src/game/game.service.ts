@@ -52,7 +52,7 @@ export class GameService {
 		return false;
 	}
 
-	inSpectate(socketId: String) {
+	inSpectate(socketId: string) {
 		for (let i:number = 0; i < this.gameRoom.length; i++) {
 			for (let j: number = 0; j < this.gameRoom[i].watchList.length; j++) {
 				if (this.gameRoom[i].watchList[j] == socketId)

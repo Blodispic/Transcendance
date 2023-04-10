@@ -87,14 +87,14 @@ async checkTab(user: User) {
     });
   }
 
-  async getUsername(id: number): Promise<String> {
+  async getUsername(id: number): Promise<string> {
     const user = await this.getById(id);
     if (user)
       return (user.username);
     return "";
   }
 
-  async getStatus(id: number): Promise<Status | String> {
+  async getStatus(id: number): Promise<Status | string> {
     const user = await this.getById(id);
     if (user)
       return (user.status);

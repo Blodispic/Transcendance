@@ -187,7 +187,7 @@ export class PongGateway implements OnGatewayDisconnect {
 	}
 
 	@SubscribeMessage('acceptCustomGame')
-	async AcceptCustomGame(@MessageBody() payload: { scoreMax: string; user1: {id: number, username: String}, user2:{id: number, username: String}, extra: boolean }, @ConnectedSocket() client: Socket) {
+	async AcceptCustomGame(@MessageBody() payload: { scoreMax: string; user1: {id: number, username: string}, user2:{id: number, username: string}, extra: boolean }, @ConnectedSocket() client: Socket) {
 
 		// const user1 = await this.userService.getById(payload.user1.id);
 		// const user2 = await this.userService.getById(payload.user2.id);
@@ -232,7 +232,7 @@ export class PongGateway implements OnGatewayDisconnect {
 	}
 
 	@SubscribeMessage('declineCustomGame')
-	DeclineCustomGame(@MessageBody() payload: { scoreMax: string; user1: {id: number}, user2:{id: number, username: String}, extra: boolean }) {
+	DeclineCustomGame(@MessageBody() payload: { scoreMax: string; user1: {id: number}, user2:{id: number, username: string}, extra: boolean }) {
 
 		// Remove both users from InviteList, the can now invite and be invited again
 		if (payload.user1.id)
