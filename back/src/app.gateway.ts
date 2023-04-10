@@ -57,7 +57,7 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
 	}
 	
 	findSocketById(userId: number): Socket | null {
-		const foundSocket = userList.find(socket => socket.handshake.auth.user.id === userId);
+		const foundSocket = userList.find(socket => socket.handshake.auth.user.id == userId);
 		return foundSocket || null;
 	}
 

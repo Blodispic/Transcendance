@@ -65,7 +65,7 @@ export class ChatGateway
 findSocketFromUser(user: User): Socket | null
  {  
   for (const iterator of userList) {
-    if (iterator.handshake.auth.user.id === user.id)
+    if (iterator.handshake.auth.user.id == user.id)
       return iterator;
   }
   return null;
