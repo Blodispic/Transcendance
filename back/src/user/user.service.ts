@@ -167,7 +167,7 @@ async checkTab(user: User) {
       }
       else
         user.username = userUpdate.username;
-        let socket = userList.find(socket => socket.handshake.auth.handshake.user.id == user.id);
+        const socket = userList.find(socket => socket.handshake.auth.handshake.user.id == user.id);
         if (socket)
           socket.handshake.auth.user.username = user.username;
     }
