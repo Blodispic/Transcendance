@@ -204,7 +204,6 @@ export class GameService {
 		this.userService.SetStatus(socket1.handshake.auth.user, Status.Ingame);
 		this.userService.SetStatus(socket2.handshake.auth.user, Status.Ingame);
 		server.emit('UpdateSomeone', { idChange: socket1.handshake.auth.user.id, idChange2: socket2.handshake.auth.user.id });
-		console.log("START GAME [",this.gameRoom.length, "] ", user1.username, user2.username);
 		server.to(player1.socket).emit('RoomStart', this.gameRoom.length, player1);
 		server.to(player2.socket).emit('RoomStart', this.gameRoom.length, player2);
 	}
@@ -225,14 +224,11 @@ export class GameService {
 
 	updateMove2(move2: Move, client: string, roomId: number) {
 		let i = 0;
-		console.log("Move2: ", roomId);
 		while (this.gameRoom[i])
 		{
-			console.log("currentRoomId: ", this.gameRoom[i].gameState.roomId);
 			if (this.gameRoom[i].gameState.roomId === roomId)
 			{
 				if (this.gameRoom[i].gameState.player2.socket === client) {
-					console.log("Moved");
 					this.gameRoom[i].updateMove2(move2);
 					return;
 				}
@@ -244,9 +240,6 @@ export class GameService {
 	playerDisconnect(client: string) {
 		let i = 0;
 		while (i < this.gameRoom.length) {
-			// let CurrentRoom: Game | undefined = this.getRoom(i);
-			// if (CurrentRoom == undefined)
-			// 	continue;
 			if (this.gameRoom[i].gameState.player1.socket === client
 				|| this.gameRoom[i].gameState.player2.socket === client)
 				this.gameRoom[i].disconnect(client);
@@ -264,28 +257,20 @@ export class GameService {
 	}
 
 	async EndGame(client: string, server: Server) {
-		// let roomId = 0;
 		let i = 0;
 		while (i < this.gameRoom.length) {
-			// let CurrentRoom: Game | undefined = this.getRoom(roomId);
-			// if (CurrentRoom == undefined)
-			// 	continue;
 			if  (this.gameRoom[i].gameState.player1.socket === client || this.gameRoom[i].gameState.player2.socket === client) {
 				
 				const user1 = await this.userService.getById(this.gameRoom[i].gameState.player1.id);
 				const user2 = await this.userService.getById(this.gameRoom[i].gameState.player2.id);
-				console.log("id1 ", this.gameRoom[i].gameState.player1.id, "id2 ", this.gameRoom[i].gameState.player2.id)
 				if (user1 && user2)
 				{ 
-					console.log("Status: ", user1.username, " ", user1.status," | ", user2.username, " ", user2.status)
 					if (user1.status !== Status.Offline)
 						await this.userService.SetStatus(user1, Status.Online);  // ACHANGER PAR USERLIST BYY ADAM 
 					if (user2.status !== Status.Offline)
 						await this.userService.SetStatus(user2, Status.Online);  // ACHANGER PAR USERLIST BYY ADAM 
 					server.emit('UpdateSomeone', { idChange: user1.id, idChange2: user2.id });
-					console.log("Gameroom before splice: ", this.gameRoom.length);
 					this.gameRoom.splice(i, 1);
-					console.log("Gameroom after splice: ", this.gameRoom.length);
 				}
 				return;
 			}
