@@ -41,7 +41,7 @@ export class UserService {
 
 async checkTab(user: User) {
   for (const iterator of userList) {
-    if (iterator.handshake.auth.user.id === user.id)
+    if (iterator.handshake.auth.user.id == user.id)
       throw new BadRequestException('t\'as deja un tab frero');
   }
 }
@@ -136,7 +136,7 @@ async checkTab(user: User) {
     }
     else if (user) {
       for (const iterator of userList) {
-        if (iterator.handshake.auth.user.id === user.id)
+        if (iterator.handshake.auth.user.id == user.id)
           throw new BadRequestException('t\'as deja un tab frero');
       }
       return user;
@@ -167,6 +167,9 @@ async checkTab(user: User) {
       }
       else
         user.username = userUpdate.username;
+        let socket = userList.find(socket => socket.handshake.auth.handshake.user.id == user.id);
+        if (socket)
+          socket.handshake.auth.user.username = user.username;
     }
     if (userUpdate.twoFaEnable != undefined) {
       user.twoFaEnable = userUpdate.twoFaEnable;
