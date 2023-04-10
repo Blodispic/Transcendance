@@ -135,20 +135,24 @@ export default function GameApp() {
 			console.log("selfID = ", selfID);
 			if (selfID === 1)
 			{
-				if (result.winner.id === gameState.player1.id)
+				if (result.winner.id === gameState.player1.id) {
 					setResult(1);
+					socket.emit("GameEnd", null);
+				}
+
 				else if (result.winner.id === gameState.player2.id)
 					setResult(2);
 			}
 			else if (selfID === 2) {
 				if (result.winner.id === gameState.player1.id)
 					setResult(2);
-				else if (result.winner.id === gameState.player2.id)
+				else if (result.winner.id === gameState.player2.id) {
 					setResult(1);
+					socket.emit("GameEnd", null);
+				}
 			}
 			else
 				setResult(3)
-			socket.emit("GameEnd", null);
 			return () => {
 				socket.off('UpdateState');
 				socket.off('GameEnd');
