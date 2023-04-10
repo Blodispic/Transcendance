@@ -225,28 +225,32 @@ export class GameService {
 
 	updateMove2(move2: Move, client: string, roomId: number) {
 		let i = 0;
+		console.log("Move2: ", roomId);
 		while (this.gameRoom[i])
 		{
-			if (this.gameRoom[i].gameState.roomId === roomId
-				&& this.gameRoom[i].gameState.player2.socket === client)
+			console.log("currentRoomId: ", this.gameRoom[i].gameState.roomId);
+			if (this.gameRoom[i].gameState.roomId === roomId)
 			{
-				this.gameRoom[i].updateMove2(move2);
-				return;
+				if (this.gameRoom[i].gameState.player2.socket === client) {
+					console.log("Moved");
+					this.gameRoom[i].updateMove2(move2);
+					return;
+				}
 			}
 			i++;
 		}
 	}
 
 	playerDisconnect(client: string) {
-		let roomId = 0;
-		while (roomId < this.gameRoom.length) {
-			let CurrentRoom: Game | undefined = this.getRoom(roomId);
-			if (CurrentRoom == undefined)
-				continue;
-			if (CurrentRoom.gameState.player1.socket === client
-				|| CurrentRoom.gameState.player2.socket === client)
-				CurrentRoom.disconnect(client);
-			roomId++;
+		let i = 0;
+		while (i < this.gameRoom.length) {
+			// let CurrentRoom: Game | undefined = this.getRoom(i);
+			// if (CurrentRoom == undefined)
+			// 	continue;
+			if (this.gameRoom[i].gameState.player1.socket === client
+				|| this.gameRoom[i].gameState.player2.socket === client)
+				this.gameRoom[i].disconnect(client);
+			i++;
 		}
 	}
 
@@ -260,17 +264,19 @@ export class GameService {
 	}
 
 	async EndGame(client: string, server: Server) {
-		let roomId = 0;
-		while (roomId < this.gameRoom.length) {
-			let CurrentRoom: Game | undefined = this.getRoom(roomId);
-			if (CurrentRoom == undefined)
-				continue;
-			if  (CurrentRoom.gameState.player1.socket === client || CurrentRoom.gameState.player2.socket === client) {
+		// let roomId = 0;
+		let i = 0;
+		while (i < this.gameRoom.length) {
+			// let CurrentRoom: Game | undefined = this.getRoom(roomId);
+			// if (CurrentRoom == undefined)
+			// 	continue;
+			if  (this.gameRoom[i].gameState.player1.socket === client || this.gameRoom[i].gameState.player2.socket === client) {
 				
-				const user1 = await this.userService.getById(CurrentRoom.gameState.player1.id);
-				const user2 = await this.userService.getById(CurrentRoom.gameState.player2.id);
+				const user1 = await this.userService.getById(this.gameRoom[i].gameState.player1.id);
+				const user2 = await this.userService.getById(this.gameRoom[i].gameState.player2.id);
+				console.log("id1 ", this.gameRoom[i].gameState.player1.id, "id2 ", this.gameRoom[i].gameState.player2.id)
 				if (user1 && user2)
-				{
+				{ 
 					console.log("Status: ", user1.username, " ", user1.status," | ", user2.username, " ", user2.status)
 					if (user1.status !== Status.Offline)
 						await this.userService.SetStatus(user1, Status.Online);  // ACHANGER PAR USERLIST BYY ADAM 
@@ -278,12 +284,12 @@ export class GameService {
 						await this.userService.SetStatus(user2, Status.Online);  // ACHANGER PAR USERLIST BYY ADAM 
 					server.emit('UpdateSomeone', { idChange: user1.id, idChange2: user2.id });
 					console.log("Gameroom before splice: ", this.gameRoom.length);
-					this.gameRoom.splice(roomId, 1);
+					this.gameRoom.splice(i, 1);
 					console.log("Gameroom after splice: ", this.gameRoom.length);
 				}
 				return;
 			}
-			roomId++;
+			i++;
         }
     }
 }
