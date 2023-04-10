@@ -124,7 +124,7 @@ export function ConfigureChannelPrivate(props: { trigger: boolean, setTrigger: (
 	const addfriend = (myfriend: IUser) => {
 		if (allfriend !== undefined && allfriend.find(allfriend => allfriend.id === myfriend.id) === undefined)
 			setAllFriend([...allfriend, myfriend])
-		else if (allfriend == undefined)
+		else if (allfriend === undefined)
 			setAllFriend([myfriend]);
 	}
 	const removeFriend = (myfriend: IUser) => {
