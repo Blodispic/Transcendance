@@ -75,8 +75,9 @@ export default function Profile() {
                 })
                         .then(async response => {
                                 if (response.ok) {
+                                        if (currentUser && id && +id !== currentUser.id)
+                                                setPages(page.PAGE_1);
                                         setCurrentUser(await response.json());
-                                        setPages(page.PAGE_1);
                                 }
 
                         })

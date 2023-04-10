@@ -46,8 +46,9 @@ export class UserController {
   @UseGuards(JwtGuard)
   async firstSign(@GetUser() user: User, @Body() updateUserDto: UpdateUserDto) {
     for (const iterator of userList) {
-      if (iterator.handshake.auth.user.id == user.id)
+      if (iterator.handshake.auth.user.id === user.id){
         throw new BadRequestException('t\'as deja un tab frero');
+      }
     }
     try {
       await validateOrReject(updateUserDto);
