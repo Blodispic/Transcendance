@@ -19,8 +19,12 @@ export default function Chat() {
 		socket.on('exception', () => {
 			swal("Format Error", "Your input is not valid for this request", "error");
 		  });
+		  socket.on("WaitingRoomFailure", (message: string) => {
+            swal("Failure", message, "error");
+        });
 		return () => {
 			socket.off('exception');
+			socket.off('WaitingRoomFailure');
 		}
 	})
 

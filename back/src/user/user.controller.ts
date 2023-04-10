@@ -45,7 +45,6 @@ export class UserController {
   @Patch('firstSign')
   @UseGuards(JwtGuard)
   async firstSign(@GetUser() user: User, @Body() updateUserDto: UpdateUserDto) {
-    console.log("CheckSign");
     for (const iterator of userList) {
       if (iterator.handshake.auth.user.id === user.id)
         throw new BadRequestException('t\'as deja un tab frero');
@@ -71,7 +70,7 @@ export class UserController {
   // Retrieves a user by their access token
   @Post('access_token')
   async GetbyAccessToken(@Body() token: { token: string }) {
-    await new Promise(resolve => setTimeout(resolve, 400));
+    // await new Promise(resolve => setTimeout(resolve, 400));
     return await plainToClass(User, this.userService.GetByAccessToken(token.token));
   }
 
@@ -169,12 +168,10 @@ export class UserController {
       await sharp(readFileSync(file.path)).metadata();
     } 
     catch (error) {
-      console.log(error);
       try {
 				unlinkSync(file.path);
 			} 
       catch(e) {
-				console.log(e.message);
 			}
       throw new UnprocessableEntityException('Invalid image file!')
     }

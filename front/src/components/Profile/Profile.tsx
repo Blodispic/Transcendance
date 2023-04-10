@@ -73,11 +73,13 @@ export default function Profile() {
                                 'Authorization': `Bearer ${myUser.user.myToken}`,
                         }
                 })
-                .then(async response => {
-                        if (response.ok)
-                                setCurrentUser(await response.json());
+                        .then(async response => {
+                                if (response.ok) {
+                                        setCurrentUser(await response.json());
+                                        setPages(page.PAGE_1);
+                                }
 
-                })
+                        })
         }
 
         useEffect(() => {
@@ -105,7 +107,7 @@ export default function Profile() {
         return (currentUser) ? (
                 <div className='all'>
                         {currentUser &&
-                                <Header currentUser={currentUser} setCurrentUser={setCurrentUser} />
+                                <Header currentUser={currentUser} setCurrentUser={setCurrentUser}/>
                         }
                         <div className='container'>
                                 <Onglets currentUser={currentUser} current={pages} setOnglets={setPages} />

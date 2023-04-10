@@ -81,7 +81,7 @@ export function JoinChannel(props: { channel: IChannel }) {
 				setTimeout(() => {
 					if (swal && swal.close)
 					  swal.close()
-				  }, 1000);
+				  }, 700);
 			}
 		});
 		return () => {
@@ -128,16 +128,17 @@ export function LeaveChannel(props: { channel: IChannel }) {
 				setTimeout(() => {
 					if (swal && swal.close)
 					  swal.close()
-				  }, 1000);
+				  }, 600);
 			}
 		})
 		socket.on("leaveChannelFailed", (err_message) => {
 			if (currentUser !== undefined) {
 				swal(err_message, "error");
-				setTimeout(() => {
-					if (swal && swal.close)
-					  swal.close()
-				  }, 1000);
+				// setTimeout(() => {
+				// 	if (swal && swal.close)
+				// 	  swal.close()
+				//   }, 1000);
+				//sert a rien ?
 			}
 		})
 		return () => {

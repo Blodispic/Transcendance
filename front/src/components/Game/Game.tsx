@@ -125,30 +125,33 @@ export default function GameApp() {
 			}, 1000 / 60)
 		);
 
-		socket.on("UpdateState", (newGameState: GameState, player: number) => {	
+		socket.on("UpdateState", (newGameState: GameState, player: number) => {
 			const convertedState: GameState = convertState(newGameState);
 			selfID = player;
 			setGameState(convertedState);
-			});
+		});
 
 		socket.on("GameEnd", (result: Result) => {
 			if (selfID === 1)
 			{
-				if (result.winner.id === gameState.player1.id)
+				if (result.winner.id === gameState.player1.id) {
 					setResult(1);
+					socket.emit("GameEnd", null);
+				}
+
 				else if (result.winner.id === gameState.player2.id)
 					setResult(2);
 			}
-			else if (selfID === 2)
-			{
+			else if (selfID === 2) {
 				if (result.winner.id === gameState.player1.id)
 					setResult(2);
-				else if (result.winner.id === gameState.player2.id)
+				else if (result.winner.id === gameState.player2.id) {
 					setResult(1);
+					socket.emit("GameEnd", null);
+				}
 			}
 			else
 				setResult(3)
-			socket.emit("GameEnd", null);
 			return () => {
 				socket.off('UpdateState');
 				socket.off('GameEnd');
@@ -169,11 +172,11 @@ export default function GameApp() {
 			socket.emit("PlayerLeft");
 		};
 	}, []);
-	
+
 	//  Here to modify game page
 	return (
 		<div id="game-container">
-			{ gameState.gameFinished ? (<ResultPopup win={result} />) : <></> }
+			{gameState.gameFinished ? (<ResultPopup win={result} />) : <></>}
 			<h3 className="display-player">
 				<img src={`${process.env.REACT_APP_BACK}user/${gameState.player2.id}/avatar`} alt={gameState.player2.name} />
 				{gameState.player2.name} : {gameState.player2.score}
@@ -218,8 +221,8 @@ export default function GameApp() {
 				</Layer>
 			</Stage>
 			<h3 className="display-player">
-			<img src={`${process.env.REACT_APP_BACK}user/${gameState.player1.id}/avatar`} alt={gameState.player1.name}/>
-			
+				<img src={`${process.env.REACT_APP_BACK}user/${gameState.player1.id}/avatar`} alt={gameState.player1.name} />
+
 				{gameState.player1.name} : {gameState.player1.score}
 			</h3>
 		</div>
@@ -227,13 +230,11 @@ export default function GameApp() {
 }
 
 function convertState(state: GameState) {
-	if (window.innerHeight > GAME_RATIO * window.innerWidth)
-	{
+	if (window.innerHeight > GAME_RATIO * window.innerWidth) {
 		state.client_area.x = Math.min((window.innerWidth * 70) / 100, GAME_INTERNAL_WIDTH);
 		state.client_area.y = state.client_area.x * GAME_RATIO;
 	}
-	else
-	{
+	else {
 		state.client_area.y = Math.min((window.innerHeight * 75) / 100, GAME_INTERNAL_WIDTH * GAME_RATIO);
 		state.client_area.x = state.client_area.y / GAME_RATIO;
 	}
@@ -287,13 +288,11 @@ function updateGameState(prev: GameState) {
 	if (swal && swal.close !== undefined && swal.stopLoading !== undefined)
 		swal.close();
 
-	if (window.innerHeight > GAME_RATIO * window.innerWidth)
-	{
+	if (window.innerHeight > GAME_RATIO * window.innerWidth) {
 		newState.client_area.x = Math.min((window.innerWidth * 70) / 100, newState.area.x);
 		newState.client_area.y = newState.client_area.x * GAME_RATIO;
 	}
-	else
-	{
+	else {
 		newState.client_area.y = Math.min((window.innerHeight * 75) / 100, newState.area.y);
 		newState.client_area.x = newState.client_area.y / GAME_RATIO;
 	}
@@ -338,7 +337,7 @@ function paddleCollision(ball: Ball, player: Player) {
 					(player.input.left === false &&
 						player.input.right === false &&
 						ball.previous.y > player.paddle.position.y)
-				){
+				) {
 					ball.speed.y = ball.speed.y * 1.7;
 					if (ball.previous.x + (ball.position.x - ball.previous.x) / 2 < player.paddle.position.x + paddleDimensions.x / 2)
 						ball.speed.x -= 3;
@@ -349,7 +348,7 @@ function paddleCollision(ball: Ball, player: Player) {
 					player.input.left === false &&
 					player.input.right === false &&
 					ball.previous.y < player.paddle.position.y
-				){
+				) {
 					ball.speed.y = ball.speed.y * 0.9;
 					if (ball.previous.x + (ball.position.x - ball.previous.x) / 2 < player.paddle.position.x + paddleDimensions.x / 2)
 						ball.speed.x -= 3;
@@ -364,7 +363,7 @@ function paddleCollision(ball: Ball, player: Player) {
 					(player.input.left === false &&
 						player.input.right === false &&
 						ball.previous.y < player.paddle.position.y)
-				){
+				) {
 					ball.speed.y = ball.speed.y * 1.7;
 					if (ball.previous.x + (ball.position.x - ball.previous.x) / 2 < player.paddle.position.x + paddleDimensions.x / 2)
 						ball.speed.x -= 3;
@@ -375,7 +374,7 @@ function paddleCollision(ball: Ball, player: Player) {
 					player.input.left === false &&
 					player.input.right === false &&
 					ball.previous.y > player.paddle.position.y
-				){
+				) {
 					ball.speed.y = ball.speed.y * 0.9;
 					if (ball.previous.x + (ball.position.x - ball.previous.x) / 2 < player.paddle.position.x + paddleDimensions.x / 2)
 						ball.speed.x -= 3;
@@ -547,7 +546,7 @@ function keyEvent(event: KeyboardEvent) {
 	}
 
 	if ((key === "ArrowLeft" || key === "ArrowRight") && selfID === 1)
-		socket.emit("Move1", {input: move1, roomId: roomId});
+		socket.emit("Move1", { input: move1, roomId: roomId });
 	else if ((key === "ArrowLeft" || key === "ArrowRight") && selfID === 2)
-		socket.emit("Move2", {input: move2, roomId: roomId});
+		socket.emit("Move2", { input: move2, roomId: roomId });
 }

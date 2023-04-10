@@ -109,8 +109,8 @@ export function InviteButton(props: { user: any, relation: string, setRelation: 
     const myToken = useAppSelector(state => state.user.myToken);
 
     const sendFriendRequest = async () => {
-        await new Promise((resolve) => setTimeout(resolve, 1000));
-
+        // await new Promise((resolve) => setTimeout(resolve, 1000));
+        // de meme pourquoi attendre ici ???
         await fetch(`${process.env.REACT_APP_BACK}user/friend-request/send/${user.id}`, {
             method: 'POST',
             headers: {

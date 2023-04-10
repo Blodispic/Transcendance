@@ -16,11 +16,9 @@ export let socket: Socket;
 
 function App() {
   const myUser = useAppSelector(state => state.user);
-
   const dispatch = useAppDispatch();
   const cookies = new Cookies();
   const token = cookies.get('Token');
-  
   const [trigger, setTrigger] = useState<boolean> (false);
   const [infoGame, setInfoGame] = useState<any | undefined> (undefined);
   let timeOutId : any = undefined;
@@ -77,12 +75,20 @@ function App() {
           }, 10000)
         })
 
+        socket.on("CreateCustomOK", (message: string) => {
+          swal("Success", message, "success");
+          setTimeout(() => {
+              if (swal && swal.close)
+                swal.close()
+            }, 700)
+        });
+
         socket.on("LoginValid", () => {
             swal("Login Successful", "You connected successfully!", "success");
             setTimeout(() => {
               if (swal && swal.close)
                 swal.close()
-            }, 1000)
+            }, 700)
           })
 
         /* Chat */
@@ -108,9 +114,9 @@ function App() {
           dispatch(addMessage(messageDto));
         });
 
-        socket.on('sendDmOK', ({sendDmDto, sendtime }) => {
+        socket.on('sendDmOK', ({sendDmDto, sender, sendtime }) => {
           const newMessage: IMessage = sendDmDto;
-          newMessage.sender = myUser.user;
+          newMessage.sender = sender;
           newMessage.chanid = sendDmDto.IdReceiver;
           newMessage.sendtime = sendtime;
           dispatch(addDM(newMessage));
@@ -191,10 +197,10 @@ function App() {
   }
   if (myUser.user === undefined) {
     if (token !== undefined)
-    setTimeout(() => {
+    if (cookies.get('Token') !== undefined) {
       get_user();
       get_channels();
-    }, 200)
+    }
   }
 
   return (

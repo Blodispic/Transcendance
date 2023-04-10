@@ -3,7 +3,7 @@ import { Server, Socket } from 'socket.io';
 import { UserService } from 'src/user/user.service';
 import { Ball, GameState, Move, Player, Vec2 } from './game.interfaces';
 import { CreateResultDto } from 'src/results/dto/create-result.dto';
-import { Status } from 'src/user/entities/user.entity';
+import { Status, User } from 'src/user/entities/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Results } from 'src/results/entities/results.entity';
 import { Repository } from 'typeorm';
@@ -52,6 +52,15 @@ export class GameService {
 		return false;
 	}
 
+	inSpectate(socketId: string) {
+		for (let i:number = 0; i < this.gameRoom.length; i++) {
+			for (let j: number = 0; j < this.gameRoom[i].watchList.length; j++) {
+				if (this.gameRoom[i].watchList[j] == socketId)
+					return true;
+			}
+		}
+		return false;
+	}
 
 	async addToWaitingRoom(client: Socket) {
 		let i  = 0;
@@ -80,7 +89,7 @@ export class GameService {
 		return 1;
 	}
 
-	startGame(server: Server) {
+	async startGame(server: Server) {
 		if (this.waitingRoom.length >= 2) {
 			const socket1 = this.waitingRoom.shift();
 			const socket2 = this.waitingRoom.shift();
@@ -119,8 +128,15 @@ export class GameService {
 			};
 			player1.name = socket1.handshake.auth.user.username;
 			player1.id = socket1.handshake.auth.user.id;
-			player2.name = socket2.handshake.auth.user.username;
 			player2.id = socket2.handshake.auth.user.id;
+			const user1 = await this.userService.getById(player1.id)
+			const user2 = await this.userService.getById(player2.id)
+			if (!user1 || !user2)
+				throw new NotFoundException("User Not found");
+			if (user1.username)
+				player1.name = user1.username;
+			if (user2.username)
+				player2.name = user2.username;
 
 			this.gameRoom.push(new Game(this, server, player1, player2, true, 3, socket1, socket2, this.gameRoom.length + 1));
 			server.to(player1.socket).emit('RoomStart', this.gameRoom.length, player1);
@@ -137,7 +153,6 @@ export class GameService {
 	async startCustomGame(server: Server, userSocket1: Socket, userSocket2: Socket, extra: boolean, scoreMax: number) {
 		const socket1 = userSocket1;
 		const socket2 = userSocket2;
-
 		const player1: Player = {
 			paddle: {
 				position: {
@@ -172,16 +187,13 @@ export class GameService {
 		};
 		player1.name = socket1.handshake.auth.user.username;
 		player1.id = socket1.handshake.auth.user.id;
+		player2.id = socket2.handshake.auth.user.id;
 		const user1 = await this.userService.getById(player1.id)
-		if (!user1)
+		const user2 = await this.userService.getById(player2.id)
+		if (!user1 || !user2)
 			throw new NotFoundException("User Not found");
 		if (user1.username)
 			player1.name = user1.username;
-		player2.name = socket2.handshake.auth.user.username;
-		player2.id = socket2.handshake.auth.user.id;
-		const user2 = await this.userService.getById(player2.id)
-		if (!user2)
-			throw new NotFoundException("User Not found");
 		if (user2.username)
 			player2.name = user2.username;
 		if (scoreMax < 1)
@@ -214,41 +226,55 @@ export class GameService {
 		let i = 0;
 		while (this.gameRoom[i])
 		{
-			if (this.gameRoom[i].gameState.roomId === roomId
-				&& this.gameRoom[i].gameState.player2.socket === client)
+			if (this.gameRoom[i].gameState.roomId === roomId)
 			{
-				this.gameRoom[i].updateMove2(move2);
-				return;
+				if (this.gameRoom[i].gameState.player2.socket === client) {
+					this.gameRoom[i].updateMove2(move2);
+					return;
+				}
 			}
 			i++;
 		}
 	}
 
 	playerDisconnect(client: string) {
-		let roomId = 0;
-		while (roomId < this.gameRoom.length && this.gameRoom.length > 0) {
-			if (this.gameRoom[roomId].gameState.player1.socket === client
-				|| this.gameRoom[roomId].gameState.player2.socket === client)
-				this.gameRoom[roomId].disconnect(client);
-			roomId++;
+		let i = 0;
+		while (i < this.gameRoom.length) {
+			if (this.gameRoom[i].gameState.player1.socket === client
+				|| this.gameRoom[i].gameState.player2.socket === client)
+				this.gameRoom[i].disconnect(client);
+			i++;
 		}
 	}
 
+	getRoom(roomId: number) {
+		if (this.gameRoom.length == 0)
+			return undefined;
+		for (let i: number = 0; this.gameRoom[i]; i++) {
+			if (this.gameRoom[i].gameState.roomId == roomId)
+				return this.gameRoom[i];
+		}
+	}
 
-
-	  
-
-	EndGame(client: string, server: Server) {
-        let roomId = 0;
-        while (roomId < this.gameRoom.length && this.gameRoom.length > 0) {
-            if (this.gameRoom[roomId].gameState.player1.socket === client || this.gameRoom[roomId].gameState.player2.socket === client) {
-                this.userService.SetStatus(this.gameRoom[roomId].socket1.handshake.auth.user, Status.Online);  // ACHANGER PAR USERLIST BYY ADAM 
-                this.userService.SetStatus(this.gameRoom[roomId].socket2.handshake.auth.user, Status.Online);  // ACHANGER PAR USERLIST BYY ADAM 
-                server.emit('UpdateSomeone', { idChange: this.gameRoom[roomId].socket1.handshake.auth.user.id, idChange2: this.gameRoom[roomId].socket2.handshake.auth.user.id });
-                this.gameRoom.splice(roomId, 1);
-                return;
-            }
-            roomId++;
+	async EndGame(client: string, server: Server) {
+		let i = 0;
+		while (i < this.gameRoom.length) {
+			if  (this.gameRoom[i].gameState.player1.socket === client || this.gameRoom[i].gameState.player2.socket === client) {
+				
+				const user1 = await this.userService.getById(this.gameRoom[i].gameState.player1.id);
+				const user2 = await this.userService.getById(this.gameRoom[i].gameState.player2.id);
+				if (user1 && user2)
+				{ 
+					if (user1.status !== Status.Offline)
+						await this.userService.SetStatus(user1, Status.Online);  // ACHANGER PAR USERLIST BYY ADAM 
+					if (user2.status !== Status.Offline)
+						await this.userService.SetStatus(user2, Status.Online);  // ACHANGER PAR USERLIST BYY ADAM 
+					server.emit('UpdateSomeone', { idChange: user1.id, idChange2: user2.id });
+					this.gameRoom.splice(i, 1);
+				}
+				return;
+			}
+			i++;
         }
     }
 }
@@ -415,19 +441,14 @@ class Game {
 
 	async finishGame() {
 		this.gameState.gameFinished = true;
-		if (this.gameState.player1.score === this.gameState.scoreMax) {
-			const result: CreateResultDto = { winnerId: this.gameState.player1.id, loserId: this.gameState.player2.id, winner_score: this.gameState.player1.score.toString(), loser_score: this.gameState.player2.score.toString() };
-			const Result: Results = await this.gameService.createResult(result);
-			this.server.to(this.gameState.player1.socket).emit('GameEnd', Result);
-			this.server.to(this.gameState.player2.socket).emit('GameEnd', Result);
-		}
-		else {
-			
-			const result: CreateResultDto = { winnerId: this.gameState.player2.id, loserId: this.gameState.player1.id, winner_score: this.gameState.player2.score.toString(), loser_score: this.gameState.player1.score.toString() };
-			const Result: Results = await this.gameService.createResult(result);
-			this.server.to(this.gameState.player1.socket).emit('GameEnd', Result);
-			this.server.to(this.gameState.player2.socket).emit('GameEnd', Result);
-		}
+		let result: CreateResultDto;
+		if (this.gameState.player1.score === this.gameState.scoreMax) 
+			result = { winnerId: this.gameState.player1.id, loserId: this.gameState.player2.id, winner_score: this.gameState.player1.score.toString(), loser_score: this.gameState.player2.score.toString() };
+		else 
+			result = { winnerId: this.gameState.player2.id, loserId: this.gameState.player1.id, winner_score: this.gameState.player2.score.toString(), loser_score: this.gameState.player1.score.toString() };
+		const Result = await this.gameService.createResult(result);
+		this.server.to(this.gameState.player1.socket).emit('GameEnd', Result);
+		this.server.to(this.gameState.player2.socket).emit('GameEnd', Result);
 	}
 
 	updateGameState(state: GameState) {

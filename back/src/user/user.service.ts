@@ -87,6 +87,20 @@ async checkTab(user: User) {
     });
   }
 
+  async getUsername(id: number): Promise<string> {
+    const user = await this.getById(id);
+    if (user)
+      return (user.username);
+    return "";
+  }
+
+  async getStatus(id: number): Promise<Status | string> {
+    const user = await this.getById(id);
+    if (user)
+      return (user.status);
+    return "";
+  }
+
   getByLogin(login: string): Promise<User | null> {
     return this.usersRepository.findOne({
       relations: [
@@ -109,7 +123,13 @@ async checkTab(user: User) {
       throw new NotFoundException('Invalid access token');
     }
     
-    const user = await this.usersRepository.findOneBy({ login: decoded_access_token.username });
+    const user = await this.usersRepository.findOne({ 
+      relations: {
+        friends: true,
+        owned: true,
+        blocked: true,
+      },
+    where: {login: decoded_access_token.username}, });
     
     if (decoded_access_token.exp && decoded_access_token.exp < Date.now() / 1000) {
       throw new NotFoundException('Token expired');
@@ -162,7 +182,6 @@ async checkTab(user: User) {
           unlinkSync(`./storage/images/${user.avatar}`);
         }
         catch (error) {
-          console.log(error);
         }
       }
       user.avatar = file.filename;
@@ -441,16 +460,6 @@ async checkTab(user: User) {
       return (false);
     // return true ou false si on trouve l'id du friend dans friend
     return (myUser.friends.some(friend => friend.id == friendId));
-  }
-
-  async getBlocked(id: number) {
-    const user = await this.usersRepository.findOne({
-      relations: {
-        blocked: true,
-      },
-      where: { id: id },
-    });
-    return user ? user.blocked : [];
   }
 
   async addBlock(user: User, blockedid: number) {

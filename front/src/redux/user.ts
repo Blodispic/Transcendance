@@ -52,7 +52,7 @@ export const userSlice = createSlice({
                 state.isLog = true;
         },
         delete_user: (state) => {
-            userSlice.caseReducers.set_status(state, { type: 'set_status', payload: UserStatus.OFFLINE })
+            // userSlice.caseReducers.set_status(state, { type: 'set_status', payload: UserStatus.OFFLINE })
             state.user = undefined;
             state.isLog = false;
             state.isOauth = false;
@@ -77,7 +77,6 @@ export const userSlice = createSlice({
                     state.user.blocked = state.user.blocked.filter(block => block.id !== payload.id);
             }
         },
-
     },
 })
 

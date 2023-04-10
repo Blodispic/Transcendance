@@ -25,7 +25,7 @@ export default function InviteGame(props: { infoGame: any, setTrigger: (value: b
     return (
         <div className='chat-form-popup'>
             <div className='chat-form-inner'>
-                <HiOutlineXMark className="close-icon" onClick={() => props.setTrigger(false)} /> <br />
+                <HiOutlineXMark className="close-icon" onClick={() => {decline(); props.setTrigger(false)}} /> <br />
 
                 <h3>{props.infoGame.user1.username} Invite you in Game</h3>
                 <div className='avatar-inpopup'>
