@@ -169,7 +169,6 @@ export class UserController {
     } 
     catch (error) {
       try {
-        console.log("Image Upload failed");
 				unlinkSync(file.path);
 			} 
       catch(e) {

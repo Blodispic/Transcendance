@@ -67,7 +67,6 @@ function App() {
         });
 
         socket.on("invitationInGame", (payload: any) => {
-          console.log(payload);
           setInfoGame(payload);
           setTrigger(true);
           timeOutId = setTimeout(() => {
@@ -199,7 +198,6 @@ function App() {
   if (myUser.user === undefined) {
     if (token !== undefined)
     if (cookies.get('Token') !== undefined) {
-      console.log("getcookies dans app.tsx ",cookies.get('Token'))
       get_user();
       get_channels();
     }

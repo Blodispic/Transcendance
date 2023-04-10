@@ -51,7 +51,7 @@ export class ChatGateway
   }
   if ((await this.userService.checkRelations(receiver.id, sender.id)).relation === 'Blocked')
     return; //User blocked');
-  const sendtime = new Date(). toLocaleString('en-US', { hourCycle: "h24", timeZone: "Europe/Paris" });
+  const sendtime = new Date().toLocaleString('en-US', { hourCycle: "h24", timeZone: "Europe/Paris" });
   client.emit('sendDmOK', {sendDmDto: sendDmDto, sender: sender, sendtime: sendtime});
   if ((await this.userService.checkRelations(sender.id, receiver.id)).relation === 'Blocked')
   return; //User blocked');
