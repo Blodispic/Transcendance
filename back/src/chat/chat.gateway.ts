@@ -233,6 +233,10 @@ async handleBanUser(@ConnectedSocket() client: Socket, @MessageBody() banUserDto
     client.emit('banUserFailed', 'No such Channel or User');
     return;
   }
+  if (user.id === userBan.id) {
+    client.emit('banUserFailed', 'You can not ban yourself')
+    return;
+  }
   if (!(await this.channelService.isUserAdmin({chanid: channel.id, userid: user.id}))) {
     client.emit('banUserFailed', 'You are not Admin on this channel');
     return;
@@ -305,6 +309,10 @@ async handleMuteUser(@ConnectedSocket() client: Socket, @MessageBody() muteUserD
     client.emit('muteUserFailed', 'No such Channel or User');
     return;
   }
+  if (user.id === userMute.id) {
+    client.emit('muteUserFailed', 'You can not mute yourself');
+    return;
+  }
   if (!(await this.channelService.isUserAdmin({chanid: channel.id, userid: user.id}))) {
     client.emit('muteUserFailed', 'You are not Admin on this channel');
     return;
@@ -363,6 +371,8 @@ async handleGiveAdmin(@ConnectedSocket() client: Socket, @MessageBody() giveAdmi
     return; // No such User or Channel
   if (!(await this.channelService.isUserAdmin({chanid: channel.id, userid: user.id})))
     return; // You are not Admin on This Channel
+  if (!(await this.channelService.isUserAdmin({chanid: channel.id, userid: userGiveAdmin.id})))
+    return; // User already Admin on This Channel
   this.channelService.addAdmin(giveAdminDto);
   this.server.to("chan" + channel.id).emit('giveAdminOK', {userid: giveAdminDto.userid, chanid: channel.id});
 }

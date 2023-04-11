@@ -476,6 +476,8 @@ async checkTab(user: User) {
     });
     if (blocked === null)
       throw new BadRequestException('No such User to block');
+    if (blocked.id === user.id)
+      throw new BadRequestException('You can not block yourself')
     if (user.blocked.find(elem => elem.id === blocked.id) !== undefined)
       throw new BadRequestException('User already blocked');
     user = await this.removeFriend(user.id, blocked.id);
