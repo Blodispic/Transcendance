@@ -371,7 +371,7 @@ async handleGiveAdmin(@ConnectedSocket() client: Socket, @MessageBody() giveAdmi
     return; // No such User or Channel
   if (!(await this.channelService.isUserAdmin({chanid: channel.id, userid: user.id})))
     return; // You are not Admin on This Channel
-  if (!(await this.channelService.isUserAdmin({chanid: channel.id, userid: userGiveAdmin.id})))
+  if (await this.channelService.isUserAdmin({chanid: channel.id, userid: userGiveAdmin.id}))
     return; // User already Admin on This Channel
   this.channelService.addAdmin(giveAdminDto);
   this.server.to("chan" + channel.id).emit('giveAdminOK', {userid: giveAdminDto.userid, chanid: channel.id});
