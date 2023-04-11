@@ -385,12 +385,18 @@ async checkTab(user: User) {
     if (!realUser)
       throw new NotFoundException('user doesn\'t exists');
 
+    const ReqExist = realUser?.receiveFriendRequests.find(realUser => realUser.creatorId === friendId)
+      if (!ReqExist)
+        throw new BadRequestException('Request doesn\'t exists');
+
     const friend = await this.usersRepository.findOne({
       relations: {
         friends: true,
+        blocked: true,
       },
       where: { id: friendId },
     });
+
     if (!friend)
       throw new NotFoundException('friend doesn\'t exists');
     if (realUser.id != friendId) {
@@ -400,6 +406,12 @@ async checkTab(user: User) {
 
       if (!friend.friends) {
         friend.friends = [];
+      }
+
+      const blocked = friend?.blocked.find((blocked: User) => blocked.id === realUser.id)
+      if (blocked) {
+        
+        throw new BadRequestException('You are Blocked');
       }
 
       realUser.friends.push(friend);
