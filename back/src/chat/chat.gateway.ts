@@ -124,6 +124,8 @@ async handleJoinChannel(@ConnectedSocket() client: Socket, @MessageBody() joinCh
     client.emit('joinChannelFailed', 'You are banned from this channel');
     return;
   }
+  if (await this.channelService.isUserinChan(channel, user))
+    return; // you already are in chan
   await this.channelService.add({
     user: user,
     chanId: channel.id,
@@ -166,6 +168,8 @@ async handleLeaveChannel(@ConnectedSocket() client: Socket, @MessageBody() leave
     client.emit('leaveChannelFailed', 'Invalid User or Channel'); 
     return;
   }
+  if (!(await this.channelService.isUserinChan(channel, user)))
+    return; // you are not in Chan
   this.channelService.rm( { user, chanid: leaveChannelDto.chanid});
   client.leave('chan' + leaveChannelDto.chanid);
   client.emit('leaveChannelOK', channel.id);
@@ -231,6 +235,10 @@ async handleBanUser(@ConnectedSocket() client: Socket, @MessageBody() banUserDto
   const userBan = await this.userService.getById(banUserDto.userid);
   if (channel === null || user === null || userBan === null) {
     client.emit('banUserFailed', 'No such Channel or User');
+    return;
+  }
+  if (user.id === userBan.id) {
+    client.emit('banUserFailed', 'You can not ban yourself')
     return;
   }
   if (!(await this.channelService.isUserAdmin({chanid: channel.id, userid: user.id}))) {
@@ -305,6 +313,10 @@ async handleMuteUser(@ConnectedSocket() client: Socket, @MessageBody() muteUserD
     client.emit('muteUserFailed', 'No such Channel or User');
     return;
   }
+  if (user.id === userMute.id) {
+    client.emit('muteUserFailed', 'You can not mute yourself');
+    return;
+  }
   if (!(await this.channelService.isUserAdmin({chanid: channel.id, userid: user.id}))) {
     client.emit('muteUserFailed', 'You are not Admin on this channel');
     return;
@@ -361,8 +373,10 @@ async handleGiveAdmin(@ConnectedSocket() client: Socket, @MessageBody() giveAdmi
   const userGiveAdmin = await this.userService.getById(giveAdminDto.userid);
   if (channel === null || user === null || userGiveAdmin === null)
     return; // No such User or Channel
-  if (!(await this.channelService.isUserAdmin({chanid: channel.id, userid: user.id})))
+  if (!(await this.channelService.isUserAdmin({ chanid: channel.id, userid: user.id })))
     return; // You are not Admin on This Channel
+  if (await this.channelService.isUserAdmin({ chanid: channel.id, userid: userGiveAdmin.id }))
+    return; // User already Admin on This Channel
   this.channelService.addAdmin(giveAdminDto);
   this.server.to("chan" + channel.id).emit('giveAdminOK', {userid: giveAdminDto.userid, chanid: channel.id});
 }
