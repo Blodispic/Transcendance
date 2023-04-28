@@ -1,5 +1,6 @@
 <a name="readme-top"></a>
 
+
 [![Contributors][contributors-shield]][contributors-url]
 [![Forks][forks-shield]][forks-url]
 [![Stargazers][stars-shield]][stars-url]
@@ -73,6 +74,12 @@ interface and a chat!
 
 * [![Next][Next.js]][Next-url]
 * [![React][React.js]][React-url]
+* [![Docker][Docker]][Docker-url]
+* [![Konva][Konva]][Konva-url]
+* [![Adminer][Adminer]][Adminer-url]
+* [![sass][sass]][sass-url]
+
+
 
 <p align="right">(<a href="#readme-top">Back to top</a>)</p>
 
@@ -169,3 +176,11 @@ Project Link: [https://github.com/Blodispic/transcendance](https://github.com/Bl
 [Next-url]: https://nextjs.org/
 [React.js]: https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB
 [React-url]: https://reactjs.org/
+[Docker]: https://img.shields.io/badge/Docker-019DDD?style=for-the-badge&logo=docker&logoColor=white
+[Docker-url]: https://www.docker.com/
+[Konva]: https://img.shields.io/badge/Konva-0784CE?style=for-the-badge&logo=konva&logoColor=white
+[Konva-url]: https://konvajs.org/
+[Adminer]: https://img.shields.io/badge/adminer-9BB2D7?style=for-the-badge&logo=adminer&logoColor=015982
+[Adminer-url]: https://www.adminer.org/
+[Sass]: https://img.shields.io/badge/sass-CD6799?style=for-the-badge&logo=sass&logoColor=white
+[Sass-url]: https://sass-lang.com/
