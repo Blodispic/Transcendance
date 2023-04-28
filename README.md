@@ -124,6 +124,7 @@ docker-compose up --build
 ## Usage
 
 The game is played as shown below.
+
 You can move around with the arrow keys, pressing both at the same time makes you go up.
 
 <img src="images/game.gif" alt="Game" width="300" height="400">
