@@ -124,13 +124,14 @@ docker-compose up --build
 ## Usage
 
 The game is played as shown below.
+You can move around with the arrow keys, pressing both at the same time makes you go up.
 
-<img src="https://user-images.githubusercontent.com/80698496/235122589-6db7a8e4-d88b-442d-9592-db2efb576674.gif" alt="Game" width="300" height="400">
+<img src="images/game.gif" alt="Game" width="300" height="400">
 
 
 You can also chat with other players, using the chat page shown below.
 
-<img src="https://user-images.githubusercontent.com/80698496/235122888-9c24c0e9-750e-4edd-9d0e-99a4fdf894d0.png" alt="Chat" width="550" height="400">
+<img src="images/chat.png" alt="Chat" width="550" height="400">
 
 <p align="right">(<a href="#readme-top">Back to top</a>)</p>
 
