@@ -6,14 +6,21 @@ import { useNavigate } from "react-router-dom";
 import { useAppSelector } from '../../redux/Hook';
 import swal from 'sweetalert';
 
+interface friend {
+    name: string,
+    avatar: string,
+    id: number,
+    ReqStatus: string,
+    UserStatus: string;
+}
 export function Friends() {
 
-    const [friendReq, setFriendReq] = useState<{ name: string, avatar: string, id: number, ReqStatus: string, UserStatus: string }[]>([]);
-    const [friend, setFriend] = useState<{ name: string, avatar: string, id: number, ReqStatus: string, UserStatus: string }[]>([]);
+    const [friendReq, setFriendReq] = useState<friend[]>([]);
+    const [friend, setFriend] = useState<friend[]>([]);
     const [updateFriend, setUpdateFriend] = useState(false);
     const navigate = useNavigate();
     const myToken = useAppSelector(state => state.user.myToken);
-
+    
 
     useEffect(() => {
         const checkFriendRequest = async () => {
@@ -22,23 +29,14 @@ export function Friends() {
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${myToken}`,
-            },
-            });
-            const data = await response.json();
-            const pendingFriendRequests = data.filter((friendRequest: { ReqStatus: string; }) => friendRequest.ReqStatus === "Pending");
-            setFriendReq(pendingFriendRequests);
+                },
+            })
+                .then(async response => {
+                    const data = await response.json();
+                    const pendingFriendRequests = data.filter((friendRequest: { ReqStatus: string; }) => friendRequest.ReqStatus === "Pending");
+                    setFriendReq(pendingFriendRequests);
+                })
         };
-
-        checkFriendRequest();
-        socket.on('UpdateSomeone', () => {
-            setUpdateFriend(!updateFriend);
-        });
-            return () => {
-        socket.off('UpdateSomeone');
-    };
-    }, [updateFriend]);
-
-    useEffect(() => {
         const checkFriend = async () => {
             const response = await fetch(`${process.env.REACT_APP_BACK}user/friends`, {
                 method: 'GET',
@@ -46,19 +44,24 @@ export function Friends() {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${myToken}`,
                 },
-            });
-            const data = await response.json();
-            setFriend(data);
+            })
+                .then(async response => {
+                    if (response.ok) {
+                        const data = await response.json();
+                        setFriend(data);
+                    }
+                })
         };
-
         checkFriend();
-            return () => {
-    };
-    }, [setUpdateFriend, updateFriend]);
+        checkFriendRequest();
+        socket.on('UpdateSomeone', () => {
+            setUpdateFriend(!updateFriend);
+        });
+        return () => {
+            socket.off('UpdateSomeone');
+        };
+    }, [updateFriend]);
 
-    interface FriendsListProps {
-        friends: { name: string, avatar: string, id: number, ReqStatus: string, UserStatus: string }[];
-    }
 
     const acceptFriendRequest = async (id: number) => {
         const response = await fetch(`${process.env.REACT_APP_BACK}user/friends/accept`, {
@@ -68,13 +71,14 @@ export function Friends() {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${myToken}`,
             },
-        });
-        const data = await response.json();
-        setFriendReq((prevFriendReq) => prevFriendReq.filter((req) => req.id !== id));
-        const str : string = "They are now your friend!";
-        swal("Congrats", str, "success");
-        socket.emit("RequestAccepted", data.id);
-        setUpdateFriend(prevFlag => !prevFlag);
+        })
+        .then (async response => {
+            if (response.ok) {
+                const data = await response.json();
+                socket.emit("RequestAccepted", data.id);
+                setUpdateFriend(!updateFriend);
+            }
+        })
     };
 
     const declineFriendRequest = async (id: number) => {
@@ -85,13 +89,14 @@ export function Friends() {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${myToken}`,
             },
-        });
-        const data = await response.json();
-        setUpdateFriend(prevFlag => !prevFlag);
-        const str : string = "You declined their friend request!"
-        swal("Congrats", str, "success");
-        socket.emit("RequestDeclined", data.id);
-        setUpdateFriend(prevFlag => !prevFlag);
+        })
+        .then (async response => {
+            if (response.ok) {
+                const data = await response.json();
+                socket.emit("RequestDeclined", data.id);
+                setUpdateFriend(!updateFriend);
+            }
+        })
     };
 
     const removeFriend = async (id: number) => {
@@ -113,11 +118,11 @@ export function Friends() {
     };
 
 
-    const FriendsReqList = (props: FriendsListProps) => {
-        return (
+    const FriendsReqList = () => {
+        return (friendReq && friendReq.length > 0) ? (
             <ul className="friends-list">
-                {props.friends && props.friends.length > 0 ? (
-                    props.friends.map((friend) => (
+                {
+                    friendReq.map((friend) => (
                         <li className="friend-block" key={friend.name}>
                             <div className="friend-img pointer" onClick={() => navigate(`../Profile/${friend.id}`)}>
                                 <img src={`${process.env.REACT_APP_BACK}user/${friend.id}/avatar`} alt={friend.name} />
@@ -127,35 +132,21 @@ export function Friends() {
                                 <div className={"color-status " + friend.UserStatus}>{friend.UserStatus}</div>
                             </div>
                             <div className="friend-actions">
-                                <button className="accept-button" onClick={() => acceptFriendRequest(friend.id)}>
-                                    <ImCheckmark />
-                                </button>
-                                <button className="refuse-button" onClick={() => declineFriendRequest(friend.id)}>
-                                    <ImCross />
-                                </button>
-
+                                <button className="accept-button" onClick={() => acceptFriendRequest(friend.id)}><ImCheckmark /></button>
+                                <button className="refuse-button" onClick={() => declineFriendRequest(friend.id)}><ImCross /></button>
                             </div>
                         </li>
-                    ))
-                ) : (
-                    <></>
-                )}
+                    ))}
             </ul>
-        );
+        ) : <></>;
     };
 
 
-
-
-    const FriendsReq = () => {
-        return <FriendsReqList friends={friendReq} />;
-    }
-
-    const FriendsList = (props: FriendsListProps) => {
-        return (
+    const FriendsList = () => {
+        return (friend && friend.length > 0) ? (
             <ul className="friends-list">
-                {props.friends && props.friends.length > 0 ? (
-                    props.friends.map((friend) => (
+                {
+                    friend.map((friend) => (
                         <li className="friend-block" key={friend.name}>
                             <div className="friend-img pointer" onClick={() => navigate(`../Profile/${friend.id}`)}>
                                 <img src={`${process.env.REACT_APP_BACK}user/${friend.id}/avatar`} alt={friend.name} />
@@ -163,34 +154,23 @@ export function Friends() {
                             <div className="friend-info">
                                 <div className="friend-name">{friend.name}</div>
                                 <div className={"color-status " + friend.UserStatus}>{friend.UserStatus}</div>
-                                <button  onClick={() => (removeFriend(friend.id))}> Remove Friend </button>
-
+                                <button onClick={() => (removeFriend(friend.id))}> Remove Friend </button>
                             </div>
                         </li>
                     ))
-                ) : (
-                    <></>
-                )}
+                }
             </ul>
-        );
+        ) : <></>;
     };
-
-
-
-
-    const Friends = () => {
-        return <FriendsList friends={friend} />;
-    }
 
     return (
         <div className='FriendHeader'>
-
             <div className='FriendRequestBlock'>
-                <FriendsReq />
+                <FriendsReqList />
             </div>
             <hr className="separate-line" />
             <div className='FriendListBlock'>
-                <Friends />
+                <FriendsList />
             </div>
         </div>
     )

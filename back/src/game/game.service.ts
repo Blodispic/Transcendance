@@ -243,6 +243,10 @@ export class GameService {
 			if (this.gameRoom[i].gameState.player1.socket === client
 				|| this.gameRoom[i].gameState.player2.socket === client)
 				this.gameRoom[i].disconnect(client);
+			if (this.gameRoom[i].watchList.find(elem => (elem == client)) !== undefined) {
+				this.gameRoom[i].watchList = this.gameRoom[i].watchList.filter(elem => (elem !== client))
+				return;
+			}
 			i++;
 		}
 	}

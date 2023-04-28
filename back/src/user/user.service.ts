@@ -136,8 +136,9 @@ async checkTab(user: User) {
     }
     else if (user) {
       for (const iterator of userList) {
-        if (iterator.handshake.auth.user.id == user.id)
+        if (iterator.handshake.auth.user.id == user.id) {
           throw new BadRequestException('t\'as deja un tab frero');
+        }
       }
       return user;
     }
@@ -162,14 +163,14 @@ async checkTab(user: User) {
       const checkUsername = await this.usersRepository.findOneBy({
         username: userUpdate.username,
       });
-      if (checkUsername && checkUsername.id !== user.id) {
+      if (checkUsername && checkUsername.id != user.id) {
         throw new NotFoundException('Username exists');
       }
       else
         user.username = userUpdate.username;
-        const socket = userList.find(socket => socket.handshake.auth.handshake.user.id == user.id);
-        if (socket)
-          socket.handshake.auth.user.username = user.username;
+        // const socket = userList.find(socket => socket.handshake.auth.handshake.user.id == user.id);
+        // if (socket)
+        //   socket.handshake.auth.user.username = user.username;
     }
     if (userUpdate.twoFaEnable != undefined) {
       user.twoFaEnable = userUpdate.twoFaEnable;
@@ -198,18 +199,18 @@ async checkTab(user: User) {
 
     if (friendId == creator.id) {
       return ({ message: 'You can\'t add yourself' });
-    }
-
+  }
     const friend: User | null = await this.usersRepository.findOne({
       relations: {
         friends: true,
+        sendFriendRequests: true,
+        receiveFriendRequests: true,
       },
       where: { id: friendId },
     });
     if (!friend) {
       return ({ message: 'Friend does not exist' });
     }
-
     const existingRequest = await this.friendRequestRepository.findOne({
       relations: {
         creator: true,
@@ -220,7 +221,6 @@ async checkTab(user: User) {
     if (existingRequest) {
       throw new UnauthorizedException('Friend Request already send');
     }
-
     const friendReqExists = await this.friendRequestRepository.findOne({
       relations: {
         creator: true,
@@ -233,29 +233,27 @@ async checkTab(user: User) {
       await this.addFriend(friendId, creator);
       return await this.DeleteFriendRequest(creator, friendId);
     }
-    
     const friendRequest: FriendRequestDto = {
       creatorId: creator.id,
       creator: creator,
-      receiverId: creator.id,
+      receiverId: friendId,
       receiver: friend,
       status: 'Pending',
     };
-
     await this.friendRequestRepository.save(friendRequest);
-    const friendRequestPush: FriendRequest | null = await this.friendRequestRepository.findOne({
-      where: [{ creator: creator, receiver: friend }],
-    });
-    if (friendRequestPush) {
-      if (!friend.receiveFriendRequests)
-        friend.receiveFriendRequests = [];
-      friend.receiveFriendRequests.push(friendRequestPush);
-      await this.usersRepository.save(friend);
-      if (!creator.sendFriendRequests)
-        creator.sendFriendRequests = [];
-      creator.sendFriendRequests.push(friendRequestPush);
-      await this.usersRepository.save(creator);
-    }
+    // const friendRequestPush: FriendRequest | null = await this.friendRequestRepository.findOne({
+    //   where: [{ creator: creator, receiver: friend }],
+    // });
+    // if (friendRequestPush) {
+    //   if (!friend.receiveFriendRequests)
+    //     friend.receiveFriendRequests = [];
+    //   friend.receiveFriendRequests.push(friendRequestPush);
+    //   await this.usersRepository.save(friend);
+    //   if (!creator.sendFriendRequests)
+    //     creator.sendFriendRequests = [];
+    //   creator.sendFriendRequests.push(friendRequestPush);
+    //   await this.usersRepository.save(creator);
+    // }
     return { message: 'Friend request sent' };
   }
 
@@ -387,12 +385,18 @@ async checkTab(user: User) {
     if (!realUser)
       throw new NotFoundException('user doesn\'t exists');
 
+    const ReqExist = realUser?.receiveFriendRequests.find(realUser => realUser.creatorId === friendId)
+      if (!ReqExist)
+        throw new BadRequestException('Request doesn\'t exists');
+
     const friend = await this.usersRepository.findOne({
       relations: {
         friends: true,
+        blocked: true,
       },
       where: { id: friendId },
     });
+
     if (!friend)
       throw new NotFoundException('friend doesn\'t exists');
     if (realUser.id != friendId) {
@@ -402,6 +406,12 @@ async checkTab(user: User) {
 
       if (!friend.friends) {
         friend.friends = [];
+      }
+
+      const blocked = friend?.blocked.find((blocked: User) => blocked.id === realUser.id)
+      if (blocked) {
+        
+        throw new BadRequestException('You are Blocked');
       }
 
       realUser.friends.push(friend);
@@ -476,6 +486,8 @@ async checkTab(user: User) {
     });
     if (blocked === null)
       throw new BadRequestException('No such User to block');
+    if (blocked.id === user.id)
+      throw new BadRequestException('You can not block yourself')
     if (user.blocked.find(elem => elem.id === blocked.id) !== undefined)
       throw new BadRequestException('User already blocked');
     user = await this.removeFriend(user.id, blocked.id);

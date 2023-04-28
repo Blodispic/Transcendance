@@ -66,11 +66,11 @@ export class User {
   @Column({ default: 0 })
   lose: number;
 
-  @OneToMany(() => FriendRequest, friendRequest => friendRequest.creator, { onDelete: 'CASCADE' })
+  @OneToMany(() => FriendRequest, friendRequest => friendRequest.creator)
   @JoinTable()
   sendFriendRequests: FriendRequest[];
 
-  @OneToMany(() => FriendRequest, friendRequest => friendRequest.receiver, { onDelete: 'CASCADE' })
+  @OneToMany(() => FriendRequest, friendRequest => friendRequest.receiver)
   @JoinTable()
   receiveFriendRequests: FriendRequest[];
 }

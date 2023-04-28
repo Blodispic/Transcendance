@@ -14,7 +14,7 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { userList } from 'src/app.gateway';
 import { ValidationError, validateOrReject } from 'class-validator';
 import * as sharp from 'sharp';
-import { readFileSync, unlinkSync } from 'fs';
+import { readFileSync, unlinkSync, existsSync } from 'fs';
 
 
 @Controller('user')
@@ -46,8 +46,9 @@ export class UserController {
   @UseGuards(JwtGuard)
   async firstSign(@GetUser() user: User, @Body() updateUserDto: UpdateUserDto) {
     for (const iterator of userList) {
-      if (iterator.handshake.auth.user.id == user.id)
+      if (iterator.handshake.auth.user.id === user.id){
         throw new BadRequestException('t\'as deja un tab frero');
+      }
     }
     try {
       await validateOrReject(updateUserDto);
@@ -138,10 +139,12 @@ export class UserController {
     const user = await this.userService.getById(id);
     if (user) {
       if (user.avatar) {
-        return res.sendFile(user.avatar, { root: './storage/images/' });
-      } else {
+        if (existsSync(`./storage/images/${user.avatar}`)) {
+          return res.sendFile(user.avatar, { root: './storage/images/' });
+        }
         return res.redirect(user.intra_avatar);
-      }
+      } else
+        return res.redirect(user.intra_avatar);
     } else {
       return null;
     }

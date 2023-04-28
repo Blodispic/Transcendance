@@ -6,7 +6,7 @@ import { GatewayExceptionFilter } from './app.exceptionFilter';
 import { ChannelService } from './chat/channel/channel.service';
 import { Status } from './user/entities/user.entity';
 
-export const userList: Socket[] = [];
+export let userList: Socket[] = [];
 
 @UseFilters(new GatewayExceptionFilter())
 @UsePipes(new ValidationPipe())
@@ -36,18 +36,16 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		} catch (error) {
 			return client.disconnect();
 		}
-		userList.push(client);
 		const channels = await this.channelService.getUserChannel(client.handshake.auth.user.id);
 		channels.forEach(channel => {
 			client.join('chan' + channel.id);
 		});
-
 		this.server.to(client.id).emit("LoginValid");
 		this.server.emit('UpdateSomeone', { idChange: client.handshake.auth.user.id, idChange2: 0 });
+		userList.push(client);
 	}
-
 	async handleDisconnect(client: Socket) {
-		userList.splice(userList.indexOf(client), 1);
+		userList = userList.filter(elem => elem != client);
 		try {
 			await this.userService.SetStatus(client.handshake.auth.user, Status.Offline);
 		} catch (error) {
