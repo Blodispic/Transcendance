@@ -97,13 +97,13 @@ Be aware that as it stands, you can only connect to transcendance using 42API, w
 Start by add a .env file following the template below:
 ```
 #URL
-APP_BACK=http://10.11.8.2:4000/
-FRONT_URL=http://10.11.8.2:3000
+APP_BACK=http://localhost:4000/
+FRONT_URL=http://localhost:3000
 
 #42API
 API42_UID=ExempleAPI
 API42_SECRET=ExempleSecret
-REDIRECT_URI=http://10.11.8.2:3000/
+REDIRECT_URI=http://localhost:3000/
 
 #PostGres
 POSTGRES_HOST=PostgreSQL
