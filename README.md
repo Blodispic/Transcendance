@@ -172,8 +172,8 @@ Project Link: [https://github.com/Blodispic/transcendance](https://github.com/Bl
 [issues-shield]: https://img.shields.io/github/issues/Blodispic/transcendance.svg?style=for-the-badge
 [issues-url]: https://github.com/Blodispic/transcendance/issues
 [product-screenshot]: images/homepage.png
-[Nest.js]: https://img.shields.io/badge/nest.js-000000?style=for-the-badge&logo=nestdotjs&logoColor=white
-[Nest-url]: https://nestjs.org/
+[Nest.js]: https://img.shields.io/badge/nest.js-000000?style=for-the-badge&logo=nestjs&logoColor=white
+[Nest-url]: https://nestjs.com/
 [React.js]: https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB
 [React-url]: https://reactjs.org/
 [Docker]: https://img.shields.io/badge/Docker-019DDD?style=for-the-badge&logo=docker&logoColor=white
