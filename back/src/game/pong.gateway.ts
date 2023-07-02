@@ -184,7 +184,7 @@ export class PongGateway implements OnGatewayDisconnect {
 	}
 
 	@SubscribeMessage('acceptCustomGame')
-	async AcceptCustomGame(@MessageBody() payload: { scoreMax: string; user1: {id: number, username: String}, user2:{id: number, username: String}, extra: boolean }, @ConnectedSocket() client: Socket) {
+	async AcceptCustomGame(@MessageBody() payload: { scoreMax: string; user1: {id: number, username: string}, user2:{id: number, username: string}, extra: boolean }, @ConnectedSocket() client: Socket) {
 		const user1 = await this.userService.getById(payload.user1.id);
 		const user2 = await this.userService.getById(payload.user2.id);
 		if (user2 === null || user1 === null)
@@ -214,8 +214,8 @@ export class PongGateway implements OnGatewayDisconnect {
             clearTimeout(this.timeoutId);
 		this.gameService.removeFromWaitingRoom(client.id);
 
-		let userSocket1: Socket | null = this.findSocketById(payload.user1.id)
-		let userSocket2: Socket | null = this.findSocketById(payload.user2.id)
+		const userSocket1: Socket | null = this.findSocketById(payload.user1.id)
+		const userSocket2: Socket | null = this.findSocketById(payload.user2.id)
 
 		if (!userSocket1 || !userSocket2)
 			throw new BadRequestException('One of the users does\'nt have a socket (handleConnection is broken)');
